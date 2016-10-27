@@ -1,0 +1,16 @@
+version: v1.0
+projects:
+- app_name: MARCEL backend
+  app_path: /
+  app_run: true
+  app_bin: true
+  app_build: true
+  app_fmt: true
+  app_watcher:
+    paths:
+    - /
+    ignore_paths:
+    - vendor
+    - bin
+    exts:
+    - .go
