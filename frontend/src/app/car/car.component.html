@@ -1,0 +1,21 @@
+<h1>Voiture</h1>
+
+<div class="position_info">
+	<i class="fa {{positionInfoMarker}} {{positionClass}}" aria-hidden="true"></i> {{positionInfo}} <br>
+	<span class="lastupdate">{{lastUpdateDate}}</span>
+</div>
+
+<google-map id="gmap" api-key="{{apikey}}" [styles]="styles" show-center-marker libraries="places" [latitude]="lat" [longitude]="lng" disable-zoom disable-default-ui [zoom]="zoom">
+	<div class="map_overlay"></div>
+	<google-map-marker id="gmapMarker" [latitude]="latCar" [longitude]="lngCar" id="google_map_marker" [icon]="carIcon"></google-map-marker>
+</google-map>
+
+<div class="last_move">
+	<h2>Trajets</h2>
+	<h3 *ngFor="let trip of trips"><i class="fa fa-road" aria-hidden="true"></i> {{trip.beginDate | date:'EEE d MMM' }} de {{trip.minutes}} min</h3>
+</div>
+
+<div class="fuel_level">
+	<h2>Carburant</h2>
+	<h3><i class="fa fa-battery-{{fuelRange}}" aria-hidden="true"></i> Niveau Carburant {{fuelLevel}} litres</h3>
+</div>

@@ -1,0 +1,36 @@
+calendar{
+  position: fixed;
+  right: 60px;
+  top: 250px;
+  text-align: right;
+
+  h3{
+    color: #ea5829;
+    font-weight: 300;
+  }
+
+  .events{
+    margin-top: 5px;
+
+    > h3{
+      margin-bottom: 10px;
+      span{
+        color: white;
+      }
+    }
+
+    .event{
+      position: relative;
+      margin-bottom: 20px;
+
+      i{
+        position: absolute;
+        left: -35px;
+        top: 17px;
+        font-size: 22px;
+        color: #ea5829;
+      }
+    }
+  }
+
+}

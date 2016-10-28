@@ -1,0 +1,9 @@
+<h1>Calendrier</h1>
+
+<div class="events">
+  <h3><span>{{events.length}}</span> Events Today</h3>
+  <div class="event" *ngFor="let event of events">
+    <h3>{{event.summary}}</h3>
+    <h4>{{event.start.dateTime | date : "HH:mm"}} - {{event.end.dateTime | date : "HH:mm"}}</h4>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+home{
+  position: absolute;
+  right: 60px;
+  bottom: 60px;
+  text-align: right;
+
+  h1{
+    margin-bottom: 10px;
+  }
+  h2{
+    color: #ea5829;
+    font-weight: 300;
+    span{
+      color:white;
+      font-size: 0.8em;
+    }
+  }
+  h3{
+    color: white;
+  }
+
+  .thermometer_img{
+    height: 20px;
+    display: inline-block;
+    width: 110px;
+    text-align: right;
+    margin-top: 2px;
+    float: left;
+
+    img{
+      max-height: 100%;
+    }
+  }
+
+}

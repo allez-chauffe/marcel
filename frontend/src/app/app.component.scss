@@ -1,0 +1,25 @@
+body{
+  margin: 0;
+  padding: 50px;
+  background: black;
+  color: white;
+  font-family: Roboto;
+  font-weight: 300;
+}
+
+h1,h2,h3,h4 {
+  color: white;
+  font-family: 'Roboto';
+  font-weight: 100;
+  line-height: 1.1;
+  letter-spacing: 0.025em;
+  margin: 0;
+  padding: 0;
+}
+
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% { opacity: 0.0; }
+}
