@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"google.golang.org/api/calendar/v3"
 	"log"
-	"mirin/auth"
+	"github.com/Zenika/MARCEL/backend/auth"
 	"net/http"
 	"time"
 )

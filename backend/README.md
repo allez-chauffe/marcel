@@ -1,6 +1,7 @@
 ##Setup
 ```go
 go get github.com/briandowns/openweathermap
+go get github.com/GwennaelBuchet/openweathermap
 go get github.com/rs/cors
 go get -u github.com/gorilla/mux
 go get -u google.golang.org/api/calendar/v3

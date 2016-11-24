@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	owm "github.com/gwennaelbuchet/openweathermap"
+	owm "github.com/GwennaelBuchet/openweathermap"
 )
 
 // URL is a constant that contains where to find the IP locale info
