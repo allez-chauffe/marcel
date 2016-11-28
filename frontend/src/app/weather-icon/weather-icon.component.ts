@@ -17,6 +17,7 @@ export class WeatherIconComponent implements OnInit{
   public weather_types : Array<Object> = [];
   public weather_object : any;
   public weather_temp : number = 0;
+  public number_list : number = 1; 
 
   constructor(public weatherService: WeatherService){
     this.weather_types.push("sun-shower");
@@ -38,8 +39,8 @@ export class WeatherIconComponent implements OnInit{
   getWeather(){
     this.weatherService.getCurrent()
     .subscribe(res => {
-      this.weather_temp = Math.round(res.main.temp);
-      this.setWeatherType(res.weather[0].main);
+      this.weather_temp = Math.round(res.list[this.number_list].main.temp);
+      this.setWeatherType(res.list[this.number_list].weather[0].main);
     });
   }
 

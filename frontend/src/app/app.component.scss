@@ -23,3 +23,18 @@ h1,h2,h3,h4 {
 @keyframes blinker {
   50% { opacity: 0.0; }
 }
+
+app-root > *{
+  animation: fadein 2s;
+}
+
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+

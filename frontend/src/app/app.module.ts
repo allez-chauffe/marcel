@@ -24,6 +24,10 @@ import { ApiService } from './api/api.service';
 import { XmlParsePipe } from './pipes/xmlparse.pipe';
 import { TwitterComponent } from './twitter/twitter.component';
 import { TwitterService } from './twitter/twitter.service';
+import { LogoComponent } from './logo/logo.component';
+import { ForecastComponent } from './forecast/forecast.component';
+import { TraficComponent } from './trafic/trafic.component';
+import { LunchplaceComponent } from './lunchplace/lunchplace.component';
 
 
 @NgModule({
@@ -42,7 +46,11 @@ import { TwitterService } from './twitter/twitter.service';
     WeatherComponent,
     WeatherIconComponent,
     XmlParsePipe,
-    TwitterComponent
+    TwitterComponent,
+    LogoComponent,
+    ForecastComponent,
+    TraficComponent,
+    LunchplaceComponent
   ],
   imports: [
     BrowserModule,
