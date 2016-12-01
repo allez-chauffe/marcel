@@ -28,6 +28,8 @@ import { LogoComponent } from './logo/logo.component';
 import { ForecastComponent } from './forecast/forecast.component';
 import { TraficComponent } from './trafic/trafic.component';
 import { LunchplaceComponent } from './lunchplace/lunchplace.component';
+import { HumeurComponent } from './humeur/humeur.component';
+import { GithubComponent } from './github/github.component';
 
 
 @NgModule({
@@ -50,7 +52,9 @@ import { LunchplaceComponent } from './lunchplace/lunchplace.component';
     LogoComponent,
     ForecastComponent,
     TraficComponent,
-    LunchplaceComponent
+    LunchplaceComponent,
+    HumeurComponent,
+    GithubComponent
   ],
   imports: [
     BrowserModule,

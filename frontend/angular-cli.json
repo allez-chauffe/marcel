@@ -16,6 +16,7 @@
       "mobile": false,
       "styles": [
         "lib/font.css",
+        "lib/weather-icons.min.css",
         "styles.css",
         "../node_modules/font-awesome/css/font-awesome.css"
       ],
@@ -30,7 +31,8 @@
     }
   ],
   "addons": [
-    "../node_modules/font-awesome/fonts/*.+(otf|eot|svg|ttf|woff|woff2)"
+    "../node_modules/font-awesome/fonts/*.+(otf|eot|svg|ttf|woff|woff2)",
+    "font/*.+(otf|eot|svg|ttf|woff|woff2)"
   ],
   "packages": [],
   "e2e": {

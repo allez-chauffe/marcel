@@ -2,15 +2,28 @@ weather-icon{
   position: absolute;
   top: 60px;
   left: 340px;
-  display: flex;
   align-items: center;
+
+  .flex{
+    display: flex;
+  }
 
   .weather_temp{
     font-size: 1.2em;
   }
   .weather_text{
     font-size: 1.5em;
-    color:#B0163C;
+    color:#c10d12;
+  }
+  .wheather_dt{
+    color:#c10d12;
+    font-size: 1em;
+    margin-bottom: 2px;
+  }
+
+  .icon_content{
+    font-size: 60px;
+    margin-right: 30px;
   }
 
   .icon {

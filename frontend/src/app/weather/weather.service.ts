@@ -6,9 +6,13 @@ import {ApiService} from './../api/api.service';
 export class WeatherService {
 
   public api : string;
+  public key : string;
+  public apiForecast : String = "http://api.openweathermap.org/data/2.5/forecast";
 
   constructor(public http:Http,public apiService:ApiService) {
-    this.api = this.apiService.getApi('weather').url;
+    //this.api = this.apiService.getApi('weather').url;
+    this.key = this.apiService.getApi('weather').key;
+    this.api = this.apiForecast + '?APPID=' + this.key + '&q=Lille,Fr&units=metric';
   }
 
   getCurrent() {

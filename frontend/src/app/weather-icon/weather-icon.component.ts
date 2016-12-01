@@ -1,25 +1,31 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit,Input} from "@angular/core";
 import {ViewEncapsulation} from '@angular/core';
 
 import {WeatherService} from '../weather/weather.service';
 import {FirstletterupperPipe} from '../pipes/firstletterupper.pipe';
+import { WeatherIconService } from './weather-icon.service';
 
 @Component({
   selector: 'weather-icon',
   encapsulation: ViewEncapsulation.None,
   templateUrl: './weather-icon.component.html',
-  styleUrls: ['./weather-icon.component.scss']
+  styleUrls: ['./weather-icon.component.scss'],
+  providers : [WeatherIconService]
 })
 
 export class WeatherIconComponent implements OnInit{
 
+  @Input() numberlist : number;
+  @Input() displaydt : boolean;
+
   public current_weather_type : String = "";
   public weather_types : Array<Object> = [];
   public weather_object : any;
-  public weather_temp : number = 0;
-  public number_list : number = 1; 
+  public weather_date : Date;
+  public weather_temp : number = 0 ;
+  public wheather_icon : string;
 
-  constructor(public weatherService: WeatherService){
+  constructor(public weatherService: WeatherService, public weatherIconService : WeatherIconService){
     this.weather_types.push("sun-shower");
     this.weather_types.push("thunder-storm");
     this.weather_types.push("cloudy");
@@ -39,14 +45,25 @@ export class WeatherIconComponent implements OnInit{
   getWeather(){
     this.weatherService.getCurrent()
     .subscribe(res => {
-      this.weather_temp = Math.round(res.list[this.number_list].main.temp);
-      this.setWeatherType(res.list[this.number_list].weather[0].main);
+      this.weather_temp = Math.round(res.list[this.numberlist].main.temp);
+      this.setWeatherType(res.list[this.numberlist].weather[0].main);
+      this.weather_date = new Date(res.list[this.numberlist].dt*1000);
+      this.wheather_icon = this.getDayNight(res.list[this.numberlist].dt*1000) + this.weatherIconService.getOneIcon(res.list[this.numberlist].weather[0].id).icon;
     });
   }
 
   randomType(){
     var randomInt = Math.floor(Math.random() * this.weather_types.length);
     return this.weather_types[randomInt];
+  }
+
+  getDayNight(date){
+    let hr = (new Date(date)).getHours();
+    console.log(hr);
+    if(hr > 6 && hr < 18)
+      return 'day-';
+    else
+      return 'day-';//night
   }
 
   setWeatherType(type) {
