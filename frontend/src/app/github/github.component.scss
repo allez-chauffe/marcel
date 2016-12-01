@@ -4,7 +4,7 @@ github{
 
     position:absolute;
     left: 60px;
-    top: 640px;
+    top: 440px;
 
     h2{
       color: $secondary-color;
@@ -17,5 +17,22 @@ github{
     ul {
         list-style-type: none;
         padding-left: 0;
+        li{
+            display: flex;
+            > *{
+                padding: 5px;
+            }
+            img{
+                height: 30px;
+                width: 30px;
+                border-radius: 50%;
+            }
+            span{
+                line-height: 30px;
+                &.number{
+                    font-weight: bold;
+                }
+            }
+        }
     }
 }

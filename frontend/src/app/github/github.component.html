@@ -3,6 +3,8 @@
 
 <ul>
   <li *ngFor="let contributor of contributors | slice:0:5">
-    {{contributor.contributions}} {{contributor.user}}
+    <img [src]="contributor.avatar" alt="">
+    <span>{{contributor.user}}</span>
+    <span class="number">{{contributor.contributions}}</span>
   </li>
 </ul>

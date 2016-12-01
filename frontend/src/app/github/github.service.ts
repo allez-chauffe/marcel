@@ -42,7 +42,8 @@ export class GithubService {
 
         this.usersContribusion.push({
           user : usersContri[0].actor.display_login,
-          contributions : nbContributions
+          contributions : nbContributions,
+          avatar: usersContri[0].actor.avatar_url
         });
         return this.sort.transform(this.usersContribusion, 'contributions');
       });
