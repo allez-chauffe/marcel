@@ -1,6 +1,8 @@
 <h1>Github</h1>
 <h2>Top contributor <i class="fa fa-github"></i></h2>
 
-<div *ngFor="let contributor of contributors">
-  {{contributor.contributions}} {{contributor.user}}
-</div>
+<ul>
+  <li *ngFor="let contributor of contributors | slice:0:5">
+    {{contributor.contributions}} {{contributor.user}}
+  </li>
+</ul>

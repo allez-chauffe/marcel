@@ -1,3 +1,4 @@
+import { GithubModule } from './github/github.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -30,6 +31,7 @@ import { TraficComponent } from './trafic/trafic.component';
 import { LunchplaceComponent } from './lunchplace/lunchplace.component';
 import { HumeurComponent } from './humeur/humeur.component';
 import { GithubComponent } from './github/github.component';
+import { SortPipe } from './pipes/sort.pipe';
 
 
 @NgModule({
@@ -54,12 +56,13 @@ import { GithubComponent } from './github/github.component';
     TraficComponent,
     LunchplaceComponent,
     HumeurComponent,
-    GithubComponent
+    SortPipe
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    GithubModule
   ],
   providers: [
     CarService,
@@ -67,7 +70,8 @@ import { GithubComponent } from './github/github.component';
     VlilleService,
     WeatherService,
     CalendarService,
-    TwitterService
+    TwitterService,
+    SortPipe
   ],
   bootstrap: [AppComponent],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]

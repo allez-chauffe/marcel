@@ -5,26 +5,16 @@ import { GithubService } from './github.service';
   selector: 'github',
   encapsulation: ViewEncapsulation.None,
   templateUrl: './github.component.html',
-  styleUrls: ['./github.component.scss'],
-  providers : [ GithubService ]
+  styleUrls: ['./github.component.scss']
 })
 
 export class GithubComponent implements OnInit {
 
-  contributors : any[] = [];
+  contributors: any[];
 
-  constructor(public githubService:GithubService) { }
+  constructor(public githubService: GithubService) { }
 
   ngOnInit() {
-    this.githubService.getTopContributors().subscribe((contributors)=>{
-      contributors.sort(function(a,b){
-        if (a.last_nom < b.last_nom)
-          return -1;
-        if (a.last_nom > b.last_nom)
-          return 1;
-        return 0;
-      })
-      this.contributors = contributors;
-    });
+    this.githubService.getTopContributors().subscribe(contributors => this.contributors = contributors)
   }
 }

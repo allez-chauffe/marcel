@@ -4,9 +4,6 @@ github{
     left: 60px;
     top: 640px;
 
-    h1{
-
-    }
     h2{
       color: #c10d12;
       font-weight: 300;
@@ -14,5 +11,9 @@ github{
     span{
         color: #c10d12;
         font-weight: 300;
+    }
+    ul {
+        list-style-type: none;
+        padding-left: 0;
     }
 }
