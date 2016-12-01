@@ -1,3 +1,4 @@
+import { SortPipe } from './../pipes/sort.pipe';
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
@@ -5,19 +6,26 @@ import { Observable } from 'rxjs/Rx';
 @Injectable()
 export class GithubService {
 
-  api : string = 'https://api.github.com/users/'
-  params : string = '/events'
-  users : any[] = []
-  usersContribusion : any[] = []
+  api: string = 'https://api.github.com/users/';
+  params: string = '/events';
+  users: any[] = [];
+  usersContribusion: any[] = [];
 
-  constructor(public http : Http) {
+  constructor(private http: Http, private sort: SortPipe) {
     this.users.push(
-      'T3kstiil3',
       'Gillespie59',
       'GwennaelBuchet',
+      'T3kstiil3',
       'RemiEven',
       'looztra',
-      'a-cordier'
+      'a-cordier',
+      'wadendo',
+      'NathanDM',
+      'Antoinephi',
+      'cluster',
+      'yyekhlef',
+      'gdrouet',
+      'Kize'
     );
   }
 
@@ -27,18 +35,16 @@ export class GithubService {
       .flatMap((users) => this.getUserContributions(users))
       .map((usersContri) => {
         let nbContributions = 0;
-        
-        usersContri.map((contri)=>{
-          if(contri.created_at.indexOf('2016-11') !== -1)
-            nbContributions++;
-        });
+
+        usersContri
+          .filter(contrib => contrib.type === 'PushEvent' && contrib.created_at.indexOf(this.getDate()) !== -1)
+          .map(contri => nbContributions += contri.payload.commits.length);
 
         this.usersContribusion.push({
           user : usersContri[0].actor.display_login,
           contributions : nbContributions
         });
-
-        return this.usersContribusion;
+        return this.sort.transform(this.usersContribusion, 'contributions');
       });
   }
 
@@ -51,6 +57,9 @@ export class GithubService {
       });
   }
 
-
+  private getDate(){
+    let today = new Date();
+    return `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}`;
+  }
 
 }
