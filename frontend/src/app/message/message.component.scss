@@ -1,3 +1,5 @@
+@import '../variables';
+
 message{
   
   position: absolute;
@@ -8,7 +10,7 @@ message{
     
   }
   h2{
-    color:#c10d12;
+    color:$secondary-color;
     font-weight: 300;
   }
 }

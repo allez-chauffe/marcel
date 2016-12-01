@@ -1,3 +1,5 @@
+@import '../variables';
+
 vlille{
   position: absolute;
   right: 60px;
@@ -11,7 +13,7 @@ vlille{
   .item{
     margin-bottom:10px;
     h2{
-      color: #c10d12;
+      color: $secondary-color;
       font-weight: 300;
     }
   }

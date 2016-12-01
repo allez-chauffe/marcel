@@ -1,14 +1,17 @@
+@import 'variables';
+
 body{
   margin: 0;
   padding: 50px;
   background: black;
-  color: white;
+  color: $primary-color;
   font-family: Roboto;
   font-weight: 300;
+  zoom: 90%;
 }
 
 h1,h2,h3,h4 {
-  color: white;
+  color: $primary-color;
   font-family: 'Roboto';
   font-weight: 100;
   line-height: 1.1;

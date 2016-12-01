@@ -1,7 +1,13 @@
+@import '../variables';
+
 forecast{
     position: absolute;
-    top: 300px;
-    left: 60px;
+    top: 60px;
+    left: 420px;
+
+    > h1{
+        text-align: center
+    }
 
     ul{
         list-style: none;
@@ -9,7 +15,9 @@ forecast{
         padding: 0; 
 
         li{
-            
+            display: inline-block;
+            margin-right: 25px;
+
             weather-icon{
                 
                 position: relative;

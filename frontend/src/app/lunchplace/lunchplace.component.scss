@@ -1,5 +1,7 @@
+@import '../variables';
+
 lunchplace{
-    bottom: 0;
+    bottom: 20px;
     position: absolute;
     left: 60px;
 
@@ -12,12 +14,8 @@ lunchplace{
         margin-top: 10px;
 
         h2{
-            color: #c10d12;
+            color: $secondary-color;
             font-weight: 300;
-        }
-
-        h3{
-
         }
     }
 
