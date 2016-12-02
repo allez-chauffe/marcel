@@ -1,3 +1,4 @@
+import { DateTimeModule } from './datetime/datetime.module';
 import { GithubModule } from './github/github.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -8,12 +9,8 @@ import { AppComponent } from './app.component';
 import { MessageComponent } from './message/message.component';
 import { VlilleComponent } from './vlille/vlille.component';
 import { VlilleService } from './vlille/vlille.service';
-import { AddZeroPipe } from './pipes/addzero.pipe';
 import { FirstletterupperPipe } from './pipes/firstletterupper.pipe';
-import { CarComponent } from './car/car.component';
-import { CarService } from './car/car.service';
 import { ClockComponent } from './clock/clock.component';
-import { DateTimeComponent } from './datetime/datetime.component';
 import { HomeComponent } from './home/home.component';
 import { SocialComponent } from './social/social.component';
 import { CalendarComponent } from './calendar/calendar.component';
@@ -40,11 +37,8 @@ import { AnniversaireComponent } from './anniversaire/anniversaire.component';
     AppComponent,
     MessageComponent,
     VlilleComponent,
-    AddZeroPipe,
     FirstletterupperPipe,
-    CarComponent,
     ClockComponent,
-    DateTimeComponent,
     HomeComponent,
     SocialComponent,
     CalendarComponent,
@@ -64,16 +58,15 @@ import { AnniversaireComponent } from './anniversaire/anniversaire.component';
     BrowserModule,
     FormsModule,
     HttpModule,
-    GithubModule
+    GithubModule,
+    DateTimeModule
   ],
   providers: [
-    CarService,
     ApiService,
     VlilleService,
     WeatherService,
     CalendarService,
-    TwitterService,
-    SortPipe
+    TwitterService
   ],
   bootstrap: [AppComponent],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
