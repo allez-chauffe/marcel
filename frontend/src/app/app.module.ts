@@ -32,6 +32,7 @@ import { LunchplaceComponent } from './lunchplace/lunchplace.component';
 import { HumeurComponent } from './humeur/humeur.component';
 import { GithubComponent } from './github/github.component';
 import { SortPipe } from './pipes/sort.pipe';
+import { AnniversaireComponent } from './anniversaire/anniversaire.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { SortPipe } from './pipes/sort.pipe';
     TraficComponent,
     LunchplaceComponent,
     HumeurComponent,
-    SortPipe
+    SortPipe,
+    AnniversaireComponent
   ],
   imports: [
     BrowserModule,
