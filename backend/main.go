@@ -1,12 +1,12 @@
 package main
 
 import (
+	"github.com/Zenika/MARCEL/backend/agenda"
+	"github.com/Zenika/MARCEL/backend/auth"
+	"github.com/Zenika/MARCEL/backend/weather"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"net/http"
-	"github.com/Zenika/MARCEL/backend/weather"
-	"github.com/Zenika/MARCEL/backend/agenda"
-	"github.com/Zenika/MARCEL/backend/auth"
 )
 
 func main() {

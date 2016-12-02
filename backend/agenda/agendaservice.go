@@ -32,7 +32,7 @@ func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 		23, 59, 59, 0,
 		startTime.Location()) //end of today
 
-	calendarEvents, err := calendarService.Events.List("primary").
+	calendarEvents, err := calendarService.Events.List("zenika.com_h6tsmhv6iqs0e3l0vrugi6tbfg@group.calendar.google.com").
 		TimeMin(startTime.Format(time.RFC3339)).
 		TimeMax(endTime.Format(time.RFC3339)).
 		//MaxResults(nbEvents).
