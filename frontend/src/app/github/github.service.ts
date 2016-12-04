@@ -42,6 +42,10 @@ export class GithubService {
           .filter(contrib => contrib.type === 'PushEvent' && contrib.created_at.indexOf(this.getDate()) !== -1)
           .map(contri => nbContributions += contri.payload.commits.length);
 
+        this.usersContribusion = this.usersContribusion.filter(contrib => {
+          return contrib.user !== contribsAndUser.user.name;
+        });
+
         this.usersContribusion.push({
           user: contribsAndUser.user.name,
           contributions: nbContributions,
