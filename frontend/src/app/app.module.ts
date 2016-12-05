@@ -25,7 +25,7 @@ import { TwitterService } from './twitter/twitter.service';
 import { LogoComponent } from './logo/logo.component';
 import { ForecastComponent } from './forecast/forecast.component';
 import { TraficComponent } from './trafic/trafic.component';
-import { LunchplaceComponent } from './lunchplace/lunchplace.component';
+import { LunchplaceModule } from './lunchplace/lunchplace.module';
 import { HumeurComponent } from './humeur/humeur.component';
 import { GithubComponent } from './github/github.component';
 import { SortPipe } from './pipes/sort.pipe';
@@ -49,7 +49,6 @@ import { AnniversaireComponent } from './anniversaire/anniversaire.component';
     LogoComponent,
     ForecastComponent,
     TraficComponent,
-    LunchplaceComponent,
     HumeurComponent,
     SortPipe,
     AnniversaireComponent
@@ -59,7 +58,8 @@ import { AnniversaireComponent } from './anniversaire/anniversaire.component';
     FormsModule,
     HttpModule,
     GithubModule,
-    DateTimeModule
+    DateTimeModule,
+    LunchplaceModule
   ],
   providers: [
     ApiService,
