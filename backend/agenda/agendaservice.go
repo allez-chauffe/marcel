@@ -31,9 +31,9 @@ func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 	//we want 'nbEvents' next events from today
 	vars := mux.Vars(r)
 	e := vars["nbEvents"]
-	if e != "" {
-		nbEvents, _ := strconv.Atoi(e)
+	nbEvents, _ := strconv.Atoi(e)
 
+	if nbEvents > 0 {
 		var startTime time.Time = time.Now() //today
 
 		calendarEvents, err := calendarService.Events.List(agendaId).
