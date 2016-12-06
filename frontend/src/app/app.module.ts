@@ -11,7 +11,7 @@ import { VlilleComponent } from './vlille/vlille.component';
 import { VlilleService } from './vlille/vlille.service';
 import { FirstletterupperPipe } from './pipes/firstletterupper.pipe';
 import { ClockComponent } from './clock/clock.component';
-import { HomeComponent } from './home/home.component';
+import { HomeModule } from './home/home.module';
 import { SocialComponent } from './social/social.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { CalendarService } from './calendar/calendar.service';
@@ -39,7 +39,6 @@ import { AnniversaireComponent } from './anniversaire/anniversaire.component';
     VlilleComponent,
     FirstletterupperPipe,
     ClockComponent,
-    HomeComponent,
     SocialComponent,
     CalendarComponent,
     WeatherComponent,
@@ -59,7 +58,8 @@ import { AnniversaireComponent } from './anniversaire/anniversaire.component';
     HttpModule,
     GithubModule,
     DateTimeModule,
-    LunchplaceModule
+    LunchplaceModule,
+    HomeModule
   ],
   providers: [
     ApiService,
