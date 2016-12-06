@@ -33,7 +33,7 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	state := r.FormValue("state")
 	if state != oauthStateString {
 		fmt.Printf("invalid oauth state, expected '%s', got '%s'\n", oauthStateString, state)
-		http.Redirect(w, r, "/api/v1/agenda/incoming", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/api/v1/agenda/incoming/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -41,10 +41,10 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	token, err := googleOauthConfig.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		fmt.Printf("oauthConf.Exchange() failed with '%s'\n", err)
-		http.Redirect(w, r, "/api/v1/agenda/incoming", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/api/v1/agenda/incoming/", http.StatusTemporaryRedirect)
 		return
 	}
 
 	Google_API_client = oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(token))
-	http.Redirect(w, r, "/api/v1/agenda/incoming", http.StatusPermanentRedirect)
+	http.Redirect(w, r, "/api/v1/agenda/incoming/", http.StatusPermanentRedirect)
 }
