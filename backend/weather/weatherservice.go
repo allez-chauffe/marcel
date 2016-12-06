@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
 	owm "github.com/GwennaelBuchet/openweathermap"
+	"github.com/gorilla/mux"
 )
 
 // URL is a constant that contains where to find the IP locale info
@@ -68,13 +68,15 @@ func GetForecastWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	f := vars["nbForecast"]
+	f := vars["nbForecasts"]
 	nbForecast, _ := strconv.Atoi(f)
 
-	wd := getForecast(location, "C", "FR", nbForecast)
+	if nbForecast > 0 {
+		wd := getForecast(location, "C", "FR", nbForecast)
 
-	j, err := json.Marshal(wd)
-	if err == nil {
-		w.Write([]byte(j))
+		j, err := json.Marshal(wd)
+		if err == nil {
+			w.Write([]byte(j))
+		}
 	}
 }

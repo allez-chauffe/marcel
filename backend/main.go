@@ -19,8 +19,8 @@ func main() {
 	})
 
 	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/weather/forecast/{nbForecast:[1-9]+}", weather.GetForecastWeatherHandler)
-	r.HandleFunc("/api/v1/agenda/incoming", agenda.GetNextEvents)
+	r.HandleFunc("/api/v1/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler)
+	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents)
 	r.HandleFunc("/api/v1/GoogleLogin", auth.HandleGoogleLogin)
 	r.HandleFunc("/api/v1/GoogleCallback", auth.HandleGoogleCallback)
 

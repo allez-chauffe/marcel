@@ -10,9 +10,23 @@ go get -u golang.org/x/oauth2/...
 
 ```shell
 export OWM_API_KEY="your_owm_api_key"
-export GOOGLE_KEY="your_google_api_key"
-export GOOGLE_SECRET="your_google_api_secret"
+export GOOGLE_API_KEY="your_google_api_key"
+export GOOGLE_API_SECRET="your_google_api_secret"
+export MARCEL_AGENDA_ID="id_of_your_google_agenda"
 ```
+
+In order to use Realize to manage your local builds :
+```shell
+go get github.com/tockins/realize
+```
+(https://tockins.github.io/realize/)
+
+Then, from project(s) root, execute :
+```shell
+realize add
+```
+
+
 
 ##Credits
  - OpenWeatherMap

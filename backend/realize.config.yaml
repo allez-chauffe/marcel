@@ -1,6 +1,6 @@
 version: v1.0
 projects:
-- app_name: MARCEL backend
+- app_name: MARCEL
   app_path: /
   app_run: true
   app_bin: true
