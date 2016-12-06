@@ -46,7 +46,8 @@ func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if len(calendarEvents.Items) > 0 {
+		//Example of parsing an event
+		/*if len(calendarEvents.Items) > 0 {
 			for _, i := range calendarEvents.Items {
 				var when string
 				// If the DateTime is an empty string the Event is an all-day Event.
@@ -60,7 +61,7 @@ func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			fmt.Printf("No upcoming events found.\n")
-		}
+		}*/
 
 		j, err := json.Marshal(calendarEvents)
 		if err == nil {
