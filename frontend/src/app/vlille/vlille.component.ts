@@ -19,10 +19,12 @@ export class VlilleComponent implements OnInit{
 
   constructor(private vlilleservice: VlilleService) {
     this.stationids = [
+      {name:'Rihour',id:10},
       {name:'Cormontaigne',id:36},
-      {name:'Rihour',id:10}
+      {name:'Mairie de Lille',id:64},
+      {name:'Gare Lille Flandres',id:25}
     ];
-    this.interval = 30000; // secondes
+    this.interval = 30000; // secondes  
   }
 
 

@@ -1,4 +1,5 @@
-import { Component, OnInit,ViewEncapsulation } from '@angular/core';
+import { Component, OnInit,ViewEncapsulation,Input } from '@angular/core';
+import { LunchplaceService } from './lunchplace.service';
 
 @Component({
   selector: 'lunchplace',
@@ -9,8 +10,10 @@ import { Component, OnInit,ViewEncapsulation } from '@angular/core';
 export class LunchplaceComponent implements OnInit {
 
   teams : any[] = [];
+  @Input() organization : any;
 
-  constructor() {
+
+  constructor(private lunchplaceService:LunchplaceService) {
     this.teams.push(
       {
         name:'Les biloutes',
@@ -26,6 +29,9 @@ export class LunchplaceComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.lunchplaceService.get_teams_by_orga(this.organization).subscribe(test => {
+      console.log(test);
+    });
   }
 
 }

@@ -29,36 +29,56 @@ export class GithubService {
     );
   }
 
-  getTopContributors(){
+  getTopContributors() {
     return Observable
       .from(this.users)
-      .flatMap((users) => this.getUserContributions(users))
-      .map((usersContri) => {
+      .flatMap(user => this.getUserInfo(user))
+      .flatMap(user => this.getUserContributions(user))
+      .map(contribsAndUser => {
         let nbContributions = 0;
+        let contribs = contribsAndUser.contribs;
 
-        usersContri
+        contribs
           .filter(contrib => contrib.type === 'PushEvent' && contrib.created_at.indexOf(this.getDate()) !== -1)
           .map(contri => nbContributions += contri.payload.commits.length);
 
-        this.usersContribusion.push({
-          user : usersContri[0].actor.display_login,
-          contributions : nbContributions,
-          avatar: usersContri[0].actor.avatar_url
+        this.usersContribusion = this.usersContribusion.filter(contrib => {
+          return contrib.user !== contribsAndUser.user.name;
         });
+
+        this.usersContribusion.push({
+          user: contribsAndUser.user.name,
+          contributions: nbContributions,
+          avatar: contribs[0].actor.avatar_url
+        });
+        
         return this.sort.transform(this.usersContribusion, 'contributions');
       });
   }
 
-  getUserContributions(user){
-    return this.http
-      .get(this.api + user + this.params)
-      .map(function(res){
+  getUserInfo(user: string) {
+    return this.http.get(`${this.api}${user}`)
+      .map(res => {
         let response = res.json();
-        return response;
+        return {
+          login: user,
+          name: response['name']
+        }
       });
   }
 
-  private getDate(){
+  getUserContributions(user) {
+    return this.http
+      .get(this.api + user.login + this.params)
+      .map(res => {
+        return {
+          contribs: res.json(),
+          user
+        };
+      });
+  }
+
+  private getDate() {
     let today = new Date();
     return `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}`;
   }
