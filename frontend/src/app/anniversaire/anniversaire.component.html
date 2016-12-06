@@ -1,3 +1,11 @@
-<p>
-  anniversaire works!
-</p>
+<h1>Anniversaire<span *ngIf="users.length > 1">s</span></h1>
+
+<div *ngFor="let user of users">
+  <h2>{{user.who}}</h2>
+  <h3>{{user.age}} <i class="fa fa-birthday-cake" aria-hidden="true"></i></h3>
+</div>
+
+<span *ngIf="users.length == 0">
+  Personne :(
+</span>
+
