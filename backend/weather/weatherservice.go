@@ -68,7 +68,7 @@ func GetForecastWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	f := vars["nbForecast"]
+	f := vars["nbForecasts"]
 	nbForecast, _ := strconv.Atoi(f)
 
 	if nbForecast > 0 {
