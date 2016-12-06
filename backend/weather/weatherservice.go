@@ -71,10 +71,12 @@ func GetForecastWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	f := vars["nbForecast"]
 	nbForecast, _ := strconv.Atoi(f)
 
-	wd := getForecast(location, "C", "FR", nbForecast)
+	if nbForecast > 0 {
+		wd := getForecast(location, "C", "FR", nbForecast)
 
-	j, err := json.Marshal(wd)
-	if err == nil {
-		w.Write([]byte(j))
+		j, err := json.Marshal(wd)
+		if err == nil {
+			w.Write([]byte(j))
+		}
 	}
 }
