@@ -47,8 +47,8 @@ export class WeatherIconComponent implements OnInit{
     .subscribe(res => {
       this.weather_temp = Math.round(res.list[this.numberlist].main.temp);
       this.setWeatherType(res.list[this.numberlist].weather[0].main);
-      this.weather_date = new Date(res.list[this.numberlist].dt*1000);
-      this.wheather_icon = this.getDayNight(res.list[this.numberlist].dt*1000) + this.weatherIconService.getOneIcon(res.list[this.numberlist].weather[0].id).icon;
+      this.weather_date = new Date(res.list[this.numberlist].dt * 1000);
+      this.wheather_icon = this.getDayNight(res.list[this.numberlist].dt * 1000) + this.weatherIconService.getOneIcon(res.list[this.numberlist].weather[0].id).icon;
     });
   }
 

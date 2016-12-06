@@ -4,10 +4,9 @@ import { Http } from '@angular/http';
 @Injectable()
 export class CalendarService {
 
-  public api_url : String = "app/calendar/agenda.json";
+  public api_url : String = "http://10.0.10.63:8090/api/v1/agenda/incoming/5";
 
-  constructor(public http : Http) {
-  }
+  constructor(public http : Http) {}
 
   getEvents(){
     return this.http

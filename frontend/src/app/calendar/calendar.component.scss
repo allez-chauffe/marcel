@@ -1,11 +1,13 @@
+@import '../variables';
+
 calendar{
   position: fixed;
   right: 60px;
-  top: 250px;
+  top: 380px;
   text-align: right;
 
   h3{
-    color: #ea5829;
+    color: $secondary-color;
     font-weight: 300;
   }
 
@@ -15,7 +17,7 @@ calendar{
     > h3{
       margin-bottom: 10px;
       span{
-        color: white;
+        color: $primary-color;
       }
     }
 
@@ -28,7 +30,7 @@ calendar{
         left: -35px;
         top: 17px;
         font-size: 22px;
-        color: #ea5829;
+        color: $secondary-color;
       }
     }
   }

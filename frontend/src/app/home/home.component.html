@@ -1,23 +1,10 @@
 <h1>Zenika</h1>
 
-<h2>
+<h2 *ngFor="let room of rooms | slice:0:5">
   <div class="thermometer_img">
     <img src="assets/thermometer-128.png" alt="" />
   </div>
-  Salle Sparow
-  <span>20°C</span>
+  {{room.name}}
+  <span>{{room.stat.temperature}}°C</span>
 </h2>
-<h2>
-  <div class="thermometer_img">
-    <img src="assets/thermometer-128.png" alt="" />
-  </div>
-  Salle Smogg
-  <span>22°C</span>
-</h2>
-<h2>
-  <div class="thermometer_img">
-    <img src="assets/thermometer-128.png" alt="" />
-  </div>
-  Extérieur
-  <span>-5°C</span>
-</h2>
+
