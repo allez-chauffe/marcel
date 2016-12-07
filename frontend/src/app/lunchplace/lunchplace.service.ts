@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Rx';
 @Injectable()
 export class LunchplaceService {
 
-  api : string = 'http://10.0.10.3:8080/';
+  api : string = 'http://lunchplace-rct.wip.devlab722.net/';
 
   constructor(private http: Http) {}
 
@@ -30,6 +30,7 @@ export class LunchplaceService {
     return Observable
       .from(orga.teams)
       .flatMap(team => this.get_team_daily_restaurant(team))
+      .toArray()
       .map(teams => {
         return {
             orga: orga,
@@ -43,10 +44,8 @@ export class LunchplaceService {
     return this.http.get(url)
       .map(res => res.json())
       .map(restaurant => {
-        return {
-          team: team,
-          daily : restaurant
-        };
+        team.daily = restaurant;
+        return team;
       })
   }
 
