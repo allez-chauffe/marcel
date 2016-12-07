@@ -12,8 +12,8 @@ import (
 func main() {
 
 	c := cors.New(cors.Options{
-		//AllowedOrigins:   []string{"*"},
-		AllowedOrigins:   []string{"http://localhost:*"},
+		AllowedOrigins:   []string{"*"},
+		//AllowedOrigins:   []string{"http://localhost:*"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTION", "PUT"},
 		AllowCredentials: true,
 	})
@@ -25,5 +25,6 @@ func main() {
 	r.HandleFunc("/api/v1/GoogleCallback", auth.HandleGoogleCallback)
 
 	handler := c.Handler(r)
+
 	http.ListenAndServe(":8090", handler)
 }
