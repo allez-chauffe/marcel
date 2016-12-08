@@ -22,7 +22,8 @@ export class VlilleComponent implements OnInit{
       {name:'Rihour',id:10},
       {name:'Cormontaigne',id:36},
       {name:'Mairie de Lille',id:64},
-      {name:'Gare Lille Flandres',id:25}
+      {name:'Gare Lille Flandres',id:25},
+      {name:'Boulevard Louis XIV',id:47}
     ];
     this.interval = 30000; // secondes  
   }
