@@ -15,6 +15,11 @@ export GOOGLE_API_SECRET="your_google_api_secret"
 export MARCEL_AGENDA_ID="id_of_your_google_agenda"
 ```
 
+Build cross architecture :
+``` shell
+env GOOS=linux GOARCH=arm go build -o ./bin/MARCEL
+```
+
 In order to use Realize to manage your local builds :
 ```shell
 go get github.com/tockins/realize
