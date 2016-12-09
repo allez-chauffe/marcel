@@ -5,3 +5,7 @@
   <h3>Mange : {{team.daily.name}}</h3>
 </div>
 
+<div *ngIf="is_weekend()">
+  <h2>Weekend !</h2>
+  <h3>Pas de restaurant 😢</h3>
+</div>
