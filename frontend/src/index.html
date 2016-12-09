@@ -8,8 +8,12 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
   <script type="text/javascript">
-       var Polymer = Polymer || {};
-       Polymer.dom = 'shadow';
+    var Polymer = Polymer || {};
+    Polymer.dom = 'shadow';
+
+    window.onbeforeunload = function() {
+      document.body.classList.add("reload");     
+    };
   </script>
 
   <style>
