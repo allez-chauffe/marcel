@@ -15,6 +15,9 @@ home{
     span{
       color:white;
       font-size: 0.8em;
+      width: 70px;
+      text-align: right;
+      display: inline-block;
     }
   }
   h3{
@@ -23,10 +26,11 @@ home{
 
   .thermometer_img{
     height: 20px;
-    width: 110px;
-    text-align: right;
+    width: 50px;
+    text-align: center;
     margin-top: 2px;
     float: left;
+    
 
     img{
       max-height: 100%;
