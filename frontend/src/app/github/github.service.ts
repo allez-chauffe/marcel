@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Rx';
 export class GithubService {
 
   api: string = 'https://api.github.com/users/';
-  params: string = '/events';
+  params: string = '/events?per_page=100';
   users: any[] = [];
   usersContribusion: any[] = [];
 

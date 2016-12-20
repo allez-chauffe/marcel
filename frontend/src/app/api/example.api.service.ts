@@ -10,6 +10,12 @@ export class ApiService {
   constructor() {
 
     this.apis = {
+      sparrow: {
+        url: ''
+      },
+      smaug: {
+        url: ''
+      },
       maps : {
         key : 'YOUR_MAPS_API_KEY'
       },
