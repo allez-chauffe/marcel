@@ -30,6 +30,7 @@ import { HumeurComponent } from './humeur/humeur.component';
 import { GithubComponent } from './github/github.component';
 import { SortPipe } from './pipes/sort.pipe';
 import { AnniversaireComponent } from './anniversaire/anniversaire.component';
+import { SoundtouchModule } from './soundtouch/soundtouch.module';
 
 
 @NgModule({
@@ -59,7 +60,8 @@ import { AnniversaireComponent } from './anniversaire/anniversaire.component';
     GithubModule,
     DateTimeModule,
     LunchplaceModule,
-    HomeModule
+    HomeModule,
+    SoundtouchModule
   ],
   providers: [
     ApiService,

@@ -1,0 +1,17 @@
+@import '../variables';
+
+soundtouch{
+    bottom: 200px;
+    position: absolute;
+    right: 60px;
+
+    h1{
+        margin-bottom: 20px;
+    }
+    h2{
+        color: $secondary-color;
+        i{
+            color: $primary-color;
+        }
+    }
+}

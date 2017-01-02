@@ -10,23 +10,21 @@ export class ApiService {
   constructor() {
 
     this.apis = {
-      sparrow: {
-        url: ''
-      },
-      smaug: {
-        url: ''
+      soundtouch : {
+        url : ''
       },
       maps : {
+        url : 'http://localhost:8090/api/v1/weather/forecast/2',
         key : 'YOUR_MAPS_API_KEY'
       },
       weather : {
         key : 'YOUR_FREE_OPENWEATHER_API_KEY'
       },
-      xee : {
-        url : 'http://RpiServerIp/domoticz_scripts/xee-car-data-to-domoticz-php/xee.php?data='
-        // Projet Github
-        // @t3kstiil3
-        // https://github.com/T3kstiil3/Domoticz_Scripts/tree/master/xee-car-data-to-domoticz-php
+      sparrow: {
+        url : 'http://10.0.10.245/arduino/getRoomStat'
+      },
+      smaug: {
+        url : 'http://10.0.10.40/arduino/getRoomStat'
       }
     };
   }
