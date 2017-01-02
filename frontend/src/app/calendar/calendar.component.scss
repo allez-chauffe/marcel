@@ -1,11 +1,6 @@
 @import '../variables';
 
 calendar{
-  position: fixed;
-  right: 60px;
-  top: 420px;
-  text-align: right;
-
   h3{
     color: $secondary-color;
     font-weight: 300;

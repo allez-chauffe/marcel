@@ -16,14 +16,15 @@ export class HomeComponent implements OnInit{
   public _sRotate: string = "1";
   public rooms : any[] = [];
 
+  private interval: number = 1000 * 60 * 60;
+
   constructor(public yunService: YunService) {
   }
 
   ngOnInit(){
-    console.log('Init Home');
     setInterval(() => {
       this.getRoomsStats();
-    }, 1000 * 60 * 60);
+    }, this.interval);
     this.getRoomsStats();
   }
 

@@ -1,8 +1,13 @@
 @import 'variables';
 
+html, app-root {
+    height: 100%;
+}
+
 body{
   margin: 0;
-  padding: 50px;
+  padding: 2%;
+  height: 96%;
   background: black;
   color: $primary-color;
   font-family: Roboto;
@@ -53,4 +58,6 @@ body.reload{
     }
 }
 
-
+forecast, datetime {
+  margin-left: 1em;
+}
