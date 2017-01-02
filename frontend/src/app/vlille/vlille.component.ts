@@ -15,7 +15,7 @@ export class VlilleComponent implements OnInit{
 
   public stationids : any[] = [];
   public stations : any[] = [];
-  public interval : number;
+  private interval : number = 30000;
 
   constructor(private vlilleservice: VlilleService) {
     this.stationids = [
@@ -25,7 +25,6 @@ export class VlilleComponent implements OnInit{
       {name:'Gare Lille Flandres',id:25},
       {name:'Boulevard Louis XIV',id:47}
     ];
-    this.interval = 30000; // secondes  
   }
 
 

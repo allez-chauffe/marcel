@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ViewEncapsulation} from '@angular/core';
+import { ViewEncapsulation } from '@angular/core';
 import { CalendarService } from './calendar.service';
 import { Observable } from 'rxjs/Rx';
 
@@ -11,19 +11,22 @@ import { Observable } from 'rxjs/Rx';
 })
 export class CalendarComponent implements OnInit {
 
-  public events : any[] = [];
+  public events: any[] = [];
 
-  constructor(public calendarService : CalendarService) {
+  private timer: number = 1000 * 60 * 60;
+
+  constructor(public calendarService: CalendarService) {
 
   }
 
   ngOnInit() {
-    console.log('Init Calandar');
-    this.calendarService.getEvents()
-      .subscribe((o) => {
-        this.events = o;
-        console.log(this.events);
-      });
+
+    setInterval(() => {
+      this.calendarService.getEvents()
+        .subscribe(o => {
+          this.events = o;
+        });
+    }, this.timer);
   }
 
 }

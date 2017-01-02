@@ -25,6 +25,8 @@ export class WeatherIconComponent implements OnInit{
   public weather_temp : number = 0 ;
   public wheather_icon : string;
 
+  private timer: number = 180000;
+  
   constructor(public weatherService: WeatherService, public weatherIconService : WeatherIconService){
     this.weather_types.push("sun-shower");
     this.weather_types.push("thunder-storm");
@@ -39,7 +41,7 @@ export class WeatherIconComponent implements OnInit{
     this.getWeather();
     setInterval(() => {
       this.getWeather();
-    }, 180000);
+    }, this.timer);
   }
 
   getWeather(){

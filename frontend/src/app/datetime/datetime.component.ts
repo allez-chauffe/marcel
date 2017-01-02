@@ -12,13 +12,15 @@ export class DateTimeComponent implements OnInit{
 
   public date: DateTime;
 
+  private timer: number = 10000;
+
   constructor() { }
 
   ngOnInit(){
     this.loopDate();
     setInterval(() => {
       this.loopDate();
-    }, 10000);
+    }, this.timer);
   }
 
   loopDate(){

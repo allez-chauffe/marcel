@@ -13,12 +13,14 @@ export class GithubComponent implements OnInit {
 
   contributors: any[];
 
+  private timer: number = 1000 * 60 * 60;
+
   constructor(public githubService: GithubService) { }
 
   ngOnInit() {
     setInterval(() => {
       this.fetchContributors();
-    }, 1000 * 60 * 60);
+    }, this.timer);
     this.fetchContributors();
   }
 
