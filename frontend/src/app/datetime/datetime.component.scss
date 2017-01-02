@@ -1,12 +1,7 @@
 @import '../variables';
 
 datetime{
-
-  position: absolute;
-  top: 60px;
-  left: 180px;
-
-  .time{
+ .time{
     display: block;
     font-size: 3em;
   }
