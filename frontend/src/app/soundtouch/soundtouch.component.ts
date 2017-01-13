@@ -9,12 +9,15 @@ import { SoundtouchService} from './soundtouch.service'
 })
 export class SoundtouchComponent implements OnInit {
 
+  sound : any;
+
   constructor(public soundtouchService : SoundtouchService) { }
 
   ngOnInit() {
     
     this.soundtouchService.getNowPlaying().subscribe( data => {
       console.log(data);
+      this.sound = data;
     });
     
   }

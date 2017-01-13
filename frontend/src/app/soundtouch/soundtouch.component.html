@@ -1,6 +1,11 @@
 <h1>Soundtouch</h1>
 
 <h2>
-  <i class="fa fa-music" aria-hidden="true"></i>
-  Weekend !
+  <i *ngIf="sound && sound.playing" class="fa fa-music" aria-hidden="true"></i>
+  <span *ngIf="sound && !sound.playing" >
+    {{sound.message}}
+  </span>
+  <span *ngIf="sound && sound.playing">
+    {{sound.track}}
+  </span>
 </h2>
