@@ -1,11 +1,20 @@
 <h1>Soundtouch</h1>
 
 <h2>
-  <i *ngIf="sound && sound.playing" class="fa fa-music" aria-hidden="true"></i>
+  <i *ngIf="sound && !sound.playing" class="fa fa-power-off" aria-hidden="true"></i>
+  <i *ngIf="sound && sound.playing && sound.source == 'BLUETOOTH'" class="fa fa-bluetooth-b" aria-hidden="true"></i>
   <span *ngIf="sound && !sound.playing" >
     {{sound.message}}
   </span>
-  <span *ngIf="sound && sound.playing">
+  <span *ngIf="sound && sound.playing && sound.source == 'BLUETOOTH'">
     {{sound.track}}
   </span>
+  <div *ngIf="sound && sound.playing && sound.source != 'BLUETOOTH'" class="playing">
+    <img src="{{sound.art}}" alt="">
+    <div class="info">
+      <span class="track">{{sound.track}}</span><br>
+      <span class="artist">{{sound.artist}}</span><br>
+      <span class="album">{{sound.album}}</span>
+    </div>
+  </div>
 </h2>

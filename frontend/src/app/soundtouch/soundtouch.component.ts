@@ -10,16 +10,22 @@ import { SoundtouchService} from './soundtouch.service'
 export class SoundtouchComponent implements OnInit {
 
   sound : any;
+  private timer: number = 1000 * 60 * 1;
 
   constructor(public soundtouchService : SoundtouchService) { }
 
   ngOnInit() {
-    
+    setInterval(() => {
+      this.getNowPlaying();
+    }, this.timer);
+    this.getNowPlaying();
+  }
+
+  getNowPlaying(){
     this.soundtouchService.getNowPlaying().subscribe( data => {
       console.log(data);
       this.sound = data;
     });
-    
   }
 
 }
