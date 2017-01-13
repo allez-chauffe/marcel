@@ -20,13 +20,18 @@ export class LunchplaceComponent implements OnInit {
   ngOnInit() {
     if(!this.is_weekend()){
       setInterval(() => {
-        this.lunchplaceService
+       this.get_teams_daily(); 
+      }, this.timer);
+      this.get_teams_daily();
+    }
+  }
+
+  get_teams_daily(){
+    this.lunchplaceService
           .get_teams_daily(this.organization)
           .subscribe(orga => {
             this.teams = orga.teams
           });
-      }, this.timer);
-    }
   }
 
   is_weekend(){
