@@ -5,14 +5,14 @@ html, app-root {
 }
 
 body{
-  margin: 0;
-  padding: 2%;
-  height: 96%;
+  height: 92%;
+  margin: 2%;
   background: black;
   color: $primary-color;
   font-family: Roboto;
   font-weight: 300;
   zoom: 90%;
+  overflow: hidden;
 }
 
 h1,h2,h3,h4 {
