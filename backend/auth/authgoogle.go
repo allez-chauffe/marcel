@@ -11,9 +11,8 @@ import (
 
 var Google_API_client *http.Client = nil
 var defaultNbEvents string = "10"
-
 var scopes = []string {"https://www.googleapis.com/auth/calendar"}
-
+var key []byte = nil
 
 func ReadKey() []byte{
 	var key, err = ioutil.ReadFile(os.Getenv("GOOGLE_API_KEY"));
@@ -24,7 +23,9 @@ func ReadKey() []byte{
 }
 
 func RequestAuthenticatedClient() *http.Client {
-	var key = ReadKey();
+	if key == nil {
+		key = ReadKey()
+	}
 	var googleOauthConfig, err = google.JWTConfigFromJSON(
 		key,
 		scopes...)

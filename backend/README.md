@@ -9,6 +9,7 @@ go get -u golang.org/x/oauth2/...
 ```
 
 ```shell
+export OWM_API_KEY="your_owm_api_key"
 export GOOGLE_API_KEY="your_google_api_key_file"
 ```
 
