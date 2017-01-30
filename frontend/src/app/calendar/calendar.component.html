@@ -1,7 +1,7 @@
 <h1>Calendrier</h1>
 
 <div class="events">
-  <h3><span>{{events.length}}</span> Events Incomming</h3>
+  <h3><span>{{events.length}}</span> Events Incoming</h3>
   <div class="event" *ngFor="let event of events">
     <h3>{{event.summary}}</h3>
     <h4>Le {{event.start.dateTime | date : "dd/MM/yy"}} de {{event.start.dateTime | date : "HH:mm"}} à {{event.end.dateTime | date : "HH:mm"}}</h4>
