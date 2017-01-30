@@ -18,7 +18,8 @@ var calendarService *calendar.Service
 func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 
 	var err error = nil
-	calendarService, err = calendar.New(auth.Google_API_client)
+	Google_API_client := auth.RequestAuthenticatedClient();
+	calendarService, err = calendar.New(Google_API_client)
 
 	if err != nil {
 		log.Printf(err.Error() + "\n Requesting a new Client ID.")

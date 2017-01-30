@@ -10,9 +10,7 @@ go get -u golang.org/x/oauth2/...
 
 ```shell
 export OWM_API_KEY="your_owm_api_key"
-export GOOGLE_API_KEY="your_google_api_key"
-export GOOGLE_API_SECRET="your_google_api_secret"
-export MARCEL_AGENDA_ID="id_of_your_google_agenda"
+export GOOGLE_API_KEY="your_google_api_key_file"
 ```
 
 Build cross architecture :

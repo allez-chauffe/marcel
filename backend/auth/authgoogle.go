@@ -1,51 +1,36 @@
 package auth
 
 import (
-	"fmt"
-	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"net/http"
+	"io/ioutil"
 	"os"
+	"log"
 )
 
 var Google_API_client *http.Client = nil
 var defaultNbEvents string = "10"
+var scopes = []string {"https://www.googleapis.com/auth/calendar"}
+var key []byte = nil
 
-var (
-	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  "http://localhost:8090/api/v1/GoogleCallback",
-		ClientID:     os.Getenv("GOOGLE_API_KEY"),    // from https://console.developers.google.com/project/<your-project-id>/apiui/credential
-		ClientSecret: os.Getenv("GOOGLE_API_SECRET"), // from https://console.developers.google.com/project/<your-project-id>/apiui/credential
-		Scopes:       []string{"https://www.googleapis.com/auth/calendar"},
-		Endpoint:     google.Endpoint,
+func ReadKey() []byte{
+	var key, err = ioutil.ReadFile(os.Getenv("GOOGLE_API_KEY"));
+	if err != nil {
+		log.Fatal(err);
 	}
-
-	// Some random string, random for each request
-	oauthStateString = "random"
-)
-
-func HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
-	url := googleOauthConfig.AuthCodeURL(oauthStateString)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	return key;
 }
 
-func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
-	state := r.FormValue("state")
-	if state != oauthStateString {
-		fmt.Printf("invalid oauth state, expected '%s', got '%s'\n", oauthStateString, state)
-		http.Redirect(w, r, "/api/v1/agenda/incoming/" + defaultNbEvents, http.StatusTemporaryRedirect)
-		return
+func RequestAuthenticatedClient() *http.Client {
+	if key == nil {
+		key = ReadKey()
 	}
-
-	code := r.FormValue("code")
-	token, err := googleOauthConfig.Exchange(oauth2.NoContext, code)
+	var googleOauthConfig, err = google.JWTConfigFromJSON(
+		key,
+		scopes...)
 	if err != nil {
-		fmt.Printf("oauthConf.Exchange() failed with '%s'\n", err)
-		http.Redirect(w, r, "/api/v1/agenda/incoming/" + defaultNbEvents, http.StatusTemporaryRedirect)
-		return
+		log.Fatal(err);
 	}
-
-	Google_API_client = oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(token))
-	http.Redirect(w, r, "/api/v1/agenda/incoming/" + defaultNbEvents, http.StatusPermanentRedirect)
+	return googleOauthConfig.Client(oauth2.NoContext);
 }
