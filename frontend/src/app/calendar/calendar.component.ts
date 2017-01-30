@@ -20,13 +20,17 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.getEvents();
     setInterval(() => {
-      this.calendarService.getEvents()
-        .subscribe(o => {
-          this.events = o;
-        });
+      this.getEvents();
     }, this.timer);
+  }
+
+  getEvents(){
+    this.calendarService.getEvents()
+      .subscribe(o => {
+        this.events = o;
+      });
   }
 
 }
