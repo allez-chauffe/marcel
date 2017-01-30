@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/Zenika/MARCEL/backend/agenda"
-	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/weather"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -21,8 +20,6 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/api/v1/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler)
 	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents)
-	r.HandleFunc("/api/v1/GoogleLogin", auth.HandleGoogleLogin)
-	r.HandleFunc("/api/v1/GoogleCallback", auth.HandleGoogleCallback)
 
 	handler := c.Handler(r)
 
