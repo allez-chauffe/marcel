@@ -3,14 +3,15 @@ package agenda
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Zenika/MARCEL/backend/auth"
-	"github.com/gorilla/mux"
-	"google.golang.org/api/calendar/v3"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/Zenika/MARCEL/backend/auth"
+	"github.com/gorilla/mux"
+	"google.golang.org/api/calendar/v3"
 )
 
 var calendarService *calendar.Service
@@ -18,6 +19,7 @@ var calendarService *calendar.Service
 func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 
 	var err error = nil
+  
 	Google_API_client := auth.RequireGoogleClient();
 	calendarService, err = calendar.New(Google_API_client)
 
@@ -38,8 +40,10 @@ func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 		var startTime time.Time = time.Now() //today
 
 		calendarEvents, err := calendarService.Events.List(agendaId).
+			SingleEvents(true).
 			TimeMin(startTime.Format(time.RFC3339)).
 			MaxResults(int64(nbEvents)).
+			OrderBy("startTime").
 			Do()
 
 		if err != nil {

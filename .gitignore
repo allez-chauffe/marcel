@@ -13,6 +13,7 @@ backend/*.a
 backend/*.so
 
 # Folders
+backend/bin
 backend/_obj
 backend/_test
 
