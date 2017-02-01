@@ -18,7 +18,7 @@ var calendarService *calendar.Service
 func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 
 	var err error = nil
-	Google_API_client := auth.RequestAuthenticatedClient();
+	Google_API_client := auth.RequireGoogleClient();
 	calendarService, err = calendar.New(Google_API_client)
 
 	if err != nil {
