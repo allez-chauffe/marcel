@@ -1,15 +1,20 @@
 @import '../variables';
 
 calendar{
+
+  width: 250px;
+
   h3{
     color: $secondary-color;
     font-weight: 300;
+    margin-bottom: 5px;
   }
 
   .events{
     margin-top: 5px;
 
     > h3{
+      display: block;
       margin-bottom: 10px;
       span{
         color: $primary-color;
