@@ -14,17 +14,17 @@ var defaultNbEvents string = "10"
 var scopes = []string {"https://www.googleapis.com/auth/calendar"}
 var key []byte = nil
 
-func ReadKey() []byte{
-	var key, err = ioutil.ReadFile(os.Getenv("GOOGLE_API_KEY"));
+func readKey() []byte{
+	var key, err = ioutil.ReadFile(os.Getenv("GOOGLE_API_KEY_FILE"));
 	if err != nil {
 		log.Fatal(err);
 	}
 	return key;
 }
 
-func RequestAuthenticatedClient() *http.Client {
+func RequireGoogleClient() *http.Client {
 	if key == nil {
-		key = ReadKey()
+		key = readKey()
 	}
 	var googleOauthConfig, err = google.JWTConfigFromJSON(
 		key,
