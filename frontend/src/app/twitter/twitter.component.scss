@@ -1,5 +1,38 @@
 @import '../variables';
 
-twitter{
-    
+marcel-twitter {
+
+    width: 250px;
+
+    h2{
+      color: $secondary-color;
+      font-weight: 300;
+    }
+
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+        li{
+            display: flex;
+            > *{
+                padding: 5px;
+            }
+            div{
+              img{
+                  height: 45px;
+                  width: 45px;
+                  border-radius: 50%;
+                  float: left;
+                  margin-right: 10px;
+                  margin-bottom: -10px;
+              }
+              p {
+                  line-height: 30px;
+                  color: $primary-color;
+                  text-align: justify;
+              }
+            }
+
+        }
+    }
 }
