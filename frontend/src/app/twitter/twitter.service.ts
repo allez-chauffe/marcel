@@ -11,7 +11,7 @@ export class TwitterService {
   constructor(private http: Http) { }
 
   getTimeline(nbEvents: number){
-    return this.http.get([this.apiUrl, nbEvents].join('/'))
+    return this.http.get(`${this.apiUrl}/${nbEvents}`)
       .map(res => <Tweet[]>res.json());
   }
 }
