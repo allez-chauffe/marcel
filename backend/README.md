@@ -18,6 +18,7 @@ export TWITTER_CONSUMER_KEY="your_twitter_consumer_key"
 export TWITTER_CONSUMER_SECRET="your_twitter_consummer_secret"
 export TWITTER_ACCESS_TOKEN="your_twitter_access_token"
 export TWITTER_ACCESS_SECRET="your_twitter_access_secret"
+export MARCEL_LOG_FILE="path_to_log_file" # defaults to $PWD/marcel.log
 ```
 
 Build cross architecture :
