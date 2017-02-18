@@ -17,11 +17,16 @@ export class TwitterComponent implements OnInit {
 
   ngOnInit() {
     this.getTimeline();
-    setInterval(this.getTimeline, this.timer);
+    setInterval(() => {
+      this.getTimeline()
+    }, this.timer);
   }
 
   getTimeline() {
-    this.twitterService.getTimeline(1).subscribe(tweets => this.tweets = tweets);
-   }
+    this.twitterService.getTimeline(1)
+      .subscribe(tweets => {
+        this.tweets = tweets
+      });
+  }
 
 }

@@ -2,12 +2,11 @@ package agenda
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
+	"log"
+	"os"
 
 	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/gorilla/mux"
@@ -19,7 +18,7 @@ var calendarService *calendar.Service
 func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 
 	var err error = nil
-  
+
 	Google_API_client := auth.RequireGoogleClient();
 	calendarService, err = calendar.New(Google_API_client)
 
@@ -47,8 +46,7 @@ func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 			Do()
 
 		if err != nil {
-			fmt.Fprintln(w, err)
-			return
+			log.Fatal(err)
 		}
 
 		//Example of parsing an event

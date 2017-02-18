@@ -7,9 +7,24 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"net/http"
+	"log"
+	"os"
 )
 
+var logFile string = os.Getenv("MARCEL_LOG_FILE");
+
 func main() {
+
+	if len(logFile) == 0 {
+		logFile = "marcel.log"
+	}
+	f, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	log.SetOutput(f)
+	log.Println("Application started")
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -26,4 +41,5 @@ func main() {
 	handler := c.Handler(r)
 
 	http.ListenAndServe(":8090", handler)
+
 }
