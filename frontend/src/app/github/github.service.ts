@@ -25,7 +25,8 @@ export class GithubService {
       'cluster',
       'yyekhlef',
       'gdrouet',
-      'Kize'
+      'Kize',
+      'kratisto'
     );
   }
 
