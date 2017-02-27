@@ -2,6 +2,7 @@ import { SortPipe } from './../pipes/sort.pipe';
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { ApiService } from './../api/api.service';
 
 @Injectable()
 export class GithubService {
@@ -10,8 +11,9 @@ export class GithubService {
   params: string = '/events?per_page=100';
   users: any[] = [];
   usersContribusion: any[] = [];
+  client_auth : string = "";
 
-  constructor(private http: Http, private sort: SortPipe) {
+  constructor(private http: Http, private sort: SortPipe,private apiService : ApiService) {
     this.users.push(
       'Gillespie59',
       'GwennaelBuchet',
@@ -28,6 +30,9 @@ export class GithubService {
       'Kize',
       'kratisto'
     );
+
+    this.client_auth = 'client_id='+apiService.getApi('github').client_id+'&client_secret='+apiService.getApi('github').client_secret;
+    console.log(this.client_auth);
   }
 
   getTopContributors() {
@@ -52,13 +57,13 @@ export class GithubService {
           contributions: nbContributions,
           avatar: contribs[0].actor.avatar_url
         });
-        
+
         return this.sort.transform(this.usersContribusion, 'contributions');
       });
   }
 
   getUserInfo(user: string) {
-    return this.http.get(`${this.api}${user}`)
+    return this.http.get(`${this.api}${user}`+"?"+this.client_auth)
       .map(res => {
         let response = res.json();
         return {
@@ -70,7 +75,7 @@ export class GithubService {
 
   getUserContributions(user) {
     return this.http
-      .get(this.api + user.login + this.params)
+      .get(this.api + user.login + this.params+"&"+this.client_auth)
       .map(res => {
         return {
           contribs: res.json(),
