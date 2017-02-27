@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Rx';
 @Injectable()
 export class LunchplaceService {
 
-  api : string = 'http://lunchplace-rct.wip.devlab722.net/';
+  api : string = 'http://lunchplace-rct.wip.devlab722.net/api/v1/';
 
   constructor(private http: Http) {}
 
