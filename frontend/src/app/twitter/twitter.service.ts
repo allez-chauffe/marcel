@@ -6,7 +6,7 @@ import { Tweet } from './tweet';
 @Injectable()
 export class TwitterService {
 
-  private apiUrl: string = 'http://localhost:8090/api/v1/twitter/timeline';
+  private apiUrl: string = 'http://10.0.10.63:8090/api/v1/twitter/timeline';
 
   constructor(private http: Http) { }
 

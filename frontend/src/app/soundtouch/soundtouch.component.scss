@@ -17,7 +17,7 @@ soundtouch{
     .playing{
         display: flex;
         height: 75px;
-        justify-content: space-between;
+        justify-content: flex-start;
 
         img{
             height: 75px;

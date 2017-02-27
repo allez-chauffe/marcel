@@ -21,6 +21,14 @@
     justify-content: space-between;
 }
 
+.flex-full{
+    width:100%;
+}
+
+.space-around{
+    justify-content: space-around;
+}
+
 .text-align-right {
     text-align: right;
 }

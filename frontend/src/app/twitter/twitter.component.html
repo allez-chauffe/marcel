@@ -4,10 +4,7 @@
 
 <ul>
   <li *ngFor="let tweet of tweets">
-    <div>
       <img [src]="tweet.user.profile_image_url" alt="">
       <p>{{tweet.text}}</p>
-    </div>
-
   </li>
 </ul>

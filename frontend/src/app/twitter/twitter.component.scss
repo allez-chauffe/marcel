@@ -2,7 +2,9 @@
 
 marcel-twitter {
 
-    width: 250px;
+    max-width: 500px;
+    max-height: 130px;
+    overflow-y: hidden;
 
     h2{
       color: $secondary-color;
@@ -17,23 +19,22 @@ marcel-twitter {
             > *{
                 padding: 5px;
             }
-            div{
-              img{
-                  height: 45px;
-                  width: 45px;
-                  border-radius: 50%;
-                  float: left;
-                  margin-right: 10px;
-                  margin-bottom: -10px;
-              }
-              p {
-                  line-height: 30px;
-                  color: $primary-color;
-                  text-align: left;
-                  margin-top: -10px;
-              }
+            img{
+                height: 45px;
+                width: 45px;
+                border-radius: 50%;
+                float: left;
+                margin-right: 10px;
+                margin-bottom: -10px;
             }
-
+            p {
+                line-height: 30px;
+                color: $primary-color;
+                text-align: left;
+                margin-top: -10px;
+                margin-bottom: -10px;
+                max-width: 400px;
+            }
         }
     }
 }
