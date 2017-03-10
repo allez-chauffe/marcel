@@ -13,7 +13,7 @@ export class GithubService {
   usersContribusion: any[] = [];
   client_auth : string = "";
 
-  constructor(private http: Http, private sort: SortPipe,private apiService : ApiService) {
+  constructor(private http: Http, private sort: SortPipe, private apiService : ApiService) {
     this.users.push(
       'Gillespie59',
       'GwennaelBuchet',
