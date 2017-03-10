@@ -4,6 +4,7 @@
   <h3><span>{{events.length}}</span> Events Incoming</h3>
   <div class="event" *ngFor="let event of events | slice:0:3">
     <h3>{{event.summary}}</h3>
-    <h4>Le {{event.start.dateTime | date : "dd/MM/yy"}} de {{event.start.dateTime | date : "HH:mm"}} à {{event.end.dateTime | date : "HH:mm"}}</h4>
+    <h4 *ngIf="event.start.dateTime">Le {{event.start.dateTime | date : "dd/MM/yy"}} de {{event.start.dateTime | date : "HH:mm"}} à {{event.end.dateTime | date : "HH:mm"}}</h4>
+    <h4 *ngIf="event.start.date">Du {{event.start.date | date : "dd/MM/yy"}} au {{event.end.date | date : "dd/MM/yy"}}</h4>
   </div>
 </div>
