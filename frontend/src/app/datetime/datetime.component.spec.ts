@@ -1,11 +1,11 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { DatetimeComponent } from './datetime.component';
+import { DateTimeComponent } from './datetime.component';
 
 describe('Component: Datetime', () => {
   it('should create an instance', () => {
-    let component = new DatetimeComponent();
+    let component = new DateTimeComponent();
     expect(component).toBeTruthy();
   });
 });

@@ -5,7 +5,7 @@ import { SoundtouchComponent } from './soundtouch.component';
 
 describe('Component: Soundtouch', () => {
   it('should create an instance', () => {
-    let component = new SoundtouchComponent();
+    let component = new SoundtouchComponent(null);
     expect(component).toBeTruthy();
   });
 });

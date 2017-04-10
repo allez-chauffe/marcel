@@ -11,10 +11,10 @@ export class SoundtouchService {
   constructor(private http: Http,private apiService : ApiService) {}
 
   getNowPlaying(){
-    let url = this.apiService.getUrl('soundtouch') + this.now_playing;
+    let url = this.apiService.getApi('soundtouch').url + this.now_playing;
     console.log(url);
     return this.http.get(url)
-      .map(res => {  
+      .map(res => {
         let parser=new DOMParser();
         let xmlDoc = parser.parseFromString(res.text(),"text/xml");
         if(xmlDoc.getElementsByTagName("track")[0]){
@@ -44,7 +44,7 @@ export class SoundtouchService {
           return {
             playing : false,
             message : "STATUT OFF"
-          } 
+          }
         }
       });
   }

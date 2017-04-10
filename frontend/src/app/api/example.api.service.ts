@@ -25,6 +25,8 @@ export class ApiService {
       },
       smaug: {
         url : 'http://10.0.10.40/arduino/getRoomStat'
+      },
+      github: {
       }
     };
   }
