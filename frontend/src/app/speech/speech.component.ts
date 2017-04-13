@@ -22,7 +22,7 @@ export class SpeechComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.startRecognition();
-    // this.sendRequest('Montre moi des vidéos de chat');
+    this.sendRequest('Montre moi des vidéos de chat');
   }
 
   startRecognition() {
@@ -48,15 +48,17 @@ export class SpeechComponent implements OnInit, OnDestroy {
   }
 
   sendRequest(request) {
-    this.apiAiClient
-      .textRequest(request)
-      .then((response) => {
-        let test: any = response;
-        this.handleRequest(test.result.parameters, test.result.fulfillment);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+    if(request.length !== 0){
+      this.apiAiClient
+        .textRequest(request)
+        .then((response) => {
+          let test: any = response;
+          this.handleRequest(test.result.parameters, test.result.fulfillment);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    }
   }
 
   handleRequest(parameters: any, fulfillment: any) {

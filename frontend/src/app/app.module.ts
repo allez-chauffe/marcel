@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule,JsonpModule } from '@angular/http';
+import { YoutubePlayerModule } from 'ng2-youtube-player';
 
 import { AppComponent } from './app.component';
 import { MessageComponent } from './message/message.component';
@@ -66,7 +67,8 @@ import { YoutubeService } from './youtube/youtube.service';
     DateTimeModule,
     LunchplaceModule,
     HomeModule,
-    SoundtouchModule
+    SoundtouchModule,
+    YoutubePlayerModule
   ],
   providers: [
     ApiService,
