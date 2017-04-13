@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { SpeechRecognitionService } from './speech-recognition.service';
+import { ApiAiClient } from 'api-ai-javascript/ApiAiClient';
+import { ApiService } from './../api/api.service';
 
 @Component({
   selector: 'speech',
@@ -9,9 +11,11 @@ import { SpeechRecognitionService } from './speech-recognition.service';
 })
 export class SpeechComponent implements OnInit, OnDestroy {
   speechData: String;
+  apiAiClient: ApiAiClient;
 
-  constructor(private speechRecognitionService: SpeechRecognitionService) {
+  constructor(private speechRecognitionService: SpeechRecognitionService, private apiService: ApiService) {
     this.speechData = "Hello";
+    this.apiAiClient = new ApiAiClient({accessToken: apiService.getApi('apiai').token });
   }
 
   ngOnInit() {
@@ -23,13 +27,14 @@ export class SpeechComponent implements OnInit, OnDestroy {
     .subscribe(
       (value) => {
         this.speechData = value;
-        console.log(value);
+        this.sendRequest(value);
       },
       (err) => {
-        console.log(err);
         if (err.error == "no-speech") {
           console.log("--restarting service--");
           this.startRecognition();
+        } else {
+          console.log(err);
         }
       },
       //completion
@@ -37,6 +42,25 @@ export class SpeechComponent implements OnInit, OnDestroy {
         console.log("--complete--");
         this.startRecognition();
       });
+  }
+
+  sendRequest(request) {
+    this.apiAiClient
+      .textRequest(request)
+      .then((response) => {
+        let test: any = response;
+        this.handleRequest(test.result.parameters, test.result.fulfillment);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
+  handleRequest(parameters: any, fulfillment: any) {
+    if(parameters.video !== undefined){
+      alert(fulfillment.speech)
+      console.log(fulfillment.speech);
+    }
   }
 
   ngOnDestroy() {

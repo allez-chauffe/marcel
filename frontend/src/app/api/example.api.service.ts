@@ -27,6 +27,9 @@ export class ApiService {
         url : 'http://10.0.10.40/arduino/getRoomStat'
       },
       github: {
+      },
+      apiai: {
+        token: ''
       }
     };
   }

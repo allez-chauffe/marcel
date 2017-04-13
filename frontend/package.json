@@ -42,6 +42,7 @@
     "@angular/compiler-cli": "^4.0.1",
     "@types/jasmine": "^2.5.47",
     "@types/node": "^7.0.12",
+    "api-ai-javascript": "^2.0.0-beta.19",
     "codelyzer": "~2.1.1",
     "electron-prebuilt": "^1.2.6",
     "jasmine-core": "2.5.2",
