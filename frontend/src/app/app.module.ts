@@ -31,7 +31,8 @@ import { GithubComponent } from './github/github.component';
 import { SortPipe } from './pipes/sort.pipe';
 import { AnniversaireComponent } from './anniversaire/anniversaire.component';
 import { SoundtouchModule } from './soundtouch/soundtouch.module';
-
+import { SpeechComponent } from './speech/speech.component';
+import { SpeechRecognitionService } from './speech/speech-recognition.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { SoundtouchModule } from './soundtouch/soundtouch.module';
     TraficComponent,
     HumeurComponent,
     SortPipe,
-    AnniversaireComponent
+    AnniversaireComponent,
+    SpeechComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +70,8 @@ import { SoundtouchModule } from './soundtouch/soundtouch.module';
     VlilleService,
     WeatherService,
     CalendarService,
-    TwitterService
+    TwitterService,
+    SpeechRecognitionService
   ],
   bootstrap: [AppComponent],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
