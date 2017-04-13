@@ -29,7 +29,11 @@ export class ApiService {
       github: {
       },
       apiai: {
-        token: ''
+        token: 'YOUR_AGENT_CLIENT_TOKEN'
+      },
+      youtube: {
+        url: 'https://www.googleapis.com/youtube/v3/search',
+        key: 'YOUR_YOUTUBE_API_KEY'
       }
     };
   }

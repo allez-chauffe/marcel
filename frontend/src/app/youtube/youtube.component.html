@@ -1,0 +1,8 @@
+<h1>
+  Youtube
+</h1>
+<ul (searchVideo)="search($event)">
+  <li *ngFor="let video of videos | slice:0:5">
+    {{video.snippet.title}}
+  </li>
+</ul>

@@ -33,6 +33,8 @@ import { AnniversaireComponent } from './anniversaire/anniversaire.component';
 import { SoundtouchModule } from './soundtouch/soundtouch.module';
 import { SpeechComponent } from './speech/speech.component';
 import { SpeechRecognitionService } from './speech/speech-recognition.service';
+import { YoutubeComponent } from './youtube/youtube.component';
+import { YoutubeService } from './youtube/youtube.service';
 
 @NgModule({
   declarations: [
@@ -53,7 +55,8 @@ import { SpeechRecognitionService } from './speech/speech-recognition.service';
     HumeurComponent,
     SortPipe,
     AnniversaireComponent,
-    SpeechComponent
+    SpeechComponent,
+    YoutubeComponent
   ],
   imports: [
     BrowserModule,
@@ -71,7 +74,8 @@ import { SpeechRecognitionService } from './speech/speech-recognition.service';
     WeatherService,
     CalendarService,
     TwitterService,
-    SpeechRecognitionService
+    SpeechRecognitionService,
+    YoutubeService
   ],
   bootstrap: [AppComponent],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
