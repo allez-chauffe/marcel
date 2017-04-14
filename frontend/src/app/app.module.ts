@@ -33,6 +33,7 @@ import { SortPipe } from './pipes/sort.pipe';
 import { AnniversaireComponent } from './anniversaire/anniversaire.component';
 import { SoundtouchModule } from './soundtouch/soundtouch.module';
 import { SpeechComponent } from './speech/speech.component';
+import { SpeechSynthesisService } from './speech/speech-synthesis.service';
 import { SpeechRecognitionService } from './speech/speech-recognition.service';
 import { YoutubeComponent } from './youtube/youtube.component';
 import { YoutubeService } from './youtube/youtube.service';
@@ -77,6 +78,7 @@ import { YoutubeService } from './youtube/youtube.service';
     CalendarService,
     TwitterService,
     SpeechRecognitionService,
+    SpeechSynthesisService,
     YoutubeService
   ],
   bootstrap: [AppComponent],

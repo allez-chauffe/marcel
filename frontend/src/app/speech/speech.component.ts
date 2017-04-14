@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { SpeechRecognitionService } from './speech-recognition.service';
+import { SpeechSynthesisService } from './speech-synthesis.service';
 import { ApiAiClient } from 'api-ai-javascript/ApiAiClient';
 import { ApiService } from './../api/api.service';
 import { YoutubeService } from './../youtube/youtube.service';
@@ -15,14 +16,16 @@ export class SpeechComponent implements OnInit, OnDestroy {
   speechData: String;
   apiAiClient: ApiAiClient;
 
-  constructor(private speechRecognitionService: SpeechRecognitionService, private youtubeService: YoutubeService, private apiService: ApiService) {
+  constructor(private speechRecognitionService: SpeechRecognitionService,
+              private speechSynthesisService: SpeechSynthesisService,
+              private youtubeService: YoutubeService,
+              private apiService: ApiService) {
     this.speechData = "Hello";
     this.apiAiClient = new ApiAiClient({accessToken: apiService.getApi('apiai').token });
   }
 
   ngOnInit() {
     this.startRecognition();
-    this.sendRequest('Montre moi des vidéos de chat');
   }
 
   startRecognition() {
@@ -34,7 +37,7 @@ export class SpeechComponent implements OnInit, OnDestroy {
       },
       (err) => {
         if (err.error == "no-speech") {
-          console.log("--restarting service--");
+          // console.log("--restarting service--");
         } else {
           console.log(err);
         }
@@ -42,7 +45,7 @@ export class SpeechComponent implements OnInit, OnDestroy {
       },
       //completion
       () => {
-        console.log("--complete--");
+        // console.log("--complete--");
         this.startRecognition();
       });
   }
@@ -66,6 +69,7 @@ export class SpeechComponent implements OnInit, OnDestroy {
       console.log(fulfillment.speech);
       this.youtubeService.startSearch(parameters.video);
     }
+    this.speechSynthesisService.speak(fulfillment.speech);
   }
 
   ngOnDestroy() {

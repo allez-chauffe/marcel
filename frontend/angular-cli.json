@@ -21,7 +21,9 @@
         "../node_modules/font-awesome/css/font-awesome.css"
       ],
       "scripts": [
-        "lib/webcomponents.min.js"
+        "lib/webcomponents.min.js",
+        "../espeak/js/espeak.js",
+        "../espeak/js/espeak.worker.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
