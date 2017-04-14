@@ -8,6 +8,7 @@ import { Subject } from 'rxjs/Subject';
 export class YoutubeService {
 
   private subject = new Subject<any>();
+  private querySubject = new Subject<any>();
 
   constructor(private http: Http, private apiService: ApiService) {
 
@@ -19,6 +20,14 @@ export class YoutubeService {
 
   getSearch(): Observable<any> {
     return this.subject.asObservable();
+  }
+
+  getQuery(): Observable<any> {
+    return this.querySubject.asObservable();
+  }
+
+  query(type) {
+    this.querySubject.next({type: type});
   }
 
   search(query: String) {

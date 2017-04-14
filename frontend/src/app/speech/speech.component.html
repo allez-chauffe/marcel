@@ -1,1 +1,2 @@
-<h1>Speech recognition : {{speechData}}</h1>
+<textarea [(ngModel)]="speechData"></textarea>
+<button (click)="sendRequest(speechData)">Envoyer</button>

@@ -8,15 +8,44 @@ import { YoutubeService } from './youtube.service';
 })
 export class YoutubeComponent implements OnInit {
   videos: Array<any>;
-  subscription: Subscription;
+  searchSubscription: Subscription;
+  fullScreenSubscription: Subscription;
   id: String = '';
   player: any;
 
   constructor(private youtubeService: YoutubeService) {
-    this.subscription = this.youtubeService.getSearch().subscribe(message => this.search(message.query));
+    this.searchSubscription = this.youtubeService.getSearch().subscribe(message => this.search(message.query));
+    this.fullScreenSubscription = this.youtubeService.getQuery().subscribe(message => this.handleQuery(message.type));
   }
 
   ngOnInit() {
+  }
+
+  launchIntoFullscreen(element: any) {
+
+  }
+
+  handleQuery(type) {
+    if(type === "fullscreen"){
+      var element = document.getElementById("youtube-player").getElementsByTagName("iframe")[0] as any;
+      if(element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if(element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if(element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }
+    }
+
+    if(type === "pause"){
+      this.player.pauseVideo();
+    }
+
+    if(type === "play"){
+      this.player.playVideo();
+    }
   }
 
   savePlayer(player) {

@@ -2,6 +2,7 @@
   Youtube
 </h1>
 <youtube-player
+  id="youtube-player"
   *ngIf="id"
   [videoId]="id"
   (ready)="savePlayer($event)">

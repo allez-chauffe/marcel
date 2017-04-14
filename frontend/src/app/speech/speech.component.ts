@@ -65,9 +65,17 @@ export class SpeechComponent implements OnInit, OnDestroy {
   }
 
   handleRequest(parameters: any, fulfillment: any) {
-    if(parameters.video !== undefined){
-      console.log(fulfillment.speech);
+    if(parameters.video !== undefined && parameters.video.length !== 0){
       this.youtubeService.startSearch(parameters.video);
+    }
+    if(parameters.pauseVideo !== undefined && parameters.pauseVideo.length !== 0) {
+      this.youtubeService.query("pause");
+    }
+    if(parameters.playVideo !== undefined && parameters.playVideo.length !== 0){
+      this.youtubeService.query("play");
+    }
+    if(parameters.fullscreen !== undefined && parameters.fullscreen.length !== 0){
+      this.youtubeService.query("fullscreen");
     }
     this.speechSynthesisService.speak(fulfillment.speech);
   }
