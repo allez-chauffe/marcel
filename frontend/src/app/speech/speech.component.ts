@@ -6,7 +6,7 @@ import { ApiService } from './../api/api.service';
 import { YoutubeService } from './../youtube/youtube.service';
 
 @Component({
-  selector: 'speech',
+  selector: 'marcel-speech',
   templateUrl: './speech.component.html',
   styleUrls: ['./speech.component.scss'],
   encapsulation: ViewEncapsulation.None
@@ -36,9 +36,7 @@ export class SpeechComponent implements OnInit, OnDestroy {
         this.sendRequest(value);
       },
       (err) => {
-        if (err.error == "no-speech") {
-          // console.log("--restarting service--");
-        } else {
+        if (err.error != "no-speech") {
           console.log(err);
         }
         this.startRecognition();
