@@ -1,45 +1,9 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-
-# personal file
-/ideas
-/src/app/api/api.service.ts
-/src_old
-agenda.json
-
-# compiled output
-/tmp
-aot
-/dist
-/build
-
-# dependencies
-/node_modules
-/bower_components
-
-# IDEs and editors
-/.idea
-
-# misc
-/.sass-cache
-/connect.lock
-/coverage/*
-/libpeerconnection.log
-npm-debug.log
-testem.log
-/typings
-
-# e2e
-/e2e/*.js
-/e2e/*.map
-
-#System Files
 .DS_Store
-Thumbs.db
-
-
-# ignore js and map files
-**/*.map
-**/**/*.map
-app/**/*.js
-!app/assets/*.js
-api/**/*.js
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+test/unit/coverage
+test/e2e/reports
+selenium-debug.log
