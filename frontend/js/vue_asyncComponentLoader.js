@@ -47,7 +47,7 @@ class Vue_AsyncComponentLoader {
 	 */
 	constructor(vueElementId) {
 		this.plugins       = [];
-		this.pluginsPath   = "plugins/";
+		this.pluginsPath   = "/";
 		this._vueElementId = vueElementId;
 		this._idEltCount   = 0;
 		this.templates = [];

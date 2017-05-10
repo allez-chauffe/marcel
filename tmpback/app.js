@@ -5,6 +5,7 @@ let app = express();
 let http = require('http').Server(app);
 
 app.use(express.static('./public/'));
+app.use(express.static('./plugins/'));
 app.use(express.static('./node_modules/'));
 
 app.get('/', function (req, res) {
