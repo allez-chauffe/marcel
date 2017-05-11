@@ -5,7 +5,7 @@ import { VlilleComponent } from './vlille.component';
 
 describe('Component: Vlille', () => {
   it('should create an instance', () => {
-    let component = new VlilleComponent();
+    let component = new VlilleComponent(null);
     expect(component).toBeTruthy();
   });
 });

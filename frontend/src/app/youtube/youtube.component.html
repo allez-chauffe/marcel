@@ -1,0 +1,14 @@
+<h1>
+  Youtube
+</h1>
+<youtube-player
+  id="youtube-player"
+  *ngIf="id"
+  [videoId]="id"
+  (ready)="savePlayer($event)">
+</youtube-player>
+<ul (searchVideo)="search($event)">
+  <li *ngFor="let video of videos | slice:0:5">
+    {{video.snippet.title}}
+  </li>
+</ul>

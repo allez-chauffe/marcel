@@ -1,6 +1,5 @@
 import { DateTime } from './datetime.model';
-import {Component, OnInit} from "@angular/core";
-import {ViewEncapsulation} from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 
 @Component({
   selector: 'datetime',

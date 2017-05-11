@@ -4,6 +4,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule,JsonpModule } from '@angular/http';
+import { YoutubePlayerModule } from 'ng2-youtube-player';
+import { SpeechModule } from './speech/speech.module';
 
 import { AppComponent } from './app.component';
 import { MessageComponent } from './message/message.component';
@@ -27,11 +29,11 @@ import { ForecastComponent } from './forecast/forecast.component';
 import { TraficComponent } from './trafic/trafic.component';
 import { LunchplaceModule } from './lunchplace/lunchplace.module';
 import { HumeurComponent } from './humeur/humeur.component';
-import { GithubComponent } from './github/github.component';
 import { SortPipe } from './pipes/sort.pipe';
 import { AnniversaireComponent } from './anniversaire/anniversaire.component';
 import { SoundtouchModule } from './soundtouch/soundtouch.module';
-
+import { YoutubeComponent } from './youtube/youtube.component';
+import { YoutubeService } from './youtube/youtube.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,8 @@ import { SoundtouchModule } from './soundtouch/soundtouch.module';
     TraficComponent,
     HumeurComponent,
     SortPipe,
-    AnniversaireComponent
+    AnniversaireComponent,
+    YoutubeComponent
   ],
   imports: [
     BrowserModule,
@@ -61,14 +64,17 @@ import { SoundtouchModule } from './soundtouch/soundtouch.module';
     DateTimeModule,
     LunchplaceModule,
     HomeModule,
-    SoundtouchModule
+    SoundtouchModule,
+    YoutubePlayerModule,
+    SpeechModule
   ],
   providers: [
     ApiService,
     VlilleService,
     WeatherService,
     CalendarService,
-    TwitterService
+    TwitterService,
+    YoutubeService
   ],
   bootstrap: [AppComponent],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]

@@ -25,6 +25,15 @@ export class ApiService {
       },
       smaug: {
         url : 'http://10.0.10.40/arduino/getRoomStat'
+      },
+      github: {
+      },
+      apiai: {
+        token: 'YOUR_AGENT_CLIENT_TOKEN'
+      },
+      youtube: {
+        url: 'https://www.googleapis.com/youtube/v3/search',
+        key: 'YOUR_YOUTUBE_API_KEY'
       }
     };
   }
