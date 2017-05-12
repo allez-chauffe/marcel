@@ -34,12 +34,9 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "hello",
-        "eltName": "hello-item",
-        "files": "hello.html",
-        "propValues": {
-            "title": "Hello"
-        }
+        "componentName": "datetime",
+        "eltName": "datetime-item",
+        "files": "datetime.html"
     }
 ];
 
