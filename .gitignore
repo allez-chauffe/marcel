@@ -52,3 +52,4 @@ frontend/.node_repl_history
 frontend/*.iml
 
 node_modules
+bower_components

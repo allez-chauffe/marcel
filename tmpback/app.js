@@ -37,7 +37,9 @@ let componentsList = [
         "componentName": "hello",
         "eltName": "hello-item",
         "files": "hello.html",
-        "title": "Hello"
+        "propValues": {
+            "title": "Hello"
+        }
     }
 ];
 
