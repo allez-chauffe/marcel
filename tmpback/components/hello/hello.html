@@ -1,0 +1,23 @@
+<dom-module id="hello-item">
+  <template>
+    <h1>{{titre}}</h1>
+  </template>
+
+  <script>
+    class Hello extends Polymer.Element {
+      static get is () { return 'hello-item' }
+
+      static get properties () {
+        return {
+          titre: String
+        }
+      }
+
+      connectedCallback () {
+        super.connectedCallback();
+      }
+    }
+
+    customElements.define(Hello.is, Hello);
+  </script>
+</dom-module>
