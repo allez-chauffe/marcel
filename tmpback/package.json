@@ -1,0 +1,17 @@
+{
+  "name": "marcel-tmpback",
+  "version": "1.0.0",
+  "description": "Temporary backend to serve components list and components",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sehsyha",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "4.15.2"
+  }
+}
