@@ -1,0 +1,129 @@
+<dom-module id="weather-icon-item">
+  <template>
+    <style>
+
+    </style>
+    <div class="flex">
+      <div class="icon_content">
+        <i class="wi wi-day-cloudy"></i>
+      </div>
+      <div class="weather_info">
+        <template is="dom-if" if="display_dt">
+          <div class="weather_dt">
+            {{weather_date}}
+          </div>
+        </template>
+        <div class="weather_temp">
+          {{weather_temp}} °C
+        </div>
+        <div class="weather_text">
+          {{current_weather_type}}
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (() => {
+      class WeatherIcon extends Polymer.Element {
+        static get is () { return 'weather-icon-item' }
+
+        static get properties () {
+          return {
+            api: String,
+            api_key: String,
+            city: String,
+            current_weather_type: String,
+            display_dt: Boolean,
+            icons: Array,
+            item_number: Number,
+            timer: Number,
+            weather_date: Date,
+            weather_icon: String,
+            weather_object: Object,
+            weather_url: String,
+            weather_temp: Number,
+            weather_types: Array,
+            weather_url: String
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.api = this.weather_url + '?APPID=' + this.api_key + '&q=' + this.city + '&units=metric';
+          this.current_weather_type = '';
+          this.display_dt = true;
+          this.timer = 180000;
+          this.weather_temp = 0;
+          this.weather_types = [
+            "sun-shower",
+            "thunder-storm",
+            "cloudy",
+            "sunny",
+            "rainy",
+            "flurries"
+          ]
+
+          this.numbersList = [0, 1, 2];
+          this._getIcons()
+              .then(() => this._getWeather())
+          setInterval(() => this._getWeather(), this.timer);
+        }
+        
+        _getWeather () {
+          this._getCurrentWeather()
+              .then(res => {
+                this.weather_temp = Math.round(res.list[this.item_number].main.temp);
+
+                this._setWeatherType(res.list[this.item_number].weather[0].main);
+
+                let icon = this._getDayNight(res.list[this.item_number].dt * 1000) + this.icons[res.list[this.item_number].weather[0].id].icon;
+                this.wheather_icon = icon;
+
+                const date = new Date(res.list[this.item_number].dt * 1000);
+                const dateString = date.getHours() + ':' + date.getMinutes();
+                this.weather_date = dateString;
+              })
+              .catch(err => console.log(err))
+        }
+
+        _getCurrentWeather () {
+          return fetch(this.api)
+                    .then(res => res.json())
+        }
+
+        _randomType () {
+          const randomIndex = Math.floor(Math.random() / this.weather_types.length);
+          return this.weather_types[randomIndex];
+        }
+
+        _setWeatherType (type) {
+          if (!type) {
+            type = this._randomType();
+          }
+          this.current_weather_type = type;
+        }
+
+        _getDayNight (date) {
+          let hour = (new Date(date)).getHours();
+          if (hour > 6 && hour < 18) {
+            return 'day-';
+          } else {
+            return 'night-';
+          }
+        }
+
+        _getIcons () {
+          return fetch('http://localhost:8080/weather/icons.json')
+                    .then(res => res.json())
+                    .then(icons => this.icons = icons)
+        }
+
+      }
+
+      customElements.define(WeatherIcon.is, WeatherIcon);
+    })();
+
+  </script>
+</dom-module>
