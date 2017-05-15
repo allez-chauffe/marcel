@@ -1,0 +1,87 @@
+<dom-module id="vlille-item">
+  <template>
+    <style>
+      h1 {
+        margin-bottom: 10px;
+      }
+
+      .item {
+        margin-bottom: 10px;
+      }
+
+      .item h2 {
+        color: #c10d12;
+        font-weight: 300;
+      }
+    </style>
+    <h1>Vlille</h1>
+    <template is="dom-repeat" items="{{stations}}" as="station">
+      <div class="item">
+        <h2>{{station.name}}</h2>
+        <h3>{{station.bikes}} / {{station.attachs}} places</h3>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    (() => {
+      class VLille extends Polymer.Element {
+        static get is () { return 'vlille-item' };
+        
+        static get properties () {
+          return {
+            api: String,
+            params: String,
+            stations: Array,
+            stations_id: Array,
+            timer: Number
+          }
+        }
+        
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.stations = [];
+
+          this.api = 'http://api.aurelien-loyer.fr/vlille/station.php?key=magdalena';
+          this.params = '&format=jsonp&json_callback=JSON_CALLBACK&borne=';
+          this.timer = 30000;
+          
+          this._getStationsData();
+          setInterval(() => { this._getStationsData() }, this.timer); 
+        }
+
+        _getStationsData () {
+          let finalStations = [];
+
+          this.stations.push({
+            "name": "Test",
+            "bikes": 20
+          })
+
+          const promises = this.stations_id.map(station_id =>
+            this._getStationData(station_id)
+                .then(station => finalStations.push(station))
+                .catch(err => console.log(err))
+          )
+
+          Promise.all(promises).then(() => {
+            this.stations = finalStations;
+          })
+        }
+
+        _getStationData (station) {
+          return fetch(this.api + this.params + station.id)
+                    .then(res => res.json())
+                    .then(res => {
+                      res.name = station.name;
+                      return res;
+                    })
+        }
+      }
+
+      customElements.define(VLille.is, VLille)
+    })();
+
+  </script>
+</dom-module>
