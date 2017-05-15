@@ -34,9 +34,12 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "datetime",
-        "eltName": "datetime-item",
-        "files": "datetime.html"
+        "componentName": "twitter",
+        "eltName": "twitter-item",
+        "files": "twitter.html",
+        "propValues": {
+            "api": "http://localhost:8090/api/v1/twitter/timeline"
+        }
     }
 ];
 
