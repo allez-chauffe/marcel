@@ -1,7 +1,33 @@
 <dom-module id="weather-icon-item">
   <template>
     <style>
+      .flex {
+        display: flex;
+      }
 
+      .weather_text{
+        font-size: 1.5em;
+        color: #c10d12;
+      }
+
+      .weather_dt {
+        color: #c10d12;
+        margin-bottom: 2px;
+        font-size: 1em;
+      }
+
+      .icon_content{
+        font-size: 60px;
+        margin-right: 30px;
+      }
+
+      .icon {
+        position: relative;
+        display: inline-block;
+        width: 11em;
+        height: 8em;
+        font-size: 0.7em; /* control icon size here */
+      }
     </style>
     <div class="flex">
       <div class="icon_content">
@@ -82,7 +108,11 @@
                 this.wheather_icon = icon;
 
                 const date = new Date(res.list[this.item_number].dt * 1000);
-                const dateString = date.getHours() + ':' + date.getMinutes();
+                let dateString = date.getHours() + ':';
+                if (date.getMinutes() < 10) {
+                  dateString += '0';
+                }
+                dateString += date.getMinutes();
                 this.weather_date = dateString;
               })
               .catch(err => console.log(err))

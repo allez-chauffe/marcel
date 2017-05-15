@@ -34,13 +34,13 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "welcome",
-        "eltName": "welcome-item",
-        "files": "welcome.html",
+        "componentName": "weather",
+        "eltName": "weather-item",
+        "files": "weather.html",
         "propValues": {
-            "text1": "Bienvenue",
-            "text2": "à Zenika Lille",
-            "url": "assets/zenika.png"
+            "city": "Lille,Fr",
+            "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5?",
+            "api_key": "OPENWEATHER_FREE_API_KEY"
         }
     }
 ];
