@@ -34,10 +34,12 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "logo",
-        "eltName": "logo-item",
-        "files": "logo.html",
+        "componentName": "welcome",
+        "eltName": "welcome-item",
+        "files": "welcome.html",
         "propValues": {
+            "text1": "Bienvenue",
+            "text2": "à Zenika Lille",
             "url": "assets/zenika.png"
         }
     }
