@@ -34,30 +34,13 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "github",
-        "eltName": "github-item",
-        "files": "github.html",
+        "componentName": "welcome",
+        "eltName": "welcome-item",
+        "files": "welcome.html",
         "propValues": {
-            "users": [
-                'Gillespie59',
-                'GwennaelBuchet',
-                'T3kstiil3',
-                'RemiEven',
-                'looztra',
-                'a-cordier',
-                'wadendo',
-                'NathanDM',
-                'Antoinephi',
-                'cluster',
-                'yyekhlef',
-                'gdrouet',
-                'Kize',
-                'kratisto',
-                'Sehsyha',
-                'P0ppoff'
-            ],
-            "client_id": "27b62f039b44ddc08fdf",
-            "client_secret": "7b14f465112e87267a72c02d4c3fc58925412dbd"
+            "text1": "Bienvenue",
+            "text2": "à Zenika Lille",
+            "url": "assets/zenika.png"
         }
     }
 ];
