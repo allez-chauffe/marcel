@@ -58,7 +58,7 @@
   </template>
 
   <script>
-    (function () {
+    (() => {
       class Twitter extends Polymer.Element {
         static get is () { return 'twitter-item' }
 
@@ -77,7 +77,7 @@
           this.timer = 1000 * 60 * 60;
 
           this._updateTimeline();
-          setInterval(_ => this._updateTimeline(), this.timer);
+          setInterval(() => this._updateTimeline(), this.timer);
         }
 
         _updateTimeline () {
