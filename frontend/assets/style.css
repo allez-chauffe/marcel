@@ -1,0 +1,50 @@
+@import 'font.css';
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 92%;
+  margin: 2%;
+  background: black;
+  color: white;
+  font-family: Roboto;
+  font-weight: 300;
+  zoom: 90%;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Roboto';
+  font-weight: 100;
+  line-height: 1.1;
+  letter-spacing: 0.025em;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+* {
+  animation: fadein 2s;
+  font-family: Roboto;
+}
+
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        opacity:1;
+    }
+    to {
+        opacity:0;
+    }
+}
