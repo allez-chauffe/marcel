@@ -34,11 +34,13 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "twitter",
-        "eltName": "twitter-item",
-        "files": "twitter.html",
+        "componentName": "welcome",
+        "eltName": "welcome-item",
+        "files": "welcome.html",
         "propValues": {
-            "api": "http://10.0.10.63:8090/api/v1/twitter/timeline"
+            "text1": "Bienvenue",
+            "text2": "à Zenika Lille",
+            "url": "assets/zenika.png"
         }
     }
 ];
