@@ -1,0 +1,80 @@
+<dom-module id="datetime-item">
+  <template>
+    <style>
+      :root {
+        min-width: 130px;
+      }
+
+      .time {
+        display: block;
+        font-size: 3em;
+
+      }
+
+      .date {
+        color: #c10d12;
+        font-size: 1.2em;
+      }
+
+      .blink_me {
+        animation: blinker 1s linear infinite;
+      }
+
+      @keyframes blinker {
+        50% { opacity: 0.0; }
+      }
+    </style>
+    <span class="time">{{date.hour}}<span class="blink_me">:</span>{{date.minutes}}</span>
+    <span class="date">{{date.day}} {{date.month}} {{date.year}}</span>
+  </template>
+
+  <script>
+    (function () {
+      class DateTimeModel {
+        constructor (date) {
+            this.minutes = this.format(date.getMinutes().toString());
+            this.hour = this.format(date.getHours().toString());
+
+            this.day = this.format(date.toLocaleString('fr', { 'day': '2-digit' }));
+            this.year = date.toLocaleString('fr', { 'year': 'numeric' });
+            this.month = date.toLocaleString('fr', { 'month': 'long' });
+        }
+
+        /**
+         * Add a 0 as a prefix if the digit in parameter has only one digit
+         */
+        format (digit) {
+            return ('0' + digit).slice(-2);
+        }
+      }
+
+      class DateTime extends Polymer.Element {
+      
+        static get is () { return 'datetime-item' }
+
+        static get properties () {
+          return {
+            date: DateTimeModel,
+            timer: Number
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.timer = 10000;
+          this.date = new DateTimeModel(new Date());
+
+          setInterval(_ => this._loopDate(), this.timer)
+        }
+
+        _loopDate () {
+          this.date = new DateTimeModel(new Date());
+        }
+      }
+
+      customElements.define(DateTime.is, DateTime);
+    })();
+
+  </script>
+</dom-module>
