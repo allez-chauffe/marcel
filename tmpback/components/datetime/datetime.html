@@ -28,33 +28,53 @@
     <span class="date">{{date.day}} {{date.month}} {{date.year}}</span>
   </template>
 
-  <script src="datetime.model.js"></script>
   <script>
-    class Datetime extends Polymer.Element {
-      
-      static get is () { return 'datetime-item' }
+    (function () {
+      class DateTimeModel {
+        constructor (date) {
+            this.minutes = this.format(date.getMinutes().toString());
+            this.hour = this.format(date.getHours().toString());
 
-      static get properties () {
-        return {
-          date: DateTimeModel,
-          timer: Number
+            this.day = this.format(date.toLocaleString('fr', { 'day': '2-digit' }));
+            this.year = date.toLocaleString('fr', { 'year': 'numeric' });
+            this.month = date.toLocaleString('fr', { 'month': 'long' });
+        }
+
+        /**
+         * Add a 0 as a prefix if the digit in parameter has only one digit
+         */
+        format (digit) {
+            return ('0' + digit).slice(-2);
         }
       }
 
-      connectedCallback () {
-        super.connectedCallback();
+      class DateTime extends Polymer.Element {
+      
+        static get is () { return 'datetime-item' }
 
-        this.timer = 10000;
-        this.date = new DateTimeModel(new Date());
+        static get properties () {
+          return {
+            date: DateTimeModel,
+            timer: Number
+          }
+        }
 
-        setInterval(_ => this._loopDate(), this.timer)
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.timer = 10000;
+          this.date = new DateTimeModel(new Date());
+
+          setInterval(_ => this._loopDate(), this.timer)
+        }
+
+        _loopDate () {
+          this.date = new DateTimeModel(new Date());
+        }
       }
 
-      _loopDate () {
-        this.date = new DateTimeModel(new Date());
-      }
-    }
+      customElements.define(DateTime.is, DateTime);
+    })();
 
-    customElements.define(Datetime.is, Datetime);
   </script>
 </dom-module>
