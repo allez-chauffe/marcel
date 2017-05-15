@@ -38,7 +38,7 @@ let componentsList = [
         "eltName": "twitter-item",
         "files": "twitter.html",
         "propValues": {
-            "api": "http://localhost:8090/api/v1/twitter/timeline"
+            "api": "http://10.0.10.63:8090/api/v1/twitter/timeline"
         }
     }
 ];

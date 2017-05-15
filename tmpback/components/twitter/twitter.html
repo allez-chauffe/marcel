@@ -50,7 +50,7 @@
     <ul>
       <template is="dom-repeat" items="[[tweets]]" as="tweet">
         <li>
-          <img src="{{tweet.user_profile_image_url" alt="" />
+          <img src="{{tweet.user.profile_image_url}}" alt="" />
           <p>{{tweet.text}}</p>
         </li>
       </template>
