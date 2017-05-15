@@ -34,9 +34,18 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "datetime",
-        "eltName": "datetime-item",
-        "files": "datetime.html"
+        "componentName": "vlille",
+        "eltName": "vlille-item",
+        "files": "vlille.html",
+        "propValues": {
+            "stations_id": [
+                { name: "Rihour", id: 10},
+                { name: "Cormontaigne", id: 36 },
+                { name: "Mairie de Lille", id: 64 },
+                { name: "Gare Lille Flandres", id: 25 },
+                { name: "Boulevard Louis XIV", id: 47 }
+            ]
+        }
     }
 ];
 
