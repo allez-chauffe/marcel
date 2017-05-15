@@ -43,106 +43,107 @@
           <span class="number">{{item.contributions}}</span>
         </li>
       </template>
-
     </ul>
   </template>
   
   <script>
-    class Github extends Polymer.Element {
-      static get is () { return 'github-item' }
+    (function () {
+      class Github extends Polymer.Element {
+        static get is () { return 'github-item' }
 
-      static get properties () {
-        return {
-          api: String,
-          client_auth: String,
-          client_id: String,     
-          client_secret: String,
-          contributors: Array,
-          timer: Number,
-          users: Array,
-          params: String,
-          userContributions: Array
+        static get properties () {
+          return {
+            api: String,
+            client_auth: String,
+            client_id: String,     
+            client_secret: String,
+            contributors: Array,
+            timer: Number,
+            users: Array,
+            params: String,
+            userContributions: Array
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.api = 'https://api.github.com/users/';
+          this.params = '/events?per_page=100';
+
+          this.userContributions = [];
+          this.client_auth = 'client_id=' + this.client_id + '&client_secret=' + this.client_secret; 
+          this.timer = 1000 * 60 * 60;
+          this._fetchContributors();
+        }
+
+        _fetchContributors () {
+          let finalUsers = [];
+          let promises = [];
+
+          // Create promises to fetch user informations and contributions
+          this.users.forEach(user => {
+            promises.push(
+              this._getUserInfo(user)
+                .then(userInfos => this._getUserContributions(userInfos))
+                .then(userContribs => finalUsers.push(userContribs))
+                .catch(err => console.log(err))
+            )
+          });
+
+          // Execute all the promises and handle the results
+          Promise.all(promises).then(_ => {
+            finalUsers.map(contribsAndUser => {
+              let nbContributions = 0;
+              let contribs = contribsAndUser.contribs;
+
+              contribs
+                .filter(contrib => contrib.type === 'PushEvent' && contrib.created_at.indexOf(this._getDate()) !== -1)
+                .map(contrib => nbContributions += contrib.payload.commits.length);
+              if (nbContributions == 0) {
+                return
+              }
+              this.userContributions = this.userContributions.filter(contrib => {
+                return contrib.user !== contribsAndUser.user.name;
+              });
+
+              let avatar_url = '';
+              if (contribs[0] != undefined) {
+                avatar_url = contribs[0].actor.avatar_url;
+              }
+
+              this.userContributions.push({
+                user: contribsAndUser.user.name,
+                contributions: nbContributions,
+                avatar: avatar_url
+              })
+
+            })
+            this.userContributions.sort((a, b) => b.contributions - a.contributions);
+            this.userContributions = this.userContributions.slice(0,5);
+          });
+        }
+
+
+        _getUserInfo (user) {
+          return fetch(this.api + user + '?' + this.client_auth)
+                    .then(res => res.json())
+                    .then(res => { return { login: user, name: res['name']}});
+        }
+
+        _getUserContributions (user) {
+          return fetch(this.api + user.login + this.params + '&' + this.client_auth)
+                    .then(res => res.json())
+                    .then(res => { return { contribs: res, user} });
+        }
+
+        _getDate() {
+          let today = new Date();
+          return `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}`;
         }
       }
 
-      connectedCallback () {
-        super.connectedCallback();
-
-        this.api = 'https://api.github.com/users/';
-        this.params = '/events?per_page=100';
-
-        this.userContributions = [];
-        this.client_auth = 'client_id=' + this.client_id + '&client_secret=' + this.client_secret; 
-        this.timer = 1000 * 60 * 60;
-        this._fetchContributors();
-      }
-
-      _fetchContributors () {
-        let finalUsers = [];
-        let promises = [];
-
-        // Create promises to fetch user informations and contributions
-        this.users.forEach(user => {
-          promises.push(
-            this._getUserInfo(user)
-              .then(userInfos => this._getUserContributions(userInfos))
-              .then(userContribs => finalUsers.push(userContribs))
-              .catch(err => console.log(err))
-          )
-        });
-
-        // Execute all the promises and handle the results
-        Promise.all(promises).then(_ => {
-          finalUsers.map(contribsAndUser => {
-            let nbContributions = 0;
-            let contribs = contribsAndUser.contribs;
-
-            contribs
-              .filter(contrib => contrib.type === 'PushEvent' && contrib.created_at.indexOf(this._getDate()) !== -1)
-              .map(contrib => nbContributions += contrib.payload.commits.length);
-            if (nbContributions == 0) {
-              return
-            }
-            this.userContributions = this.userContributions.filter(contrib => {
-              return contrib.user !== contribsAndUser.user.name;
-            });
-
-            let avatar_url = '';
-            if (contribs[0] != undefined) {
-              avatar_url = contribs[0].actor.avatar_url;
-            }
-
-            this.userContributions.push({
-              user: contribsAndUser.user.name,
-              contributions: nbContributions,
-              avatar: avatar_url
-            })
-
-          })
-          this.userContributions.sort((a, b) => b.contributions - a.contributions);
-          this.userContributions = this.userContributions.slice(0,5);
-        });
-      }
-
-
-      _getUserInfo (user) {
-        return fetch(this.api + user + '?' + this.client_auth)
-                  .then(res => res.json())
-                  .then(res => { return { login: user, name: res['name']}});
-      }
-
-      _getUserContributions (user) {
-        return fetch(this.api + user.login + this.params + '&' + this.client_auth)
-                  .then(res => res.json())
-                  .then(res => { return { contribs: res, user} });
-      }
-
-      _getDate() {
-        let today = new Date();
-        return `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}`;
-      }
-    }
-
-    customElements.define(Github.is, Github);
+      customElements.define(Github.is, Github);
+    })();
   </script>
 </dom-module>
