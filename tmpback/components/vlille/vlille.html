@@ -1,5 +1,9 @@
+<link rel="import" href="/shared-styles/shared-styles.html">
+<link rel="import" href="/font-awesome/font-awesome.html">
 <dom-module id="vlille-item">
   <template>
+    <style include="shared-styles"></style>
+    <style include="font-awesome"></style>
     <style>
       h1 {
         margin-bottom: 10px;
@@ -18,7 +22,11 @@
     <template is="dom-repeat" items="{{stations}}" as="station">
       <div class="item">
         <h2>{{station.name}}</h2>
-        <h3>{{station.bikes}} / {{station.attachs}} places</h3>
+        <h3>{{station.bikes}} <i class="fa fa-bicycle" aria-hidden="true"></i> / {{station.attachs}} places 
+          <template is="dom-if" if="{{_availableAttachs(station.attachs)}}">
+            <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
+          </template>
+        </h3>
       </div>
     </template>
   </template>
@@ -77,6 +85,10 @@
                       res.name = station.name;
                       return res;
                     })
+        }
+
+        _availableAttachs (nbAttachs) {
+          return nbAttachs == 0;
         }
       }
 

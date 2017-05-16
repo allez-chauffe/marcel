@@ -15,17 +15,6 @@ body {
   overflow: hidden;
 }
 
-h1, h2, h3, h4 {
-  font-family: 'Roboto';
-  font-weight: 100;
-  line-height: 1.1;
-  letter-spacing: 0.025em;
-  margin: 0;
-  padding: 0;
-}
-
-
-
 * {
   animation: fadein 2s;
   font-family: Roboto;
