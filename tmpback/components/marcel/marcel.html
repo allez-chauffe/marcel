@@ -1,0 +1,78 @@
+<!-- Styling -->
+<link rel="import" href="/shared-styles/shared-styles.html">
+
+<!-- Components -->
+<link rel="import" href="/logo/logo.html">
+<link rel="import" href="/datetime/datetime.html">
+<link rel="import" href="/message/message.html">
+<link rel="import" href="/github/github.html">
+<link rel="import" href="/twitter/twitter.html">
+<link rel="import" href="/vlille/vlille.html">
+
+<dom-module id="marcel-item">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :root {
+        height: 100%;
+      }
+
+      .app {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    <div class="flex space-between app">
+      <div class="flex flex-column space-between">
+          <div class="flex flex-column">
+              <div class="flex">
+                  <logo-item url="[[logo_url]]"></logo-item>
+                  <datetime-item></datetime-item>
+              </div>
+              <message-item text1="[[message_text1]]" text2="[[message_text2]]"></message-item>
+          </div>
+          <github-item users="[[github_users]]" client_id="[[github_client_id]]" client_secret="[[github_client_secret]]"></github-item>
+          <lunchplace></lunchplace>
+      </div>
+
+      <div class="flex flex-column space-between flex-full">
+          <forecast></forecast>
+
+          <div class="flex flex-full space-around">
+              <twitter-item api="[[twitter_api]]"></twitter-item>
+          </div>
+      </div>
+
+      <div class="flex flex-column space-between text-align-right">
+          <vlille-item stations_id="[[vlille_stations_id]]"></vlille-item>
+          <calendar></calendar>
+          <home></home>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class Marcel extends Polymer.Element {
+      static get is () { return 'marcel-item' }
+
+      static get properties () {
+        return {
+          github_users: Array,
+          github_client_id: String,
+          github_client_secret: String,
+          logo_url: String,
+          message_text1: String, 
+          message_text2: String,
+          twitter_api: String,
+          vlille_stations_id: Array
+        }
+      }
+
+      connectedCallback () {
+        super.connectedCallback();
+      }
+    }
+
+    customElements.define(Marcel.is, Marcel);
+  </script>
+</dom-module>

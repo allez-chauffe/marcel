@@ -18,7 +18,7 @@
         font-weight: 300;
       }
     </style>
-    <h1>Vlille</h1>
+    <h1>VLille</h1>
     <template is="dom-repeat" items="{{stations}}" as="station">
       <div class="item">
         <h2>{{station.name}}</h2>
@@ -74,6 +74,15 @@
           )
 
           Promise.all(promises).then(() => {
+            finalStations = finalStations.sort((a, b) => {
+              if (a.name > b.name) {
+                return 1;
+              }
+              if (a.name < b.name) {
+                return -1;
+              }
+              return 0;
+            })
             this.stations = finalStations;
           })
         }

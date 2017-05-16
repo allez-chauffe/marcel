@@ -15,6 +15,12 @@ body {
   overflow: hidden;
 }
 
+#components {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
 * {
   animation: fadein 2s;
   font-family: Roboto;

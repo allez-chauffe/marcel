@@ -34,21 +34,14 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "welcome",
-        "eltName": "welcome-item",
-        "files": "welcome.html",
+        "componentName": "marcel",
+        "eltName": "marcel-item",
+        "files": "marcel.html",
         "propValues": {
-            "url": "assets/zenika.png",
-            "text1": "Bienvenue",
-            "text2": "à Zenika Lille"
-        }
-    },
-    {   
-         "componentName": "github",
-         "eltName": "github-item",
-         "files": "github.html",
-         "propValues": {
-             "users": [
+            "logo_url": "assets/zenika.png",
+            "message_text1": "Bienvenue",
+            "message_text2": "à Zenika Lille",
+            "github_users": [
                  'Gillespie59',
                  'GwennaelBuchet',
                  'T3kstiil3',
@@ -65,17 +58,11 @@ let componentsList = [
                  'kratisto',
                  'Sehsyha',
                  'P0ppoff'
-             ],
-             "client_id": "27b62f039b44ddc08fdf",
-             "client_secret": "7b14f465112e87267a72c02d4c3fc58925412dbd"
-         }
-    },
-    {
-        "componentName": "vlille",
-        "eltName": "vlille-item",
-        "files": "vlille.html",
-        "propValues": {
-            "stations_id": [
+            ],
+            "github_client_id": "27b62f039b44ddc08fdf",
+            "github_client_secret": "7b14f465112e87267a72c02d4c3fc58925412dbd",
+            "twitter_api": "http://10.0.10.63:8090/api/v1/twitter/timeline",
+            "vlille_stations_id": [
                 { name: "Rihour", id: 10},
                 { name: "Cormontaigne", id: 36 },
                 { name: "Mairie de Lille", id: 64 },
