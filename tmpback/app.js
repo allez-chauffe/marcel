@@ -68,7 +68,8 @@ let componentsList = [
                 { name: "Mairie de Lille", id: 64 },
                 { name: "Gare Lille Flandres", id: 25 },
                 { name: "Boulevard Louis XIV", id: 47 }
-            ]
+            ],
+            "soundtouch_url": "http://10.0.10.166:8090/now_playing"
         }
     }
 ];
