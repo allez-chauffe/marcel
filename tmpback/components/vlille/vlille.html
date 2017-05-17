@@ -74,15 +74,7 @@
           )
 
           Promise.all(promises).then(() => {
-            finalStations = finalStations.sort((a, b) => {
-              if (a.name > b.name) {
-                return 1;
-              }
-              if (a.name < b.name) {
-                return -1;
-              }
-              return 0;
-            })
+            finalStations = finalStations.sort((a, b) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1)
             this.stations = finalStations;
           })
         }
@@ -97,7 +89,7 @@
         }
 
         _availableAttachs (nbAttachs) {
-          return nbAttachs == 0;
+          return nbAttachs === 0;
         }
       }
 
