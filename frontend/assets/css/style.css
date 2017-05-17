@@ -15,16 +15,11 @@ body {
   overflow: hidden;
 }
 
-h1, h2, h3, h4 {
-  font-family: 'Roboto';
-  font-weight: 100;
-  line-height: 1.1;
-  letter-spacing: 0.025em;
-  margin: 0;
-  padding: 0;
+#components {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
 }
-
-
 
 * {
   animation: fadein 2s;

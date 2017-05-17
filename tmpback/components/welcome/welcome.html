@@ -1,11 +1,14 @@
 <dom-module id="welcome-item">
   <template>
+    <style include="shared-styles"></style>
     <div class="flex flex-column">
-      <div class="flex">
-        <logo-item url="[[url]]"></logo-item>
-        <datetime-item></datetime-item>
+      <div class="flex flex-column">
+        <div class="flex">
+          <logo-item url="[[url]]"></logo-item>
+          <datetime-item></datetime-item>
+        </div>
+        <message-item text1="[[text1]]" text2="[[text2]]"></message-item>
       </div>
-      <message-item text1="[[text1]]" text2="[[text2]]"></message-item>
     </div>
   </template>
   <link rel="import" href="/message/message.html" />

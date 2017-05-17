@@ -34,13 +34,41 @@ let server = app.listen(8080, function () {
 /** list of components to be loaded */
 let componentsList = [
     {
-        "componentName": "weather",
-        "eltName": "weather-item",
-        "files": "weather.html",
+        "componentName": "marcel",
+        "eltName": "marcel-item",
+        "files": "marcel.html",
         "propValues": {
-            "city": "Lille,Fr",
-            "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5?",
-            "api_key": "OPENWEATHER_FREE_API_KEY"
+            "logo_url": "assets/zenika.png",
+            "message_text1": "Bienvenue",
+            "message_text2": "à Zenika Lille",
+            "github_users": [
+                 'Gillespie59',
+                 'GwennaelBuchet',
+                 'T3kstiil3',
+                 'RemiEven',
+                 'looztra',
+                 'a-cordier',
+                 'wadendo',
+                 'NathanDM',
+                 'Antoinephi',
+                 'cluster',
+                 'yyekhlef',
+                 'gdrouet',
+                 'Kize',
+                 'kratisto',
+                 'Sehsyha',
+                 'P0ppoff'
+            ],
+            "github_client_id": "27b62f039b44ddc08fdf",
+            "github_client_secret": "7b14f465112e87267a72c02d4c3fc58925412dbd",
+            "twitter_api": "http://10.0.10.63:8090/api/v1/twitter/timeline",
+            "vlille_stations_id": [
+                { name: "Rihour", id: 10},
+                { name: "Cormontaigne", id: 36 },
+                { name: "Mairie de Lille", id: 64 },
+                { name: "Gare Lille Flandres", id: 25 },
+                { name: "Boulevard Louis XIV", id: 47 }
+            ]
         }
     }
 ];

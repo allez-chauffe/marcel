@@ -1,0 +1,100 @@
+<link rel="import" href="/shared-styles/shared-styles.html">
+<link rel="import" href="/vendors/font-awesome/font-awesome.html">
+<dom-module id="vlille-item">
+  <template>
+    <style include="shared-styles"></style>
+    <style include="font-awesome"></style>
+    <style>
+      h1 {
+        margin-bottom: 10px;
+      }
+
+      .item {
+        margin-bottom: 10px;
+      }
+
+      .item h2 {
+        color: var(--secondary-color);
+        font-weight: 300;
+      }
+    </style>
+    <h1>VLille</h1>
+    <template is="dom-repeat" items="{{stations}}" as="station">
+      <div class="item">
+        <h2>{{station.name}}</h2>
+        <h3>{{station.bikes}} <i class="fa fa-bicycle" aria-hidden="true"></i> / {{station.attachs}} places 
+          <template is="dom-if" if="{{_availableAttachs(station.attachs)}}">
+            <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
+          </template>
+        </h3>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    (() => {
+      class VLille extends Polymer.Element {
+        static get is () { return 'vlille-item' };
+        
+        static get properties () {
+          return {
+            api: String,
+            params: String,
+            stations: Array,
+            stations_id: Array,
+            timer: Number
+          }
+        }
+        
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.stations = [];
+
+          this.api = 'http://api.aurelien-loyer.fr/vlille/station.php?key=magdalena';
+          this.params = '&format=jsonp&json_callback=JSON_CALLBACK&borne=';
+          this.timer = 30000;
+          
+          this._getStationsData();
+          setInterval(() => { this._getStationsData() }, this.timer); 
+        }
+
+        _getStationsData () {
+          let finalStations = [];
+
+          this.stations.push({
+            "name": "Test",
+            "bikes": 20
+          })
+
+          const promises = this.stations_id.map(station_id =>
+            this._getStationData(station_id)
+                .then(station => finalStations.push(station))
+                .catch(err => console.log(err))
+          )
+
+          Promise.all(promises).then(() => {
+            finalStations = finalStations.sort((a, b) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1)
+            this.stations = finalStations;
+          })
+        }
+
+        _getStationData (station) {
+          return fetch(this.api + this.params + station.id)
+                    .then(res => res.json())
+                    .then(res => {
+                      res.name = station.name;
+                      return res;
+                    })
+        }
+
+        _availableAttachs (nbAttachs) {
+          return nbAttachs === 0;
+        }
+      }
+
+      customElements.define(VLille.is, VLille)
+    })();
+
+  </script>
+</dom-module>
