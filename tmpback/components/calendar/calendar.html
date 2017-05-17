@@ -33,16 +33,30 @@
     </style>
     <h1>Calendrier</h1>
     <div class="events">
-      <h3><span>{{events.length}}</span> Events Incoming</h3>
-      <template is="dom-repeat" items="[[events]]" as="event">
-        <h3>{{event.summary}}</h3>
-        <template is="dom-if" if="[[event.start.dateTime]]">
-          <h4>Le {{event.start.dateTime}} de {{event.start.dateTime}} à {{event.end.dateTime}}</h4>
-        </template>
+      <h3><span>{{nbEvents}}</span> Events Incoming</h3>
+      <template is="dom-repeat" items="{{events}}" as="event">
+        <div class="event">
+          <h3>{{event.summary}}</h3>
+          <template is="dom-if" if="[[event.start.dateTime]]">
+            <h4>
+              Le 
+              <moment-element datetime="{{event.start.dateTime}}" output-format="DD/MM/YY"></moment-element>
+              de 
+              <moment-element datetime="{{event.start.dateTime}}" output-format="HH:mm"></moment-element>
+              à 
+              <moment-element datetime="{{event.end.dateTime}}" output-format="HH:mm"></moment-element>
+            </h4>
+          </template>
 
-        <template is="dom-if" if="[[event.start.date]]">
-          <h4>Du {{event.start.date}} au {{event.end.date }}</h4>
-        </template>
+          <template is="dom-if" if="[[event.start.date]]">
+            <h4>
+              Du 
+              <moment-element datetime="{{event.start.date}}" output-format="DD/MM/YY"></moment-element>
+              au
+              <moment-element datetime="{{event.end.date}}" output-format="DD/MM/YY"></moment-element>
+            </h4>
+          </template>
+        </div>
       </template>
     </div>
   </template>
@@ -55,6 +69,7 @@
         static get properties () {
           return {
             events: Array,
+            nbEvents: Number,
             timer: Number,
             url: String
           }
@@ -72,7 +87,8 @@
         _updateEvents () {
           this._getEvents()
               .then(events => {
-                this.events = events.slice(0, 4);
+                this.nbEvents = events.length;
+                this.events = events.slice(0, 3)
               })
         }
 
