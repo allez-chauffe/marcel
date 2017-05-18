@@ -1,0 +1,164 @@
+<link rel="import" href="/shared-styles/shared-styles.html">
+<link rel="import" href="/vendors/font-awesome/font-awesome.html">
+<dom-module id="soundtouch-item">
+  <template>
+    <style include="shared-styles"></style>
+    <style include="font-awesome"></style>
+    <style>
+      :host {
+        text-align: center;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        color: var(--secondary-color);
+      }
+
+      h2 i {
+        color: var(--primary-color);
+      }
+
+      .playing {
+        display: flex;
+        height: 75px;
+        justify-content: flex-start;
+      }
+
+      img {
+        height: 75px;
+        width: 75px;
+      }
+
+      .info {
+        text-align: left;
+        padding-left: 25px;
+      }
+
+      .track {
+        color: var(--secondary-color);
+      }
+
+      .artist {
+        color: var(--primary-color);
+        font-size: 15px;
+      }
+
+      .album {
+        color: var(--secondary-color);
+        font-size: 15px;
+      }
+    </style>
+    <h1>Bose Soundtouch</h1>
+    <h2>
+      <template is="dom-if" if="{{!sound.playing}}">
+        <i class="fa fa-power-off" aria-hidden="true"></i>
+      </template>
+      <template is="dom-if" if="{{sound.playing}}">
+        <template is="dom-if" if="{{bluetooth}}">
+          <i class="fa fa-bluetooth-b" aria-hidden="true"></i>
+        </template>
+      </template>
+
+
+      <template is="dom-if" if="{{!sound.playing}}">
+        <span>
+          {{sound.message}}
+        </span>
+      </template>
+
+      <template is="dom-if" if="{{sound.playing}}">
+
+        <template is="dom-if" if="{{bluetooh}}">
+          {{sound.track}}
+        </template>
+        
+        <template is="dom-if" if="{{!bluetooth}}">
+          <div class="playing">
+            <img src="{{sound.art}}" alt="">
+            <div class="info">
+              <span class="track">{{sound.track}}</span><br />
+              <span class="artist">{{sound.artist}}</span><br />
+              <span class="album">{{sound.album}}</span><br />
+            </div>
+          </div>
+        </template>
+      
+      </template>
+    </h2>
+  </template>
+
+  <script>
+    (() => {
+      class SoundTouch extends Polymer.Element {
+        static get is () { return 'soundtouch-item' }
+
+        static get properties () {
+          return {
+            bluetooth: Boolean,
+            sound: Object,
+            timer: Number,
+            url: String
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.sound = {
+            "playing": true,
+            "source": "DEEZER"
+          };
+          this.timer = 1000 * 60;
+
+          this._changeSound();
+          setInterval(() => this._changeSound(), this.timer);
+        }
+
+        _changeSound () {
+          this._getNowPlaying()
+              .then(now_playing => {
+                this.sound = now_playing
+                this.bluetooth = now_playing.source === 'BLUETOOH'
+            })
+        }
+
+        _getNowPlaying () {
+          return fetch(this.url)
+                    .then(res => res.text())
+                    .then(res => {
+                      const parser = new DOMParser();
+                      const xmlDoc = parser.parseFromString(res, "text/xml");
+                      const track = xmlDoc.getElementsByTagName("track")[0];
+                      const source = xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source");
+                      if (!track) {
+                        return {
+                          playing: false,
+                          message: source === 'STANDBY' ? "STANDBY" : "STATUS OFF"
+                        }
+                      }
+                      if (source === "BLUETOOTH") {
+                        return {
+                          playing: true,
+                          source: source,
+                          track: xmlDoc.getElementsByTagName("stationName")[0].childNodes[0].nodeValue
+                        }
+                      }
+                      return {
+                        playing: true,
+                        source: source,
+                        artist: xmlDoc.getElementsByTagName("artist")[0].childNodes[0].nodeValue,
+                        track: track.childNodes[0].nodeValue,
+                        album: xmlDoc.getElementsByTagName("album")[0].childNodes[0].nodeValue,
+                        art: xmlDoc.getElementsByTagName("art")[0].childNodes[0].nodeValue
+                      }
+                    })
+        }
+      }
+
+      customElements.define(SoundTouch.is, SoundTouch);
+    })();
+  </script>
+</dom-module>
