@@ -3,7 +3,8 @@
   "description": "Miroir A Reflet Connecté Et Ludique",
   "main": "index.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0-rc.2"
+    "polymer": "Polymer/polymer#^2.0.0-rc.2",
+    "moment-element": "^0.4.4"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#2.0-preview",
