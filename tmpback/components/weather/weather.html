@@ -1,0 +1,54 @@
+<dom-module id="weather-item">
+  <template>
+    <style>
+      :host > h1 {
+        text-align: center;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+
+      li {
+        display: inline-block;
+        margin-right: 25px;
+      }
+    </style>
+    <h1>Météo</h1>
+    <ul>
+      <template is="dom-repeat" items="[[numbersList]]" as="itemNumber">
+        <li>
+          <weather-icon-item api_key="{{api_key}}" city="{{city}}" weather_url="{{weather_url}}" item_number="{{itemNumber}}"></weather-icon-item>
+        </li>
+      </template>
+    </ul>
+  </template>
+  <link rel="import" href="weather-icon.html">
+  <script>
+    (function () {
+      class Weather extends Polymer.Element {
+        static get is () { return 'weather-item' }
+
+        static get properties () {
+          return {
+            api_key: String,
+            city: String,
+            numbersList: Array,
+            weather_url: String
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.numbersList = [0, 1, 2];
+        }
+      }
+
+      customElements.define(Weather.is, Weather);
+    })();
+  </script>
+</dom-module>
