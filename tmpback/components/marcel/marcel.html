@@ -9,6 +9,7 @@
 <link rel="import" href="/soundtouch/soundtouch.html">
 <link rel="import" href="/twitter/twitter.html">
 <link rel="import" href="/vlille/vlille.html">
+<link rel="import" href="/calendar/calendar.html">
 
 <dom-module id="marcel-item">
   <template>
@@ -52,10 +53,11 @@
 
       <div class="flex flex-column space-between text-align-right">
           <vlille-item stations_id="[[vlille_stations_id]]"></vlille-item>
-          <calendar></calendar>
+          <calendar-item url="[[calendar_url]]"></calendar-item>
           <div>
             <h1>Zenika</h1>
           </div>
+          <home></home>
       </div>
     </div>
   </template>
@@ -66,6 +68,7 @@
 
       static get properties () {
         return {
+          calendar_url: String,
           github_users: Array,
           github_client_id: String,
           github_client_secret: String,
