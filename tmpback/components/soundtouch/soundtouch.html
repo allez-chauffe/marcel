@@ -134,16 +134,10 @@
                       let track = xmlDoc.getElementsByTagName("track")[0];
                       let source = xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source");
                       if (!track) {
-                          if (source === "STANDBY") {
-                            return {
-                              playing: false,
-                              message: "STANDBY"
-                            }
-                          }
-                          return {
-                            playing: false,
-                            message: "STATUS OFF"
-                          }
+                        return {
+                          playing: false,
+                          message: source === 'STANDBY' ? "STANDBY" : "STATUS OFF"
+                        }
                       }
                       if (source === "BLUETOOTH") {
                         return {
