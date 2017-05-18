@@ -4,6 +4,14 @@
   <template>
     <style include="weather-icons"></style>
     <style>
+      :host {
+        position: relative;
+        display: block;
+        margin: 15px 0px;
+        top : 0;
+        left: 0;
+      }
+
       .flex {
         display: flex;
       }
@@ -17,6 +25,10 @@
         color: #c10d12;
         margin-bottom: 2px;
         font-size: 1em;
+      }
+
+      .weather_temp{
+        font-size: 1.2em;
       }
 
       .icon_content{
@@ -34,7 +46,7 @@
     </style>
     <div class="flex">
       <div class="icon_content">
-        <i class="wi wi-day-cloudy"></i>
+        <i class$="{{weather_icon}}"></i>
       </div>
       <div class="weather_info">
         <template is="dom-if" if="display_dt">
@@ -108,7 +120,7 @@
                 this._setWeatherType(res.list[this.item_number].weather[0].main);
 
                 let icon = this._getDayNight(res.list[this.item_number].dt * 1000) + this.icons[res.list[this.item_number].weather[0].id].icon;
-                this.wheather_icon = icon;
+                this.weather_icon = "wi wi-" + icon;
 
                 this.weather_date = new Date(res.list[this.item_number].dt * 1000);
               })
