@@ -68,7 +68,8 @@ let componentsList = [
                 { name: "Mairie de Lille", id: 64 },
                 { name: "Gare Lille Flandres", id: 25 },
                 { name: "Boulevard Louis XIV", id: 47 }
-            ]
+            ],
+            "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK"
         }
     }
 ];
