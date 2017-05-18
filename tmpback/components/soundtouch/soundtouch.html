@@ -129,10 +129,10 @@
           return fetch(this.url)
                     .then(res => res.text())
                     .then(res => {
-                      let parser = new DOMParser();
-                      let xmlDoc = parser.parseFromString(res, "text/xml");
-                      let track = xmlDoc.getElementsByTagName("track")[0];
-                      let source = xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source");
+                      const parser = new DOMParser();
+                      const xmlDoc = parser.parseFromString(res, "text/xml");
+                      const track = xmlDoc.getElementsByTagName("track")[0];
+                      const source = xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source");
                       if (!track) {
                         return {
                           playing: false,
