@@ -5,7 +5,7 @@
     <style include="shared-styles"></style>
     <style include="font-awesome"></style>
     <style>
-      :root {
+      :host {
         text-align: center;
       }
 
@@ -125,56 +125,40 @@
             })
         }
 
-        _playingBluetooth () {
-          return this.sound && this.sound.playing && this.sound.source === 'BLUETOOTH';
-        }
-
-        _playingNotBluetooth () {
-          console.log(this.sound)
-          return this.sound && this.sound.playing && this.sound.source !== 'BLUETOOTH';
-        }
-
-        _notPlaying () {
-          return this.sound && !this.sound.playing;
-        }
-
-        _powerOff () {
-          return this.sound && this.sound.playing;
-        }
-
         _getNowPlaying () {
           return fetch(this.url)
                     .then(res => res.text())
                     .then(res => {
                       let parser = new DOMParser();
                       let xmlDoc = parser.parseFromString(res, "text/xml");
-                      if (xmlDoc.getElementsByTagName("track")[0]) {
-                        if (xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source") === "BLUETOOTH") {
-                          return {
-                            playing: true,
-                            source: xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source"),
-                            track: xmlDoc.getElementsByTagName("stationName")[0].childNodes[0].nodeValue
+                      let track = xmlDoc.getElementsByTagName("track")[0];
+                      let source = xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source");
+                      if (!track) {
+                          if (source === "STANDBY") {
+                            return {
+                              playing: false,
+                              message: "STANDBY"
+                            }
                           }
-                        } else {
                           return {
-                            playing: true,
-                            source: xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source"),
-                            artist: xmlDoc.getElementsByTagName("artist")[0].childNodes[0].nodeValue,
-                            track: xmlDoc.getElementsByTagName("track")[0].childNodes[0].nodeValue,
-                            album: xmlDoc.getElementsByTagName("album")[0].childNodes[0].nodeValue,
-                            art: xmlDoc.getElementsByTagName("art")[0].childNodes[0].nodeValue
+                            playing: false,
+                            message: "STATUS OFF"
                           }
-                        }
-                      } else if (xmlDoc.getElementsByTagName("ContentItem")[0].getAttribute("source") === "STANDBY") {
+                      }
+                      if (source === "BLUETOOTH") {
                         return {
-                          playing: false,
-                          message: "STANDBY"
+                          playing: true,
+                          source: source,
+                          track: xmlDoc.getElementsByTagName("stationName")[0].childNodes[0].nodeValue
                         }
-                      } else {
-                        return {
-                          playing: false,
-                          message: "STATUS OFF"
-                        }
+                      }
+                      return {
+                        playing: true,
+                        source: source,
+                        artist: xmlDoc.getElementsByTagName("artist")[0].childNodes[0].nodeValue,
+                        track: track.childNodes[0].nodeValue,
+                        album: xmlDoc.getElementsByTagName("album")[0].childNodes[0].nodeValue,
+                        art: xmlDoc.getElementsByTagName("art")[0].childNodes[0].nodeValue
                       }
                     })
         }
