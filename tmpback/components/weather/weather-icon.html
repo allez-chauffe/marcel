@@ -39,7 +39,7 @@
       <div class="weather_info">
         <template is="dom-if" if="display_dt">
           <div class="weather_dt">
-            {{weather_date}}
+            <moment-element datetime="{{weather_date}}" output-format="HH:mm"></moment-element>
           </div>
         </template>
         <div class="weather_temp">
@@ -110,13 +110,7 @@
                 let icon = this._getDayNight(res.list[this.item_number].dt * 1000) + this.icons[res.list[this.item_number].weather[0].id].icon;
                 this.wheather_icon = icon;
 
-                const date = new Date(res.list[this.item_number].dt * 1000);
-                let dateString = date.getHours() + ':';
-                if (date.getMinutes() < 10) {
-                  dateString += '0';
-                }
-                dateString += date.getMinutes();
-                this.weather_date = dateString;
+                this.weather_date = new Date(res.list[this.item_number].dt * 1000);
               })
               .catch(err => console.log(err))
         }
@@ -132,10 +126,7 @@
         }
 
         _setWeatherType (type) {
-          if (!type) {
-            type = this._randomType();
-          }
-          this.current_weather_type = type;
+          this.current_weather_type = type || this._randomType();
         }
 
         _getDayNight (date) {

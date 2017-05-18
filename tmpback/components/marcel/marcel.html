@@ -8,6 +8,7 @@
 <link rel="import" href="/github/github.html">
 <link rel="import" href="/twitter/twitter.html">
 <link rel="import" href="/vlille/vlille.html">
+<link rel="import" href="/weather/weather.html">
 
 <dom-module id="marcel-item">
   <template>
@@ -41,7 +42,7 @@
       </div>
 
       <div class="flex flex-column space-between flex-full">
-          <forecast></forecast>
+          <weather-item weather_url="[[weather_url]]" city="[[weather_city]]" api_key="[[weather_api_key]]"></weather-item>
 
           <div class="flex flex-full space-around">
               <twitter-item api="[[twitter_api]]"></twitter-item>
@@ -69,7 +70,10 @@
           message_text1: String, 
           message_text2: String,
           twitter_api: String,
-          vlille_stations_id: Array
+          vlille_stations_id: Array,
+          weather_api_key: String,
+          weather_city: String,
+          weather_url: String
         }
       }
 

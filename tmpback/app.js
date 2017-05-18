@@ -68,7 +68,10 @@ let componentsList = [
                 { name: "Mairie de Lille", id: 64 },
                 { name: "Gare Lille Flandres", id: 25 },
                 { name: "Boulevard Louis XIV", id: 47 }
-            ]
+            ],
+            "weather_api_key": "FREE_OPENWEATHER_KEY",
+            "weather_city": "Lille,Fr",
+            "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5"
         }
     }
 ];
