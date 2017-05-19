@@ -6,6 +6,7 @@
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.4",
+    "react-toolbox": "^2.0.0-beta.8",
     "redux": "^3.6.0",
     "redux-actions": "^2.0.3",
     "redux-logger": "^3.0.1",
@@ -15,12 +16,28 @@
   "devDependencies": {
     "flow-bin": "^0.46.0",
     "flow-typed": "^2.1.2",
-    "react-scripts": "0.9.5"
+    "react-scripts": "0.9.5",
+    "react-toolbox-themr": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "toolbox": "react-toolbox-themr"
+  },
+  "reactToolbox": {
+    "include": [
+      "BUTTON",
+      "DATE_PICKER"
+    ],
+    "customProperties": {
+      "animation-duration": "0.3s",
+      "color-accent": "var(--palette-pink-a200)",
+      "color-accent-dark": "var(--palette-pink-700)",
+      "color-primary-contrast": "var(--color-dark-contrast)",
+      "color-accent-contrast": "var(--color-dark-contrast)"
+    },
+    "output": "assets/react-toolbox"
   }
 }
