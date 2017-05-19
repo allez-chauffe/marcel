@@ -1,8 +1,8 @@
 "use strict";
 
-let express = require('express');
-let app = express();
-let http = require('http').Server(app);
+const express = require('express');
+const app = express();
+const http = require('http').Server(app);
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -24,19 +24,28 @@ app.get('/', function (req, res) {
  * Server itself
  * @type {http.Server}
  */
-let server = app.listen(8080, function () {
+const server = app.listen(8080, function () {
     //print few information about the server
-    let host = server.address().address;
-    let port = server.address().port;
+    const host = server.address().address;
+    const port = server.address().port;
     console.log("Server running and listening @ " + host + ":" + port);
 });
+const io = require('socket.io')(server);
+
+io.on('connection', socket => {
+    socket.emit('test');
+})
 
 /** list of components to be loaded */
-let componentsList = {
+const componentsList = {
     "styles": [
         "css/style.css",
         "css/font-awesome.min.css",
         "css/weather-icons.min.css"
+    ],
+    "scripts": [
+        "socket.io/socket.io.js",
+        "js/connect-socketio.js"
     ],
     "components": [
         {

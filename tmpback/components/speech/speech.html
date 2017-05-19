@@ -1,0 +1,34 @@
+<link rel="import" href="/shared-styles/shared-styles.html">
+
+<dom-module id="speech-item">
+  <template>
+      <style include="shared-styles"></style>
+      <style>
+        :host {
+            text-align: center;
+        }
+      </style>
+    <h1>{{message}}</h1>
+  </template>
+
+  <script>
+    class Speech extends Polymer.Element {
+      static get is () { return 'speech-item' }
+
+      static get properties () {
+          return {
+              message: String
+          }
+      }
+
+      connectedCallback () {
+        super.connectedCallback();
+
+        this.message = 'Je vous écoute';
+      }
+
+    }
+
+    customElements.define(Speech.is, Speech);
+  </script>
+</dom-module>

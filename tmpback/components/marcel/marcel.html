@@ -11,6 +11,7 @@
 <link rel="import" href="/vlille/vlille.html">
 <link rel="import" href="/weather/weather.html">
 <link rel="import" href="/calendar/calendar.html">
+<link rel="import" href="/speech/speech.html">
 
 <dom-module id="marcel-item">
   <template>
@@ -49,7 +50,7 @@
 
       <div class="flex flex-column space-between flex-full">
           <weather-item weather_url="[[weather_url]]" city="[[weather_city]]" api_key="[[weather_api_key]]"></weather-item>
-
+          <speech-item></speech-item>
           <div class="flex flex-full space-around">
               <twitter-item api="[[twitter_api]]"></twitter-item>
               <soundtouch-item url="[[soundtouch_url]]"></soundtouch-item>
