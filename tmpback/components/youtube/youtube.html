@@ -1,0 +1,62 @@
+<link rel="import" href="/bower_components/google-youtube/google-youtube.html">
+<dom-module id="youtube-item">
+  <template>
+    <style>
+      :host {
+        display: none;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        left: 0px;
+        bottom: 0px;
+        background-color: black;
+      }
+    </style>
+    <google-youtube video-id="[[video_id]]" autoplay="1" width="100%" height="100%" controls="0"></google-youtube>
+  </template>
+  <script>
+    (() => {
+      class Youtube extends Polymer.Element {
+        static get is() { return 'youtube-item' }
+
+        static get properties() {
+          return {
+            title: String,
+            video_id: String
+          }
+        }
+
+        connectedCallback() {
+          super.connectedCallback();
+          this._launchVideo();
+          this._stopVideo()
+        }
+
+        _launchVideo () {
+          this.video_id = 'M7lc1UVf-VE';
+          const elements = document.getElementById('components').childNodes;
+          elements.forEach(element => {
+            if (element.nodeName != 'YOUTUBE-ITEM') {
+              element.style.visibility = 'hidden';
+            }
+          })
+          this.style.display = 'block';
+        }
+
+        _stopVideo () {
+          this.video_id = '';
+          const elements = document.getElementById('components').childNodes;
+          elements.forEach(element => {
+            if (element.nodeName != 'YOUTUBE-ITEM') {
+              element.style.visibility = 'initial';
+            }
+          })
+
+          this.style.display = 'none';
+        }
+      }
+
+      customElements.define(Youtube.is, Youtube);
+    })();
+  </script>
+</dom-module>

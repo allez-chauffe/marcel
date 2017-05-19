@@ -1,0 +1,21 @@
+{
+  "name": "marcel-tmpback",
+  "description": "Temporary backend to serve components list and components",
+  "main": "app.js",
+  "authors": [
+    "Sehsyha"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/Zenika/MARCEL",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "google-youtube": "^1.3.0",
+    "polymer": "^2.0.0"
+  }
+}

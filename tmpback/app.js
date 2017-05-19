@@ -70,6 +70,11 @@ const componentsList = {
     ],
     "components": [
         {
+            "componentName": "youtube",
+            "eltName": "youtube-item",
+            "files": "youtube.html"
+        },
+        {
             "componentName": "marcel",
             "eltName": "marcel-item",
             "files": "marcel.html",
