@@ -66,9 +66,8 @@
       }
 
       _onHotWord () {
-        // this.speech_recognition.start();
+        this.speech_recognition.start();
         this.message = 'Je vous écoute';
-        socket.emit('speech', {"message": "Montre moi une vidéo de chat"})
       }
 
     }
