@@ -9,6 +9,7 @@
         }
       </style>
     <h1>{{message}}</h1>
+    <h2>{{request}}</h2>
   </template>
 
   <script>
@@ -17,14 +18,57 @@
 
       static get properties () {
           return {
-              message: String
+            default_message: String,
+            message: String,
+            speech_recognition: Object
           }
       }
 
       connectedCallback () {
         super.connectedCallback();
 
+        this.message = this.default_message;
+
+        this._setSpeechRecognition();
+        socket.on('hotword', () => this._onHotWord());
+      }
+
+      _setSpeechRecognition () {
+        // Initialize speech recognition
+        this.speech_recognition = new webkitSpeechRecognition();
+        this.speech_recognition.continuous = true;
+        this.speech_recognition.interimResults = true;
+        this.speech_recognition.lang = 'fr-FR';
+        this.speech_recognition.maxAlternatives = 1;
+
+        // Set method when speech is recognized
+        this.speech_recognition.onresult = speech => {
+          let term = '';
+          if (speech.results) {
+            var result = speech.results[speech.resultIndex];
+            var transcript = result[0].transcript;
+            if (result.isFinal ) {
+              if (result[0].confidence < 0.3) {
+                console.log('Unrecognized result');
+              } else {
+                this.request = transcript.trim();
+                socket.emit('speech', {"message": transcript.trim()})
+                this.speech_recognition.stop();
+              }
+            }
+          }
+        }
+
+        // Display any error
+        this.speech_recognition.onerror = error => {
+          console.log(error);
+        };
+      }
+
+      _onHotWord () {
+        // this.speech_recognition.start();
         this.message = 'Je vous écoute';
+        socket.emit('speech', {"message": "Montre moi une vidéo de chat"})
       }
 
     }

@@ -33,7 +33,9 @@ const server = app.listen(8080, function () {
 const io = require('socket.io')(server);
 
 io.on('connection', socket => {
-    socket.emit('test');
+    setTimeout(() => socket.emit('hotword'), 2000);
+    
+    socket.on('speech', (message) => console.log(message))
 })
 
 /** list of components to be loaded */
@@ -88,7 +90,8 @@ const componentsList = {
                 "weather_api_key": "FREE_OPENWEATHER_KEY",
                 "weather_city": "Lille,Fr",
                 "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5",
-                "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK"
+                "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
+                "speech_default_message": "Bonjour à tous, je suis MARCEL !"
             }
         }
     ]
