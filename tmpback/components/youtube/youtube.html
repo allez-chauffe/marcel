@@ -12,7 +12,7 @@
         background-color: black;
       }
     </style>
-    <google-youtube video-id="[[video_id]]" autoplay="1" width="100%" height="100%" controls="0"></google-youtube>
+    <google-youtube id="googleYoutube" video-id="[[video_id]]" autoplay="1" width="100%" height="100%" controls="0"></google-youtube>
   </template>
   <script>
     (() => {
@@ -28,12 +28,42 @@
 
         connectedCallback() {
           super.connectedCallback();
-          this._launchVideo();
-          this._stopVideo()
+          socket.on('youtube', (request) => this._handleRequest(request));
         }
 
-        _launchVideo () {
-          this.video_id = 'M7lc1UVf-VE';
+        _handleRequest (req) {
+          switch (req.type) {
+            case 'search':
+              this._searchVideo(req.content);
+              break;
+            case 'pause':
+              this._pauseVideo();
+              break;
+            case 'play':
+              this._playVideo();
+              break;
+            case 'stop':
+              this._stopVideo();
+              break;
+          }
+        }
+
+        _searchVideo (req) {
+          return fetch('https://www.googleapis.com/youtube/v3/search?q=' + req + '&part=snippet&key=AIzaSyAJk1xUI72YYfBMgEc84gjHUX-k2AN6-B0')
+                    .then(res => res.json())
+                    .then(res => this._launchVideo(res.items[0].id.videoId))
+        }
+
+        _pauseVideo () {
+          this.$.googleYoutube.pause();
+        }
+
+        _playVideo () {
+          this.$.googleYoutube.play();
+        }
+
+        _launchVideo (videoId) {
+          this.video_id = videoId;
           const elements = document.getElementById('components').childNodes;
           elements.forEach(element => {
             if (element.nodeName != 'YOUTUBE-ITEM') {

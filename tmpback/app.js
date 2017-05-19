@@ -50,6 +50,10 @@ const io = require('socket.io')(server);
 
 io.on('connection', socket => {
     socket.on('speech', (message) => console.log(message))
+    setTimeout(() => socket.emit('youtube', {"type": "search", "content": "chat"}), 2000);
+    setTimeout(() => socket.emit('youtube', {"type": "pause"}), 4000);
+    setTimeout(() => socket.emit('youtube', {"type": "play"}), 6000);
+    setTimeout(() => socket.emit('youtube', {"type": "stop"}), 8000);
 })
 
 detector.on('hotword', (index, hotword) => {
