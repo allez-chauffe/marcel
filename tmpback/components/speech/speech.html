@@ -49,9 +49,8 @@
             var transcript = result[0].transcript;
             if (result.isFinal ) {
               if (result[0].confidence < 0.3) {
-                console.log('Unrecognized result');
+                this.message = "Je n'ai pas compris, veuillez répeter";
               } else {
-                this.request = transcript.trim();
                 socket.emit('speech', {"message": transcript.trim()})
                 this.speech_recognition.stop();
               }
