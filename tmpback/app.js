@@ -57,6 +57,12 @@ detector.on('hotword', (index, hotword) => {
     io.sockets.emit('hotword');
 })
 
+const mic = record.start({
+  threshold: 0
+})
+
+mic.pipe(detector)
+
 /** list of components to be loaded */
 const componentsList = {
     "styles": [
