@@ -52,6 +52,7 @@
           return fetch('https://www.googleapis.com/youtube/v3/search?q=' + req + '&part=snippet&key=AIzaSyAJk1xUI72YYfBMgEc84gjHUX-k2AN6-B0')
                     .then(res => res.json())
                     .then(res => this._launchVideo(res.items[0].id.videoId))
+                    .catch(err => console.log(err));
         }
 
         _pauseVideo () {
@@ -64,12 +65,12 @@
 
         _launchVideo (videoId) {
           this.video_id = videoId;
-          const elements = document.getElementById('components').childNodes;
-          elements.forEach(element => {
-            if (element.nodeName != 'YOUTUBE-ITEM') {
-              element.style.visibility = 'hidden';
-            }
-          })
+          // Hide every other components
+          document.getElementById('components').childNodes
+            .filter(el => el.nodeName != 'YOUTUBE-ITEM')
+            .forEach(el => el.style.visibility = 'hidden');
+
+          // Show this component in full screen
           this.style.display = 'block';
         }
 
