@@ -13,5 +13,10 @@
   "license": "ISC",
   "devDependencies": {
     "express": "4.15.2"
+  },
+  "dependencies": {
+    "node-record-lpcm16": "^0.3.0",
+    "snowboy": "^1.2.0",
+    "socket.io": "^2.0.1"
   }
 }

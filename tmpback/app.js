@@ -1,8 +1,26 @@
 "use strict";
 
-let express = require('express');
-let app = express();
-let http = require('http').Server(app);
+const express = require('express');
+const app = express();
+const record = require('node-record-lpcm16')
+const snowboy = require('snowboy');
+const Models = snowboy.Models;
+const Detector = snowboy.Detector;
+const http = require('http').Server(app);
+
+const models = new Models();
+
+models.add({
+    file: 'resources/snowboy.umdl',
+    sensitivity: '0.8',
+    hotwords: 'snowboy'
+})
+
+const detector = new Detector({
+    resource: 'resources/common.res',
+    audioGain: 2.0,
+    models
+})
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -14,9 +32,7 @@ app.use(express.static('./public/'));
 app.use(express.static('./components/'));
 app.use(express.static('./node_modules/'));
 
-
-
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     res.sendfile("public/index.html");
 });
 
@@ -24,19 +40,39 @@ app.get('/', function (req, res) {
  * Server itself
  * @type {http.Server}
  */
-let server = app.listen(8080, function () {
+const server = app.listen(8080, () => {
     //print few information about the server
-    let host = server.address().address;
-    let port = server.address().port;
+    const host = server.address().address;
+    const port = server.address().port;
     console.log("Server running and listening @ " + host + ":" + port);
 });
+const io = require('socket.io')(server);
+
+io.on('connection', socket => {
+    socket.on('speech', (message) => console.log(message))
+})
+
+detector.on('hotword', (index, hotword) => {
+    console.log('hotword detected');
+    io.sockets.emit('hotword');
+})
+
+const mic = record.start({
+  threshold: 0
+})
+
+mic.pipe(detector)
 
 /** list of components to be loaded */
-let componentsList = {
+const componentsList = {
     "styles": [
         "css/style.css",
         "css/font-awesome.min.css",
         "css/weather-icons.min.css"
+    ],
+    "scripts": [
+        "socket.io/socket.io.js",
+        "js/connect-socketio.js"
     ],
     "components": [
         {
@@ -79,7 +115,8 @@ let componentsList = {
                 "weather_api_key": "FREE_OPENWEATHER_KEY",
                 "weather_city": "Lille,Fr",
                 "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5",
-                "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK"
+                "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
+                "speech_default_message": "Bonjour à tous, je suis MARCEL !"
             }
         }
     ]
