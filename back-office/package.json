@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "lodash": "^4.17.4",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.4",
@@ -29,7 +30,10 @@
   "reactToolbox": {
     "include": [
       "BUTTON",
-      "DATE_PICKER"
+      "DATE_PICKER",
+      "APP_BAR",
+      "INPUT",
+      "LIST"
     ],
     "customProperties": {
       "animation-duration": "0.3s",
