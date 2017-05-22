@@ -7,9 +7,20 @@
         :host {
             text-align: center;
         }
+
+        #loader {
+          margin-top: 20px;
+          width: 9%;
+          height: auto;
+        }
+
+        .hide {
+          display: none;
+        }
       </style>
     <h1>{{message}}</h1>
     <h2>{{request}}</h2>
+    <img src="assets/loader.jpg" alt="" id="loader"/>
   </template>
 
   <script>
@@ -28,6 +39,7 @@
         super.connectedCallback();
 
         this.message = this.default_message;
+        this.$.loader.classList.add('hide');
 
         this._setSpeechRecognition();
         socket.on('hotword', () => this._onHotWord());
@@ -43,15 +55,16 @@
 
         // Set method when speech is recognized
         this.speech_recognition.onresult = speech => {
-          let term = '';
           if (speech.results) {
-            var result = speech.results[speech.resultIndex];
-            var transcript = result[0].transcript;
+            const result = speech.results[speech.resultIndex];
+            const transcript = result[0].transcript;
             if (result.isFinal ) {
               if (result[0].confidence < 0.3) {
-                this.message = "Je n'ai pas compris, veuillez répeter";
+                console.log('Unrecognized result');
               } else {
+                this.request = transcript.trim();
                 socket.emit('speech', {"message": transcript.trim()})
+                this.$.loader.classList.add('hide');
                 this.speech_recognition.stop();
               }
             }
@@ -67,6 +80,7 @@
       _onHotWord () {
         this.speech_recognition.start();
         this.message = 'Je vous écoute';
+        this.$.loader.classList.remove('hide');
       }
 
     }

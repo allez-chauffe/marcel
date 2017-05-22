@@ -20,9 +20,9 @@ models.add({
 })
 
 const detector = new Detector({
-  resource: 'resources/common.res',
-  audioGain: 2.0,
-  models
+    resource: 'resources/common.res',
+    audioGain: 2.0,
+    models
 })
 
 app.use((req, res, next) => {
@@ -130,6 +130,13 @@ const componentsList = {
       }
     }
   ]
+})
+
+const mic = record.start({
+  threshold: 0
+})
+
+mic.pipe(detector)
 };
 
 /**
