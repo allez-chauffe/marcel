@@ -130,14 +130,13 @@ const componentsList = {
       }
     }
   ]
-})
+}
 
 const mic = record.start({
   threshold: 0
 })
 
-mic.pipe(detector)
-};
+mic.pipe(detector);
 
 /**
  * Get a list of JSON for all registered components
