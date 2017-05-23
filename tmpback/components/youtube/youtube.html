@@ -66,9 +66,12 @@
         _launchVideo (videoId) {
           this.video_id = videoId;
           // Hide every other components
-          document.getElementById('components').childNodes
-            .filter(el => el.nodeName != 'YOUTUBE-ITEM')
-            .forEach(el => el.style.visibility = 'hidden');
+          const elements = document.getElementById('components').childNodes
+          elements.forEach(element => {
+            if (element.nodeName != 'YOUTUBE-ITEM') {
+              element.style.visibility = 'hidden';
+            }
+          })
 
           // Show this component in full screen
           this.style.display = 'block';
@@ -83,6 +86,7 @@
             }
           })
 
+          // Hide this component
           this.style.display = 'none';
         }
       }

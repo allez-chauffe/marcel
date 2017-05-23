@@ -14,9 +14,9 @@ const sessionId = 'marcel';
 const models = new Models();
 
 models.add({
-  file: 'resources/snowboy.umdl',
-  sensitivity: '0.8',
-  hotwords: 'snowboy'
+  file: 'resources/marcel.pmdl',
+  sensitivity: '0.5',
+  hotwords: 'marcel'
 })
 
 const detector = new Detector({
