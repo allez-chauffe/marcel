@@ -1,0 +1,7 @@
+.Grid .react-grid-layout, .Grid .react-grid-item {
+  border: 1px solid black
+}
+
+.Grid {
+  flex: 1;
+}
