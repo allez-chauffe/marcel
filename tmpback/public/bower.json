@@ -16,6 +16,11 @@
   ],
   "dependencies": {
     "google-youtube": "^1.3.0",
+    "polymer": "^2.0.0",
+    "moment-element": "^0.4.4"
+  },
+  "resolutions": {
+    "webcomponentsjs": "^v1.0.0",
     "polymer": "^2.0.0"
   }
 }
