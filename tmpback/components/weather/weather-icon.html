@@ -119,7 +119,7 @@
 
                 this._setWeatherType(res.list[this.item_number].weather[0].main);
 
-                let icon = this._getDayNight(res.list[this.item_number].dt * 1000) + this.icons[res.list[this.item_number].weather[0].id].icon;
+                let icon = 'day-' + this.icons[res.list[this.item_number].weather[0].id].icon;
                 this.weather_icon = "wi wi-" + icon;
 
                 this.weather_date = new Date(res.list[this.item_number].dt * 1000);
