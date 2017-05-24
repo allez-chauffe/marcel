@@ -31,7 +31,8 @@
           return {
             default_message: String,
             message: String,
-            speech_recognition: Object
+            speech_recognition: Object,
+            started: Boolean
           }
       }
 
@@ -39,6 +40,7 @@
         super.connectedCallback();
 
         this.message = this.default_message;
+        this.started = false;
         this.$.loader.classList.add('hide');
 
         this._setSpeechRecognition();
@@ -65,6 +67,7 @@
                 this.request = transcript.trim();
                 socket.emit('speech', {"message": transcript.trim()})
                 this.$.loader.classList.add('hide');
+                this.started = false;
                 this.speech_recognition.stop();
               }
             }
@@ -78,10 +81,12 @@
       }
 
       _onHotWord () {
-        this.speech_recognition.start();
-        this.message = 'Je vous écoute';
-        this.$.loader.style.display = 'inline-block';
-        this.$.loader.classList.remove('hide');
+        if (!this.started) {
+          this.started = true;
+          this.speech_recognition.start();
+          this.message = 'Je vous écoute';
+          this.$.loader.classList.remove('hide');
+        }
       }
 
     }
