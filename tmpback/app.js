@@ -8,14 +8,15 @@ const Models = snowboy.Models;
 const Detector = snowboy.Detector;
 const http = require('http').Server(app);
 const ApiAi = require('apiai-promise')
-const apiaitoken = require('./config.js').apiaitoken;
-const apiai = ApiAi(apiaitoken);
+const config = require('./config.js');
+const apiai = ApiAi(config.apiaitoken);
 const sessionId = 'marcel';
 const models = new Models();
+const ip = require("ip");
 
 models.add({
   file: 'resources/marcel.pmdl',
-  sensitivity: '0.5',
+  sensitivity: '0.2',
   hotwords: 'marcel'
 })
 
@@ -90,7 +91,7 @@ const componentsList = {
       "eltName": "marcel-item",
       "files": "marcel.html",
       "propValues": {
-        "logo_url": "assets/zenika.png",
+        "logo_url": "http://" + ip.address() + ":8080/logo/zenika.png",
         "message_text1": "Bienvenue",
         "message_text2": "à Zenika Lille",
         "github_users": [
@@ -111,8 +112,8 @@ const componentsList = {
           'Sehsyha',
           'P0ppoff'
         ],
-        "github_client_id": "27b62f039b44ddc08fdf",
-        "github_client_secret": "7b14f465112e87267a72c02d4c3fc58925412dbd",
+        "github_client_id": config.github_client_id,
+        "github_client_secret": config.github_client_secret,
         "twitter_api": "http://10.0.10.63:8090/api/v1/twitter/timeline",
         "vlille_stations_id": [
           { name: "Rihour", id: 10 },
@@ -126,15 +127,14 @@ const componentsList = {
         "weather_city": "Lille,Fr",
         "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5",
         "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
-        "speech_default_message": "Bonjour à tous, je suis MARCEL !"
+        "speech_default_message": "Bonjour à tous, je suis MARCEL !",
+        "speech_loader_url": "http://" + ip.address() + ":8080/speech/loader.jpg"
       }
     }
   ]
 }
 
-const mic = record.start({
-  threshold: 0
-})
+const mic = record.start(config.microphone);
 
 mic.pipe(detector);
 

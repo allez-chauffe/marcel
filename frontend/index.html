@@ -9,5 +9,11 @@
   <body onload="loadComponents()">
     <section id="components"></section>
     <script src="bower_components/polymer_dynamic_components/polymer_asyncComponentLoader.js"></script>
+    <script>
+      function loadComponents () {
+        polymerAsyncLoader = new Polymer_AsyncComponentLoader('components', 'http://localhost:8080');
+        polymerAsyncLoader.load();
+      }
+    </script>
   </body>
 </html>

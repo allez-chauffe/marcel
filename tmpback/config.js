@@ -1,1 +1,0 @@
-module.exports.apiaitoken = 'ad40bf7cfc36486ebe0cd284c76931f4';

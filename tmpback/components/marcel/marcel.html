@@ -50,7 +50,7 @@
 
       <div class="flex flex-column space-between flex-full">
           <weather-item weather_url="[[weather_url]]" city="[[weather_city]]" api_key="[[weather_api_key]]"></weather-item>
-          <speech-item default_message="[[speech_default_message]]"></speech-item>
+          <speech-item default_message="[[speech_default_message]]" loader_url="[[speech_loader_url]]"></speech-item>
           <div class="flex flex-full space-around">
               <twitter-item api="[[twitter_api]]"></twitter-item>
               <soundtouch-item url="[[soundtouch_url]]"></soundtouch-item>
@@ -82,6 +82,7 @@
           message_text2: String,
           soundtouch_url: String,
           speech_default_message: String,
+          speech_loader_url: String,
           twitter_api: String,
           vlille_stations_id: Array,
           weather_api_key: String,
