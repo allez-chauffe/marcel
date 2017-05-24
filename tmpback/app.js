@@ -84,7 +84,11 @@ const componentsList = {
     {
       "componentName": "devfest",
       "eltName": "devfest-item",
-      "files": "devfest.html"
+      "files": "devfest.html",
+      "propValues": {
+        "speakers_url": "http://localhost:8080/devfest/speakers.json",
+        "talks_url": "http://localhost:8080/devfest/talks.json"
+      }
     },
     {
       "componentName": "youtube",

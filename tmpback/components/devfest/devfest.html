@@ -3,6 +3,12 @@
   <template>
     <style include="shared-styles"></style>
     <h1>Devfest</h1>
+    <template is="dom-repeat" items="[[talks]]" as="talk">
+      <!--{{talk.title}}<br />-->
+    </template>
+    <template is="dom-repeat" items="[[speakers]]" as="speaker">
+      {{speaker.name}}<br />
+    </template>
   </template>
 
   <script>
@@ -12,7 +18,10 @@
 
         static get properties() {
           return {
-            talks: Array
+            speakers: Array,
+            speakers_url: String,
+            talks: Array,
+            talks_url: String
           }
         }
 
@@ -20,12 +29,19 @@
           super.connectedCallback();
 
           this._fetchDevfestTalks();
+          this._fetchDevfestSpeakers();
         }
 
         _fetchDevfestTalks () {
-          fetch('http://localhost:8080/devfest/talks.json')
+          fetch(this.talks_url)
             .then(res => res.json())
-            .then(res => console.log(res));
+            .then(res => this.talks = res);
+        }
+
+        _fetchDevfestSpeakers () {
+          fetch(this.speakers_url)
+            .then(res => res.json())
+            .then(res => this.speakers = res);  
         }
       }
 
