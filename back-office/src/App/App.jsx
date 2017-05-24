@@ -2,15 +2,15 @@
 import React, { Component } from 'react'
 import AppBar from 'react-toolbox/lib/app_bar/AppBar'
 
-import '../../assets/react-toolbox/theme.css'
+import '../assets/react-toolbox/theme.css'
 import ThemeProvider from 'react-toolbox/lib/ThemeProvider'
-import theme from '../../assets/react-toolbox/theme.js'
+import theme from '../assets/react-toolbox/theme.js'
 
-import { MainScreen } from '../MainScreen'
+import MainScreen from '../MainScreen'
 
 import './App.css'
 
-export class App extends Component {
+class App extends Component {
   render() {
     return (
       <ThemeProvider theme={theme}>
@@ -29,3 +29,5 @@ export class App extends Component {
     )
   }
 }
+
+export default App

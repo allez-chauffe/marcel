@@ -19,7 +19,7 @@
   "devDependencies": {
     "flow-bin": "^0.46.0",
     "flow-typed": "^2.1.2",
-    "react-scripts": "0.9.5",
+    "react-scripts": "1.0.5",
     "react-toolbox-themr": "^1.0.2"
   },
   "scripts": {
@@ -44,6 +44,6 @@
       "color-primary-contrast": "var(--color-dark-contrast)",
       "color-accent-contrast": "var(--color-dark-contrast)"
     },
-    "output": "assets/react-toolbox"
+    "output": "src/assets/react-toolbox"
   }
 }
