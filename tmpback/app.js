@@ -82,6 +82,11 @@ const componentsList = {
   ],
   "components": [
     {
+      "componentName": "devfest",
+      "eltName": "devfest-item",
+      "files": "devfest.html"
+    },
+    {
       "componentName": "youtube",
       "eltName": "youtube-item",
       "files": "youtube.html"

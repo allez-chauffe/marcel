@@ -1,0 +1,35 @@
+<link rel="import" href="/shared-styles/shared-styles.html">
+<dom-module id="devfest-item">
+  <template>
+    <style include="shared-styles"></style>
+    <h1>Devfest</h1>
+  </template>
+
+  <script>
+    (() => {
+      class Devfest extends Polymer.Element {
+        static get is() { return 'devfest-item' }
+
+        static get properties() {
+          return {
+            talks: Array
+          }
+        }
+
+        connectedCallback() {
+          super.connectedCallback();
+
+          this._fetchDevfestTalks();
+        }
+
+        _fetchDevfestTalks () {
+          fetch('http://localhost:8080/devfest/talks.json')
+            .then(res => res.json())
+            .then(res => console.log(res));
+        }
+      }
+
+      customElements.define(Devfest.is, Devfest);
+    })();
+  </script>
+</dom-module>
