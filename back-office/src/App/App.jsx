@@ -10,7 +10,7 @@ import MainScreen from '../MainScreen'
 
 import './App.css'
 
-class App extends Component {
+export default class App extends Component {
   render() {
     return (
       <ThemeProvider theme={theme}>
@@ -29,5 +29,3 @@ class App extends Component {
     )
   }
 }
-
-export default App
