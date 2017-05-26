@@ -12,6 +12,7 @@
 .MainScreen .main-panel {
   flex: 1;
   padding: 1em 3em 1em 3em;
+  display: flex;
 }
 
 .MainScreen .left-side-panel {

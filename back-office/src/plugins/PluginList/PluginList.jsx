@@ -11,7 +11,7 @@ type Plugin = {
   icon: string,
 }
 
-export class PluginList extends React.Component {
+export default class PluginList extends React.Component {
   props: { plugins: Plugin[] }
   state = { filter: '', regexp: /.*/ }
 
