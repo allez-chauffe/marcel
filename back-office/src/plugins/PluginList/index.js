@@ -1,2 +1,2 @@
 // @flow
-export * from './PluginList'
+export { default } from './PluginList'

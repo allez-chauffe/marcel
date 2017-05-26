@@ -7,7 +7,7 @@ import { chain } from 'lodash'
 import { SearchField } from '../../common'
 import type { Plugin } from '../plugins.type'
 
-export class PluginList extends React.Component {
+export default class PluginList extends React.Component {
   props: { plugins: Plugin[] }
   state = { filter: '', regexp: /.*/ }
 

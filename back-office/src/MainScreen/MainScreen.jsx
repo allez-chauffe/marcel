@@ -4,6 +4,8 @@ import { range } from 'lodash'
 import { PluginList, PluginProps } from '../plugins'
 import './MainScreen.css'
 
+import { Dashboard } from '../grid'
+
 //TODO Remove mocked data
 const availablePlugins = range(20).map(i => ({
   name: `Plugin ${i}`,
@@ -17,16 +19,18 @@ const availablePlugins = range(20).map(i => ({
   ],
 }))
 
-export const MainScreen = () => (
+const MainScreen = () => (
   <div className="MainScreen">
     <div className="left-side-panel">
       <PluginList plugins={availablePlugins} />
     </div>
     <div className="main-panel">
-      main-panel
+      <Dashboard />
     </div>
     <div className="right-side-panel">
       <PluginProps plugin={availablePlugins[0]} />
     </div>
   </div>
 )
+
+export default MainScreen
