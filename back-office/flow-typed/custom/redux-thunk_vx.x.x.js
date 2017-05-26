@@ -12,49 +12,47 @@
  * community by sending a pull request to:
  * https://github.com/flowtype/flow-typed
  */
+import type { Middleware } from 'redux'
+import { State, Action } from '../../src/store/types'
 
 declare module 'redux-thunk' {
-  declare module.exports: any;
-}
+  declare module.exports: Middleware<State, Action>
 
-/**
+  /**
  * We include stubs for each file inside this npm package in case you need to
  * require those files directly. Feel free to delete any files that aren't
  * needed.
  */
+}
 declare module 'redux-thunk/dist/redux-thunk' {
-  declare module.exports: any;
+  declare module.exports: any
 }
-
 declare module 'redux-thunk/dist/redux-thunk.min' {
-  declare module.exports: any;
+  declare module.exports: any
 }
-
 declare module 'redux-thunk/es/index' {
-  declare module.exports: any;
+  declare module.exports: any
 }
-
 declare module 'redux-thunk/lib/index' {
-  declare module.exports: any;
+  declare module.exports: any
 }
-
 declare module 'redux-thunk/src/index' {
-  declare module.exports: any;
-}
+  declare module.exports: any
 
-// Filename aliases
+  // Filename aliases
+}
 declare module 'redux-thunk/dist/redux-thunk.js' {
-  declare module.exports: $Exports<'redux-thunk/dist/redux-thunk'>;
+  declare module.exports: $Exports<'redux-thunk/dist/redux-thunk'>
 }
 declare module 'redux-thunk/dist/redux-thunk.min.js' {
-  declare module.exports: $Exports<'redux-thunk/dist/redux-thunk.min'>;
+  declare module.exports: $Exports<'redux-thunk/dist/redux-thunk.min'>
 }
 declare module 'redux-thunk/es/index.js' {
-  declare module.exports: $Exports<'redux-thunk/es/index'>;
+  declare module.exports: $Exports<'redux-thunk/es/index'>
 }
 declare module 'redux-thunk/lib/index.js' {
-  declare module.exports: $Exports<'redux-thunk/lib/index'>;
+  declare module.exports: $Exports<'redux-thunk/lib/index'>
 }
 declare module 'redux-thunk/src/index.js' {
-  declare module.exports: $Exports<'redux-thunk/src/index'>;
+  declare module.exports: $Exports<'redux-thunk/src/index'>
 }

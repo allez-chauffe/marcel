@@ -5,11 +5,7 @@ import ListItem from 'react-toolbox/lib/list/ListItem'
 import Input from 'react-toolbox/lib/input/Input'
 import { chain } from 'lodash'
 
-type Plugin = {
-  name: string,
-  elementName: string,
-  icon: string,
-}
+import type { Plugin } from '../plugins.types'
 
 export default class PluginList extends React.Component {
   props: { plugins: Plugin[] }
