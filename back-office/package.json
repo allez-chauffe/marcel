@@ -33,7 +33,8 @@
       "DATE_PICKER",
       "APP_BAR",
       "INPUT",
-      "LIST"
+      "LIST",
+      "SWITCH"
     ],
     "customProperties": {
       "animation-duration": "0.3s",
