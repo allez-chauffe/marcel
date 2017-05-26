@@ -2,18 +2,21 @@
 import React from 'react'
 import Input from 'react-toolbox/lib/input/Input'
 import Switch from 'react-toolbox/lib/switch/Switch'
-import type { PropTyped } from '../../plugins/plugins.type'
+import type { Prop } from '../../plugins/plugins.type'
 
-const AutoTypeField = (prop: PropTyped) => {
-  if (prop.type === 'string') return <Input value={prop.value} />
-  if (prop.type === 'number') return <Input type="number" value={prop.value} />
-  if (prop.type === 'boolean') return <Switch checked={prop.value} />
-  if (prop.type === 'json') {
-    const value = JSON.stringify(prop.value, null, 2)
-    return <Input multiline={true} value={value} />
+const AutoTypeField = ({ value }: { value: Prop }) => {
+  if (value.type === 'string')
+    return <Input value={value.value} name={value.name} />
+  if (value.type === 'number')
+    return <Input type="number" prop={value.value} name={value.name} />
+  if (value.type === 'boolean')
+    return <Switch checked={value.value} name={value.name} />
+  if (value.type === 'json') {
+    const stringValue = JSON.stringify(value.value, null, 2)
+    return <Input multiline={true} value={stringValue} />
   }
 
-  return <Input value={prop.value} />
+  return <Input value={value.value} />
 }
 
 export default AutoTypeField

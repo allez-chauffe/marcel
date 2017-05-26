@@ -4,13 +4,12 @@ import './PluginProp.css'
 import type { Prop } from '../../plugins.type'
 import { AutoTypeField } from '../../../common'
 
-const PluginProp = (props: { prop: Prop }) => {
-  const { type, name, value } = props.prop
+const PluginProp = ({ prop }: { prop: Prop }) => {
   return (
     <div className="PluginProp">
-      <div className="propName">{name}</div>
+      <div className="propName">{prop.name}</div>
       <div className="propValue">
-        <AutoTypeField type={type} value={value} />
+        <AutoTypeField value={prop} />
       </div>
     </div>
   )
