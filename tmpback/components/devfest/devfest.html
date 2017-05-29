@@ -2,21 +2,20 @@
 <dom-module id="devfest-item">
   <template>
     <style include="shared-styles"></style>
-      <style>
-        #planning {
-          width: 100%;
-          height: 100%;
-        }
+    <style>
+      #planning {
+        width: 100%;
+        height: 100%;
+      }
 
-      </style>
-    <template is="dom-repeat" items="[[talks]]" as="talk">
-      <!--{{talk.title}}-->
-    </template>
+    </style>
     <template is="dom-if" if="[[speaker]]">
        {{speaker.bio}}
     </template>
-    <template is="dom-repeat" items="[[speakers]]" as="speaker">
-      <!--{{speaker.name}}<br />-->
+    <template is="dom-if" if="[[displayCurrentTalk]]">
+      <template is="dom-repeat" items="[[currentTalks]]" as="talk">
+        {{talk.title}}<br />
+      </template>
     </template>
     <template is="dom-if" if="[[planning]]">
       <div id="planning">
@@ -34,6 +33,8 @@
 
         static get properties() {
           return {
+            currentTalks: Array,
+            displayCurrentTalk: Boolean,
             planning: Boolean,
             speaker: Object,
             speakers: Array,
@@ -62,7 +63,7 @@
               this._displayPlanning();
               break;
             case "current":
-
+              this._displayCurrentTalks(req.location);
               break;
             case "speaker":
               this._displayBio(req.name);
@@ -80,6 +81,30 @@
           this.planning = true;
         }
         
+        _displayCurrentTalks (location) {
+          const now = new Date();
+          this.currentTalks = this.talks.filter(talk => {
+            const start = new Date();
+            start.setHours(talk.time.split(':')[0]);
+            start.setMinutes(talk.time.split(':')[1]);
+            start.setSeconds(0);
+
+            let duration = 0;
+            if (talk.duration.indexOf('mn') != -1) {
+              duration = talk.duration.slice(0, 2) * 60;
+            } else {
+              duration = talk.duration.slice(0, 1) * 60 * 60;
+            }
+
+            const end = new Date(start.getTime() + duration * 1000);
+            if(location !== "") {
+              return now > start && now < end && talk.room === location;;
+            } 
+            return now > start && now < end;
+          });
+          this.planning = false;
+          this.displayCurrentTalk = true;
+        }
 
         _displayBio (name) {
           this.speaker = this.speakers.filter(speaker => speaker.name === name)[0];

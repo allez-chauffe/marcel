@@ -56,6 +56,7 @@ io.on('connection', socket => {
   socket.on('speech', (speech) => {
     apiai.textRequest(speech.message, { sessionId })
          .then((response) => {
+            console.log(response)
             if (response.result.parameters.video !== undefined) {
               socket.emit('youtube', {"type": "search", "content": response.result.parameters.video});
             }
@@ -63,11 +64,14 @@ io.on('connection', socket => {
             if (response.result.metadata.intentName === "Planning") {
               socket.emit('devfest', {type: "planning"});
             }
+
+            if (response.result.metadata.intentName === 'CurrentConference') {
+              socket.emit('devfest', {type: "current", location: response.result.parameters.location});
+            }
           })
           .catch(err => console.log(err));
   });
 
-  // setTimeout(() => {socket.emit('devfest', {type: "planning"})}, 2000);
 })
 
 detector.on('hotword', (index, hotword) => {
