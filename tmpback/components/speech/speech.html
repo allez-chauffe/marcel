@@ -42,7 +42,7 @@
 
         this.message = this.default_message;
         this.started = false;
-        // this.$.loader.classList.add('hide');
+        this.$.loader.classList.add('hide');
 
         this._setSpeechRecognition();
         socket.on('hotword', () => this._onHotWord());

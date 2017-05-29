@@ -16,7 +16,7 @@ const ip = require("ip");
 
 models.add({
   file: 'resources/marcel.pmdl',
-  sensitivity: '04.',
+  sensitivity: '0.4',
   hotwords: 'marcel'
 })
 
@@ -87,7 +87,7 @@ const componentsList = {
     "css/weather-icons.min.css"
   ],
   "scripts": [
-    "socket.io/socket.io.js",
+    "http://localhost:8080/socket.io/socket.io.js",
     "js/connect-socketio.js"
   ],
   "components": [
@@ -103,7 +103,8 @@ const componentsList = {
     {
       "componentName": "youtube",
       "eltName": "youtube-item",
-      "files": "youtube.html"
+      "files": "youtube.html",
+      "url": "http://localhost/plugins"
     },
     {
       "componentName": "marcel",
@@ -147,14 +148,14 @@ const componentsList = {
         "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5",
         "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
         "speech_default_message": "Bonjour à tous, je suis MARCEL !",
-        "speech_loader_url": "http://" + ip.address() + ":8080/speech/loader.jpg"
+        "speech_loader_url": "http://" + ip.address() + ":8080/speech/loader.jpg",
+        "loader_url": "http://localhost/plugins/speech/loader.jpg"
       }
     }
   ]
 }
 
 const mic = record.start(config.microphone);
-
 mic.pipe(detector);
 
 /**

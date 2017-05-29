@@ -4,14 +4,14 @@
     <meta charset="utf-8">
     <title>MARCEL v2</title>
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="http://localhost:8080/bower_components/polymer/polymer.html">
+    <link rel="import" href="bower_components/polymer/polymer.html">
   </head>
   <body onload="loadComponents()">
     <section id="components"></section>
     <script src="bower_components/polymer_dynamic_components/polymer_asyncComponentLoader.js"></script>
     <script>
       function loadComponents () {
-        polymerAsyncLoader = new Polymer_AsyncComponentLoader('components', 'http://localhost:8080');
+        polymerAsyncLoader = new Polymer_AsyncComponentLoader('components', 'http://localhost:8080/componentsList', 'http://localhost/plugins');
         polymerAsyncLoader.load();
       }
     </script>

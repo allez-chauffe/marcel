@@ -1,0 +1,101 @@
+<link rel="import" href="/plugins/shared-styles/shared-styles.html">
+<link rel="import" href="/plugins/vendors/font-awesome/font-awesome.html">
+
+<dom-module id="twitter-item">
+  <template>
+    <style include="font-awesome"></style>
+    <style include="shared-styles">
+      :host {
+        max-width: 500px;
+        max-height: 130px;
+        overflow-y: hidden;
+      }
+
+
+      h2{
+        color: var(--secondary-color);
+        font-weight: 300;
+      }
+
+      ul {
+          list-style-type: none;
+          padding-left: 0;
+      }
+
+      li{
+        display: flex;
+      }
+
+      img{
+          height: 45px;
+          width: 45px;
+          border-radius: 50%;
+          float: left;
+          margin-right: 10px;
+          margin-bottom: -10px;
+      }
+      
+      p {
+          line-height: 30px;
+          color: var(--primary-color);
+          text-align: left;
+          margin-top: -10px;
+          margin-bottom: -10px;
+          max-width: 400px;
+      }
+
+      li > * {
+          padding: 5px;
+      }
+    </style>
+    <h1>Twitter</h1>
+
+    <h2>Last tweet <i class="fa fa-twitter"></i></h2>
+    <ul>
+      <template is="dom-repeat" items="[[tweets]]" as="tweet">
+        <li>
+          <img src="{{tweet.user.profile_image_url}}" alt="" />
+          <p>{{tweet.text}}</p>
+        </li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    (() => {
+      class Twitter extends Polymer.Element {
+        static get is () { return 'twitter-item' }
+
+        static get properties () {
+          return {
+            api: String,
+            timer: Number,
+            tweets: Array
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.tweets = [];
+          this.timer = 1000 * 60 * 60;
+
+          this._updateTimeline();
+          setInterval(() => this._updateTimeline(), this.timer);
+        }
+
+        _updateTimeline () {
+          this._getTimeline(1)
+              .then(tweets => this.tweets = tweets);
+        }
+
+        _getTimeline (nbEvents) {
+          return fetch(this.api + '/' + nbEvents)
+                    .then(res => res.json());
+        }
+      }
+
+      customElements.define(Twitter.is, Twitter);
+    })();
+  </script>
+</dom-module>
