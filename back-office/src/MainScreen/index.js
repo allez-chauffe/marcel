@@ -1,1 +1,2 @@
-export * from './MainScreen'
+// @flow
+export { default } from './MainScreen'

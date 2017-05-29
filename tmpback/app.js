@@ -8,15 +8,15 @@ const Models = snowboy.Models;
 const Detector = snowboy.Detector;
 const http = require('http').Server(app);
 const ApiAi = require('apiai-promise')
-const config = require('./config.js');
-const apiai = ApiAi(config.apiaitoken);
+const apiaitoken = require('./config.js').apiaitoken;
+const apiai = ApiAi(apiaitoken);
 const sessionId = 'marcel';
 const models = new Models();
 const ip = require("ip");
 
 models.add({
   file: 'resources/marcel.pmdl',
-  sensitivity: '0.2',
+  sensitivity: '0.4',
   hotwords: 'marcel'
 })
 
@@ -135,7 +135,6 @@ const componentsList = {
 }
 
 const mic = record.start(config.microphone);
-
 mic.pipe(detector);
 
 /**
