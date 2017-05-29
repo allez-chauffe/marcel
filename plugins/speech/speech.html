@@ -20,7 +20,7 @@
       </style>
     <h1>{{message}}</h1>
     <h2>{{request}}</h2>
-    <img src="assets/loader.jpg" alt="" id="loader"/>
+    <img src="{{loader_url}}" alt="" id="loader"/>
   </template>
 
   <script>
@@ -30,6 +30,7 @@
       static get properties () {
           return {
             default_message: String,
+            loader_url: String,
             message: String,
             speech_recognition: Object,
             started: Boolean

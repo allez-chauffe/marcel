@@ -50,7 +50,7 @@
 
       <div class="flex flex-column space-between flex-full">
           <weather-item weather_url="[[weather_url]]" city="[[weather_city]]" api_key="[[weather_api_key]]"></weather-item>
-          <speech-item default_message="[[speech_default_message]]"></speech-item>
+          <speech-item default_message="[[speech_default_message]]" loader_url="[[loader_url]]"></speech-item>
           <div class="flex flex-full space-around">
               <twitter-item api="[[twitter_api]]"></twitter-item>
               <soundtouch-item url="[[soundtouch_url]]"></soundtouch-item>
@@ -77,6 +77,7 @@
           github_users: Array,
           github_client_id: String,
           github_client_secret: String,
+          loader_url: String,
           logo_url: String,
           message_text1: String, 
           message_text2: String,

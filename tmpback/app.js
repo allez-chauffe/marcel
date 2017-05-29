@@ -129,7 +129,8 @@ const componentsList = {
         "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5",
         "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
         "speech_default_message": "Bonjour à tous, je suis MARCEL !",
-        "speech_loader_url": "http://" + ip.address() + ":8080/speech/loader.jpg"
+        "speech_loader_url": "http://" + ip.address() + ":8080/speech/loader.jpg",
+        "loader_url": "http://localhost/plugins/speech/loader.jpg"
       }
     }
   ]
