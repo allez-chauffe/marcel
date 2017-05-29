@@ -8,7 +8,7 @@ for (var i in items ) {
         if (description[0] != undefined) {
             talk.description = description[0].getElementsByTagName('p')[0].innerHTML;
         }
-
+        talk.time = items[i].getElementsByTagName('time')[0].title;
         talk.title = items[i].title;
         talk.name = items[i].name;
         talk.company = items[i].company;

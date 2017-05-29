@@ -1,5 +1,6 @@
 [
     {
+        "time": "09:00",
         "title": "Keynote d'ouverture",
         "name": "Hubert Sablonnière",
         "company": "Opendevise",
@@ -10,6 +11,7 @@
     },
     {
         "description": "Les notifications sont un des éléments incontournables des applications Android. En effet, elles sont un point d’entrée très intéressant pour vos utilisateurs et peuvent apporter une vraie plus-value si elles sont utilisées correctement. Dans ce talk, nous commencerons par un peu d’historique et de contexte notamment sur leurs évolutions au cours des versions d’Android d’un point de vue UX et design. Introduite dés la version #1 d’Android, elles sont souvent sous-estimées et mal-utilisées. Nous verrons donc dans un second temps comment être un bon citoyen des notifications en s’appuyant sur des concepts comme la catégorie, la pertinence et la légitimité. Enfin, nous aborderons une série de tips &amp; tricks afin de faire correspondre parfaitement leurs utilisations aux besoins de vos utilisateurs. En abordant des sujets comme la gestion multi-devices, le déclenchement et les API méconnues du framework, nous ferons un vrai tour horizon de leurs possibilités et des bonnes pratiques associées.",
+        "time": "09:50",
         "title": "L’évolution des notifications - Tips & tricks",
         "name": "Jeremie Martinez",
         "company": "Trainline (Captain Train)",
@@ -19,6 +21,7 @@
         "room": "Amphi"
     },
     {
+        "time": "10:40",
         "title": "Pause",
         "name": "",
         "company": "",
@@ -29,6 +32,7 @@
     },
     {
         "description": "Une page web n’a jamais été une image figée ; néanmoins, on insiste à proposer aux clients de wireframes et de maquettes Photoshop statiques. Aujourd’hui, le besoin de démontrer cette expérience dans différents devices ne peut que donner une idée encore plus réductrice du résultat réel. L’approche de travail actuelle n’est plus adaptée ou soutenable. Ce constat nous obligent pas seulement à questionner notre façon de travailler, mais aussi la façon comme on va interagir avec nos clients et comment on doit enrichir nos livrables. Cette présentation a pour but d'explorer une nouvelle façon de travail plus en harmonie avec le media Web, et plus en phase avec les méthodologies Agiles.",
+        "time": "11:00",
         "title": "Le Dao d'un projet Web front",
         "name": "Angela Ricci",
         "company": "Worldline",
@@ -38,6 +42,7 @@
         "room": "Amphi"
     },
     {
+        "time": "11:50",
         "title": "Déjeuner",
         "name": "",
         "company": "",
@@ -48,6 +53,7 @@
     },
     {
         "description": "On parle d'agilité et de devops depuis pas mal d'années maintenant, mais pour la plupart cela se résume à des sprints de 2 semaines suivis d'une mise en prod mensuelle au mieux. C'est loin du Continuous Delivery ! Et si on découplait le planing de dev du planning de prod, du planing de QA et du planing du PO? Et si on poussait en prod tout nos changements immédiatement, ça changerait quoi? Et comment ça marche? Facile, on va le faire ensemble, là, maintenant, tout de suite en réutilisant les mêmes outils que l'équipe de dev de GitHub (Flipper, GH-ost, Scientist, Hubot et Jenkins) sur une appli existante.",
+        "time": "12:50",
         "title": "Le changement, c'est maintenant !",
         "name": "Alain Helaili",
         "company": "GitHub",
@@ -58,6 +64,7 @@
     },
     {
         "description": "Comment gérer efficacement le traffic réseau entrant de votre infrastructure orientée conteneurs? Cette conférence sera l'occasion d'approfondir les fonctionnalités de Traefik, un reverse proxy de nouvelle génération. Ce talk sera composé majoritairement de démos avec Kubernetes et Docker Swarm ainsi que d'un live coding d'un plugin pour Traefik en go.",
+        "time": "13:50",
         "title": "Make load-balancing great again!",
         "name": "Emile Vauge",
         "company": "Containous",
@@ -67,6 +74,7 @@
         "room": "Amphi"
     },
     {
+        "time": "14:40",
         "title": "Pause",
         "name": "",
         "company": "",
@@ -77,6 +85,7 @@
     },
     {
         "description": "How do you mix SQL and NoSQL worlds without starting a messy revolution? This live coding talk will show you how to add Elasticsearch to your legacy application without changing all your current development habits. Your application will have suddenly have advanced search features, all without the need to write complex SQL code! David will start from a RestX, Hibernate and Postgresql/MySQL based application and will add a complete integration of Elasticsearch, all live from the stage during his presentation.",
+        "time": "15:00",
         "title": "Advanced search for your legacy application",
         "name": "David Pilato",
         "company": "Elastic",
@@ -87,6 +96,7 @@
     },
     {
         "description": "NodeJS poursuit son avancé dans tous les écosystèmes. L'avènement de ES6 puis ES7 et l'intégration dans les navigateurs des dernières moutures d'ECMASCRIPT pousse vers l'avant NodeJS grâce aux avancées du moteur V8. Nous verrons ensemble quelles sont les nouvelles fonctionnalités apportées par NodeJS 7 voir NodeJS 8, et quelles sont les problématiques rencontrées par les équipes de dev NodeJS. Nous parlerons d'asynchronisme ou encore de modules ESM dans se talk résolument orienté vers les développeurs backend !",
+        "time": "16:10",
         "title": "Futur de NodeJS",
         "name": "Sébastien Pertus",
         "company": "Microsoft",
@@ -97,6 +107,7 @@
     },
     {
         "description": "Le but de la présentation n'est pas de définir le design génératif mais plutôt de proposer un rapide tour d'horizon de projets graphiques et/ou artistiques résultant d'un algorithme.",
+        "time": "17:10",
         "title": "Découverte du design génératif pour la création graphique et artistique",
         "name": "Sylvain Coste & Daishi Kaszer",
         "company": "Eartsup",
@@ -106,6 +117,7 @@
         "room": "Amphi"
     },
     {
+        "time": "18:10",
         "title": "Keynote de fermeture",
         "name": "CommitStrip",
         "company": "",
@@ -116,6 +128,7 @@
     },
     {
         "description": "Aujourd'hui, il existe beaucoup d'outils pour packager les applications JavaScript. Il y a tellement de solutions que nous pouvons rapidement nous sentir dépassés et incompétents. Pourtant, le problème réside dans la complexité technique de ces outils, pas en nous. Par exemple, nous pouvons facilement passer des heures, voire des jours, à essayer de comprendre comment ils fonctionnent ou comment ils réécrivent notre code. Dans cette présentation, nous plongerons dans les méandres des bundlers JavaScript les plus courants : de Webpack et Rollup à Browserify et Brunch. Nous étudierons les spécificités de chacun et verrons comment ils peuvent nous être utiles. Nous discuterons également de leur coût en matière de performance et apprendrons comment ils affectent le débogage, la qualité de code, et la sécurité.",
+        "time": "09:50",
         "title": "Tous les bundlers au monde",
         "name": "Xavier Dutreilh",
         "company": "SFEIR",
@@ -125,6 +138,7 @@
         "room": "Talk room"
     },
     {
+        "time": "10:40",
         "title": "Pause",
         "name": "",
         "company": "",
@@ -135,6 +149,7 @@
     },
     {
         "description": "Mai 2016, les équipes de Google nous annoncaient l’arrivé d’un nouveau layout : ConstraintLayout. Nous verrons ensemble ce qui le rend si disruptif, pourquoi il s’agit bien plus d’une nouvelle corde à notre arc, en tant que développeurs Android. Nous verrons également ensemble démonstration à l’appui quelques cas d’usage plus “avancés” pour explorer ses possibilités.",
+        "time": "11:00",
         "title": "Let's create 2017's layouts together",
         "name": "Marion Hayoun",
         "company": "",
@@ -144,6 +159,7 @@
         "room": "Talk room"
     },
     {
+        "time": "11:50",
         "title": "Déjeuner",
         "name": "",
         "company": "",
@@ -154,6 +170,7 @@
     },
     {
         "description": "Les conteneurs se généralisent depuis maintenant quelques temps. Et un nouveau concept est déjà en train de pointer le bout de son nez : le serverless. Qu’est-ce que c’est ? Est-ce un buzz ou une réelle évolution ? Est-ce que l’on doit déjà mettre à la poubelle les conteneurs ? Au cours de cette présentation, nous présenterons les principes du serverless et nous ferons une mise en application avec AWS Lambda, Google Cloud Functions et le framework serverless. Nous essaierons d’apporter un éclairage sur l’intérêt de cette technologie à travers des exemples d’utilisation.",
+        "time": "12:50",
         "title": "Serverless: just a buzzword?",
         "name": "Julien Landuré & Eric Briand",
         "company": "Zenika",
@@ -164,6 +181,7 @@
     },
     {
         "description": "Tout le monde sait que les chats règnent en maîtres sur Internet, mais comment domineront-ils l’IoT ? En partant d’un MVP “trouver mon chat”, nous avons transformé un simple collier en objet connecté. Notre objectif : créer un MAAS (Matou As A Service) et un Cat Social Network. À base d’arduino, capteurs, GPS et réseau sans fil LoRa, nous avons mis en place une solution de communication en temps réel avec notre chat. Nous aborderons les difficultés rencontrées pour réaliser le prototype et les challenges à relever pour passer à grande échelle (notamment avec le réseau LoRa). PS : Aucun animal ne sera maltraité durant cette session.",
+        "time": "13:50",
         "title": "Lolcat on IoT",
         "name": "Jérémie Huchet & Erwann Thebault & Yoan Rousseau",
         "company": "Zenika",
@@ -173,6 +191,7 @@
         "room": "Talk room"
     },
     {
+        "time": "14:40",
         "title": "Pause",
         "name": "",
         "company": "",
@@ -183,6 +202,7 @@
     },
     {
         "description": "Pérégrinations d'un agiliste au coeur d'une transformation agile à la maison (avec 1 Chef de projet et 2 jeunes enfants) quand sa moitié d'en comprend pas tout à fait l'état d'esprit... Que ce soit au boulot ou à la maison, les situations, les résistances, les outils et les apprentissages se retrouvent. Agile ne nous aide pas uniquement dans le développement logiciel. Ses valeurs nous accompagnent dans la vie de tous les jours, à la maison par exemple. La session, sous la forme d'une respiration, vise à partager ces valeurs, à échanger sur les expériences que nous menons, peut-être même dans le savoir !",
+        "time": "15:00",
         "title": "#JeVisAvecUnCycleEnV",
         "name": "Régis Schneider",
         "company": "Valtech",
@@ -193,6 +213,7 @@
     },
     {
         "description": "Tying up the users to your app is the most important and yet one of the most puzzling parts. Users will already have a strong impression about your app the first 30''; Yes, including splash screens or empty lists and loading indicators, that are pretty much impossible to avoid in most of the apps. So all we need is some stardust, say the 'abracadabra' 3 times, and the boring splash screen or the empty screen will transform to something entertaining and interesting that will impress our users! Wait... what?! How do I do this? A great place to start is learning to leverage Android's animation SDKs ;-)",
+        "time": "16:10",
         "title": "Impress your user's inner child!",
         "name": "Eliza Camberogiannis",
         "company": "Pixplicity",
@@ -203,6 +224,7 @@
     },
     {
         "description": "La Réalité Virtuelle est longtemps resté un rêve mais après de nombreuses années de développement le rêve est devenu accessible. Quel impact cela aura sur notre façon de percevoir les informations ? De consommer des média, et plus précisément qu'est-ce que ça peut apporter de concret au Web tel qu'on le connaît aujourd'hui ?",
+        "time": "17:10",
         "title": "La Réalité Virtuelle: un nouveau médium pour une nouvelle façon d'explorer le Web ?",
         "name": "Thomas Balouet & Fabien Benetou",
         "company": "LucidWeb",
@@ -213,6 +235,7 @@
     },
     {
         "description": "Le projet Jenkins profite de cette année 2017 pour 'rénover mur et toiture' : Une nouvelle interface graphique 'BlueOcean' (réécriture de zéro en ReactJS), Des nouveaux Pipelines Déclaratifs (stop au Groovy, accès facilité aux débutants), Une (ré)adaptation aux pratiques récentes (Git/Github flows, collaboration, DevOps, Docker), Au delà des 'promesses électorales', qu'en est-il réellement ? (SPOILER alerte: nous travaillons pour CloudBees, mais adorons aussi utiliser Travis et GitLab CI). L'objectif de cet atelier est de se faire une idée concrète du Jenkins 'sauce 2017' par la pratique plutôt que par le marketing. Nous réaliserons ensemble un 'Pipeline' de livraison continue basé sur du Jenkins BlueOcean. Au menu: Intégration avec Git Configuration de l'environnement de build Compilation Tests &amp; valorisation des rapports Visualisation Déploiement et interactions avec les Ops Des environnements hébergés dans Amazon seront mis à disposition (Navigateur Web HTML5 requis). Des machines VirtualBox seront toutefois disponibles, en secours, si l'Internet devait se révéler défaillant. Ces VMs vous permettrons de rejouer l'atelier après la conférence.",
+        "time": "09:50",
         "title": "Livraison Continue & BlueOcean : écrivons ensemble des Pipelines Jenkins Déclaratifs pour votre application",
         "name": "Damien Duportal & Jean-Marc Meessen",
         "company": "CloudBees",
@@ -222,6 +245,7 @@
         "room": "Codelab room"
     },
     {
+        "time": "11:50",
         "title": "Déjeuner",
         "name": "",
         "company": "",
@@ -232,6 +256,7 @@
     },
     {
         "description": "Depuis le temps que vous allez à des conférences, vous avez sûrement participé à des codelabs React et/ou Angular2. Vous êtes même devenu peut-être un expert sur l'une de ces technos. C'est pour cela que nous avons décidé de ne pas choisir l'un de ces deux projets. Pendant ce codelab, nous avons choisi une toute autre librairie que nous sommes en train de tester pour des projets perso : VueJS. A travers ces 3 heures, nous allons aborder tous les concepts vous permettant de créer une application riche : composants, directives, mixins, routers, ... A la fin de ce codelab, vous allez pouvoir vous rendre compte que VueJS gagne le combat des frameworks/librairies JavaScript par sa simplicité et sa facilité de mise en oeuvre, tout en réutilisant certains concepts de ses deux concurrents.",
+        "time": "12:50",
         "title": "Après Angular et React, voici ... VueJS",
         "name": "Aurélien Loyer",
         "company": "Zenika",
@@ -242,6 +267,7 @@
     },
     {
         "description": "De plus en plus de développeurs Java se tournent vers le Go, langage backend qui monte, qui monte. Profitez de cet atelier pour mettre les mains dans le code et vous familiariser avec le langage et son écosystème (test, makefile, vendors, etc.). Il est recommandé d'avoir fait le tour of Go et d'être déjà à l'aise avec le langage pour rentrer plus facilement dans le sujet. Un workspace de développement est fourni pour les OS Unix friendly (linux, mac) et des VM sont à disposition des utilisateurs Windows ou de ceux qui le souhaitent. Lors de cet atelier, nous vous proposons de développer du sol au plafond un petit service web REST qui expose des données récupérées dans un MongoDB au format JSON. Nous commencerons par le parsing d'argument de la ligne de commande et le logging. Nous verrons ensuite comment modéliser et manipuler la data avec MongoDB. Pour finir nous attaquerons la partie web avec le routage, les middleware et les handler. En bonus, nous pourrons déployer le tout dans un docker-compose avec un instance de Mongo.",
+        "time": "15:00",
         "title": "Votre premier microservice en Go",
         "name": "Romain Lespinasse & Sébastien Friess",
         "company": "SFEIR",
