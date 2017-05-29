@@ -2,12 +2,14 @@
 <dom-module id="devfest-item">
   <template>
     <style include="shared-styles"></style>
-    <h1>Devfest</h1>
     <template is="dom-repeat" items="[[talks]]" as="talk">
-      <!--{{talk.title}}<br />-->
+      <!--{{talk.title}}-->
+    </template>
+    <template is="dom-if" if="speaker">
+       {{speaker.bio}}
     </template>
     <template is="dom-repeat" items="[[speakers]]" as="speaker">
-      {{speaker.name}}<br />
+      <!--{{speaker.name}}<br />-->
     </template>
   </template>
 
@@ -18,6 +20,7 @@
 
         static get properties() {
           return {
+            speaker: Object,
             speakers: Array,
             speakers_url: String,
             talks: Array,
@@ -25,11 +28,34 @@
           }
         }
 
-        connectedCallback() {
+        connectedCallback () {
           super.connectedCallback();
+
+          socket.on('devfest', (req) => this._handleRequest(req));
 
           this._fetchDevfestTalks();
           this._fetchDevfestSpeakers();
+        }
+        
+        _handleRequest (req) {
+          switch (req.type) {
+            case "conf":
+
+              break;
+            case "planning":
+
+              break;
+            case "current":
+
+              break;
+            case "speaker":
+              this._displayBio(req.name);
+              break;
+          }
+        }
+
+        _displayBio (name) {
+          this.speaker = this.speakers.filter(speaker => speaker.name === name)[0];
         }
 
         _fetchDevfestTalks () {

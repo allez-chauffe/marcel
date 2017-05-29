@@ -62,6 +62,8 @@ io.on('connection', socket => {
           })
           .catch(err => console.log(err));
   });
+
+  setTimeout(() => {socket.emit('devfest', {type: "speaker", name: "Aurélien Loyer"})}, 2000);
 })
 
 detector.on('hotword', (index, hotword) => {
