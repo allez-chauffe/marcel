@@ -15,7 +15,17 @@ for (var i in items ) {
         talk.abstract = items[i].abstract;
         talk.duration = items[i].duration;
         talk.type = items[i].type;
+        if (talks.length < 12) {
+            talk.room = "Amphi";
+        } else if (talks.length < 22) {
+            talk.room = "Talk room";
+        } else {
+            talk.room = "Codelab room";
+        }
         talks.push(talk);
+    }
+    if(talks.length == 26) {
+        break;
     }
 }
 
