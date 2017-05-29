@@ -16,7 +16,7 @@ const ip = require("ip");
 
 models.add({
   file: 'resources/marcel.pmdl',
-  sensitivity: '0.2',
+  sensitivity: '04.',
   hotwords: 'marcel'
 })
 
@@ -59,11 +59,15 @@ io.on('connection', socket => {
             if (response.result.parameters.video !== undefined) {
               socket.emit('youtube', {"type": "search", "content": response.result.parameters.video});
             }
+
+            if (response.result.metadata.intentName === "Planning") {
+              socket.emit('devfest', {type: "planning"});
+            }
           })
           .catch(err => console.log(err));
   });
 
-  setTimeout(() => {socket.emit('devfest', {type: "speaker", name: "Aurélien Loyer"})}, 2000);
+  // setTimeout(() => {socket.emit('devfest', {type: "planning"})}, 2000);
 })
 
 detector.on('hotword', (index, hotword) => {

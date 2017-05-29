@@ -2,14 +2,28 @@
 <dom-module id="devfest-item">
   <template>
     <style include="shared-styles"></style>
+      <style>
+        #planning {
+          width: 100%;
+          height: 100%;
+        }
+
+      </style>
     <template is="dom-repeat" items="[[talks]]" as="talk">
       <!--{{talk.title}}-->
     </template>
-    <template is="dom-if" if="speaker">
+    <template is="dom-if" if="[[speaker]]">
        {{speaker.bio}}
     </template>
     <template is="dom-repeat" items="[[speakers]]" as="speaker">
       <!--{{speaker.name}}<br />-->
+    </template>
+    <template is="dom-if" if="[[planning]]">
+      <div id="planning">
+        <template is="dom-repeat" items="[[talks]]" as="talk">
+          {{talk.title}}
+        </template>
+      </div>
     </template>
   </template>
 
@@ -20,6 +34,7 @@
 
         static get properties() {
           return {
+            planning: Boolean,
             speaker: Object,
             speakers: Array,
             speakers_url: String,
@@ -32,7 +47,8 @@
           super.connectedCallback();
 
           socket.on('devfest', (req) => this._handleRequest(req));
-
+          
+          this.planning = false;
           this._fetchDevfestTalks();
           this._fetchDevfestSpeakers();
         }
@@ -43,7 +59,7 @@
               
               break;
             case "planning":
-
+              this._displayPlanning();
               break;
             case "current":
 
@@ -53,6 +69,17 @@
               break;
           }
         }
+
+        _displayPlanning () {
+          const elements = document.getElementById('components').childNodes;
+          elements.forEach(element => {
+            if (element.nodeName != 'DEVFEST-ITEM') {
+              element.style.visibility = 'hidden';
+            }
+          })
+          this.planning = true;
+        }
+        
 
         _displayBio (name) {
           this.speaker = this.speakers.filter(speaker => speaker.name === name)[0];
