@@ -32,10 +32,6 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(express.static('./public/'));
-app.use(express.static('./components/'));
-app.use(express.static('./node_modules/'));
-
 app.get('/', (req, res) => {
   res.sendfile("public/index.html");
 });
@@ -111,7 +107,7 @@ const componentsList = {
       "eltName": "marcel-item",
       "files": "marcel.html",
       "propValues": {
-        "logo_url": "http://" + ip.address() + ":8080/logo/zenika.png",
+        "logo_url": "http://" + ip.address() + "/plugins/logo/zenika.png",
         "message_text1": "Bienvenue",
         "message_text2": "à Zenika Lille",
         "github_users": [
