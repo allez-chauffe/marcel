@@ -96,8 +96,8 @@ const componentsList = {
       "eltName": "devfest-item",
       "files": "devfest.html",
       "propValues": {
-        "speakers_url": "http://localhost:8080/devfest/speakers.json",
-        "talks_url": "http://localhost:8080/devfest/talks.json"
+        "speakers_url": "http://localhost/plugins/devfest/speakers.json",
+        "talks_url": "http://localhost/plugins/devfest/talks.json"
       }
     },
     {
