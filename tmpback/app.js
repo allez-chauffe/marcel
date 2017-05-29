@@ -61,8 +61,20 @@ io.on('connection', socket => {
               socket.emit('devfest', {type: "planning"});
             }
 
-            if (response.result.metadata.intentName === 'CurrentConference') {
+            if (response.result.metadata.intentName === 'CurrentTalk') {
               socket.emit('devfest', {type: "current", location: response.result.parameters.location});
+            }
+
+            if (response.result.metadata.intentName === 'CloseDisplayed') {
+              socket.emit('close');
+            }
+
+            if (response.result.metadata.intentName === 'Speaker') {
+              socket.emit('devfest', {type: "speaker", name: response.result.parameters.speaker});
+            }
+
+            if (response.result.metadata.intentName === 'Talk') {
+              socket.emit('devfest', {type: "talk", title: response.result.parameters.title});
             }
           })
           .catch(err => console.log(err));
