@@ -8,8 +8,8 @@ const Models = snowboy.Models;
 const Detector = snowboy.Detector;
 const http = require('http').Server(app);
 const ApiAi = require('apiai-promise')
-const apiaitoken = require('./config.js').apiaitoken;
-const apiai = ApiAi(apiaitoken);
+const config = require('./config.js');
+const apiai = ApiAi(config.apiaitoken);
 const sessionId = 'marcel';
 const models = new Models();
 const ip = require("ip");
@@ -77,14 +77,15 @@ const componentsList = {
     "css/weather-icons.min.css"
   ],
   "scripts": [
-    "socket.io/socket.io.js",
+    "http://localhost:8080/socket.io/socket.io.js",
     "js/connect-socketio.js"
   ],
   "components": [
     {
       "componentName": "youtube",
       "eltName": "youtube-item",
-      "files": "youtube.html"
+      "files": "youtube.html",
+      "url": "http://localhost/plugins"
     },
     {
       "componentName": "marcel",
