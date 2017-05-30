@@ -5,7 +5,6 @@ import (
 	"github.com/gorilla/mux"
 	"strconv"
 	"io/ioutil"
-	"fmt"
 )
 
 func GetMedia(w http.ResponseWriter, r *http.Request) {
@@ -15,9 +14,8 @@ func GetMedia(w http.ResponseWriter, r *http.Request) {
 
 	if idMedia > 0 {
 
-		config, err := ioutil.ReadFile("MARCEL/api/data/media.config.json")
+		config, err := ioutil.ReadFile("data/media.config.json")
 		check(err)
-		fmt.Print(string(config))
 
 		if err == nil {
 			w.Write([]byte(config))
