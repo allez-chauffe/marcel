@@ -28,8 +28,8 @@ func main() {
 	log.Println("Application started")
 
 	c := cors.New(cors.Options{
-		// AllowedOrigins:   []string{"*"},
-		AllowedOrigins:   []string{"http://localhost:*"},
+		AllowedOrigins:   []string{"*"},
+		// AllowedOrigins:   []string{"http://localhost:*"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTION", "PUT"},
 		AllowCredentials: true,
 	})
