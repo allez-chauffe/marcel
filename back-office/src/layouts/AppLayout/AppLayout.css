@@ -1,0 +1,17 @@
+.AppLayout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.AppLayout > main {
+  display: flex;
+}
+
+.AppLayout > main, .AppLayout > main > * {
+  flex: 1;
+}
+
+.AppLayout > header, .AppLayout > footer {
+  z-index: 100;
+}
