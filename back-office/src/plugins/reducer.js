@@ -10,8 +10,6 @@ const intialState = range(20).map(i => ({
   icon: 'picture_in_picture_alt',
 }))
 
-const reducer: Reducer<State, Action> = (state = intialState, action) => {
-  return state
-}
+const reducer: Reducer<State, Action> = (state = intialState, action) => state
 
 export default reducer

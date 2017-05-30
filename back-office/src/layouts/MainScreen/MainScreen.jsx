@@ -1,9 +1,9 @@
 // @flow
 import React from 'react'
-import { PluginList } from '../plugins'
+import { PluginList } from '../../plugins'
 import './MainScreen.css'
-import type { Plugin } from '../plugins/plugins.types'
-import { Dashboard } from '../grid'
+import type { Plugin } from '../../plugins/plugins.types'
+import { Dashboard } from '../../grid'
 
 const MainScreen = ({ availablePlugins }: { availablePlugins: Plugin[] }) => (
   <div className="MainScreen">

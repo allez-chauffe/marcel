@@ -2,7 +2,7 @@
 import { connect } from 'react-redux'
 import MainScreen from './MainScreen'
 
-import type { State } from '../store/types'
+import type { State } from '../../store/types'
 
 const mapStateToProps = (state: State) => ({
   availablePlugins: state.plugins,

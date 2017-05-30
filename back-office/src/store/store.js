@@ -8,9 +8,11 @@ import type { Options } from 'redux-logger'
 import type { State, Action } from './types'
 import rootReducer from './rootReducer'
 
+const devMode = 'development'
+
 const middlewares: Middleware<State, Action>[] = [thunk]
 
-if (process.env.NODE_ENV === `development`) {
+if (process.env.NODE_ENV === devMode) {
   const options: Options<State, Action> = {
     collapsed: (getState, action, logEntry) => !logEntry.error,
   }
