@@ -1,0 +1,8 @@
+.PluginProps {
+  display: flex;
+  flex-direction: column;
+}
+
+.PluginProps h2 {
+  text-align: center;
+}

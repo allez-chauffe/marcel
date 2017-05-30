@@ -2,14 +2,10 @@
 import React from 'react'
 import List from 'react-toolbox/lib/list/List'
 import ListItem from 'react-toolbox/lib/list/ListItem'
-import Input from 'react-toolbox/lib/input/Input'
 import { chain } from 'lodash'
 
-type Plugin = {
-  name: string,
-  elementName: string,
-  icon: string,
-}
+import { SearchField } from '../../common'
+import type { Plugin } from '../plugins.type'
 
 export default class PluginList extends React.Component {
   props: { plugins: Plugin[] }
@@ -40,9 +36,8 @@ export default class PluginList extends React.Component {
 
     return (
       <div>
-        <Input
+        <SearchField
           label="Search plugin"
-          icon="search"
           value={filter}
           onChange={this.onSearchChange}
         />
