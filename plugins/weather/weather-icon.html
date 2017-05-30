@@ -1,4 +1,5 @@
 <link rel="import" href="/plugins/vendors/weather-icons/weather-icons.html">
+<link rel="import" href="/bower_components/moment-element/moment-element.html">
 
 <dom-module id="weather-icon-item">
   <template>
@@ -119,7 +120,7 @@
 
                 this._setWeatherType(res.list[this.item_number].weather[0].main);
 
-                let icon = this._getDayNight(res.list[this.item_number].dt * 1000) + this.icons[res.list[this.item_number].weather[0].id].icon;
+                let icon = "day-" + this.icons[res.list[this.item_number].weather[0].id].icon;
                 this.weather_icon = "wi wi-" + icon;
 
                 this.weather_date = new Date(res.list[this.item_number].dt * 1000);
@@ -151,7 +152,7 @@
         }
 
         _getIcons () {
-          return fetch('http://localhost:8080/weather/icons.json')
+          return fetch('/plugins/weather/icons.json')
                     .then(res => res.json())
                     .then(icons => this.icons = icons)
         }

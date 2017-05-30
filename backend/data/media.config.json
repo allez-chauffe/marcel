@@ -5,8 +5,6 @@
     "css/weather-icons.min.css"
   ],
   "scripts": [
-    "socket.io/socket.io.js",
-    "js/connect-socketio.js"
   ],
   "components": [
     {
@@ -19,7 +17,7 @@
       "eltName": "marcel-item",
       "files": "marcel.html",
       "propValues": {
-        "logo_url": "assets/zenika.png",
+        "logo_url": "plugins/logo/zenika.png",
         "message_text1": "Bienvenue",
         "message_text2": "à Zenika Lille",
         "github_users": [
