@@ -23,9 +23,6 @@
         margin: 20px;
       }
     </style>
-    <template is="dom-if" if="[[speaker]]">
-       {{speaker.bio}}
-    </template>
     <template is="dom-if" if="[[displayCurrentTalk]]">
       <div id="current" class="flex space-between">
         <template is="dom-repeat" items="[[currentTalks]]" as="talk">
@@ -97,6 +94,15 @@
         _displayPlanning () {
           this._hideEverything();
           this.planning = true;
+        }
+
+        _displayTalk (talkTitle) {
+          this.currentTalks = this.talks.filter(talk => {
+            return talk.title.indexOf(talkTitle) != -1
+          });
+          console.log(this.currentTalks)
+          this._hideEverything();
+          this.displayCurrentTalk = true;
         }
 
         _hideEverything () {
