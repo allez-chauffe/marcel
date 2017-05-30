@@ -52,12 +52,34 @@ io.on('connection', socket => {
   socket.on('speech', (speech) => {
     apiai.textRequest(speech.message, { sessionId })
          .then((response) => {
+            console.log(response)
             if (response.result.parameters.video !== undefined) {
               socket.emit('youtube', {"type": "search", "content": response.result.parameters.video});
+            }
+
+            if (response.result.metadata.intentName === "Planning") {
+              socket.emit('devfest', {type: "planning"});
+            }
+
+            if (response.result.metadata.intentName === 'CurrentTalk') {
+              socket.emit('devfest', {type: "current", location: response.result.parameters.location});
+            }
+
+            if (response.result.metadata.intentName === 'CloseDisplayed') {
+              socket.emit('close');
+            }
+
+            if (response.result.metadata.intentName === 'Speaker') {
+              socket.emit('devfest', {type: "speaker", name: response.result.parameters.speaker});
+            }
+
+            if (response.result.metadata.intentName === 'Talk') {
+              socket.emit('devfest', {type: "talk", title: response.result.parameters.title});
             }
           })
           .catch(err => console.log(err));
   });
+
 })
 
 detector.on('hotword', (index, hotword) => {
@@ -77,6 +99,15 @@ const componentsList = {
     "js/connect-socketio.js"
   ],
   "components": [
+    {
+      "componentName": "devfest",
+      "eltName": "devfest-item",
+      "files": "devfest.html",
+      "propValues": {
+        "speakers_url": "http://localhost/plugins/devfest/speakers.json",
+        "talks_url": "http://localhost/plugins/devfest/talks.json"
+      }
+    },
     {
       "componentName": "youtube",
       "eltName": "youtube-item",

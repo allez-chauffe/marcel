@@ -1,0 +1,137 @@
+[
+    {
+        "bio": "<p>As far back as he can remember, Alain — also known as @helaili on GitHub.com — has always been a tech guy.</p> \n                                        <p>After 15+ years in the software industry (from middleware to database and APM) he joined GitHub in 2015 as a \n                                        Solutions Engineer. He now commits to strengthen relationships between developers and operations, and helps \n                                        companies understand how to build better software, faster.</p><p> A tireless Open Source advocate, Alain has a very \n                                        interesting take on the way businesses (including GitHub) use GitHub to collaborate on code and create \n                                        awesomeness everyday.</p>",
+        "company": "Github",
+        "name": "Alain Helaili"
+    },
+    {
+        "bio": "<p>Je dispose de plus de 23 ans d'expérience professionnelle, dont un peu plus de \n                                        20 années entièrement dédiées aux technologies web et au web design. </p>\n                                        <p>J'écris à propos des standards du web et du web design sur mon site personnel, \n                                        et j'ai eu deux articles publiés pour The Pastry Box, ainsi qu'une petite \n                                        participation au NetMag. \n                                        J'ai participé à quelques conférences comme BlendWeb Mix et TakeOff.</p>",
+        "company": "Worldline",
+        "name": "Angela Ricci"
+    },
+    {
+        "bio": "<p>Consultant et Formateur Web chez Zenika Lille depuis novembre 2015. \n                                        Je me suis spécialisé dans le domaine du Web, AngularJS, Angular, VueJs, PHP...</p>\n                                        <p>Fan d'IOT durant mes heures perdues, je suis toujours à l'affût des dernières nouveautés Web !</p>",
+        "company": "Zenika",
+        "name": "Aurélien Loyer"
+    },
+    {
+        "bio": "<p>Développeur depuis plus de 15 ans, je suis également pédagogue depuis 5 ans.</p>\n                                        <p>Le croisement du domaine technique voir scientifique et du domaine artistique m'a toujours intéressé.</p>\n                                        <p>J'ai constaté que l'apprentissage du code dans le but de produire des réalisations visuelles, sonores \n                                            et/ou interactives était une méthode prometteuse pour progresser.</p>\n                                        <p>Inversement, je pense que le domaine artistique a beaucoup à gagner en assimilant ces nouvelles technologies, \n                                            non comme fin en soi mais plutôt comme de nouveaux moyens d'expression.</p>",
+        "company": "e-artstup",
+        "name": "Daishi Kaszer"
+    },
+    {
+        "bio": "<p>Training Engineer chez Cloudbees, je suis un touche à tout technique, qui adore faire progresser mes \n                                        interlocuteurs sur des sujets complexes.</p>\n                                        <p>Fan de Docker de la première heure, j'adore jouer avec les techniques des devs, des ops et de tout ce qui va \n                                            au milieu !</p>",
+        "company": "CloudBees",
+        "name": "Damien Duportal"
+    },
+    {
+        "bio": "<p>David Pilato is Developer at elastic in elasticsearch team and French spoken language User Group creator.</p> \n                                        <p>In his free time, he likes talking about elasticsearch in conferences or in companies (Brown Bag Lunches).</p>",
+        "company": "Elastic",
+        "name": "David Pilato"
+    },
+    {
+        "bio": "<p>Eliza is an Android developer at Pixplicity and a student at the Faculty of Automation and Robotics Engineering \n                                        in Thessaloniki.</p>\n                                        <p>Her big passion is to explore and play with new technologies while she enjoys travelling, and attending conferences and meetups.</p>",
+        "company": "Pixplicity",
+        "name": "Eliza Camberogiannis"
+    },
+    {
+        "bio": "<p>Créateur de traefik.io, Emile est développeur et le fondateur de containo.us. Il a plus de 10 années \n                                        d'expérience dans le développement d'applications pour le web et l'industrie et il est formateur certifié Docker. </p>\n                                        Il s'intéresse au mouvement DevOps depuis ses débuts et se passionne pour les outils d’orchestration comme Kubernetes, \n                                        Swarm ou Mesos.</p>",
+        "company": "Containous",
+        "name": "Emile Vauge"
+    },
+    {
+        "bio": "<p>Développeur touche à tout depuis plus de 10 ans, il travaille actuellement à Zenika Nantes.</p>\n                                    <p>Ses sujets du moments sont le Cloud, Golang, l’industrialisation du JS, Electron et Docker. Il est formateur \n                                        officiel Docker et co-organisateur du Docker Meetup Nantes.</p>",
+        "company": "Zenika",
+        "name": "Eric Briand"
+    },
+    {
+        "bio": "<p>Erwann Thebault est consultant à Zenika Rennes. Il participe à la conception et \n                                        réalisation de projets backend autour de Java, Spring Boot, ELK,... . </p>\n                                        <p>Geek, il s'est interessé a l'évolutions des object connectés, puis à l'emergence de \n                                            l'IOT : le web, ce n'est plus seulement un navigateur.</p>",
+        "company": "Zenika",
+        "name": "Erwann Thebault"
+    },
+    {
+        "bio": "<p>Etienne est le dessinateur de CommitStrip, le blog qui raconte la vie des codeurs depuis 2012.</p>",
+        "company": "CommitStrip",
+        "name": "Etienne Issartial"
+    },
+    {
+        "bio": "<p>Breton émigré à Bruxelles, Fabien fait partie des premiers développeurs à avoir suivi Mozilla dans leur \n                                        aventure en Réalité Virtuelle avec A-Frame, technologie sur laquelle il a pu donner de nombreuses conférences \n                                        et ateliers, notamment en Belgique, démontrant les merveilles du WebVR à grand renfort de cubes.</p>",
+        "company": "",
+        "name": "Fabien Benetou"
+    },
+    {
+        "bio": "<p>Hubert est développeur Web et passionné d’HTML, CSS et JavaScript. Il travaille depuis 7\n                                    ans chez INEAT Conseil et passe une bonne partie de sa semaine à développer sur des projets.\n                                    Il intervient de temps en temps chez d'autres clients pour du conseil et de l'audit.</p>\n                                    <p>Il a travaillé avec du PHP, du Java et beaucoup de JavaScript pour des sites et webapp\n                                    Intranet/Internet, mobile/tablettes et desktop. Il a également une casquette CSS/intégration.</p>\n                                    <p>Sur son temps libre, il bidouille beaucoup avec les dernières technologies pour essayer de trouver\n                                    des nouveaux usages pour ses utilisateurs et des facilités pour les développeurs.</p>",
+        "company": "OpenDevise",
+        "name": "Hubert Sablonnière"
+    },
+    {
+        "bio": "<p>A perpetual and enthusiastic learner, admirative of all the cool stuff out there. Loves to share his discoveries and passions.</p>\n                                        <p>Considered ″old generation″, he has seen the birth of Personal Computing, word processing, eMail, the World Wide Web, mobile Internet, Linux. Cloud Computing, Docker, DevOps, etc. </p>\n                                        <p>Always at the cross-road of Operations and Development, he worked for many years in the same company on several subjects and positions. But his main goal remained to people's life easier by improving and automating software build, testing delivery and installation. Then he discovered that he was not too old for the excitement and adventure of young companies: he joined Cloudbees begin 2017.</p>",
+        "company": "CloudBees",
+        "name": "Jean-Marc Meessen"
+    },
+    {
+        "bio": "<p>Jérémie Huchet est consultant Java au sein de Zenika Rennes. Il intervient principalement en réalisation sur des projets backend et en accompagnement \n                                        pour optimiser les cycles d'intégration et livraison continue.</p>\n                                        <p>Il est adepte du TDD, convaincu par les méthodes agiles et accorde de l'importance à l'esprit libre et au partage.</p>",
+        "company": "Zenika",
+        "name": "Jérémie Huchet"
+    },
+    {
+        "bio": "<p>Jérémie est développeur Android depuis plus de 5 ans et travaille chez Captain Train. </p>\n                                        <p>Il est un fervent adepte des bonnes pratiques de développement et des principes du Software Craftsmanship. \n                                        Il est également un grand passionné d'UI/UX.</p>",
+        "company": "Trainline",
+        "name": "Jérémie Martinez"
+    },
+    {
+        "bio": "<p>CTO de Zenika Nantes, Julien navigue entre des missions de formation et d’architecture autour des technos \n                                        Web et des sujets Cloud.</p>\n                                        <p>Julien a co-fondé en Janvier 2011 le GDG Nantes, une communauté de développeurs des technologies Google, \n                                            organise chaque année le DevFest Nantes.</p>",
+        "company": "Zenika",
+        "name": "Julien Landuré"
+    },
+    {
+        "bio": "<p>Android Craftswoman depuis 2012 ♥ Travaille chez Canal+ ★ Vous pouvez me croiser au Paris Android User Group.</p>",
+        "company": "",
+        "name": "Marion Hayoun"
+    },
+    {
+        "bio": "<p>Je suis marié, avec 2 enfants (6 & 7 ans). Je suis aussi Coach Agile à tendance Product Owner à Valtech Paris.</p> \n                                        <p>Au boulot, j'apprécie les échanges et les partages entre toutes les équipes au profit de l'innovation et des beaux \n                                            produits à construire.</p>\n                                            <p>A la maison, je n'arrive pas à oublier l'état d'esprit Agile. </p>\n                                            <p>Toujours, je cherche à grandir et aider à grandir, en veillant que l'on s'amuse très sérieusement.</p>",
+        "company": "Valtech",
+        "name": "Régis Schneider"
+    },
+    {
+        "bio": "<p>Romain est développeur backend chez SFEIR. Depuis plus de 10 ans, il aide les clients dans leurs projets Java, \n                                        tantôt développeur, tantôt intégrateur.</p>\n                                        <p>Arrivant chez Sfeir, il est parti regarder du côté de Go et Docker pour ses clients IoT.</p>",
+        "company": "SFEIR",
+        "name": "Romain Lespinasse"
+    },
+    {
+        "bio": "<p>Seb est développeur backend chez SFEIR. Après 10 années de Java dans des environnements distribués, \n                                        il a récemment sauté le pas pour le Go chez ses clients dans le domaine de l'IoT.</p>\n                                        <p>Il vous propose aujourd'hui de partager sa passion et son expérience pour ce nouveau langage.</p>",
+        "company": "SFEIR",
+        "name": "Sébastien Friess"
+    },
+    {
+        "bio": "<p>Evangéliste technique Microsoft France, je suis en charge d'accompagner les communautés de développeurs \n                                        autour des technologies innovantes Microsoft. Web Front avec JavaScript/TypeScript, Backend Node.js, ASP.NET et \n                                        cloud avec Azure. OSS forever :)</p>",
+        "company": "Microsoft",
+        "name": "Sébastien Pertus"
+    },
+    {
+        "bio": "<p>Responsable pédagogique et enseignant en design interactif pour e-artsup, Sylvain aime également se définir \n                                        comme un « artisan/artiste du numérique et du physique ». </p>\n                                        <p>L'expérimentation est au cœur de son travail ; il aime interroger les usages et développer de nouveaux modes de création \n                                            en mélangeant les techniques.</p>",
+        "company": "e-artstup",
+        "name": "Sylvain Coste"
+    },
+    {
+        "bio": "<p>As an IT engineer, Thomas has always been passionate about new technologies. Starting his career as a \n                                        game-play developer in a video-game studio in Paris, he's been moving since into developing 3D softwares for \n                                        the Web, and has been working full time on Virtual Reality for the Web for the past two years. </p>\n                                        <p>Spending 3 months in the BoostVC VR incubator (SF Bay Area, USA) has been a revelation for him, and he is \n                                            now working on his own WebVR company LucidWeb for a year. Keen adept of science fiction, \n                                            he's working hard on building what could be the everyday life of tomorrow, helping out to build the Metaverse!</p>",
+        "company": "LucidWeb",
+        "name": "Thomas Balouet"
+    },
+    {
+        "bio": "<p>Thomas Gx est le fondateur de CommitStrip, le blog BD bien connu des codeurs : c'est lui qui écrit chaque jour depuis \n                                        2012 une strip sur la vie quotidienne des codeurs. </p>\n                                        <p>Pionner du développement des réseaux sociaux en France dès 2006 en lançant Cancoon, Thomas co-fonde en 2007 l'agence KRDS, \n                                            première agence spécialisée en social media marketing et aujourd'hui leader en Europe et en Asie.</p>\n                                            <p> Il y occupe aujourd'hui la Direction de la Production, dirigeant un studio primé et une équipe de développeurs web ayant \n                                                produit près de 2000 projets.</p>",
+        "company": "CommitStrip",
+        "name": "Thomas Guenoux"
+    },
+    {
+        "bio": "<p>Xavier est un développeur web full-stack vivant à Paris.</p>\n                                        <p> Il travaille chez SFEIR, une ESN qui accompagne les entreprises dans leur transformation numérique.</p>",
+        "company": "SFEIR",
+        "name": "Xavier Dutreilh"
+    },
+    {
+        "bio": "<p>Développeur & Formateur, Zenika Yoan Rousseau est consultant chez Zenika Rennes. Il intervient sur la conception et la réalisation back-end \n                                        (Spring,boot,hibernate,rabbitmq).</p>\n                                        <p>Curieux et passionné par son métier il travaille aussi sur des sujets gravitant autour du Devops, de l'agilité, du Cloud et de l'IOT. </p>",
+        "company": "Zenika",
+        "name": "Yoan Rousseau"
+    }
+]
