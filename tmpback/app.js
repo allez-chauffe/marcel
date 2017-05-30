@@ -8,14 +8,15 @@ const Models = snowboy.Models;
 const Detector = snowboy.Detector;
 const http = require('http').Server(app);
 const ApiAi = require('apiai-promise')
-const apiaitoken = require('./config.js').apiaitoken;
-const apiai = ApiAi(apiaitoken);
+const config = require('./config.js');
+const apiai = ApiAi(config.apiaitoken);
 const sessionId = 'marcel';
 const models = new Models();
+const ip = require("ip");
 
 models.add({
   file: 'resources/marcel.pmdl',
-  sensitivity: '0.5',
+  sensitivity: '0.4',
   hotwords: 'marcel'
 })
 
@@ -30,10 +31,6 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'X-Requested-With')
   next()
 })
-
-app.use(express.static('./public/'));
-app.use(express.static('./components/'));
-app.use(express.static('./node_modules/'));
 
 app.get('/', (req, res) => {
   res.sendfile("public/index.html");
@@ -55,12 +52,34 @@ io.on('connection', socket => {
   socket.on('speech', (speech) => {
     apiai.textRequest(speech.message, { sessionId })
          .then((response) => {
+            console.log(response)
             if (response.result.parameters.video !== undefined) {
               socket.emit('youtube', {"type": "search", "content": response.result.parameters.video});
+            }
+
+            if (response.result.metadata.intentName === "Planning") {
+              socket.emit('devfest', {type: "planning"});
+            }
+
+            if (response.result.metadata.intentName === 'CurrentTalk') {
+              socket.emit('devfest', {type: "current", location: response.result.parameters.location});
+            }
+
+            if (response.result.metadata.intentName === 'CloseDisplayed') {
+              socket.emit('close');
+            }
+
+            if (response.result.metadata.intentName === 'Speaker') {
+              socket.emit('devfest', {type: "speaker", name: response.result.parameters.speaker});
+            }
+
+            if (response.result.metadata.intentName === 'Talk') {
+              socket.emit('devfest', {type: "talk", title: response.result.parameters.title});
             }
           })
           .catch(err => console.log(err));
   });
+
 })
 
 detector.on('hotword', (index, hotword) => {
@@ -76,21 +95,31 @@ const componentsList = {
     "css/weather-icons.min.css"
   ],
   "scripts": [
-    "socket.io/socket.io.js",
+    "http://localhost:8080/socket.io/socket.io.js",
     "js/connect-socketio.js"
   ],
   "components": [
     {
+      "componentName": "devfest",
+      "eltName": "devfest-item",
+      "files": "devfest.html",
+      "propValues": {
+        "speakers_url": "http://localhost/plugins/devfest/speakers.json",
+        "talks_url": "http://localhost/plugins/devfest/talks.json"
+      }
+    },
+    {
       "componentName": "youtube",
       "eltName": "youtube-item",
-      "files": "youtube.html"
+      "files": "youtube.html",
+      "url": "http://localhost/plugins"
     },
     {
       "componentName": "marcel",
       "eltName": "marcel-item",
       "files": "marcel.html",
       "propValues": {
-        "logo_url": "assets/zenika.png",
+        "logo_url": "http://" + ip.address() + "/plugins/logo/zenika.png",
         "message_text1": "Bienvenue",
         "message_text2": "à Zenika Lille",
         "github_users": [
@@ -111,8 +140,8 @@ const componentsList = {
           'Sehsyha',
           'P0ppoff'
         ],
-        "github_client_id": "27b62f039b44ddc08fdf",
-        "github_client_secret": "7b14f465112e87267a72c02d4c3fc58925412dbd",
+        "github_client_id": config.github_client_id,
+        "github_client_secret": config.github_client_secret,
         "twitter_api": "http://10.0.10.63:8090/api/v1/twitter/timeline",
         "vlille_stations_id": [
           { name: "Rihour", id: 10 },
@@ -126,16 +155,15 @@ const componentsList = {
         "weather_city": "Lille,Fr",
         "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5",
         "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
-        "speech_default_message": "Bonjour à tous, je suis MARCEL !"
+        "speech_default_message": "Bonjour à tous, je suis MARCEL !",
+        "speech_loader_url": "http://" + ip.address() + ":8080/speech/loader.jpg",
+        "loader_url": "http://localhost/plugins/speech/loader.jpg"
       }
     }
   ]
 }
 
-const mic = record.start({
-  threshold: 0
-})
-
+const mic = record.start(config.microphone);
 mic.pipe(detector);
 
 /**

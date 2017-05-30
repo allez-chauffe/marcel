@@ -1,0 +1,181 @@
+<link rel="import" href="/plugins/shared-styles/shared-styles.html">
+<dom-module id="devfest-item">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      #planning {
+        width: 100%;
+        height: 100%;
+      }
+
+      #current {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        margin: 10px;
+      }
+ 
+      #current h1 {
+        color: #c10d12;
+      }
+
+      #current div {
+        margin: 20px;
+      }
+    </style>
+    <template is="dom-if" if="[[displayCurrentTalk]]">
+      <div id="current" class="flex space-between">
+        <template is="dom-repeat" items="[[currentTalks]]" as="talk">
+          <div>
+            <h1>{{talk.title}}</h1>
+            <h2>{{talk.type}}<br />Animé par {{talk.name}}<br/>{{talk.company}}</h2>
+            <h3>Durée : {{talk.duration}}<br />{{talk.room}}</h3>
+            {{talk.description}}
+          </div>
+        </template>
+      </div>
+    </template>
+    <template is="dom-if" if="[[planning]]">
+      <div id="planning">
+        <template is="dom-repeat" items="[[talks]]" as="talk">
+            {{talk.title}}
+        </template>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    (() => {
+      class Devfest extends Polymer.Element {
+        static get is() { return 'devfest-item' }
+
+        static get properties() {
+          return {
+            currentTalks: Array,
+            displayCurrentTalk: Boolean,
+            planning: Boolean,
+            speaker: Object,
+            speakers: Array,
+            speakers_url: String,
+            talks: Array,
+            talks_url: String
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
+
+          socket.on('devfest', (req) => this._handleRequest(req));
+          socket.on('close', (req) => this._showEverything());
+          
+          this.planning = false;
+          this.displayCurrentTalk = false;
+          this._fetchDevfestTalks();
+          this._fetchDevfestSpeakers();
+        }
+        
+        _handleRequest (req) {
+          switch (req.type) {
+            case "talk":
+              this._displayTalk(req.title);
+              break;
+            case "planning":
+              this._displayPlanning();
+              break;
+            case "current":
+              this._displayCurrentTalks(req.location);
+              break;
+            case "speaker":
+              this._displayBio(req.name);
+              break;
+          }
+        }
+
+        _displayPlanning () {
+          this._hideEverything();
+          this.planning = true;
+        }
+
+        _displayTalk (talkTitle) {
+          this.currentTalks = this.talks.filter(talk => {
+            return talk.title.indexOf(talkTitle) != -1
+          });
+          console.log(this.currentTalks)
+          this._hideEverything();
+          this.displayCurrentTalk = true;
+        }
+
+        _hideEverything () {
+          const elements = document.getElementById('components').childNodes;
+          elements.forEach(element => {
+            if (element.nodeName != 'DEVFEST-ITEM') {
+              element.style.visibility = 'hidden';
+            }
+          })
+        }
+
+        _displayTalk (title) {
+          this.currentTalks = this.talks.filter(talk => talk.title.toLowerCase().indexOf(title.toLowerCase()) != -1);
+          console.log(this.currentTalks)
+          this.displayCurrentTalk = true;
+          this._hideEverything();
+        }
+
+        _showEverything () {
+          const elements = document.getElementById('components').childNodes;
+          elements.forEach(element => {
+            if (element.nodeName != 'DEVFEST-ITEM') {
+              element.style.visibility = 'initial';
+            }
+          })
+          this.planning = false;
+          this.displayCurrentTalk = false;
+        }
+        
+        _displayCurrentTalks (location) {
+          const now = new Date();
+          this.currentTalks = this.talks.filter(talk => {
+            const start = new Date();
+            start.setHours(talk.time.split(':')[0]);
+            start.setMinutes(talk.time.split(':')[1]);
+            start.setSeconds(0);
+
+            let duration = 0;
+            if (talk.duration.indexOf('mn') != -1) {
+              duration = talk.duration.slice(0, 2) * 60;
+            } else {
+              duration = talk.duration.slice(0, 1) * 60 * 60;
+            }
+
+            const end = new Date(start.getTime() + duration * 1000);
+            if(location !== "") {
+              return now > start && now < end && talk.room === location;;
+            } 
+            return now > start && now < end;
+          });
+          this.planning = false;
+          this._hideEverything();
+          this.displayCurrentTalk = true;
+        }
+
+        _displayBio (name) {
+          this.speaker = this.speakers.filter(speaker => speaker.name === name)[0];
+        }
+
+        _fetchDevfestTalks () {
+          fetch(this.talks_url)
+            .then(res => res.json())
+            .then(res => this.talks = res);
+        }
+
+        _fetchDevfestSpeakers () {
+          fetch(this.speakers_url)
+            .then(res => res.json())
+            .then(res => this.speakers = res);  
+        }
+      }
+
+      customElements.define(Devfest.is, Devfest);
+    })();
+  </script>
+</dom-module>
