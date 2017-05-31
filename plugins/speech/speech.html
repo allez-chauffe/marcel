@@ -35,14 +35,15 @@
             message: String,
             speech_recognition: Object,
             started: Boolean,
-            socket: Object
+            socket: Object,
+            socket_url: String
           }
       }
 
       connectedCallback () {
         super.connectedCallback();
 
-        this.socket = io.connect('http://localhost:8080')
+        this.socket = io.connect(this.socket_url)
 
         this.message = this.default_message;
         this.started = false;

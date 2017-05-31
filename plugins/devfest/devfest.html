@@ -60,6 +60,7 @@
             speakers: Array,
             speakers_url: String,
             socket: String,
+            socket_url: String,
             talks: Array,
             talks_url: String
           }
@@ -68,7 +69,7 @@
         connectedCallback () {
           super.connectedCallback();
 
-          this.socket = io.connect('http://localhost:8080');
+          this.socket = io.connect(this.socket_url);
 
           this.socket.on('devfest', (req) => this._handleRequest(req));
           this.socket.on('close', (req) => this._showEverything());
