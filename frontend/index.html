@@ -15,7 +15,7 @@
       }
 
       function loadComponents () {
-        fetch('http://localhost/config.json')
+        fetch('config.json')
           .then(res => res.json())
           .then(res => {
             serverIp = res.ip || 'localhost';
