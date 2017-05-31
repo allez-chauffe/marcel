@@ -32,7 +32,7 @@
         connectedCallback() {
           super.connectedCallback();
 
-          this.socket = io('http://localhost:8080');
+          this.socket = io.connect('http://localhost:8080');
 
           this.socket.on('youtube', (request) => this._handleRequest(request));
         }

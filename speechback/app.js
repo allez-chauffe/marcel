@@ -79,7 +79,7 @@ io.on('connection', socket => {
           })
           .catch(err => console.log(err));
   });
-
+  
 })
 
 detector.on('hotword', (index, hotword) => {
@@ -87,91 +87,5 @@ detector.on('hotword', (index, hotword) => {
   io.sockets.emit('hotword');
 })
 
-/** list of components to be loaded */
-const componentsList = {
-  "styles": [
-    "css/style.css",
-    "css/font-awesome.min.css",
-    "css/weather-icons.min.css"
-  ],
-  "scripts": [
-    "http://localhost:8080/socket.io/socket.io.js",
-    "js/connect-socketio.js"
-  ],
-  "components": [
-    {
-      "componentName": "devfest",
-      "eltName": "devfest-item",
-      "files": "devfest.html",
-      "propValues": {
-        "speakers_url": "http://localhost/plugins/devfest/speakers.json",
-        "talks_url": "http://localhost/plugins/devfest/talks.json"
-      }
-    },
-    {
-      "componentName": "youtube",
-      "eltName": "youtube-item",
-      "files": "youtube.html",
-      "url": "http://localhost/plugins"
-    },
-    {
-      "componentName": "marcel",
-      "eltName": "marcel-item",
-      "files": "marcel.html",
-      "propValues": {
-        "logo_url": "http://" + ip.address() + "/plugins/logo/zenika.png",
-        "message_text1": "Bienvenue",
-        "message_text2": "à Zenika Lille",
-        "github_users": [
-          'Gillespie59',
-          'GwennaelBuchet',
-          'T3kstiil3',
-          'RemiEven',
-          'looztra',
-          'a-cordier',
-          'wadendo',
-          'NathanDM',
-          'Antoinephi',
-          'cluster',
-          'yyekhlef',
-          'gdrouet',
-          'Kize',
-          'kratisto',
-          'Sehsyha',
-          'P0ppoff'
-        ],
-        "github_client_id": config.github_client_id,
-        "github_client_secret": config.github_client_secret,
-        "twitter_api": "http://10.0.10.63:8090/api/v1/twitter/timeline",
-        "vlille_stations_id": [
-          { name: "Rihour", id: 10 },
-          { name: "Cormontaigne", id: 36 },
-          { name: "Mairie de Lille", id: 64 },
-          { name: "Gare Lille Flandres", id: 25 },
-          { name: "Boulevard Louis XIV", id: 47 }
-        ],
-        "soundtouch_url": "http://10.0.10.166:8090/now_playing",
-        "weather_api_key": "FREE_OPENWEATHER_KEY",
-        "weather_city": "Lille,Fr",
-        "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5",
-        "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
-        "speech_default_message": "Bonjour à tous, je suis MARCEL !",
-        "speech_loader_url": "http://" + ip.address() + ":8080/speech/loader.jpg",
-        "loader_url": "http://localhost/plugins/speech/loader.jpg"
-      }
-    }
-  ]
-}
-
 const mic = record.start(config.microphone);
 mic.pipe(detector);
-
-/**
- * Get a list of JSON for all registered components
- * @path /componentsList
- * @HTTPMethod GET
- * @returns {string}
- */
-app.get("/componentsList", function (req, res) {
-  res.send(componentsList);
-});
