@@ -13,3 +13,5 @@ export type Plugin = {
   icon: string,
   elementName: string,
 }
+
+export type State = Plugin[]

@@ -1,0 +1,166 @@
+<link rel="import" href="/plugins/vendors/weather-icons/weather-icons.html">
+<link rel="import" href="/bower_components/moment-element/moment-element.html">
+
+<dom-module id="weather-icon-item">
+  <template>
+    <style include="weather-icons"></style>
+    <style>
+      :host {
+        position: relative;
+        display: block;
+        margin: 15px 0px;
+        top : 0;
+        left: 0;
+      }
+
+      .flex {
+        display: flex;
+      }
+
+      .weather_text{
+        font-size: 1.5em;
+        color: #c10d12;
+      }
+
+      .weather_dt {
+        color: #c10d12;
+        margin-bottom: 2px;
+        font-size: 1em;
+      }
+
+      .weather_temp{
+        font-size: 1.2em;
+      }
+
+      .icon_content{
+        font-size: 60px;
+        margin-right: 30px;
+      }
+
+      .icon {
+        position: relative;
+        display: inline-block;
+        width: 11em;
+        height: 8em;
+        font-size: 0.7em; /* control icon size here */
+      }
+    </style>
+    <div class="flex">
+      <div class="icon_content">
+        <i class$="{{weather_icon}}"></i>
+      </div>
+      <div class="weather_info">
+        <template is="dom-if" if="display_dt">
+          <div class="weather_dt">
+            <moment-element datetime="{{weather_date}}" output-format="HH:mm"></moment-element>
+          </div>
+        </template>
+        <div class="weather_temp">
+          {{weather_temp}} °C
+        </div>
+        <div class="weather_text">
+          {{current_weather_type}}
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (() => {
+      class WeatherIcon extends Polymer.Element {
+        static get is () { return 'weather-icon-item' }
+
+        static get properties () {
+          return {
+            api: String,
+            api_key: String,
+            city: String,
+            current_weather_type: String,
+            display_dt: Boolean,
+            icons: Array,
+            item_number: Number,
+            timer: Number,
+            weather_date: Date,
+            weather_icon: String,
+            weather_object: Object,
+            weather_url: String,
+            weather_temp: Number,
+            weather_types: Array,
+            weather_url: String
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
+
+          this.api = this.weather_url + '?APPID=' + this.api_key + '&q=' + this.city + '&units=metric';
+          this.current_weather_type = '';
+          this.display_dt = true;
+          this.timer = 180000;
+          this.weather_temp = 0;
+          this.weather_types = [
+            "sun-shower",
+            "thunder-storm",
+            "cloudy",
+            "sunny",
+            "rainy",
+            "flurries"
+          ]
+
+          this.numbersList = [0, 1, 2];
+          this._getIcons()
+              .then(() => this._getWeather())
+          setInterval(() => this._getWeather(), this.timer);
+        }
+        
+        _getWeather () {
+          this._getCurrentWeather()
+              .then(res => {
+                this.weather_temp = Math.round(res.list[this.item_number].main.temp);
+
+                this._setWeatherType(res.list[this.item_number].weather[0].main);
+
+                let icon = "day-" + this.icons[res.list[this.item_number].weather[0].id].icon;
+                this.weather_icon = "wi wi-" + icon;
+
+                this.weather_date = new Date(res.list[this.item_number].dt * 1000);
+              })
+              .catch(err => console.log(err))
+        }
+
+        _getCurrentWeather () {
+          return fetch(this.api)
+                    .then(res => res.json())
+        }
+
+        _randomType () {
+          const randomIndex = Math.floor(Math.random() / this.weather_types.length);
+          return this.weather_types[randomIndex];
+        }
+
+        _setWeatherType (type) {
+          this.current_weather_type = type || this._randomType();
+        }
+
+        _getDayNight (date) {
+          let hour = (new Date(date)).getHours();
+          if (hour > 6 && hour < 18) {
+            return 'day-';
+          } else {
+            return 'night-';
+          }
+        }
+
+        _getIcons () {
+          return fetch('/plugins/weather/icons.json')
+                    .then(res => res.json())
+                    .then(icons => this.icons = icons)
+        }
+
+      }
+
+      customElements.define(WeatherIcon.is, WeatherIcon);
+    })();
+
+  </script>
+</dom-module>
