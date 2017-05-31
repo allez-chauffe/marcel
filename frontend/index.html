@@ -8,11 +8,10 @@
   </head>
   <body onload="loadComponents()">
     <section id="components"></section>
-    <script src="bower_components/polymer_dynamic_components/polymer_asyncComponentLoader.js"></script>
+    <script src="bower_components/polymer-application-loader/loader.js"></script>
     <script>
       function launchLoad (serverIp) {
-        polymerAsyncLoader = new Polymer_AsyncComponentLoader('components', 'http://' + serverIp + ':8090/api/v1/media/1', 'http://' + serverIp + '/plugins');
-        polymerAsyncLoader.load();
+        PolymerApplicationLoader.load('components', 'http://' + serverIp + ':8090/api/v1/media/1', 'http://' + serverIp + '/plugins');
       }
 
       function loadComponents () {
