@@ -1,4 +1,5 @@
 <link rel="import" href="/plugins/shared-styles/shared-styles.html">
+<script src="./socketio.js"></script>
 
 <dom-module id="speech-item">
   <template>
@@ -33,19 +34,23 @@
             loader_url: String,
             message: String,
             speech_recognition: Object,
-            started: Boolean
+            started: Boolean,
+            socket: Object,
+            socket_url: String
           }
       }
 
       connectedCallback () {
         super.connectedCallback();
 
+        this.socket = io.connect(this.socket_url)
+
         this.message = this.default_message;
         this.started = false;
         this.$.loader.classList.add('hide');
 
         this._setSpeechRecognition();
-        socket.on('hotword', () => this._onHotWord());
+        this.socket.on('hotword', () => this._onHotWord());
       }
 
       _setSpeechRecognition () {
@@ -66,7 +71,7 @@
                 console.log('Unrecognized result');
               } else {
                 this.request = transcript.trim();
-                socket.emit('speech', {"message": transcript.trim()})
+                this.socket.emit('speech', {"message": transcript.trim()})
                 this.$.loader.classList.add('hide');
                 this.started = false;
                 this.speech_recognition.stop();

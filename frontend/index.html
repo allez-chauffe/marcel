@@ -10,9 +10,21 @@
     <section id="components"></section>
     <script src="bower_components/polymer_dynamic_components/polymer_asyncComponentLoader.js"></script>
     <script>
-      function loadComponents () {
-        polymerAsyncLoader = new Polymer_AsyncComponentLoader('components', 'http://10.0.10.63:8090/api/v1/media/1', 'http://10.0.10.63/plugins');
+      function launchLoad (serverIp) {
+        polymerAsyncLoader = new Polymer_AsyncComponentLoader('components', 'http://' + serverIp + ':8090/api/v1/media/1', 'http://' + serverIp + '/plugins');
         polymerAsyncLoader.load();
+      }
+
+      function loadComponents () {
+        fetch('http://localhost/config.json')
+          .then(res => res.json())
+          .then(res => {
+            serverIp = res.ip || 'localhost';
+            launchLoad(serverIp);
+          })
+          .catch(() => {
+            launchLoad('localhost');
+          })
       }
     </script>
   </body>

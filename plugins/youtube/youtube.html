@@ -1,4 +1,6 @@
 <link rel="import" href="/bower_components/google-youtube/google-youtube.html">
+<script src="./socketio.js"></script>
+
 <dom-module id="youtube-item">
   <template>
     <style>
@@ -21,6 +23,8 @@
 
         static get properties() {
           return {
+            socket: Object,
+            socket_url: String,
             title: String,
             video_id: String
           }
@@ -28,7 +32,10 @@
 
         connectedCallback() {
           super.connectedCallback();
-          socket.on('youtube', (request) => this._handleRequest(request));
+
+          this.socket = io.connect(this.socket_url);
+
+          this.socket.on('youtube', (request) => this._handleRequest(request));
         }
 
         _handleRequest (req) {
