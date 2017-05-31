@@ -54,27 +54,27 @@ io.on('connection', socket => {
          .then((response) => {
             console.log(response)
             if (response.result.parameters.video !== undefined) {
-              socket.emit('youtube', {"type": "search", "content": response.result.parameters.video});
+              io.sockets.emit('youtube', {"type": "search", "content": response.result.parameters.video});
             }
 
             if (response.result.metadata.intentName === "Planning") {
-              socket.emit('devfest', {type: "planning"});
+              io.sockets.emit('devfest', {type: "planning"});
             }
 
             if (response.result.metadata.intentName === 'CurrentTalk') {
-              socket.emit('devfest', {type: "current", location: response.result.parameters.location});
+              io.sockets.emit('devfest', {type: "current", location: response.result.parameters.location});
             }
 
             if (response.result.metadata.intentName === 'CloseDisplayed') {
-              socket.emit('close');
+              io.sockets.emit('close');
             }
 
             if (response.result.metadata.intentName === 'Speaker') {
-              socket.emit('devfest', {type: "speaker", name: response.result.parameters.speaker});
+              io.sockets.emit('devfest', {type: "speaker", name: response.result.parameters.speaker});
             }
 
             if (response.result.metadata.intentName === 'Talk') {
-              socket.emit('devfest', {type: "talk", title: response.result.parameters.title});
+              io.sockets.emit('devfest', {type: "talk", title: response.result.parameters.title});
             }
           })
           .catch(err => console.log(err));

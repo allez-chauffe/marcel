@@ -1,4 +1,6 @@
 <link rel="import" href="/plugins/shared-styles/shared-styles.html">
+<script src="./socketio.js"></script>
+
 <dom-module id="devfest-item">
   <template>
     <style include="shared-styles"></style>
@@ -57,6 +59,7 @@
             speaker: Object,
             speakers: Array,
             speakers_url: String,
+            socket: String,
             talks: Array,
             talks_url: String
           }
@@ -65,8 +68,10 @@
         connectedCallback () {
           super.connectedCallback();
 
-          socket.on('devfest', (req) => this._handleRequest(req));
-          socket.on('close', (req) => this._showEverything());
+          this.socket = io('http://localhost:8080');
+
+          this.socket.on('devfest', (req) => this._handleRequest(req));
+          this.socket.on('close', (req) => this._showEverything());
           
           this.planning = false;
           this.displayCurrentTalk = false;
@@ -75,6 +80,7 @@
         }
         
         _handleRequest (req) {
+          alert('Pouet');
           switch (req.type) {
             case "talk":
               this._displayTalk(req.title);
@@ -100,7 +106,7 @@
           this.currentTalks = this.talks.filter(talk => {
             return talk.title.indexOf(talkTitle) != -1
           });
-          console.log(this.currentTalks)
+
           this._hideEverything();
           this.displayCurrentTalk = true;
         }

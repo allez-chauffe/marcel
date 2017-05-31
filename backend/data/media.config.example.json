@@ -40,7 +40,7 @@
         ],
         "github_client_id": "27b62f039b44ddc08fdf",
         "github_client_secret": "7b14f465112e87267a72c02d4c3fc58925412dbd",
-        "twitter_api": "http://10.0.10.63:8090/api/v1/twitter/timeline",
+        "twitter_api": "http://localhost:8090/api/v1/twitter/timeline",
         "vlille_stations_id": [
           { "name": "Rihour", "id": 10 },
           { "name": "Cormontaigne", "id": 36 },
@@ -51,8 +51,8 @@
         "soundtouch_url": "http://10.0.10.166:8090/now_playing",
         "weather_api_key": "FREE_OPENWEATHER_KEY",
         "weather_city": "Lille,Fr",
-        "weather_url": "http://10.0.10.63:8090/api/v1/weather/forecast/5",
-        "calendar_url": "http://10.0.10.63:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
+        "weather_url": "http://localhost:8090/api/v1/weather/forecast/5",
+        "calendar_url": "http://localhost:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
         "speech_default_message": "Bonjour à tous, je suis MARCEL !"
       }
     }
