@@ -59,7 +59,6 @@
             listening: Boolean,
             message: String,
             speech_recognition: Object,
-            started: Boolean,
             socket: Object,
             socket_url: String
           }
@@ -71,7 +70,6 @@
         this.socket = io.connect(this.socket_url)
 
         this.message = this.default_message;
-        this.started = false;
         this.listening = false;
 
         this._setSpeechRecognition();
@@ -98,7 +96,6 @@
                 this.request = transcript.trim();
                 this.socket.emit('speech', {"message": transcript.trim()})
                 this.listening = false;
-                this.started = false;
                 this.speech_recognition.stop();
               }
             }
@@ -112,7 +109,7 @@
       }
 
       _onHotWord () {
-        if (!this.started) {
+        if (!this.listening) {
           this.started = true;
           this.speech_recognition.start();
           this.message = 'Je vous écoute';

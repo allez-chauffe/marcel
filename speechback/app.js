@@ -53,8 +53,17 @@ io.on('connection', socket => {
     apiai.textRequest(speech.message, { sessionId })
          .then((response) => {
             console.log(response)
-            if (response.result.parameters.video !== undefined) {
-              io.sockets.emit('youtube', {"type": "search", "content": response.result.parameters.video});
+            if (response.result.metadata.intentName === 'YoutubeSearch') {
+              console.log(response.result.parameters.video);
+              io.sockets.emit('youtube', {type: "search", content: response.result.parameters.video});
+            }
+
+            if (response.result.metadata.intentName === 'YoutubePause') {
+              io.sockets.emit('youtube', {type: "pause"});
+            }
+
+            if (response.result.metadata.intentName === 'YoutubePlay') {
+              io.sockets.emit('youtube', {type: "play"});
             }
 
             if (response.result.metadata.intentName === "Planning") {
@@ -79,10 +88,6 @@ io.on('connection', socket => {
           })
           .catch(err => console.log(err));
   });
-
-  setTimeout(() => socket.emit('devfest', {type: "speaker", name: "truc"}), 2000);
-  setTimeout(() => socket.emit('devfest', {type: "current"}), 4000);
-  setTimeout(() => io.sockets.emit('close'), 6000);
 
 })
 
