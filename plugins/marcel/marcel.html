@@ -49,7 +49,7 @@
       </div>
 
       <div class="flex flex-column space-between flex-full">
-          <weather-item weather_url="[[weather_url]]" city="[[weather_city]]" api_key="[[weather_api_key]]"></weather-item>
+          <weather-item weather_url="[[weather_url]]"></weather-item>
           <div class="flex flex-full space-around">
               <twitter-item api="[[twitter_api]]"></twitter-item>
               <soundtouch-item url="[[soundtouch_url]]"></soundtouch-item>
@@ -82,8 +82,6 @@
           soundtouch_url: String,
           twitter_api: String,
           vlille_stations_id: Array,
-          weather_api_key: String,
-          weather_city: String,
           weather_url: String
         }
       }
