@@ -4,13 +4,34 @@
     "css/font-awesome.min.css",
     "css/weather-icons.min.css"
   ],
-  "scripts": [
-  ],
   "components": [
+    {
+      "componentName": "devfest",
+      "eltName": "devfest-item",
+      "files": "devfest.html",
+      "propValues": {
+        "talks_url": "plugins/devfest/talks.json",
+        "speakers_url": "plugins/devfest/speakers.json",
+        "socket_url": "http://localhost:8080"
+      }
+    },
     {
       "componentName": "youtube",
       "eltName": "youtube-item",
-      "files": "youtube.html"
+      "files": "youtube.html",
+      "propValues": {
+        "socket_url": "http://localhost:8080"
+      }
+    },
+    {
+      "componentName": "speech",
+      "eltName": "speech-item",
+      "files": "speech.html",
+      "propValues": {
+        "loader_url": "plugins/speech/loader.jpg",
+        "socket_url": "http://localhost:8080",
+        "default_message": "Bonjour à tous, je suis MARCEL !"
+      }
     },
     {
       "componentName": "marcel",
@@ -49,11 +70,8 @@
           { "name": "Boulevard Louis XIV", "id": 47 }
         ],
         "soundtouch_url": "http://10.0.10.166:8090/now_playing",
-        "weather_api_key": "FREE_OPENWEATHER_KEY",
-        "weather_city": "Lille,Fr",
         "weather_url": "http://localhost:8090/api/v1/weather/forecast/5",
-        "calendar_url": "http://localhost:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
-        "speech_default_message": "Bonjour à tous, je suis MARCEL !"
+        "calendar_url": "http://localhost:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK"
       }
     }
   ]

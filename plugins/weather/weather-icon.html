@@ -50,11 +50,9 @@
         <i class$="{{weather_icon}}"></i>
       </div>
       <div class="weather_info">
-        <template is="dom-if" if="display_dt">
-          <div class="weather_dt">
-            <moment-element datetime="{{weather_date}}" output-format="HH:mm"></moment-element>
-          </div>
-        </template>
+        <div class="weather_dt">
+          <moment-element datetime="{{weather_date}}" output-format="HH:mm"></moment-element>
+        </div>
         <div class="weather_temp">
           {{weather_temp}} °C
         </div>
@@ -73,10 +71,7 @@
         static get properties () {
           return {
             api: String,
-            api_key: String,
-            city: String,
             current_weather_type: String,
-            display_dt: Boolean,
             icons: Array,
             item_number: Number,
             timer: Number,
@@ -93,9 +88,8 @@
         connectedCallback () {
           super.connectedCallback();
 
-          this.api = this.weather_url + '?APPID=' + this.api_key + '&q=' + this.city + '&units=metric';
+          this.api = this.weather_url;
           this.current_weather_type = '';
-          this.display_dt = true;
           this.timer = 180000;
           this.weather_temp = 0;
           this.weather_types = [
@@ -107,7 +101,6 @@
             "flurries"
           ]
 
-          this.numbersList = [0, 1, 2];
           this._getIcons()
               .then(() => this._getWeather())
           setInterval(() => this._getWeather(), this.timer);

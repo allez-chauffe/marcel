@@ -5,43 +5,42 @@
   <template>
     <style include="shared-styles"></style>
     <style>
-      #planning {
+      :host, #overlay {
         width: 100%;
         height: 100%;
-      }
-
-      #current {
-        width: 100%;
-        height: 100%;
+        position: absolute;
         text-align: center;
-        margin: 10px;
-      }
- 
-      #current h1 {
-        color: #c10d12;
+        top: 0px;
+        left: 0px;
+        z-index: 5;
       }
 
-      #current div {
-        margin: 20px;
+      #overlay {
+        /*display: none;*/
+        background-color: rgba(0,0,0,0.9);
+      }
+      
+      #overlay > div {
+        margin: 5%;
       }
     </style>
-    <template is="dom-if" if="[[displayCurrentTalk]]">
-      <div id="current" class="flex space-between">
-        <template is="dom-repeat" items="[[currentTalks]]" as="talk">
-          <div>
+    <template is="dom-if" if="[[overlay]]">
+      <div id="overlay">
+        <div>
+          <template is="dom-repeat" items="[[displayedTalks]]" as="talk">
             <h1>{{talk.title}}</h1>
             <h2>{{talk.type}}<br />Animé par {{talk.name}}<br/>{{talk.company}}</h2>
             <h3>Durée : {{talk.duration}}<br />{{talk.room}}</h3>
             {{talk.description}}
-          </div>
-        </template>
-      </div>
-    </template>
-    <template is="dom-if" if="[[planning]]">
-      <div id="planning">
-        <template is="dom-repeat" items="[[talks]]" as="talk">
-            {{talk.title}}
-        </template>
+          </template>
+          <template is="dom-if" if="[[speaker]]">
+            <h1>{{speaker.name}}</h1>
+            <h2>{{speaker.bio}}</h2>
+          </template>
+          <template is="dom-if" if="[[pause]]">
+            <h1>Les conférences sont actuellement en pause</h1>
+          </template>
+        <div>
       </div>
     </template>
   </template>
@@ -53,8 +52,9 @@
 
         static get properties() {
           return {
-            currentTalks: Array,
-            displayCurrentTalk: Boolean,
+            displayedTalks: Array,
+            overlay: Boolean,
+            pause: Boolean,
             planning: Boolean,
             speaker: Object,
             speakers: Array,
@@ -71,16 +71,18 @@
 
           this.socket = io.connect(this.socket_url);
 
-          this.socket.on('devfest', (req) => this._handleRequest(req));
-          this.socket.on('close', (req) => this._showEverything());
-          
+          this.overlay = false;
+          this.pause = false;
           this.planning = false;
-          this.displayCurrentTalk = false;
           this._fetchDevfestTalks();
           this._fetchDevfestSpeakers();
+
+          this.socket.on('devfest', (req) => this._handleRequest(req));
+          this.socket.on('close', (req) => this.overlay = false);
         }
         
         _handleRequest (req) {
+          this.overlay = true;
           switch (req.type) {
             case "talk":
               this._displayTalk(req.title);
@@ -94,53 +96,55 @@
             case "speaker":
               this._displayBio(req.name);
               break;
+            default: 
+              this.overlay = false;
+              break;
           }
         }
 
         _displayPlanning () {
-          this._hideEverything();
           this.planning = true;
         }
 
-        _displayTalk (talkTitle) {
-          this.currentTalks = this.talks.filter(talk => {
-            return talk.title.indexOf(talkTitle) != -1
-          });
-
-          this._hideEverything();
-          this.displayCurrentTalk = true;
-        }
-
-        _hideEverything () {
-          const elements = document.getElementById('components').childNodes;
-          elements.forEach(element => {
-            if (element.nodeName != 'DEVFEST-ITEM') {
-              element.style.visibility = 'hidden';
-            }
-          })
-        }
-
         _displayTalk (title) {
-          this.currentTalks = this.talks.filter(talk => talk.title.toLowerCase().indexOf(title.toLowerCase()) != -1);
-          console.log(this.currentTalks)
-          this.displayCurrentTalk = true;
-          this._hideEverything();
+          this.displayedTalks = this.talks.filter(talk => talk.title.toLowerCase().indexOf(title.toLowerCase()) != -1);
+
+          // Hide other things
+          this.speaker = false;
+          this.planning = false;
+          this.pause = false;
         }
 
-        _showEverything () {
-          const elements = document.getElementById('components').childNodes;
-          elements.forEach(element => {
-            if (element.nodeName != 'DEVFEST-ITEM') {
-              element.style.visibility = 'initial';
-            }
-          })
-          this.planning = false;
-          this.displayCurrentTalk = false;
-        }
-        
         _displayCurrentTalks (location) {
+          this.displayedTalks = this._searchCurrentTalks(location);
+
+          if (this.displayedTalks[0].title === 'Pause') {
+            this.pause = true;
+            this.displayedTalks = false;
+          }
+          
+          // Hide other things
+          this.speaker = false;
+          this.planning = false;
+        }
+
+        _displayBio (name) {
+          this.speaker = this.speakers.filter(speaker => speaker.name.indexOf(name) != -1)[0];
+          if(this.speaker === undefined) {
+            this.speaker = {
+              name: "Le speaker demandé n'a pas été trouvé"
+            }
+          }
+
+          // Hide other thigns
+          this.planning = false;
+          this.displayedTalks = false;
+          this.pause = false;
+        }
+
+        _searchCurrentTalks (location) {
           const now = new Date();
-          this.currentTalks = this.talks.filter(talk => {
+          return this.talks.filter(talk => {
             const start = new Date();
             start.setHours(talk.time.split(':')[0]);
             start.setMinutes(talk.time.split(':')[1]);
@@ -154,18 +158,11 @@
             }
 
             const end = new Date(start.getTime() + duration * 1000);
-            if(location !== "") {
+            if(location !== undefined && location !== "") {
               return now > start && now < end && talk.room === location;;
             } 
             return now > start && now < end;
           });
-          this.planning = false;
-          this._hideEverything();
-          this.displayCurrentTalk = true;
-        }
-
-        _displayBio (name) {
-          this.speaker = this.speakers.filter(speaker => speaker.name.indexOf(name) != -1)[0];
         }
 
         _fetchDevfestTalks () {

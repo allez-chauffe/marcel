@@ -53,8 +53,16 @@ io.on('connection', socket => {
     apiai.textRequest(speech.message, { sessionId })
          .then((response) => {
             console.log(response)
-            if (response.result.parameters.video !== undefined) {
-              io.sockets.emit('youtube', {"type": "search", "content": response.result.parameters.video});
+            if (response.result.metadata.intentName === 'YoutubeSearch') {
+              io.sockets.emit('youtube', {type: "search", content: response.result.parameters.video});
+            }
+
+            if (response.result.metadata.intentName === 'YoutubePause') {
+              io.sockets.emit('youtube', {type: "pause"});
+            }
+
+            if (response.result.metadata.intentName === 'YoutubePlay') {
+              io.sockets.emit('youtube', {type: "play"});
             }
 
             if (response.result.metadata.intentName === "Planning") {
@@ -79,7 +87,6 @@ io.on('connection', socket => {
           })
           .catch(err => console.log(err));
   });
-  
 })
 
 detector.on('hotword', (index, hotword) => {
