@@ -10,19 +10,20 @@
     <section id="components"></section>
     <script src="bower_components/polymer-application-loader/loader.js"></script>
     <script>
-      function launchLoad (serverIp) {
-        PolymerApplicationLoader.load('components', 'http://' + serverIp + ':8090/api/v1/media/1', 'http://' + serverIp + '/plugins');
+      function launchLoad (serverIp,pluginIp) {
+        PolymerApplicationLoader.load('components', 'http://' + serverIp + ':8090/api/v1/media/1', 'http://' + pluginIp + '/plugins');
       }
 
       function loadComponents () {
         fetch('config.json')
           .then(res => res.json())
           .then(res => {
-            serverIp = res.ip || 'localhost';
-            launchLoad(serverIp);
+            serverIp = res.serverIp || 'localhost';
+            pluginIp = res.pluginIp || 'localhost';
+            launchLoad(serverIp,pluginIp);
           })
           .catch(() => {
-            launchLoad('localhost');
+            launchLoad('localhost','localhost');
           })
       }
     </script>

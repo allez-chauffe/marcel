@@ -1,3 +1,4 @@
 {
-  "ip": "10.0.10.63"
+  "serverIp": "localhost",
+  "pluginIp": "marcel.local"
 }
