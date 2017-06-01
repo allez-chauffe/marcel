@@ -1,7 +1,7 @@
 {
-  "name": "marcel-tmpback",
+  "name": "marcel-speechback",
   "version": "1.0.0",
-  "description": "Temporary backend to serve components list and components",
+  "description": "Server that listen microphone to detect hotword and send sockets",
   "main": "app.js",
   "directories": {
     "test": "test"
