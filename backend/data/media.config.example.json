@@ -24,6 +24,16 @@
       }
     },
     {
+      "componentName": "speech",
+      "eltName": "speech-item",
+      "files": "speech.html",
+      "propValues": {
+        "loader_url": "plugins/speech/loader.jpg",
+        "socket_url": "http://localhost:8080",
+        "default_message": "Bonjour à tous, je suis MARCEL !"
+      }
+    },
+    {
       "componentName": "marcel",
       "eltName": "marcel-item",
       "files": "marcel.html",
@@ -63,9 +73,7 @@
         "weather_api_key": "FREE_OPENWEATHER_KEY",
         "weather_city": "Lille,Fr",
         "weather_url": "http://localhost:8090/api/v1/weather/forecast/5",
-        "calendar_url": "http://localhost:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
-        "speech_default_message": "Bonjour à tous, je suis MARCEL !",
-        "speech_socket_url": "http://localhost:8080"
+        "calendar_url": "http://localhost:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK"
       }
     }
   ]

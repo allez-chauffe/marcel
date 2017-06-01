@@ -79,7 +79,7 @@ io.on('connection', socket => {
           })
           .catch(err => console.log(err));
   });
-  
+
 })
 
 detector.on('hotword', (index, hotword) => {
