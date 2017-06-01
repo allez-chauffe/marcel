@@ -54,7 +54,6 @@ io.on('connection', socket => {
          .then((response) => {
             console.log(response)
             if (response.result.metadata.intentName === 'YoutubeSearch') {
-              console.log(response.result.parameters.video);
               io.sockets.emit('youtube', {type: "search", content: response.result.parameters.video});
             }
 
@@ -88,7 +87,6 @@ io.on('connection', socket => {
           })
           .catch(err => console.log(err));
   });
-
 })
 
 detector.on('hotword', (index, hotword) => {
