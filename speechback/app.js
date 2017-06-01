@@ -80,6 +80,10 @@ io.on('connection', socket => {
           .catch(err => console.log(err));
   });
 
+  setTimeout(() => socket.emit('devfest', {type: "speaker", name: "truc"}), 2000);
+  setTimeout(() => socket.emit('devfest', {type: "current"}), 4000);
+  setTimeout(() => io.sockets.emit('close'), 6000);
+
 })
 
 detector.on('hotword', (index, hotword) => {
