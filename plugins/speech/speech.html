@@ -49,76 +49,79 @@
   </template>
 
   <script>
-    class Speech extends Polymer.Element {
-      static get is () { return 'speech-item' }
+    (() => {
+      class Speech extends Polymer.Element {
+        static get is () { return 'speech-item' }
 
-      static get properties () {
-          return {
-            default_message: String,
-            loader_url: String,
-            listening: Boolean,
-            message: String,
-            speech_recognition: Object,
-            socket: Object,
-            socket_url: String
-          }
-      }
+        static get properties () {
+            return {
+              default_message: String,
+              loader_url: String,
+              listening: Boolean,
+              message: String,
+              speech_recognition: Object,
+              socket: Object,
+              socket_url: String
+            }
+        }
 
-      connectedCallback () {
-        super.connectedCallback();
+        connectedCallback () {
+          super.connectedCallback();
 
-        this.socket = io.connect(this.socket_url)
+          this.socket = io.connect(this.socket_url)
 
-        this.message = this.default_message;
-        this.listening = false;
+          this.message = this.default_message;
+          this.listening = false;
 
-        this._setSpeechRecognition();
-        this.socket.on('hotword', () => this._onHotWord());
-      }
+          this._setSpeechRecognition();
+          this.socket.on('hotword', () => this._onHotWord());
+        }
 
-      _setSpeechRecognition () {
-        // Initialize speech recognition
-        this.speech_recognition = new webkitSpeechRecognition();
-        this.speech_recognition.continuous = true;
-        this.speech_recognition.interimResults = true;
-        this.speech_recognition.lang = 'fr-FR';
-        this.speech_recognition.maxAlternatives = 1;
+        _setSpeechRecognition () {
+          // Initialize speech recognition
+          this.speech_recognition = new webkitSpeechRecognition();
+          this.speech_recognition.continuous = true;
+          this.speech_recognition.interimResults = true;
+          this.speech_recognition.lang = 'fr-FR';
+          this.speech_recognition.maxAlternatives = 1;
 
-        // Set method when speech is recognized
-        this.speech_recognition.onresult = speech => {
-          if (speech.results) {
-            const result = speech.results[speech.resultIndex];
-            const transcript = result[0].transcript;
-            if (result.isFinal ) {
-              if (result[0].confidence < 0.3) {
-                console.log('Unrecognized result');
-              } else {
-                this.request = transcript.trim();
-                this.socket.emit('speech', {"message": transcript.trim()})
-                this.listening = false;
-                this.speech_recognition.stop();
+          // Set method when speech is recognized
+          this.speech_recognition.onresult = speech => {
+            if (speech.results) {
+              const result = speech.results[speech.resultIndex];
+              const transcript = result[0].transcript;
+              if (result.isFinal ) {
+                if (result[0].confidence < 0.3) {
+                  console.log('Unrecognized result');
+                } else {
+                  this.request = transcript.trim();
+                  this.socket.emit('speech', {"message": transcript.trim()})
+                  this.listening = false;
+                  this.speech_recognition.stop();
+                }
               }
             }
           }
+
+          // Display any error
+          this.speech_recognition.onerror = error => {
+            console.log(error);
+          };
         }
 
-        // Display any error
-        this.speech_recognition.onerror = error => {
-          console.log(error);
-        };
-      }
-
-      _onHotWord () {
-        if (!this.listening) {
-          this.started = true;
-          this.speech_recognition.start();
-          this.message = 'Je vous écoute';
-          this.listening = true;
+        _onHotWord () {
+          if (!this.listening) {
+            this.started = true;
+            this.speech_recognition.start();
+            this.message = 'Je vous écoute';
+            this.listening = true;
+          }
         }
+
       }
 
-    }
+      customElements.define(Speech.is, Speech);
+    })();
 
-    customElements.define(Speech.is, Speech);
   </script>
 </dom-module>

@@ -67,30 +67,32 @@
   </template>
 
   <script>
-    class Marcel extends Polymer.Element {
-      static get is () { return 'marcel-item' }
+    (() => {
+      class Marcel extends Polymer.Element {
+        static get is () { return 'marcel-item' }
 
-      static get properties () {
-        return {
-          calendar_url: String,
-          github_users: Array,
-          github_client_id: String,
-          github_client_secret: String,
-          logo_url: String,
-          message_text1: String, 
-          message_text2: String,
-          soundtouch_url: String,
-          twitter_api: String,
-          vlille_stations_id: Array,
-          weather_url: String
+        static get properties () {
+          return {
+            calendar_url: String,
+            github_users: Array,
+            github_client_id: String,
+            github_client_secret: String,
+            logo_url: String,
+            message_text1: String, 
+            message_text2: String,
+            soundtouch_url: String,
+            twitter_api: String,
+            vlille_stations_id: Array,
+            weather_url: String
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
         }
       }
 
-      connectedCallback () {
-        super.connectedCallback();
-      }
-    }
-
-    customElements.define(Marcel.is, Marcel);
+      customElements.define(Marcel.is, Marcel);
+    })
   </script>
 </dom-module>
