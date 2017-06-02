@@ -73,6 +73,10 @@ io.on('connection', socket => {
               io.sockets.emit('devfest', {type: "current", location: response.result.parameters.location});
             }
 
+            if (response.result.metadata.intentName === 'NextTalk') {
+              io.sockets.emit('devfest', {type: "next", location: response.result.parameters.location});
+            }
+
             if (response.result.metadata.intentName === 'CloseDisplayed') {
               io.sockets.emit('close');
             }
@@ -87,6 +91,7 @@ io.on('connection', socket => {
           })
           .catch(err => console.log(err));
   });
+
 })
 
 detector.on('hotword', (index, hotword) => {
