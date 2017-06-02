@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"errors"
+	"log"
 )
 
 var Medias []Media
@@ -17,6 +18,7 @@ func LoadMedias() {
 
 	err = json.Unmarshal(content, &Medias)
 	check(err)
+	log.Print(Media{})
 }
 
 func GetMedia(idMedia int) (*Media, error) {
@@ -56,6 +58,7 @@ func writeResponseWithError(w http.ResponseWriter, errorCode int) {
 
 func check(e error) {
 	if e != nil {
+		log.Fatal(e)
 		panic(e)
 	}
 }
