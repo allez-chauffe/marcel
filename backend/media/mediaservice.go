@@ -18,7 +18,8 @@ func LoadMedias() {
 
 	err = json.Unmarshal(content, &Medias)
 	check(err)
-	log.Print(Media{})
+
+	log.Print("Medias config is loaded...")
 }
 
 func GetMedia(idMedia int) (*Media, error) {
