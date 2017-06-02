@@ -20,6 +20,7 @@ func LoadMedias() {
 	check(err)
 
 	log.Print("Medias config is loaded...")
+	log.Print(Medias)
 }
 
 func GetMedia(idMedia int) (*Media, error) {
