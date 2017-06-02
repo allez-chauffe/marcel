@@ -27,6 +27,9 @@ func main() {
 	log.SetOutput(f)
 	log.Println("Application started")
 
+	//plugins.LoadPluginsCatalog()
+	media.LoadMedias()
+
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		// AllowedOrigins:   []string{"http://localhost:*"},
@@ -39,11 +42,10 @@ func main() {
 	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents)
 	r.HandleFunc("/api/v1/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline)
 	//r.HandleFunc("/api/v1/plugins/", plugins.GetTimeline)
-	r.HandleFunc("/api/v1/media/{idMedia:[0-9]*}", media.GetMedia)
+	r.HandleFunc("/api/v1/media/{idMedia:[0-9]*}", media.HandleGetMedia)
 
 
 	handler := c.Handler(r)
 
 	http.ListenAndServe(":8090", handler)
-
 }
