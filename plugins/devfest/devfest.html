@@ -38,7 +38,7 @@
             <h2>{{speaker.bio}}</h2>
           </template>
           <template is="dom-if" if="[[pause]]">
-            <h1>Les conférences sont actuellement en pause</h1>
+            <h1>Les conférences sont en pause</h1>
           </template>
         <div>
       </div>
@@ -62,7 +62,9 @@
             socket: String,
             socket_url: String,
             talks: Array,
-            talks_url: String
+            talks_url: String,
+            times: Array,
+            times_url: String
           }
         }
 
@@ -76,6 +78,7 @@
           this.planning = false;
           this._fetchDevfestTalks();
           this._fetchDevfestSpeakers();
+          this._fetchTimes();
 
           this.socket.on('devfest', (req) => this._handleRequest(req));
           this.socket.on('close', (req) => this.overlay = false);
@@ -95,6 +98,9 @@
               break;
             case "speaker":
               this._displayBio(req.name);
+              break;
+            case "next":
+              this._displayNextTalks(req.location);
               break;
             default: 
               this.overlay = false;
@@ -116,13 +122,32 @@
         }
 
         _displayCurrentTalks (location) {
-          this.displayedTalks = this._searchCurrentTalks(location);
+          const currentTimeIndex = this._searchCurrentTimeIndex();
+          this.displayedTalks = this._searchTalks(currentTimeIndex, location);
 
           if (this.displayedTalks[0].title === 'Pause') {
             this.pause = true;
             this.displayedTalks = false;
           }
           
+          // Hide other things
+          this.speaker = false;
+          this.planning = false;
+        }
+
+        _displayNextTalks (location) {
+          const currentTimeIndex = this._searchCurrentTimeIndex();
+          let timeIndex = currentTimeIndex - 1;
+          if (currentTimeIndex === 0) {
+            timeIndex = 0;
+          }
+          this.displayedTalks = this._searchTalks(timeIndex, location);
+          
+          if (this.displayedTalks[0].title === 'Pause') {
+            this.pause = true;
+            this.displayedTalks = false;
+          }
+
           // Hide other things
           this.speaker = false;
           this.planning = false;
@@ -142,27 +167,27 @@
           this.pause = false;
         }
 
-        _searchCurrentTalks (location) {
+        _searchCurrentTimeIndex () {
           const now = new Date();
-          return this.talks.filter(talk => {
+          const currentTime = this.times.find(time => {
             const start = new Date();
-            start.setHours(talk.time.split(':')[0]);
-            start.setMinutes(talk.time.split(':')[1]);
+            start.setHours(time.split(':')[0]);
+            start.setMinutes(time.split(':')[1]);
             start.setSeconds(0);
 
-            let duration = 0;
-            if (talk.duration.indexOf('mn') != -1) {
-              duration = talk.duration.slice(0, 2) * 60;
-            } else {
-              duration = talk.duration.slice(0, 1) * 60 * 60;
-            }
+            return now > start;
+          })
+          return this.times.indexOf(currentTime);
+        }
 
-            const end = new Date(start.getTime() + duration * 1000);
-            if(location !== undefined && location !== "") {
-              return now > start && now < end && talk.room === location;;
-            } 
-            return now > start && now < end;
-          });
+        _searchTalks (timeIndex, location = '') {
+          return this.talks.filter(talk => {
+            let sameLocation = true;
+            if (location !== '') {
+              sameLocation = talk.room === location;
+            }
+            return talk.time === this.times[timeIndex] && sameLocation;
+          })
         }
 
         _fetchDevfestTalks () {
@@ -175,6 +200,12 @@
           fetch(this.speakers_url)
             .then(res => res.json())
             .then(res => this.speakers = res);  
+        }
+
+        _fetchTimes () {
+          fetch(this.times_url)
+            .then(res => res.json())
+            .then(res => this.times = res);
         }
       }
 

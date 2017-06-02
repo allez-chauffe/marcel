@@ -12,7 +12,8 @@
       "propValues": {
         "talks_url": "plugins/devfest/talks.json",
         "speakers_url": "plugins/devfest/speakers.json",
-        "socket_url": "http://localhost:8080"
+        "socket_url": "http://localhost:8080",
+        "times_url": "plugins/devfest/times.json"
       }
     },
     {
