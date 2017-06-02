@@ -12,7 +12,6 @@ const config = require('./config.js');
 const apiai = ApiAi(config.apiaitoken);
 const sessionId = 'marcel';
 const models = new Models();
-const ip = require("ip");
 
 models.add({
   file: 'resources/marcel.pmdl',
