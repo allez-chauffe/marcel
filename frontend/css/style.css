@@ -5,14 +5,14 @@ html {
 }
 
 body {
-  height: 92%;
-  margin: 2%;
-  background: black;
-  color: white;
-  font-family: Roboto;
-  font-weight: 300;
-  zoom: 90%;
-  overflow: hidden;
+    height: 85%;
+    background: black;
+    color: white;
+    font-family: Roboto;
+    font-weight: 300;
+    zoom: 90%;
+    overflow: hidden;
+    padding: 4% 4%;
 }
 
 #components {
