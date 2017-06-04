@@ -29,7 +29,9 @@
       "eltName": "speech-item",
       "files": "speech.html",
       "propValues": {
-        "loader_url": "plugins/speech/loader.jpg",
+        "loader_url": "https://cdn.dribbble.com/users/32512/screenshots/3227273/loader.gif",
+        "default_url": "https://cdn.dribbble.com/users/321090/screenshots/2811752/404.jpg",
+        "default_time": 8000,
         "socket_url": "http://localhost:8080",
         "default_message": "Bonjour à tous, je suis MARCEL !"
       }

@@ -87,6 +87,10 @@ io.on('connection', socket => {
             if (response.result.metadata.intentName === 'Talk') {
               io.sockets.emit('devfest', {type: "talk", title: response.result.parameters.title});
             }
+            
+            if (response.result.metadata.intentName === 'Default Fallback Intent') {
+              io.sockets.emit('default', response.result.fulfillment);
+            }
           })
           .catch(err => console.log(err));
   });
