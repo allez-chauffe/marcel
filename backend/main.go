@@ -53,8 +53,30 @@ func main() {
 
 	handler := c.Handler(r)
 
+	ExposeAPI(r)
+
 	http.ListenAndServe(":8090", handler)
 	log.Printf("Server is started and listening on port %v", 8090)
 }
 
-
+func ExposeAPI(r *mux.Router) {
+	//export API to the log
+	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+		t, err := route.GetPathTemplate()
+		if err != nil {
+			return err
+		}
+		// p will contain regular expression is compatible with regular expression in Perl, Python, and other languages.
+		// for instance the regular expression for path '/articles/{id}' will be '^/articles/(?P<v0>[^/]+)$'
+		p, err := route.GetPathRegexp()
+		if err != nil {
+			return err
+		}
+		m, err := route.GetMethods()
+		if err != nil {
+			return err
+		}
+		log.Println(strings.Join(m, ","), t, p)
+		return nil
+	})
+}
