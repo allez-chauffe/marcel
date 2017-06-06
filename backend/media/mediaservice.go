@@ -11,6 +11,9 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+/**
+Global variable which encapsulate all the Medias in memory
+ */
 var Medias []Media
 
 func LoadMedias() {
@@ -58,6 +61,16 @@ func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
 	}
 
 	b, err := json.Marshal(*m)
+	if err != nil {
+		writeResponseWithError(w, http.StatusNotFound)
+		return
+	}
+
+	w.Write([]byte(b))
+}
+
+func HandleGetMedias(w http.ResponseWriter, r *http.Request) {
+	b, err := json.Marshal(Medias)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return
