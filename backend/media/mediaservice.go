@@ -28,8 +28,6 @@ func LoadMedias() {
 	fmt.Println("1. ---------------------------------")
 	fmt.Printf("Type: %T \n", y[0])
 	fmt.Println("2. ---------------------------------")
-	fmt.Printf("%#v \n", y)
-	fmt.Println("3. --------------------------------- END")
 
 	m := y[0].(map[string]interface{})
 	log.Println("m = ")
