@@ -25,7 +25,6 @@ func main() {
 	}
 	defer f.Close()
 	log.SetOutput(f)
-	log.Println("Application started")
 
 	//Load plugins list from DB
 	//plugins.LoadPluginsCatalog()
@@ -35,20 +34,20 @@ func main() {
 
 	//Set API services
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
+		AllowedOrigins: []string{"*"},
 		// AllowedOrigins:   []string{"http://localhost:*"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTION", "PUT"},
 		AllowCredentials: true,
 	})
 
 	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler)
-	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents)
-	r.HandleFunc("/api/v1/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline)
-	r.HandleFunc("/api/v1/media/{idMedia:[0-9]*}", media.HandleGetMedia)
-
+	r.HandleFunc("/api/v1/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler).Methods("GET")
+	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents).Methods("GET")
+	r.HandleFunc("/api/v1/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline).Methods("GET")
+	r.HandleFunc("/api/v1/medias/{idMedia:[0-9]*}", media.HandleGetMedia).Methods("GET")
 
 	handler := c.Handler(r)
 
 	http.ListenAndServe(":8090", handler)
+	log.Printf("Server is started and listening on port %v",8090)
 }
