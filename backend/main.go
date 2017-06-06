@@ -10,9 +10,12 @@ import (
 	"net/http"
 	"log"
 	"os"
+	"strings"
 )
 
-var logFile string = os.Getenv("MARCEL_LOG_FILE");
+var logFile string = os.Getenv("MARCEL_LOG_FILE")
+//current version of the API
+const MARCEL_API_VERSION = "1"
 
 func main() {
 
@@ -41,14 +44,17 @@ func main() {
 	})
 
 	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler).Methods("GET")
-	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents).Methods("GET")
-	r.HandleFunc("/api/v1/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline).Methods("GET")
-	r.HandleFunc("/api/v1/medias/{idMedia:[0-9]*}", media.HandleGetMedia).Methods("GET")
-	r.HandleFunc("/api/v1/medias", media.HandleGetMedias).Methods("GET")
+	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
+	s.HandleFunc("/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler).Methods("GET")
+	s.HandleFunc("/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents).Methods("GET")
+	s.HandleFunc("/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline).Methods("GET")
+	s.HandleFunc("/medias/{idMedia:[0-9]*}", media.HandleGetMedia).Methods("GET")
+	s.HandleFunc("/medias", media.HandleGetMedias).Methods("GET")
 
 	handler := c.Handler(r)
 
 	http.ListenAndServe(":8090", handler)
-	log.Printf("Server is started and listening on port %v",8090)
+	log.Printf("Server is started and listening on port %v", 8090)
 }
+
+
