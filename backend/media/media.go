@@ -19,5 +19,5 @@ type MediaPlugins struct {
 }
 
 type MediaPluginProps struct {
-	Values []interface{}
+	X map[string]interface{} `json:"-"`
 }
