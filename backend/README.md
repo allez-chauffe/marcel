@@ -42,3 +42,4 @@ realize add
  - OpenWeatherMap
  - OpenWeatherMap Go API by briandowns (http://briandowns.github.io/openweathermap/)
  - Twitter Go API by Dalton Hubble (https://github.com/dghubble/go-twitter)
+ - MapStructure from Mitchellh (https://github.com/mitchellh/mapstructure)
