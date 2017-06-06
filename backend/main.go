@@ -45,6 +45,7 @@ func main() {
 	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents).Methods("GET")
 	r.HandleFunc("/api/v1/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline).Methods("GET")
 	r.HandleFunc("/api/v1/medias/{idMedia:[0-9]*}", media.HandleGetMedia).Methods("GET")
+	r.HandleFunc("/api/v1/medias", media.HandleGetMedias).Methods("GET")
 
 	handler := c.Handler(r)
 
