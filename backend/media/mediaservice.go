@@ -2,13 +2,10 @@ package media
 
 import (
 	"net/http"
-	//"github.com/gorilla/mux"
-	//"strconv"
 	"io/ioutil"
 	"encoding/json"
 	"errors"
 	"log"
-	"fmt"
 	"github.com/gorilla/mux"
 	"strconv"
 	"github.com/mitchellh/mapstructure"
@@ -22,44 +19,9 @@ func LoadMedias() {
 	content, err := ioutil.ReadFile("data/media.config.json")
 	check(err)
 
-	/*err = json.Unmarshal(content, &Medias)
-	check(err)
-	}*/
-
 	json.Unmarshal([]byte(content), &y)
-	fmt.Println("1. ---------------------------------")
-	fmt.Printf("Type: %T \n", y[0])
-	fmt.Println("2. ---------------------------------")
 
-	//for now: only the first media
-	/*mi := y[0].(map[string]interface{})
-	log.Println("mi = ")
-	log.Println(mi)
-
-	m := &Media{}
-	err = m.FillStruct(mi)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(m)*/
-
-
-	/*for k, v := range mi {
-		switch vv := v.(type) {
-		case string:
-			fmt.Println(k, "is string", vv)
-		case int:
-			fmt.Println(k, "is int", vv)
-		case []interface{}:
-			fmt.Println(k, "is an array:")
-			for i, u := range vv {
-				fmt.Println(i, u)
-			}
-		default:
-			fmt.Println(k, "is of a type I don't know how to handle")
-		}
-	}*/
-
+	//Map the json to the Media structure
 	var m Media
 	err = mapstructure.Decode(y[0].(map[string]interface{}), &m)
 	if err != nil {
@@ -93,14 +55,12 @@ func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
 	}
 
 	b, err := json.Marshal(*m)
-	//b, err := json.Marshal(y)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return
 	}
 
 	w.Write([]byte(b))
-
 }
 
 func writeResponseWithError(w http.ResponseWriter, errorCode int) {
