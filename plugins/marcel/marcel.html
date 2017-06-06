@@ -49,8 +49,7 @@
       </div>
 
       <div class="flex flex-column space-between flex-full">
-          <weather-item weather_url="[[weather_url]]" city="[[weather_city]]" api_key="[[weather_api_key]]"></weather-item>
-          <speech-item default_message="[[speech_default_message]]" loader_url="[[loader_url]]"></speech-item>
+          <weather-item weather_url="[[weather_url]]"></weather-item>
           <div class="flex flex-full space-around">
               <twitter-item api="[[twitter_api]]"></twitter-item>
               <soundtouch-item url="[[soundtouch_url]]"></soundtouch-item>
@@ -68,34 +67,32 @@
   </template>
 
   <script>
-    class Marcel extends Polymer.Element {
-      static get is () { return 'marcel-item' }
+    (() => {
+      class Marcel extends Polymer.Element {
+        static get is () { return 'marcel-item' }
 
-      static get properties () {
-        return {
-          calendar_url: String,
-          github_users: Array,
-          github_client_id: String,
-          github_client_secret: String,
-          loader_url: String,
-          logo_url: String,
-          message_text1: String, 
-          message_text2: String,
-          soundtouch_url: String,
-          speech_default_message: String,
-          twitter_api: String,
-          vlille_stations_id: Array,
-          weather_api_key: String,
-          weather_city: String,
-          weather_url: String
+        static get properties () {
+          return {
+            calendar_url: String,
+            github_users: Array,
+            github_client_id: String,
+            github_client_secret: String,
+            logo_url: String,
+            message_text1: String, 
+            message_text2: String,
+            soundtouch_url: String,
+            twitter_api: String,
+            vlille_stations_id: Array,
+            weather_url: String
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
         }
       }
 
-      connectedCallback () {
-        super.connectedCallback();
-      }
-    }
-
-    customElements.define(Marcel.is, Marcel);
+      customElements.define(Marcel.is, Marcel);
+    })();
   </script>
 </dom-module>

@@ -10,20 +10,23 @@
   </template>
 
   <script>
-    class Logo extends Polymer.Element {
-      static get is () { return 'logo-item' }
+    (() => {
+      class Logo extends Polymer.Element {
+        static get is () { return 'logo-item' }
 
-      static get properties () {
-        return {
-          url: String
+        static get properties () {
+          return {
+            url: String
+          }
+        }
+
+        connectedCallback () {
+          super.connectedCallback();
         }
       }
 
-      connectedCallback () {
-        super.connectedCallback();
-      }
-    }
+      customElements.define(Logo.is, Logo);
+    })();
 
-    customElements.define(Logo.is, Logo);
   </script>
 </dom-module>

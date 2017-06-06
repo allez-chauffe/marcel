@@ -10,9 +10,12 @@ import (
 	"net/http"
 	"log"
 	"os"
+	"strings"
 )
 
-var logFile string = os.Getenv("MARCEL_LOG_FILE");
+var logFile string = os.Getenv("MARCEL_LOG_FILE")
+//current version of the API
+const MARCEL_API_VERSION = "1"
 
 func main() {
 
@@ -25,25 +28,55 @@ func main() {
 	}
 	defer f.Close()
 	log.SetOutput(f)
-	log.Println("Application started")
 
+	//Load plugins list from DB
+	//plugins.LoadPluginsCatalog()
+
+	//Load Medias configuration from DB
+	media.LoadMedias()
+
+	//Set API services
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
+		AllowedOrigins: []string{"*"},
 		// AllowedOrigins:   []string{"http://localhost:*"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTION", "PUT"},
 		AllowCredentials: true,
 	})
 
 	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler)
-	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents)
-	r.HandleFunc("/api/v1/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline)
-	//r.HandleFunc("/api/v1/plugins/", plugins.GetTimeline)
-	r.HandleFunc("/api/v1/media/{idMedia:[0-9]*}", media.GetMedia)
-
+	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
+	s.HandleFunc("/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler).Methods("GET")
+	s.HandleFunc("/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents).Methods("GET")
+	s.HandleFunc("/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline).Methods("GET")
+	s.HandleFunc("/medias/{idMedia:[0-9]*}", media.HandleGetMedia).Methods("GET")
+	s.HandleFunc("/medias", media.HandleGetMedias).Methods("GET")
 
 	handler := c.Handler(r)
 
-	http.ListenAndServe(":8090", handler)
+	ExposeAPI(r)
 
+	http.ListenAndServe(":8090", handler)
+	log.Printf("Server is started and listening on port %v", 8090)
+}
+
+func ExposeAPI(r *mux.Router) {
+	//export API to the log
+	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+		t, err := route.GetPathTemplate()
+		if err != nil {
+			return err
+		}
+		// p will contain regular expression is compatible with regular expression in Perl, Python, and other languages.
+		// for instance the regular expression for path '/articles/{id}' will be '^/articles/(?P<v0>[^/]+)$'
+		p, err := route.GetPathRegexp()
+		if err != nil {
+			return err
+		}
+		m, err := route.GetMethods()
+		if err != nil {
+			return err
+		}
+		log.Println(strings.Join(m, ","), t, p)
+		return nil
+	})
 }

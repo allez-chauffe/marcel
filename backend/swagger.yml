@@ -1,0 +1,11 @@
+consumes:
+- application/json
+info:
+  title: Backend
+  version: 1
+paths: {}
+produces:
+- application/json
+schemes:
+- http
+swagger: "2.0"
