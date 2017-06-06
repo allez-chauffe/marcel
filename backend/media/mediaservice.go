@@ -8,10 +8,11 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"fmt"
 )
 
 //var Medias []Media
-var y interface{}
+var y []interface{}
 
 func LoadMedias() {
 	//Medias configurations are loaded from a JSON file on the FS.
@@ -22,8 +23,33 @@ func LoadMedias() {
 	check(err)
 	}*/
 
+
 	json.Unmarshal([]byte(content), &y)
-	log.Print(y)
+	fmt.Println("1. ---------------------------------")
+	fmt.Printf("Type: %T \n", y[0])
+	fmt.Println("2. ---------------------------------")
+	fmt.Printf("%#v \n", y)
+	fmt.Println("3. --------------------------------- END")
+
+	m := y[0].(map[string]interface{})
+	log.Println("m = ")
+	log.Println(m)
+
+	for k, v := range m {
+		switch vv := v.(type) {
+		case string:
+			fmt.Println(k, "is string", vv)
+		case int:
+			fmt.Println(k, "is int", vv)
+		case []interface{}:
+			fmt.Println(k, "is an array:")
+			for i, u := range vv {
+				fmt.Println(i, u)
+			}
+		default:
+			fmt.Println(k, "is of a type I don't know how to handle")
+		}
+	}
 
 	log.Print("Medias configurations is loaded...")
 }
