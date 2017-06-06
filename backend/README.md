@@ -8,6 +8,7 @@ go get github.com/rs/cors
 go get -u github.com/gorilla/mux
 go get -u google.golang.org/api/calendar/v3
 go get -u golang.org/x/oauth2/...
+go get github.com/mitchellh/mapstructure
 ```
 
 ```shell
