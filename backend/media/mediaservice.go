@@ -10,36 +10,30 @@ import (
 	"log"
 )
 
-var Medias []Media
+//var Medias []Media
 var y interface{}
 
 func LoadMedias() {
+	//Medias configurations are loaded from a JSON file on the FS.
 	content, err := ioutil.ReadFile("data/media.config.json")
 	check(err)
 
 	/*err = json.Unmarshal(content, &Medias)
 	check(err)
-
-	for _, m := range Medias {
-		for _, p:=range m.Plugins {
-			err = json.Unmarshal(content, &p.PropValues.X)
-			check(err)
-		}
 	}*/
 
 	json.Unmarshal([]byte(content), &y)
 	log.Print(y)
 
-	log.Print("Medias config is loaded...")
-	log.Print(Medias)
+	log.Print("Medias configurations is loaded...")
 }
 
 func GetMedia(idMedia int) (*Media, error) {
-	for _, m := range Medias {
+	/*for _, m := range Medias {
 		if idMedia == m.ID {
 			return &m, nil
 		}
-	}
+	}*/
 
 	return nil, errors.New("NO_MEDIA_FOUND")
 }
