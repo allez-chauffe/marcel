@@ -12,23 +12,26 @@ import (
 )
 
 var Medias []Media
-var y []interface{}
 
 func LoadMedias() {
 	//Medias configurations are loaded from a JSON file on the FS.
 	content, err := ioutil.ReadFile("data/media.config.json")
 	check(err)
 
-	json.Unmarshal([]byte(content), &y)
+
+	var obj []interface{}
+	json.Unmarshal([]byte(content), &obj)
 
 	//Map the json to the Media structure
-	var m Media
-	err = mapstructure.Decode(y[0].(map[string]interface{}), &m)
-	if err != nil {
-		panic(err)
-	}
+	for _, b := range obj {
+		var m Media
+		err = mapstructure.Decode(b.(map[string]interface{}), &m)
+		if err != nil {
+			panic(err)
+		}
 
-	Medias = append(Medias, m)
+		Medias = append(Medias, m)
+	}
 
 	log.Print("Medias configurations is loaded...")
 }
