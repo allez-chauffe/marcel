@@ -12,7 +12,6 @@ const config = require('./config.js');
 const apiai = ApiAi(config.apiaitoken);
 const sessionId = 'marcel';
 const models = new Models();
-const ip = require("ip");
 
 models.add({
   file: 'resources/marcel.pmdl',
@@ -87,6 +86,10 @@ io.on('connection', socket => {
 
             if (response.result.metadata.intentName === 'Talk') {
               io.sockets.emit('devfest', {type: "talk", title: response.result.parameters.title});
+            }
+            
+            if (response.result.metadata.intentName === 'Default Fallback Intent') {
+              io.sockets.emit('default', response.result.fulfillment);
             }
           })
           .catch(err => console.log(err));

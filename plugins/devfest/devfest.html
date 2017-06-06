@@ -6,18 +6,18 @@
     <style include="shared-styles"></style>
     <style>
       :host, #overlay {
-        width: 100%;
-        height: 100%;
+        width: 80%;
+        height: 80%;
         position: absolute;
         text-align: center;
-        top: 0px;
-        left: 0px;
+        top: 7%;
+        left: 10%;
         z-index: 5;
       }
 
       #overlay {
         /*display: none;*/
-        background-color: rgba(0,0,0,0.9);
+        /*background-color: rgba(0,0,0,0.9);*/
       }
       
       #overlay > div {
@@ -125,10 +125,9 @@
           const currentTimeIndex = this._searchCurrentTimeIndex();
           this.displayedTalks = this._searchTalks(currentTimeIndex, location);
 
-          if (this.displayedTalks[0].title === 'Pause') {
-            this.pause = true;
-            this.displayedTalks = false;
-          }
+          console.log(this.times[currentTimeIndex])
+
+          this._isPause();
           
           // Hide other things
           this.speaker = false;
@@ -143,14 +142,18 @@
           }
           this.displayedTalks = this._searchTalks(timeIndex, location);
           
-          if (this.displayedTalks[0].title === 'Pause') {
-            this.pause = true;
-            this.displayedTalks = false;
-          }
+          this._isPause();
 
           // Hide other things
           this.speaker = false;
           this.planning = false;
+        }
+
+        _isPause () {
+          if (this.displayedTalks.length > 0 && this.displayedTalks[0].title === 'Pause') {
+            this.pause = true;
+            this.displayedTalks = false;
+          }
         }
 
         _displayBio (name) {

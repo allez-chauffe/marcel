@@ -28,9 +28,12 @@
       }
 
       #loader {
-        margin-top: 20px;
-        width: 7%;
+        margin-top: -60px;
+        width: 20%;
         height: auto;
+        z-index: -1;
+        position: absolute;
+        left: 40%;
       }
 
       .hide {
@@ -42,7 +45,12 @@
         <div>
           <h1>{{message}}</h1>
           <h2>{{request}}</h2>
-          <img src="{{loader_url}}" alt="" id="loader"/>
+          <template is="dom-if" if="[[default]]">
+            <img src="{{default_url}}" alt="" id="loader"/>
+          </template>
+          <template is="dom-if" if="[[!default]]">
+            <img src="{{loader_url}}" alt="" id="loader"/>
+          </template>
         </div>
       </div>
     </template>
@@ -57,6 +65,8 @@
             return {
               default_message: String,
               loader_url: String,
+              default_url: String,
+              default_time: Number,
               listening: Boolean,
               message: String,
               speech_recognition: Object,
@@ -75,6 +85,9 @@
 
           this._setSpeechRecognition();
           this.socket.on('hotword', () => this._onHotWord());
+          this.socket.on('default', (data) => this._onDefault(data));
+
+          
         }
 
         _setSpeechRecognition () {
@@ -112,10 +125,22 @@
         _onHotWord () {
           if (!this.listening) {
             this.started = true;
+            this.default = false;
+            this.request = '';
             this.speech_recognition.start();
             this.message = 'Je vous écoute';
             this.listening = true;
           }
+        }
+        _onDefault (data) {
+          this.default = true;
+          this.listening = true;
+          this.message = data.speech;
+          setTimeout(()=>{
+            this.default = false;
+            this.listening = false;
+            this.message = "";
+          },this.default_time)
         }
 
       }
