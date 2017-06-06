@@ -27,9 +27,13 @@ func main() {
 	log.SetOutput(f)
 	log.Println("Application started")
 
+	//Load plugins list from DB
 	//plugins.LoadPluginsCatalog()
+
+	//Load Medias configuration from DB
 	media.LoadMedias()
 
+	//Set API services
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		// AllowedOrigins:   []string{"http://localhost:*"},
@@ -41,7 +45,6 @@ func main() {
 	r.HandleFunc("/api/v1/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler)
 	r.HandleFunc("/api/v1/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents)
 	r.HandleFunc("/api/v1/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline)
-	//r.HandleFunc("/api/v1/plugins/", plugins.GetTimeline)
 	r.HandleFunc("/api/v1/media/{idMedia:[0-9]*}", media.HandleGetMedia)
 
 
