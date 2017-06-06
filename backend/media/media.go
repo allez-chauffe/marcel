@@ -12,7 +12,7 @@ type Media struct {
 	ID      int    `json:"id"`
 	Name    string `json:"name"`
 	Config  MediaConfig `json:"config"`
-	Plugins []MediaPlugin `json:"plugins"`
+	Components []MediaPlugin `json:"components"`
 }
 
 type MediaConfig struct {
@@ -23,7 +23,7 @@ type MediaConfig struct {
 Properties and configuration for a plugin used in the media
  */
 type MediaPlugin struct {
-	Name       string `json:"name"`
+	ComponentName       string `json:"componentName"`
 	EltName    string `json:"eltName"`
 	Files      []string `json:"files"`
 	PropValues map[string]interface{} `json:"propValues"` //MediaPluginProps `json:"propValues"`
