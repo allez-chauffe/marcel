@@ -9,9 +9,12 @@ import (
 	"errors"
 	"log"
 	"fmt"
+	"github.com/gorilla/mux"
+	"strconv"
+	"github.com/mitchellh/mapstructure"
 )
 
-//var Medias []Media
+var Medias []Media
 var y []interface{}
 
 func LoadMedias() {
@@ -23,17 +26,25 @@ func LoadMedias() {
 	check(err)
 	}*/
 
-
 	json.Unmarshal([]byte(content), &y)
 	fmt.Println("1. ---------------------------------")
 	fmt.Printf("Type: %T \n", y[0])
 	fmt.Println("2. ---------------------------------")
 
-	m := y[0].(map[string]interface{})
-	log.Println("m = ")
-	log.Println(m)
+	//for now: only the first media
+	/*mi := y[0].(map[string]interface{})
+	log.Println("mi = ")
+	log.Println(mi)
 
-	for k, v := range m {
+	m := &Media{}
+	err = m.FillStruct(mi)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(m)*/
+
+
+	/*for k, v := range mi {
 		switch vv := v.(type) {
 		case string:
 			fmt.Println(k, "is string", vv)
@@ -47,23 +58,31 @@ func LoadMedias() {
 		default:
 			fmt.Println(k, "is of a type I don't know how to handle")
 		}
+	}*/
+
+	var m Media
+	err = mapstructure.Decode(y[0].(map[string]interface{}), &m)
+	if err != nil {
+		panic(err)
 	}
+
+	Medias = append(Medias, m)
 
 	log.Print("Medias configurations is loaded...")
 }
 
 func GetMedia(idMedia int) (*Media, error) {
-	/*for _, m := range Medias {
+	for _, m := range Medias {
 		if idMedia == m.ID {
 			return &m, nil
 		}
-	}*/
+	}
 
 	return nil, errors.New("NO_MEDIA_FOUND")
 }
 
 func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
-	/*vars := mux.Vars(r)
+	vars := mux.Vars(r)
 	f := vars["idMedia"]
 	idMedia, _ := strconv.Atoi(f)
 
@@ -71,10 +90,10 @@ func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return
-	}*/
+	}
 
-	//b, err := json.Marshal(*m)
-	b, err := json.Marshal(y)
+	b, err := json.Marshal(*m)
+	//b, err := json.Marshal(y)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return

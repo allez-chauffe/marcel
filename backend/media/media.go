@@ -1,5 +1,10 @@
 package media
 
+import (
+	"errors"
+	"fmt"
+	"reflect"
+)
 /**
 The global attributes for a Media
  */
@@ -21,12 +26,45 @@ type MediaPlugin struct {
 	Name       string `json:"name"`
 	EltName    string `json:"eltName"`
 	Files      []string `json:"files"`
-	PropValues MediaPluginProps `json:"propValues"`
+	PropValues map[string]interface{} `json:"propValues"` //MediaPluginProps `json:"propValues"`
 }
 
 /**
 Because we don't know what will compounds the props for a plugin, we use a map[string] interface{}
  */
 type MediaPluginProps struct {
-	X map[string]interface{} `json:"-"`
+	X map[string]interface{} `json:"-"` //map[string]string
+}
+
+func SetField(obj interface{}, name string, value interface{}) error {
+	structValue := reflect.ValueOf(obj).Elem()
+	structFieldValue := structValue.FieldByName(name)
+
+	if !structFieldValue.IsValid() {
+		return fmt.Errorf("No such field: %s in obj", name)
+	}
+
+	if !structFieldValue.CanSet() {
+		return fmt.Errorf("Cannot set %s field value", name)
+	}
+
+	structFieldType := structFieldValue.Type()
+	val := reflect.ValueOf(value)
+	if structFieldType != val.Type() {
+		return errors.New("Provided value type didn't match obj field type")
+	}
+
+	structFieldValue.Set(val)
+	return nil
+}
+
+
+func (s *Media) FillStruct(m map[string]interface{}) error {
+	for k, v := range m {
+		err := SetField(s, k, v)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
