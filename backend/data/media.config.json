@@ -10,7 +10,7 @@
       {
         "componentName": "devfest",
         "eltName": "devfest-item",
-        "files": "devfest.html",
+        "files": ["devfest.html"],
         "propValues": {
           "talks_url": "plugins/devfest/talks.json",
           "speakers_url": "plugins/devfest/speakers.json",
@@ -21,7 +21,7 @@
       {
         "componentName": "youtube",
         "eltName": "youtube-item",
-        "files": "youtube.html",
+        "files": ["youtube.html"],
         "propValues": {
           "socket_url": "http://localhost:8080"
         }
@@ -29,7 +29,7 @@
       {
         "componentName": "speech",
         "eltName": "speech-item",
-        "files": "speech.html",
+        "files": ["speech.html"],
         "propValues": {
           "loader_url": "plugins/speech/loader.jpg",
           "socket_url": "http://localhost:8080",
@@ -39,7 +39,7 @@
       {
         "componentName": "marcel",
         "eltName": "marcel-item",
-        "files": "marcel.html",
+        "files": ["marcel.html"],
         "propValues": {
           "logo_url": "plugins/logo/zenika.png",
           "message_text1": "Bienvenue",
