@@ -28,7 +28,6 @@ backend/_testmain.go
 backend/*.iml
 
 backend/marcel.log
-backend/data/media.config.json
 
 # User-specific stuff:
 .idea/
