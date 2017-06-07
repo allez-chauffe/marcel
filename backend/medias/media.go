@@ -1,4 +1,4 @@
-package media
+package medias
 
 import (
 	"errors"
@@ -11,7 +11,7 @@ The global attributes for a Media
 type Media struct {
 	ID      int    `json:"id"`
 	Name    string `json:"name"`
-	Config  MediaConfig `json:"config"`
+	Styles []string `json:"styles"`
 	Components []MediaPlugin `json:"components"`
 }
 
