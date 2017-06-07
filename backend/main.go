@@ -4,7 +4,7 @@ import (
 	"github.com/Zenika/MARCEL/backend/agenda"
 	"github.com/Zenika/MARCEL/backend/weather"
 	"github.com/Zenika/MARCEL/backend/twitter"
-	"github.com/Zenika/MARCEL/backend/media"
+	"github.com/Zenika/MARCEL/backend/medias"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"net/http"
@@ -33,7 +33,7 @@ func main() {
 	//plugins.LoadPluginsCatalog()
 
 	//Load Medias configuration from DB
-	media.LoadMedias()
+	medias.LoadMedias()
 
 	//Set API services
 	c := cors.New(cors.Options{
@@ -48,8 +48,8 @@ func main() {
 	s.HandleFunc("/weather/forecast/{nbForecasts:[0-9]+}", weather.GetForecastWeatherHandler).Methods("GET")
 	s.HandleFunc("/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents).Methods("GET")
 	s.HandleFunc("/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline).Methods("GET")
-	s.HandleFunc("/medias/{idMedia:[0-9]*}", media.HandleGetMedia).Methods("GET")
-	s.HandleFunc("/medias", media.HandleGetMedias).Methods("GET")
+	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.HandleGetMedia).Methods("GET")
+	s.HandleFunc("/medias", medias.HandleGetMedias).Methods("GET")
 
 	handler := c.Handler(r)
 
