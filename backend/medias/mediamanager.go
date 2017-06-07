@@ -10,7 +10,7 @@ import (
 
 var Medias []Media
 
-const path_to_config string = "data/media.config.json"
+const path_to_config string = "data/medias.config.json"
 
 func LoadMedias() {
 	//Medias configurations are loaded from a JSON file on the FS.
