@@ -23,21 +23,19 @@
     <ul>
       <template is="dom-repeat" items="[[numbersList]]" as="itemNumber">
         <li>
-          <weather-icon-item api_key="{{api_key}}" city="{{city}}" weather_url="{{weather_url}}" item_number="{{itemNumber}}"></weather-icon-item>
+          <weather-icon-item weather_url="{{weather_url}}" item_number="{{itemNumber}}"></weather-icon-item>
         </li>
       </template>
     </ul>
   </template>
   <link rel="import" href="weather-icon.html">
   <script>
-    (function () {
+    (() => {
       class Weather extends Polymer.Element {
         static get is () { return 'weather-item' }
 
         static get properties () {
           return {
-            api_key: String,
-            city: String,
             numbersList: Array,
             weather_url: String
           }

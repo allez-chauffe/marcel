@@ -27,6 +27,9 @@ backend/_testmain.go
 
 backend/*.iml
 
+backend/marcel.log
+backend/data/media.config.json
+
 # User-specific stuff:
 .idea/
 
@@ -55,4 +58,5 @@ node_modules
 bower_components
 
 config.js
+google_api_key_file.json
 .DS_Store

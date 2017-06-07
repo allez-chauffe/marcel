@@ -8,9 +8,13 @@ go get github.com/rs/cors
 go get -u github.com/gorilla/mux
 go get -u google.golang.org/api/calendar/v3
 go get -u golang.org/x/oauth2/...
+go get github.com/mitchellh/mapstructure
 ```
 
 ```shell
+docker pull quay.io/goswagger/swagger
+alias swagger="docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
+
 export OWM_API_KEY="your_owm_api_key"
 export GOOGLE_API_KEY_FILE="your_google_api_key_file"
 export MARCEL_AGENDA_ID="id_of_your_google_agenda"
@@ -41,3 +45,5 @@ realize add
  - OpenWeatherMap
  - OpenWeatherMap Go API by briandowns (http://briandowns.github.io/openweathermap/)
  - Twitter Go API by Dalton Hubble (https://github.com/dghubble/go-twitter)
+ - MapStructure from Mitchellh (https://github.com/mitchellh/mapstructure)
+ - Go-Swagger.io (https://goswagger.io)

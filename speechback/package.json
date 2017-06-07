@@ -1,7 +1,7 @@
 {
-  "name": "marcel-tmpback",
+  "name": "marcel-speechback",
   "version": "1.0.0",
-  "description": "Temporary backend to serve components list and components",
+  "description": "Server that listen microphone to detect hotword and send sockets",
   "main": "app.js",
   "directories": {
     "test": "test"
@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "apiai-promise": "^1.0.0",
-    "ip": "^1.1.5",
     "node-record-lpcm16": "^0.3.0",
     "snowboy": "^1.2.0",
     "socket.io": "^2.0.1"
