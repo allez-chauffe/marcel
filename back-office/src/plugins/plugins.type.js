@@ -1,5 +1,4 @@
 // @flow
-
 export type PropBase = { name: string }
 
 export type Prop =

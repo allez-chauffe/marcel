@@ -7,28 +7,21 @@ import type { Plugin } from '../../plugins.type'
 
 import './PluginProps.css'
 
-class PluginProps extends React.Component {
-  props: { plugin: Plugin }
-  state: { filter: string } = { filter: '' }
+const PluginProps = (props: {
+  plugin: Plugin,
+  filter: string,
+  changeFilter: string => void,
+}) => {
+  const { plugin, filter, changeFilter } = props
+  const { name, props: pluginProps } = plugin
 
-  onFilterChange = (filter: string) => this.setState({ filter })
-
-  render() {
-    const { plugin } = this.props
-    const { name, props } = plugin
-
-    return (
-      <div className="PluginProps">
-        <h2>{name}</h2>
-        <SearchField
-          label="Search Prop"
-          value={this.state.filter}
-          onChange={this.onFilterChange}
-        />
-        {props.map(p => <PluginProp prop={p} key={p.name} />)}
-      </div>
-    )
-  }
+  return (
+    <div className="PluginProps">
+      <h2>{name}</h2>
+      <SearchField label="Search Prop" value={filter} onChange={changeFilter} />
+      {pluginProps.map(p => <PluginProp prop={p} key={p.name} />)}
+    </div>
+  )
 }
 
 export default PluginProps

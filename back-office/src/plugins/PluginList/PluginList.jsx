@@ -8,19 +8,13 @@ import { SearchField } from '../../common'
 import type { Plugin } from '../plugins.type'
 
 export default class PluginList extends React.Component {
-  props: { plugins: Plugin[] }
-  state = { filter: '', regexp: /.*/ }
-
-  onSearchChange = (filter: string) => {
-    //Remove spaces and add 'any char' matcher between each chars.
-    const regexPatern = chain(filter).split('').without(' ').join('.*').value()
-    const regexp = RegExp(`.*${regexPatern}.*`, 'i')
-    this.setState({ regexp, filter })
-  }
+  props: { plugins: Plugin[], filter: string, changeFilter: string => void }
 
   render() {
-    const { plugins } = this.props
-    const { filter, regexp } = this.state
+    const { plugins, filter, changeFilter } = this.props
+
+    const regexPatern = chain(filter).split('').without(' ').join('.*').value()
+    const regexp = RegExp(`.*${regexPatern}.*`, 'i')
 
     const pluginNodes = chain(plugins)
       .filter(({ name }) => regexp.test(name))
@@ -39,7 +33,7 @@ export default class PluginList extends React.Component {
         <SearchField
           label="Search plugin"
           value={filter}
-          onChange={this.onSearchChange}
+          onChange={changeFilter}
         />
         <List selectable>
           {pluginNodes}

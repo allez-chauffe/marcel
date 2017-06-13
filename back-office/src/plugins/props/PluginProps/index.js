@@ -1,2 +1,2 @@
 // @flow
-export { default } from './PluginProps'
+export { default } from './PluginProps.container'

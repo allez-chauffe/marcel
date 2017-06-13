@@ -1,5 +1,5 @@
 // @flow
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import type { Store, Middleware } from 'redux'
 import thunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
@@ -19,9 +19,11 @@ if (process.env.NODE_ENV === devMode) {
   middlewares.push(createLogger(options))
 }
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
 const store: Store<State, Action> = createStore(
   rootReducer,
-  applyMiddleware(...middlewares),
+  composeEnhancers(applyMiddleware(...middlewares)),
 )
 
 export default store
