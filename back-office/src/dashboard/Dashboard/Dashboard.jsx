@@ -12,17 +12,17 @@ const Dashboard = () => (
       {
         layout: { x: 0, y: 0, w: 3, h: 3 },
         id: 'p1',
-        plugin: { name: 'Plugin 1' },
+        plugin: { name: 'Plugin 1', elementName: 'plugin-1' },
       },
       {
         layout: { x: 1, y: 10, w: 3, h: 3 },
         id: 'p2',
-        plugin: { name: 'Plugin 2' },
+        plugin: { name: 'Plugin 2', elementName: 'plugin-2' },
       },
       {
         layout: { x: 5, y: 0, w: 3, h: 3 },
         id: 'p3',
-        plugin: { name: 'Plugin 3' },
+        plugin: { name: 'Plugin 3', elementName: 'plugin-3' },
       },
     ]}
   />
