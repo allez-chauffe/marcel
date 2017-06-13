@@ -8,7 +8,7 @@ import Grid from './Grid'
 const SizedGrid = sizeMe({ monitorWidth: true, monitorHeight: true })(Grid)
 
 const mapStateToProps = state => ({
-  pluginName: selectedPluginNameSelector(state),
+  selectedPlugin: selectedPluginNameSelector(state),
 })
 
 const mapDispatchToProps = {

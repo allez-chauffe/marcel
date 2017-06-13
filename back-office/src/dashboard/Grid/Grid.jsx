@@ -24,10 +24,19 @@ export type Props = {
   cols: number,
   layout: Item[],
   selectPlugin: string => void,
+  selectedPlugin: string,
 }
 
 const Grid = (props: Props) => {
-  const { size, ratio, rows, cols, layout, selectPlugin } = props
+  const {
+    size,
+    ratio,
+    rows,
+    cols,
+    layout,
+    selectPlugin,
+    selectedPlugin,
+  } = props
   const { width, height } = size
   const marginHeight: number = ReactGridLayout.defaultProps.margin[1]
 
@@ -50,6 +59,7 @@ const Grid = (props: Props) => {
           <div
             key={id}
             data-grid={layout}
+            className={selectedPlugin === plugin.elementName ? 'selected' : ''}
             onClick={() => selectPlugin(plugin.elementName)}
           >
             {plugin.name}
