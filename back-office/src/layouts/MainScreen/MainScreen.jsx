@@ -8,7 +8,7 @@ import { Dashboard } from '../../grid'
 const MainScreen = ({ availablePlugins }: { availablePlugins: Plugin[] }) => (
   <div className="MainScreen">
     <div className="left-side-panel">
-      <PluginList plugins={availablePlugins} />
+      <PluginList />
     </div>
     <div className="main-panel">
       <Dashboard />
