@@ -2,8 +2,8 @@
 import React from 'react'
 import { PluginList, PluginProps } from '../../plugins'
 import './MainScreen.css'
-import type { Plugin } from '../../plugins/plugins.type'
-import { Dashboard } from '../../grid'
+import type { Plugin } from '../../plugins'
+import { Dashboard } from '../../dashboard'
 
 const MainScreen = ({ availablePlugins }: { availablePlugins: Plugin[] }) => (
   <div className="MainScreen">

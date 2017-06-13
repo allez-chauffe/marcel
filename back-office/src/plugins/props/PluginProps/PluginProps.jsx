@@ -3,7 +3,7 @@ import React from 'react'
 
 import { SearchField } from '../../../common'
 import PluginProp from '../PluginProp'
-import type { Plugin } from '../../plugins.type'
+import type { Plugin } from '../../type'
 
 import './PluginProps.css'
 

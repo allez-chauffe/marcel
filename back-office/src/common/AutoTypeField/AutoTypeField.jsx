@@ -2,7 +2,7 @@
 import React from 'react'
 import Input from 'react-toolbox/lib/input/Input'
 import Switch from 'react-toolbox/lib/switch/Switch'
-import type { Prop } from '../../plugins/plugins.type'
+import type { Prop } from '../../plugins'
 
 const AutoTypeField = ({ value }: { value: Prop }) => {
   if (value.type === 'string')
