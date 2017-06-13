@@ -6,13 +6,12 @@ import './Grid.css'
 import 'react-grid-layout/css/styles.css'
 
 import type { LayoutItem } from 'react-grid-layout/build/utils.js.flow'
+import type { PluginInstance } from '../type'
 
 export type Item = {
   layout: LayoutItem,
   id: string,
-  plugin: {
-    name: string,
-  },
+  plugin: PluginInstance,
 }
 
 export type Props = {
@@ -22,10 +21,21 @@ export type Props = {
   rows: number,
   cols: number,
   layout: Item[],
+  selectPlugin: PluginInstance => void,
+  selectedPlugin: string,
 }
 
 const Grid = (props: Props) => {
-  const { size: { width, height }, ratio, rows, cols, layout } = props
+  const {
+    size,
+    ratio,
+    rows,
+    cols,
+    layout,
+    selectPlugin,
+    selectedPlugin,
+  } = props
+  const { width, height } = size
   const marginHeight: number = ReactGridLayout.defaultProps.margin[1]
 
   const containerRatio = width / height
@@ -43,8 +53,15 @@ const Grid = (props: Props) => {
         maxRows={rows}
         isRearrangeable={false}
       >
-        {layout.map(({ layout, plugin, id }) => (
-          <div key={id} data-grid={layout}>{plugin.name}</div>
+        {layout.map(({ layout, plugin }) => (
+          <div
+            key={plugin.instanceId}
+            data-grid={layout}
+            className={selectedPlugin === plugin.instanceId ? 'selected' : ''}
+            onClick={() => selectPlugin(plugin)}
+          >
+            {plugin.name}
+          </div>
         ))}
       </ReactGridLayout>
     </div>

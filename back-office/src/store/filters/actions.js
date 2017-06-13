@@ -7,13 +7,10 @@ export const actions = {
 
 export const changeFilter = (collection: string) => (
   filter: string,
-): FiltersAction => {
-  console.log(collection, filter)
-  return {
-    type: actions.CHANGE_FILTER,
-    payload: { filter, collection },
-  }
-}
+): FiltersAction => ({
+  type: actions.CHANGE_FILTER,
+  payload: { filter, collection },
+})
 
 export const changePluginFilter = changeFilter('plugins')
 export const changePropsFilter = changeFilter('props')
