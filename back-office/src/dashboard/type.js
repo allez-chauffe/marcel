@@ -17,13 +17,20 @@ export type Dashboard = {
 
 // Redux
 export type SelectPluginAction = {
-  type: string,
+  type: 'DASHBOARD/SELECT_PLUGIN',
   payload: {
-    elementName: string,
+    instanceId: string,
   },
 }
 
-export type DashboardAction = SelectPluginAction
+export type AddPluginAction = {
+  type: 'DASHBOARD/ADD_PLUGIN',
+  payload: {
+    plugin: Plugin,
+  },
+}
+
+export type DashboardAction = SelectPluginAction | AddPluginAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
