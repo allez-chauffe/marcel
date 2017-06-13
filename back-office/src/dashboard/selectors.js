@@ -4,6 +4,8 @@ import { find } from 'lodash'
 import type { State } from '../store'
 import { pluginsSelector } from '../plugins/selectors'
 
+export const dashboardSelector = (state: State) => state.dashboard.dashboard
+
 export const selectedPluginNameSelector = (state: State) =>
   state.dashboard.selectedPlugin
 
