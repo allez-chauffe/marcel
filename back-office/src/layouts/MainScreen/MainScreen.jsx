@@ -14,7 +14,7 @@ const MainScreen = ({ availablePlugins }: { availablePlugins: Plugin[] }) => (
       <Dashboard />
     </div>
     <div className="right-side-panel">
-      <PluginProps plugin={availablePlugins[0]} />
+      <PluginProps />
     </div>
   </div>
 )
