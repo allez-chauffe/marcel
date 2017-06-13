@@ -2,15 +2,17 @@
 import { createSelector } from 'reselect'
 import { find } from 'lodash'
 import type { State } from '../store'
-import { pluginsSelector } from '../plugins/selectors'
 
 export const dashboardSelector = (state: State) => state.dashboard.dashboard
+
+export const dashboardPluginsSelector = (state: State) =>
+  state.dashboard.dashboard.plugins
 
 export const selectedPluginNameSelector = (state: State) =>
   state.dashboard.selectedPlugin
 
 export const selectedPluginSelector = createSelector(
-  pluginsSelector,
+  dashboardPluginsSelector,
   selectedPluginNameSelector,
-  (plugins, elementName) => find(plugins, { elementName }),
+  (plugins, instanceId) => find(plugins, { instanceId }),
 )
