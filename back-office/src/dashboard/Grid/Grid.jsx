@@ -36,7 +36,7 @@ const makePluginInstance = (selectPlugin, selectedPlugin) => item => {
 
 const Grid = (props: Props) => {
   const { size: { width, height }, ratio, rows, cols } = props
-  const { layout, selectPlugin, selectedPlugin } = props
+  const { layout, saveLayout, selectPlugin, selectedPlugin } = props
   const marginHeight: number = ReactGridLayout.defaultProps.margin[1]
 
   const containerRatio = width / height
@@ -53,6 +53,7 @@ const Grid = (props: Props) => {
         verticalCompact={false}
         maxRows={rows}
         isRearrangeable={false}
+        onLayoutChange={saveLayout}
       >
         {layout.map(makePluginInstance(selectPlugin, selectedPlugin))}
       </ReactGridLayout>
