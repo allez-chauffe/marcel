@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import './PluginProp.css'
-import type { Prop } from '../../plugins.type'
+import type { Prop } from '../../type'
 import { AutoTypeField } from '../../../common'
 
 const PluginProp = ({ prop }: { prop: Prop }) => (

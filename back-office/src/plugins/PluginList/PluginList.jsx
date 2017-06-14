@@ -5,7 +5,7 @@ import ListItem from 'react-toolbox/lib/list/ListItem'
 import { chain } from 'lodash'
 
 import { SearchField } from '../../common'
-import type { Plugin } from '../plugins.type'
+import type { Plugin } from '../type'
 
 export default class PluginList extends React.Component {
   props: { plugins: Plugin[], filter: string, changeFilter: string => void }

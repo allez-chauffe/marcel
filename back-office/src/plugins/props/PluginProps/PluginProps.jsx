@@ -3,16 +3,19 @@ import React from 'react'
 
 import { SearchField } from '../../../common'
 import PluginProp from '../PluginProp'
-import type { Plugin } from '../../plugins.type'
+import type { Plugin } from '../../type'
 
 import './PluginProps.css'
 
 const PluginProps = (props: {
-  plugin: Plugin,
+  plugin?: Plugin,
   filter: string,
   changeFilter: string => void,
 }) => {
   const { plugin, filter, changeFilter } = props
+
+  if (!plugin) return <div className="PluginsProps" />
+
   const { name, props: pluginProps } = plugin
 
   return (
