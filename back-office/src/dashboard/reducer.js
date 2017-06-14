@@ -2,9 +2,8 @@
 import type { Reducer } from 'redux'
 import { actions } from './actions'
 import { push } from 'immutadot'
-import { find } from 'lodash'
-import type { DashboardAction, DashboardState, Dashboard } from './type'
-import type { Plugin } from '../plugins'
+import uuid from 'uuid/v4'
+import type { DashboardAction, DashboardState } from './type'
 
 const intialState = {
   selectedPlugin: null,
@@ -27,14 +26,6 @@ const intialState = {
   },
 }
 
-const generateInstanceId = (dashboard: Dashboard, plugin: Plugin) => {
-  const { elementName } = plugin
-  let id = 0
-  while (find(dashboard.plugins, { instanceId: `${elementName}#${id}` }))
-    id++
-  return `${elementName}#${id}`
-}
-
 const dashboard: Reducer<DashboardState, DashboardAction> = (
   state = intialState,
   action,
@@ -49,7 +40,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         y: 0,
         columns: 1,
         rows: 1,
-        instanceId: generateInstanceId(state.dashboard, action.payload.plugin),
+        instanceId: uuid(),
       })
 
     default:
