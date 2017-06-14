@@ -6,14 +6,12 @@ import './Grid.css'
 import 'react-grid-layout/css/styles.css'
 
 import type { LayoutItem } from 'react-grid-layout/build/utils.js.flow'
+import type { PluginInstance } from '../type'
 
 export type Item = {
   layout: LayoutItem,
   id: string,
-  plugin: {
-    name: string,
-    elementName: string,
-  },
+  plugin: PluginInstance,
 }
 
 export type Props = {
@@ -23,7 +21,7 @@ export type Props = {
   rows: number,
   cols: number,
   layout: Item[],
-  selectPlugin: string => void,
+  selectPlugin: PluginInstance => void,
   selectedPlugin: string,
 }
 
@@ -55,12 +53,12 @@ const Grid = (props: Props) => {
         maxRows={rows}
         isRearrangeable={false}
       >
-        {layout.map(({ layout, plugin, id }) => (
+        {layout.map(({ layout, plugin }) => (
           <div
-            key={id}
+            key={plugin.instanceId}
             data-grid={layout}
-            className={selectedPlugin === plugin.elementName ? 'selected' : ''}
-            onClick={() => selectPlugin(plugin.elementName)}
+            className={selectedPlugin === plugin.instanceId ? 'selected' : ''}
+            onClick={() => selectPlugin(plugin)}
           >
             {plugin.name}
           </div>
