@@ -1,2 +1,2 @@
-// @flow
+//@flow
 export { default } from './Dashboard.container'
