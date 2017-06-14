@@ -6,11 +6,22 @@
     <style include="shared-styles"></style>
     <style include="font-awesome"></style>
     <style>
+      .title {
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        font-weight: 100;
+      }
+
       .name {
         color: var(--secondary-color);
       }
     </style>
-    <h1><i class="fa fa-birthday-cake"></i> Anniversaires</h1>
+    <h1 class="title">Anniversaires</h1>
+    <template is="dom-if" if="[[todayBirthday]]">
+      <h2><i class="fa fa-birthday-cake"></i> {{todayBirthday.name}} <i class="fa fa-birthday-cake"></i></h2>
+    </template>
     <template is="dom-repeat" items="[[birthdays]]" as="birthday">
       <p><span class="name">{{birthday.name}}</span> le {{birthday.date}}</p>
     </template>
@@ -22,7 +33,8 @@
 
         static get properties () {
           return {
-            birthdays: Array
+            birthdays: Array,
+            todayBirthday: Object
           }
         }
 
@@ -31,6 +43,8 @@
 
           this.birthdays = [];
           this.birthdays.push({name: 'Valentin STERN', date: '03/11/1995'})
+
+          this.todayBirthday = {name: 'Valentin STERN'};
         }
       }
 
