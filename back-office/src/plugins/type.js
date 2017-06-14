@@ -8,7 +8,7 @@ export type Prop =
   | ({ type: 'json', value: mixed } & PropBase)
 export type Plugin = {
   name: string,
-  props: Prop[],
+  props: { [propName: string]: ?Prop },
   icon: string,
   elementName: string,
 }

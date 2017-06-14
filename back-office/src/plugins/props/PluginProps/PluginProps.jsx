@@ -1,14 +1,15 @@
 // @flow
 import React from 'react'
+import { values } from 'lodash'
 
 import { SearchField } from '../../../common'
 import PluginProp from '../PluginProp'
-import type { Plugin } from '../../type'
+import type { PluginInstance } from '../../../dashboard'
 
 import './PluginProps.css'
 
 const PluginProps = (props: {
-  plugin?: Plugin,
+  plugin?: PluginInstance,
   filter: string,
   changeFilter: string => void,
 }) => {
@@ -22,7 +23,9 @@ const PluginProps = (props: {
     <div className="PluginProps">
       <h2>{name}</h2>
       <SearchField label="Search Prop" value={filter} onChange={changeFilter} />
-      {pluginProps.map(p => <PluginProp prop={p} key={p.name} />)}
+      {values(pluginProps).map(p => (
+        <PluginProp plugin={plugin} prop={p} key={p.name} />
+      ))}
     </div>
   )
 }

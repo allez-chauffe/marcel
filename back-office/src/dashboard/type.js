@@ -1,5 +1,5 @@
 //@flow
-import type { Plugin } from '../plugins'
+import type { Plugin, Prop } from '../plugins'
 
 export type PluginInstance = Plugin & {
   instanceId: string,
@@ -12,7 +12,7 @@ export type PluginInstance = Plugin & {
 export type Dashboard = {
   name: string,
   description: string,
-  plugins: PluginInstance[],
+  plugins: { [instanceId: string]: ?PluginInstance },
 }
 
 // Redux
@@ -30,7 +30,19 @@ export type AddPluginAction = {
   },
 }
 
-export type DashboardAction = SelectPluginAction | AddPluginAction
+export type ChangePropAction = {
+  type: 'DASHBOARD/CHANGE_PROP',
+  payload: {
+    instanceId: string,
+    prop: Prop,
+    value: mixed,
+  },
+}
+
+export type DashboardAction =
+  | SelectPluginAction
+  | AddPluginAction
+  | ChangePropAction
 
 export type DashboardState = {
   selectedPlugin: string | null,

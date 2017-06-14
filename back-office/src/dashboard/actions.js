@@ -1,14 +1,16 @@
 //@flow
-import type { Plugin } from '../plugins'
+import type { Plugin, Prop } from '../plugins'
 import type {
   SelectPluginAction,
   PluginInstance,
   AddPluginAction,
+  ChangePropAction,
 } from './type'
 
 export const actions = {
   SELECT_PLUGIN: 'DASHBOARD/SELECT_PLUGIN',
   ADD_PLUGIN: 'DASHBOARD/ADD_PLUGIN',
+  CHANGE_PROP: 'DASHBOARD/CHANGE_PROP',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -19,4 +21,17 @@ export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
 export const addPlugin = (plugin: Plugin): AddPluginAction => ({
   type: actions.ADD_PLUGIN,
   payload: { plugin },
+})
+
+export const changeProp = (
+  plugin: PluginInstance,
+  prop: Prop,
+  value: mixed,
+): ChangePropAction => ({
+  type: actions.CHANGE_PROP,
+  payload: {
+    instanceId: plugin.instanceId,
+    prop,
+    value,
+  },
 })
