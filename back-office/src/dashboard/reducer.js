@@ -39,12 +39,10 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
   state = intialState,
   action,
 ) => {
-  console.log(state)
   switch (action.type) {
     case actions.SELECT_PLUGIN:
       return { ...state, selectedPlugin: action.payload.instanceId }
     case actions.ADD_PLUGIN:
-      console.log(state)
       return push(state, 'dashboard.plugins', {
         ...action.payload.plugin,
         x: 0,
