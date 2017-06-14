@@ -2,16 +2,13 @@
 import type { Reducer } from 'redux'
 import { actions } from './actions'
 import { push, map } from 'immutadot'
-import { find } from 'lodash'
+import uuid from 'uuid/v4'
 import type {
   DashboardAction,
   DashboardState,
-  Dashboard,
   LayoutMap,
   PluginInstance,
 } from './type'
-import type { Plugin } from '../plugins'
-import uuid from 'uuid/v4'
 
 const intialState = {
   selectedPlugin: null,
