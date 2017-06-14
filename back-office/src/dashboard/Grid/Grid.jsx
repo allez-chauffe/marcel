@@ -5,22 +5,18 @@ import ReactGridLayout from 'react-grid-layout'
 import './Grid.css'
 import 'react-grid-layout/css/styles.css'
 
-import type { LayoutItem } from 'react-grid-layout/build/utils.js.flow'
-import type { PluginInstance as PluginInstanceT } from '../type'
+import type { PluginInstance, LayoutItem, Layout } from '../type'
 
-export type Item = {
-  layout: LayoutItem,
-  plugin: PluginInstanceT,
-}
-
+export type Item = { layout: LayoutItem, plugin: PluginInstance }
 export type Props = {
   size: { height: number, width: number },
   ratio: number,
   rows: number,
   cols: number,
   layout: Item[],
-  selectPlugin: PluginInstanceT => void,
+  selectPlugin: PluginInstance => void,
   selectedPlugin: string,
+  saveLayout: Layout => void,
 }
 
 const makePluginInstance = (selectPlugin, selectedPlugin) => item => {
