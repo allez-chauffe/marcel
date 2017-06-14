@@ -5,12 +5,14 @@ import type {
   PluginInstance,
   AddPluginAction,
   ChangePropAction,
+  DeletePluginAction,
 } from './type'
 
 export const actions = {
   SELECT_PLUGIN: 'DASHBOARD/SELECT_PLUGIN',
   ADD_PLUGIN: 'DASHBOARD/ADD_PLUGIN',
   CHANGE_PROP: 'DASHBOARD/CHANGE_PROP',
+  DELETE_PLUGIN: 'DASHBOARD/DELETE_PLUGIN',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -20,6 +22,11 @@ export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
 
 export const addPlugin = (plugin: Plugin): AddPluginAction => ({
   type: actions.ADD_PLUGIN,
+  payload: { plugin },
+})
+
+export const deletePlugin = (plugin: Plugin): DeletePluginAction => ({
+  type: actions.DELETE_PLUGIN,
   payload: { plugin },
 })
 

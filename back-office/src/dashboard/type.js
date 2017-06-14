@@ -30,6 +30,13 @@ export type AddPluginAction = {
   },
 }
 
+export type DeletePluginAction = {
+  type: 'DASHBOARD/DELETE_PLUGIN',
+  payload: {
+    plugin: Plugin,
+  },
+}
+
 export type ChangePropAction = {
   type: 'DASHBOARD/CHANGE_PROP',
   payload: {
@@ -42,6 +49,7 @@ export type ChangePropAction = {
 export type DashboardAction =
   | SelectPluginAction
   | AddPluginAction
+  | DeletePluginAction
   | ChangePropAction
 
 export type DashboardState = {

@@ -1,7 +1,7 @@
 //@flow
 import type { Reducer } from 'redux'
 import { actions } from './actions'
-import { set } from 'immutadot'
+import { set, unset } from 'immutadot'
 import uuid from 'uuid/v4'
 import type { DashboardAction, DashboardState } from './type'
 
@@ -53,6 +53,11 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         rows: 1,
         instanceId,
       })
+    }
+    case actions.DELETE_PLUGIN: {
+      return state.selectedPlugin
+        ? unset(state, `dashboard.plugins.${state.selectedPlugin}`)
+        : state
     }
     case actions.CHANGE_PROP: {
       const { instanceId, prop, value } = action.payload
