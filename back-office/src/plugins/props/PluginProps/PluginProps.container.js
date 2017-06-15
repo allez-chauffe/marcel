@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PluginProps from './PluginProps'
 import type { State } from '../../../store'
 import { propsFilterSelector, changePropsFilter } from '../../../store/filters'
-import { selectedPluginSelector } from '../../../dashboard'
+import { selectedPluginSelector, deletePlugin } from '../../../dashboard'
 
 const mapStateToProps = (state: State) => ({
   filter: propsFilterSelector(state),
@@ -12,6 +12,7 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = {
   changeFilter: changePropsFilter,
+  deletePlugin,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PluginProps)
