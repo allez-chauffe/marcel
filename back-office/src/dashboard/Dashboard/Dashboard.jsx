@@ -1,4 +1,4 @@
-// @flow
+//@flow
 import React from 'react'
 import Grid from '../Grid'
 import type { Dashboard as DashboardT } from '../type'
