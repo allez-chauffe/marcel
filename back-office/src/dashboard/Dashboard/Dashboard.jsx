@@ -5,24 +5,10 @@ import { values } from 'lodash'
 import type { Dashboard as DashboardT } from '../type'
 import './Dashboard.css'
 
-class Dashboard extends React.Component {
-  props: { dashboard: DashboardT, deletePlugin: () => void }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.onKeyDown)
-  }
-
-  componentWillUnmout() {
-    document.removeEventListener('keydown', this.onKeyDown)
-  }
-
-  onKeyDown = ({ code }: KeyboardEvent) => {
-    if (code === 'Delete' || code === 'Backspace') this.props.deletePlugin()
-  }
-
-  render() {
-    const plugins = values(this.props.dashboard.plugins)
-    return (
+const Dashboard = (props: { dashboard: DashboardT }) => {
+  const plugins = values(props.dashboard.plugins)
+  return (
+    <div className="Dashboard">
       <Grid
         ratio={2}
         rows={20}
@@ -32,8 +18,8 @@ class Dashboard extends React.Component {
           plugin: instance,
         }))}
       />
-    )
-  }
+    </div>
+  )
 }
 
 export default Dashboard
