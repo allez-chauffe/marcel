@@ -33,7 +33,7 @@ const intialState = {
 
 const updatePlugin = (layout: LayoutMap) => (plugin: PluginInstance) => {
   if (!layout[plugin.instanceId])
-    throw new Error('Plugin instance not foun in layout')
+    throw new Error('Plugin instance not found in layout')
 
   const { x, y, w: columns, h: rows } = layout[plugin.instanceId]
   return { ...plugin, x, y, columns, rows }
