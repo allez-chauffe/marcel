@@ -1,9 +1,15 @@
 //@flow
 import type { Reducer } from 'redux'
 import { actions } from './actions'
-import { set, unset } from 'immutadot'
+import { mapValues } from 'lodash'
+import { set, update, unset } from 'immutadot'
 import uuid from 'uuid/v4'
-import type { DashboardAction, DashboardState } from './type'
+import type {
+  DashboardAction,
+  DashboardState,
+  LayoutMap,
+  PluginInstanceMap,
+} from './type'
 
 const intialState = {
   selectedPlugin: null,
@@ -33,6 +39,16 @@ const intialState = {
       },
     },
   },
+}
+
+const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
+  return mapValues(plugins, plugin => {
+    if (!layout[plugin.instanceId])
+      throw new Error('Plugin instance not found in layout')
+
+    const { x, y, w: columns, h: rows } = layout[plugin.instanceId]
+    return { ...plugin, x, y, columns, rows }
+  })
 }
 
 const dashboard: Reducer<DashboardState, DashboardAction> = (
@@ -66,6 +82,10 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         `dashboard.plugins.${instanceId}.props.${prop.name}.value`,
         value,
       )
+    }
+    case actions.SAVE_LAYOUT: {
+      const { layout } = action.payload
+      return update(state, 'dashboard.plugins', updatePlugins(layout))
     }
     default:
       return state

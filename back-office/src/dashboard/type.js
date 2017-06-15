@@ -1,6 +1,15 @@
 //@flow
 import type { Plugin, Prop } from '../plugins'
 
+import type {
+  LayoutItem as LayoutItemT,
+  Layout as LayoutT,
+} from 'react-grid-layout/build/utils.js.flow'
+
+export type Layout = LayoutT
+export type LayoutItem = LayoutItemT
+export type LayoutMap = { [instanceId: string]: ?LayoutItem }
+
 export type PluginInstance = Plugin & {
   instanceId: string,
   x: number,
@@ -9,10 +18,11 @@ export type PluginInstance = Plugin & {
   rows: number,
 }
 
+export type PluginInstanceMap = { [instanceId: string]: PluginInstance }
 export type Dashboard = {
   name: string,
   description: string,
-  plugins: { [instanceId: string]: ?PluginInstance },
+  plugins: PluginInstanceMap,
 }
 
 // Redux
@@ -36,6 +46,12 @@ export type DeletePluginAction = {
     plugin: Plugin,
   },
 }
+export type SaveLayoutAction = {
+  type: 'DASHBOARD/SAVE_LAYOUT',
+  payload: {
+    layout: LayoutMap,
+  },
+}
 
 export type ChangePropAction = {
   type: 'DASHBOARD/CHANGE_PROP',
@@ -51,6 +67,7 @@ export type DashboardAction =
   | AddPluginAction
   | DeletePluginAction
   | ChangePropAction
+  | SaveLayoutAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
