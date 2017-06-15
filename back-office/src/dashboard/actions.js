@@ -1,5 +1,7 @@
 //@flow
-import { keyBy } from 'lodash'
+import { keyBy, values } from 'lodash'
+import { pick } from 'lodash/fp'
+import { dashboardSelector } from './selectors'
 import type { Plugin, Prop } from '../plugins'
 import type {
   SelectPluginAction,
@@ -9,6 +11,7 @@ import type {
   SaveLayoutAction,
   Layout,
   ChangePropAction,
+  DashboardThunk,
 } from './type'
 
 export const actions = {
@@ -17,6 +20,9 @@ export const actions = {
   DELETE_PLUGIN: 'DASHBOARD/DELETE_PLUGIN',
   CHANGE_PROP: 'DASHBOARD/CHANGE_PROP',
   SAVE_LAYOUT: 'DASHBOARD/SAVE_LAYOUT',
+  UPLOAD_STARTED: 'DASHBOARD/UPLOAD_STARTED',
+  UPLOAD_SUCCESSED: 'DASHBOARD/UPLOAD_SUCCESSED',
+  UPLOAD_FAILED: 'DASHBOARD/UPLOAD_FAILED',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -51,3 +57,20 @@ export const saveLayout = (layout: Layout): SaveLayoutAction => ({
   type: actions.SAVE_LAYOUT,
   payload: { layout: keyBy(layout, 'i') },
 })
+
+export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
+  dispatch({ type: actions.UPLOAD_STARTED })
+
+  const { name, description, plugins } = dashboardSelector(getState())
+  const requestBody = {
+    name,
+    description,
+    plugins: values(plugins).map(
+      pick(['elementName', 'instanceId', 'props', 'x', 'y', 'columns', 'rows']),
+    ),
+  }
+
+  console.log('Upload to the server : ', JSON.stringify(requestBody, null, 2))
+
+  dispatch({ type: actions.UPLOAD_SUCCESSED })
+}
