@@ -18,10 +18,11 @@ export type PluginInstance = Plugin & {
   rows: number,
 }
 
+export type PluginInstanceMap = { [instanceId: string]: PluginInstance }
 export type Dashboard = {
   name: string,
   description: string,
-  plugins: { [instanceId: string]: ?PluginInstance },
+  plugins: PluginInstanceMap,
 }
 
 // Redux
