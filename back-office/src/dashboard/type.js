@@ -1,6 +1,15 @@
 //@flow
 import type { Plugin, Prop } from '../plugins'
 
+import type {
+  LayoutItem as LayoutItemT,
+  Layout as LayoutT,
+} from 'react-grid-layout/build/utils.js.flow'
+
+export type Layout = LayoutT
+export type LayoutItem = LayoutItemT
+export type LayoutMap = { [instanceId: string]: ?LayoutItem }
+
 export type PluginInstance = Plugin & {
   instanceId: string,
   x: number,
@@ -38,10 +47,17 @@ export type ChangePropAction = {
     value: mixed,
   },
 }
+export type SaveLayoutAction = {
+  type: 'DASHBOARD/SAVE_LAYOUT',
+  payload: {
+    layout: LayoutMap,
+  },
+}
 
 export type DashboardAction =
   | SelectPluginAction
   | AddPluginAction
+  | SaveLayoutAction
   | ChangePropAction
 
 export type DashboardState = {
