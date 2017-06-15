@@ -4,13 +4,16 @@ import './PluginProp.css'
 import type { Prop } from '../../type'
 import { AutoTypeField } from '../../../common'
 
-const PluginProp = ({ prop }: { prop: Prop }) => (
-  <div className="PluginProp">
-    <div className="propName">{prop.name}</div>
-    <div className="propValue">
-      <AutoTypeField value={prop} />
+const PluginProp = (props: { prop: Prop, changeProp: mixed => void }) => {
+  const { prop, changeProp } = props
+  return (
+    <div className="PluginProp">
+      <div className="propName">{prop.name}</div>
+      <div className="propValue">
+        <AutoTypeField value={prop} onChange={changeProp} />
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default PluginProp

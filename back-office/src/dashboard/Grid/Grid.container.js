@@ -8,7 +8,7 @@ import { selectPlugin, saveLayout } from '../actions'
 const SizedGrid = sizeMe({ monitorWidth: true, monitorHeight: true })(Grid)
 
 const mapStateToProps = state => ({
-  selectedPlugin: selectedPluginNameSelector,
+  selectedPlugin: selectedPluginNameSelector(state),
 })
 
 const mapDispatchToProps = {

@@ -1,2 +1,2 @@
 // @flow
-export { default } from './MainScreen.container'
+export { default } from './MainScreen'

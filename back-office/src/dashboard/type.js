@@ -1,5 +1,5 @@
 //@flow
-import type { Plugin } from '../plugins'
+import type { Plugin, Prop } from '../plugins'
 
 import type {
   LayoutItem as LayoutItemT,
@@ -18,10 +18,11 @@ export type PluginInstance = Plugin & {
   rows: number,
 }
 
+export type PluginInstanceMap = { [instanceId: string]: PluginInstance }
 export type Dashboard = {
   name: string,
   description: string,
-  plugins: PluginInstance[],
+  plugins: PluginInstanceMap,
 }
 
 // Redux
@@ -39,6 +40,14 @@ export type AddPluginAction = {
   },
 }
 
+export type ChangePropAction = {
+  type: 'DASHBOARD/CHANGE_PROP',
+  payload: {
+    instanceId: string,
+    prop: Prop,
+    value: mixed,
+  },
+}
 export type SaveLayoutAction = {
   type: 'DASHBOARD/SAVE_LAYOUT',
   payload: {
@@ -50,6 +59,7 @@ export type DashboardAction =
   | SelectPluginAction
   | AddPluginAction
   | SaveLayoutAction
+  | ChangePropAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
