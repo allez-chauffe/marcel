@@ -12,6 +12,10 @@ class Dashboard extends React.Component {
     document.addEventListener('keydown', this.onKeyDown)
   }
 
+  componentWillUnmout() {
+    document.removeEventListener('keydown', this.onKeyDown)
+  }
+
   onKeyDown = ({ code }: KeyboardEvent) => {
     if (code === 'Delete' || code === 'Backspace') this.props.deletePlugin()
   }
