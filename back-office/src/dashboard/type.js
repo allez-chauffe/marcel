@@ -40,12 +40,10 @@ export type AddPluginAction = {
   },
 }
 
-export type ChangePropAction = {
-  type: 'DASHBOARD/CHANGE_PROP',
+export type DeletePluginAction = {
+  type: 'DASHBOARD/DELETE_PLUGIN',
   payload: {
-    instanceId: string,
-    prop: Prop,
-    value: mixed,
+    plugin: Plugin,
   },
 }
 export type SaveLayoutAction = {
@@ -55,11 +53,21 @@ export type SaveLayoutAction = {
   },
 }
 
+export type ChangePropAction = {
+  type: 'DASHBOARD/CHANGE_PROP',
+  payload: {
+    instanceId: string,
+    prop: Prop,
+    value: mixed,
+  },
+}
+
 export type DashboardAction =
   | SelectPluginAction
   | AddPluginAction
-  | SaveLayoutAction
+  | DeletePluginAction
   | ChangePropAction
+  | SaveLayoutAction
 
 export type DashboardState = {
   selectedPlugin: string | null,

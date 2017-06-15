@@ -5,6 +5,7 @@ import type {
   SelectPluginAction,
   PluginInstance,
   AddPluginAction,
+  DeletePluginAction,
   SaveLayoutAction,
   Layout,
   ChangePropAction,
@@ -13,6 +14,7 @@ import type {
 export const actions = {
   SELECT_PLUGIN: 'DASHBOARD/SELECT_PLUGIN',
   ADD_PLUGIN: 'DASHBOARD/ADD_PLUGIN',
+  DELETE_PLUGIN: 'DASHBOARD/DELETE_PLUGIN',
   CHANGE_PROP: 'DASHBOARD/CHANGE_PROP',
   SAVE_LAYOUT: 'DASHBOARD/SAVE_LAYOUT',
 }
@@ -27,9 +29,9 @@ export const addPlugin = (plugin: Plugin): AddPluginAction => ({
   payload: { plugin },
 })
 
-export const saveLayout = (layout: Layout): SaveLayoutAction => ({
-  type: actions.SAVE_LAYOUT,
-  payload: { layout: keyBy(layout, 'i') },
+export const deletePlugin = (plugin: Plugin): DeletePluginAction => ({
+  type: actions.DELETE_PLUGIN,
+  payload: { plugin },
 })
 
 export const changeProp = (
@@ -43,4 +45,9 @@ export const changeProp = (
     prop,
     value,
   },
+})
+
+export const saveLayout = (layout: Layout): SaveLayoutAction => ({
+  type: actions.SAVE_LAYOUT,
+  payload: { layout: keyBy(layout, 'i') },
 })

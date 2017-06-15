@@ -2,7 +2,7 @@
 import type { Reducer } from 'redux'
 import { actions } from './actions'
 import { mapValues } from 'lodash'
-import { set, update } from 'immutadot'
+import { set, update, unset } from 'immutadot'
 import uuid from 'uuid/v4'
 import type {
   DashboardAction,
@@ -69,6 +69,11 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         rows: 1,
         instanceId,
       })
+    }
+    case actions.DELETE_PLUGIN: {
+      return state.selectedPlugin
+        ? unset(state, `dashboard.plugins.${state.selectedPlugin}`)
+        : state
     }
     case actions.CHANGE_PROP: {
       const { instanceId, prop, value } = action.payload
