@@ -2,7 +2,7 @@
 import { connect } from 'react-redux'
 import PluginProps from './PluginProps'
 import type { State } from '../../../store'
-import { selectedPluginSelector, deletePlugin } from '../../../dashboard'
+import { deletePlugin } from '../../../dashboard'
 import {
   propsFilterSelector,
   changePropsFilter,
