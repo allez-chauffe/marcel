@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import { values } from 'lodash'
+import Button from 'react-toolbox/lib/button/Button'
 
 import { SearchField } from '../../../common'
 import PluginProp from '../PluginProp'
@@ -8,26 +9,48 @@ import type { PluginInstance } from '../../../dashboard'
 
 import './PluginProps.css'
 
-const PluginProps = (props: {
-  plugin?: PluginInstance,
-  filter: string,
-  changeFilter: string => void,
-}) => {
-  const { plugin, filter, changeFilter } = props
+class PluginProps extends React.Component {
+  props: {
+    plugin?: PluginInstance,
+    filter: string,
+    changeFilter: string => void,
+    deletePlugin: PluginInstance => void,
+  }
 
-  if (!plugin) return <div className="PluginsProps" />
+  deletePlugin = () => {
+    if (this.props.plugin) this.props.deletePlugin(this.props.plugin)
+  }
 
-  const { name, props: pluginProps } = plugin
+  render() {
+    const { plugin, filter, changeFilter } = this.props
 
-  return (
-    <div className="PluginProps">
-      <h2>{name}</h2>
-      <SearchField label="Search Prop" value={filter} onChange={changeFilter} />
-      {values(pluginProps).map(p => (
-        <PluginProp plugin={plugin} prop={p} key={p.name} />
-      ))}
-    </div>
-  )
+    if (!plugin) return <div className="PluginsProps" />
+
+    const { name, props: pluginProps } = plugin
+
+    return (
+      <div className="PluginProps">
+        <h2>{name}</h2>
+        <SearchField
+          label="Search Prop"
+          value={filter}
+          onChange={changeFilter}
+        />
+        {values(pluginProps).map(p => (
+          <PluginProp plugin={plugin} prop={p} key={p.name} />
+        ))}
+
+        <Button
+          icon="delete"
+          label="Supprimer"
+          raised
+          primary
+          className="delete"
+          onClick={this.deletePlugin}
+        />
+      </div>
+    )
+  }
 }
 
 export default PluginProps
