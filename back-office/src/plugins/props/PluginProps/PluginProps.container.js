@@ -2,12 +2,16 @@
 import { connect } from 'react-redux'
 import PluginProps from './PluginProps'
 import type { State } from '../../../store'
-import { propsFilterSelector, changePropsFilter } from '../../../store/filters'
 import { selectedPluginSelector, deletePlugin } from '../../../dashboard'
+import {
+  propsFilterSelector,
+  changePropsFilter,
+  selectedPluginPropsFilteredSelector,
+} from '../../../store/filters'
 
 const mapStateToProps = (state: State) => ({
   filter: propsFilterSelector(state),
-  plugin: selectedPluginSelector(state),
+  plugin: selectedPluginPropsFilteredSelector(state),
 })
 
 const mapDispatchToProps = {
