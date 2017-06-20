@@ -11,5 +11,3 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   uploadLayout,
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
