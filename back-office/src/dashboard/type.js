@@ -1,5 +1,6 @@
 //@flow
 import type { Plugin, Prop } from '../plugins'
+import type { State } from '../store'
 
 import type {
   LayoutItem as LayoutItemT,
@@ -62,12 +63,32 @@ export type ChangePropAction = {
   },
 }
 
+export type UploadStartedAction = {
+  type: 'DASHBOARD/UPLOAD_STARTED',
+}
+
+export type UploadSuccesedAction = {
+  type: 'DASHBOARD/UPLOAD_SUCCESSED',
+}
+
+export type UploadFailedAction = {
+  type: 'DASHBOARD/UPLOAD_FAILED',
+  payload: { error: string },
+}
+
+// eslint-disable-next-line no-use-before-define
+export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
+
 export type DashboardAction =
   | SelectPluginAction
   | AddPluginAction
   | DeletePluginAction
   | ChangePropAction
   | SaveLayoutAction
+  | UploadStartedAction
+  | UploadSuccesedAction
+  | UploadFailedAction
+  | DashboardAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
