@@ -9,6 +9,7 @@ import type {
   AddPluginAction,
   DeletePluginAction,
   SaveLayoutAction,
+  UpdateConfigAction,
   Layout,
   ChangePropAction,
   DashboardThunk,
@@ -23,6 +24,7 @@ export const actions = {
   UPLOAD_STARTED: 'DASHBOARD/UPLOAD_STARTED',
   UPLOAD_SUCCESSED: 'DASHBOARD/UPLOAD_SUCCESSED',
   UPLOAD_FAILED: 'DASHBOARD/UPLOAD_FAILED',
+  UPDATE_CONFIG: 'DASHBOARD/UPDATE_CONFIG',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -74,3 +76,10 @@ export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
 
   dispatch({ type: actions.UPLOAD_SUCCESSED })
 }
+
+export const updateConfig = (property: string) => (
+  value: string | number,
+): UpdateConfigAction => ({
+  type: actions.UPDATE_CONFIG,
+  payload: { property, value },
+})
