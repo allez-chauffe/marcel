@@ -8,18 +8,7 @@
     ],
     "components": [
       {
-        "componentName": "devfest",
-        "eltName": "devfest-item",
-        "files": ["devfest.html"],
-        "propValues": {
-          "talks_url": "plugins/devfest/talks.json",
-          "speakers_url": "plugins/devfest/speakers.json",
-          "socket_url": "http://localhost:8080",
-          "times_url": "plugins/devfest/times.json"
-        }
-      },
-      {
-        "componentName": "youtube",
+        "componentName": "marcel-plugin-youtube",
         "eltName": "youtube-item",
         "files": ["youtube.html"],
         "propValues": {
@@ -27,21 +16,21 @@
         }
       },
       {
-        "componentName": "speech",
+        "componentName": "marcel-plugin-speech",
         "eltName": "speech-item",
         "files": ["speech.html"],
         "propValues": {
-          "loader_url": "plugins/speech/loader.jpg",
+          "loader_url": "plugins/marcel-plugin-speech/loader.jpg",
           "socket_url": "http://localhost:8080",
           "default_message": "Bonjour à tous, je suis MARCEL !"
         }
       },
       {
-        "componentName": "marcel",
+        "componentName": "marcel-plugin-marcel",
         "eltName": "marcel-item",
         "files": ["marcel.html"],
         "propValues": {
-          "logo_url": "plugins/logo/zenika.png",
+          "logo_url": "plugins/marcel-plugin-logo/zenika.png",
           "message_text1": "Bienvenue",
           "message_text2": "à Zenika Lille",
           "github_users": [
