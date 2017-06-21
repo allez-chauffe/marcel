@@ -13,6 +13,7 @@
     "react-toolbox": "^2.0.0-beta.8",
     "redux": "^3.6.0",
     "redux-actions": "^2.0.3",
+    "redux-little-router": "^13.2.0",
     "redux-logger": "^3.0.1",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
