@@ -6,23 +6,26 @@ import type { Dashboard } from '../type'
 import './DashboardConfig.css'
 
 export type PropsType = {
-  dashboard: Dashboard,
-  changeName: (string) => void,
-  changeDescription: (string) => void,
-  changeCols: (number) => void,
-  changeRows: (number) => void,
-  changeRatio: (number) => void,
+  dashboard: ?Dashboard,
+  changeName: string => void,
+  changeDescription: string => void,
+  changeCols: number => void,
+  changeRows: number => void,
+  changeRatio: number => void,
 }
 
 const DashboardConfig = (props: PropsType) => {
+  const { dashboard } = props
+  if (!dashboard) throw new Error('A dashboard should be selected !')
+
   const {
-    dashboard: { name, description, cols, rows, ratio },
     changeName,
     changeDescription,
     changeCols,
     changeRows,
     changeRatio,
   } = props
+  const { name, description, cols, rows, ratio } = dashboard
 
   return (
     <div className="DashboardConfig">

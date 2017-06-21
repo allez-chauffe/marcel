@@ -1,11 +1,11 @@
 //@flow
 import { connect } from 'react-redux'
 import DashboardConfig from './DashboardConfig'
-import { dashboardSelector } from '../selectors'
+import { selectedDashboardSelector } from '../selectors'
 import { updateConfig } from '../actions'
 
 const mapStateToProps = state => ({
-  dashboard: dashboardSelector(state),
+  dashboard: selectedDashboardSelector(state),
 })
 
 const mapDispatchToProps = {

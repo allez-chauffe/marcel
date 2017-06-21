@@ -1,22 +1,21 @@
 // @flow
 import React from 'react'
 import AppBar from 'react-toolbox/lib/app_bar/AppBar'
-import MainScreen from '../MainScreen'
+import DashboardScreen from '../DashboardScreen'
 
 import './AppLayout.css'
 
-const AppLayout = () => (
+const AppLayout = () =>
   <div className="AppLayout">
     <header>
       <AppBar title="Zenboard" leftIcon="menu" />
     </header>
     <main>
-      <MainScreen />
+      <DashboardScreen />
     </main>
     <footer>
       <AppBar />
     </footer>
   </div>
-)
 
 export default AppLayout
