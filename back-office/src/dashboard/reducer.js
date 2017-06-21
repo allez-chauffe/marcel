@@ -63,6 +63,9 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     case actions.SELECT_DASHBOARD: {
       return { ...state, selectedDashboard: action.payload.dashboardName }
     }
+    case actions.UNSELECT_DASHBOARD: {
+      return { ...state, selectedDashboard: null }
+    }
     case actions.ADD_PLUGIN: {
       const instanceId = uuid()
       return set(state, `dashboard.plugins.${instanceId}`, {

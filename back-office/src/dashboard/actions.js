@@ -15,11 +15,13 @@ import type {
   ChangePropAction,
   DashboardThunk,
   SelectDashboardAction,
+  UnselectDashboardAction,
 } from './type'
 
 export const actions = {
   SELECT_PLUGIN: 'DASHBOARD/SELECT_PLUGIN',
   SELECT_DASHBOARD: 'DASHBOARD/SELECT_DASHBOARD',
+  UNSELECT_DASHBOARD: 'DASHBOARD/UNSELECT_DASHBOARD',
   ADD_PLUGIN: 'DASHBOARD/ADD_PLUGIN',
   DELETE_PLUGIN: 'DASHBOARD/DELETE_PLUGIN',
   CHANGE_PROP: 'DASHBOARD/CHANGE_PROP',
@@ -40,6 +42,10 @@ export const selectDashboard = (
 ): SelectDashboardAction => ({
   type: actions.SELECT_DASHBOARD,
   payload: { dashboardName: dashboard.name },
+})
+
+export const unselectDashboard = (): UnselectDashboardAction => ({
+  type: actions.UNSELECT_DASHBOARD,
 })
 
 export const addPlugin = (plugin: Plugin): AddPluginAction => ({

@@ -45,6 +45,10 @@ export type SelectDashboardAction = {
   },
 }
 
+export type UnselectDashboardAction = {
+  type: 'DASHBOARD/UNSELECT_DASHBOARD',
+}
+
 export type AddPluginAction = {
   type: 'DASHBOARD/ADD_PLUGIN',
   payload: {
@@ -97,9 +101,10 @@ export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 
 export type DashboardAction =
   | SelectPluginAction
+  | SelectDashboardAction
+  | UnselectDashboardAction
   | AddPluginAction
   | DeletePluginAction
-  | SelectDashboardAction
   | ChangePropAction
   | SaveLayoutAction
   | UploadStartedAction
