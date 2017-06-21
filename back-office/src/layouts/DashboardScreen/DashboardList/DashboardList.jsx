@@ -1,20 +1,18 @@
 //@flow
 import React from 'react'
 import type { Dashboard } from '../../../dashboard/type'
+import DashboardListItem from './DashboardListItem'
 
 export type PropsType = {
   dashboards: Dashboard[],
-  selectDashboard: Dashboard => void,
 }
 
 const DashboardList = (props: PropsType) => {
-  const { dashboards, selectDashboard } = props
+  const { dashboards } = props
   return (
     <div>
       {dashboards.map(dashboard =>
-        <div key={dashboard.name} onClick={() => selectDashboard(dashboard)}>
-          {dashboard.name}
-        </div>,
+        <DashboardListItem key={dashboard.name} dashboard={dashboard} />,
       )}
     </div>
   )
