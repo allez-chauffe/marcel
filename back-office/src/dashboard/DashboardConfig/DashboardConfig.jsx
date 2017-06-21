@@ -7,6 +7,11 @@ import './DashboardConfig.css'
 
 export type PropsType = {
   dashboard: Dashboard,
+  changeName: (string) => void,
+  changeDescription: (string) => void,
+  changeCols: (number) => void,
+  changeRows: (number) => void,
+  changeRatio: (number) => void,
 }
 
 const DashboardConfig = (props: PropsType) => {
