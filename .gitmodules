@@ -57,3 +57,7 @@
 	path = plugins/marcel-plugin-youtube
 	url = git@github.com:Zenika/marcel-plugin-youtube.git
 	branch = master
+[submodule "plugins/marcel-plugin-temperature"]
+	path = plugins/marcel-plugin-temperature
+	url = git@github.com:Zenika/marcel-plugin-temperature
+	branch = master
