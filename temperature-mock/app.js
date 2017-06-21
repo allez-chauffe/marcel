@@ -23,5 +23,6 @@ const server = app.listen(5000, () => {
 const io = require('socket.io')(server);
 
 io.on('connection', socket => {
-  setInterval(() => socket.emit('temperature', {name: 'Salle 1', value: '10'}), 3000)
+  socket.emit('temperature', {name: 'Salle 1', value: '32'})
+  setInterval(() => socket.emit('temperature', {name: 'Salle 1', value: Math.floor(Math.random() * 33)}), 3000)
 })

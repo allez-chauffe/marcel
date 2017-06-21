@@ -96,7 +96,7 @@
         "eltName": "temperature-item",
         "files": ["temperature.html"],
         "propValues": {
-          
+          "socket_url": "http://localhost:5000"
         }
       }
     ]
