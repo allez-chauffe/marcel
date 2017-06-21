@@ -1,5 +1,6 @@
 //@flow
 import React from 'react'
+import ListItem from 'react-toolbox/lib/list/ListItem'
 import type { Dashboard } from '../../../../dashboard/type'
 
 export type PropsType = {
@@ -10,9 +11,12 @@ export type PropsType = {
 const DashboardListItem = (props: PropsType) => {
   const { dashboard, selectDashboard } = props
   return (
-    <div key={dashboard.name} onClick={selectDashboard}>
-      {dashboard.name}
-    </div>
+    <ListItem
+      caption={dashboard.name}
+      legend={dashboard.description}
+      key={dashboard.name}
+      onClick={selectDashboard}
+    />
   )
 }
 
