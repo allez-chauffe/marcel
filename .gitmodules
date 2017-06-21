@@ -1,3 +1,59 @@
 [submodule "plugins/marcel-plugin-hello"]
 	path = plugins/marcel-plugin-hello
 	url = https://github.com/Zenika/marcel-plugin-hello.git
+[submodule "plugins/marcel-plugin-calendar"]
+	path = plugins/marcel-plugin-calendar
+	url = git@github.com:Zenika/marcel-plugin-calendar.git
+	branch = master
+[submodule "plugins/marcel-plugin-datetime"]
+	path = plugins/marcel-plugin-datetime
+	url = git@github.com:Zenika/marcel-plugin-datetime.git
+	branch = master
+[submodule "plugins/marcel-plugin-devfest"]
+	path = plugins/marcel-plugin-devfest
+	url = git@github.com:Zenika/marcel-plugin-devfest.git
+	branch = master
+[submodule "plugins/marcel-plugin-github"]
+	path = plugins/marcel-plugin-github
+	url = git@github.com:Zenika/marcel-plugin-github.git
+	branch = master
+[submodule "plugins/marcel-plugin-logo"]
+	path = plugins/marcel-plugin-logo
+	url = git@github.com:Zenika/marcel-plugin-logo.git
+	branch = master
+[submodule "plugins/marcel-plugin-marcel"]
+	path = plugins/marcel-plugin-marcel
+	url = git@github.com:Zenika/marcel-plugin-marcel.git
+	branch = master
+[submodule "plugins/marcel-plugin-message"]
+	path = plugins/marcel-plugin-message
+	url = git@github.com:Zenika/marcel-plugin-message.git
+	branch = master
+[submodule "plugins/marcel-plugin-soundtouch"]
+	path = plugins/marcel-plugin-soundtouch
+	url = git@github.com:Zenika/marcel-plugin-soundtouch.git
+	branch = master
+[submodule "plugins/marcel-plugin-speech"]
+	path = plugins/marcel-plugin-speech
+	url = git@github.com:Zenika/marcel-plugin-speech.git
+	branch = master
+[submodule "plugins/marcel-plugin-twitter"]
+	path = plugins/marcel-plugin-twitter
+	url = git@github.com:Zenika/marcel-plugin-twitter.git
+	branch = master
+[submodule "plugins/marcel-plugin-vlille"]
+	path = plugins/marcel-plugin-vlille
+	url = git@github.com:Zenika/marcel-plugin-vlille.git
+	branch = master
+[submodule "plugins/marcel-plugin-weather"]
+	path = plugins/marcel-plugin-weather
+	url = git@github.com:Zenika/marcel-plugin-weather.git
+	branch = master
+[submodule "plugins/marcel-plugin-welcome"]
+	path = plugins/marcel-plugin-welcome
+	url = git@github.com:Zenika/marcel-plugin-welcome.git
+	branch = master
+[submodule "plugins/marcel-plugin-youtube"]
+	path = plugins/marcel-plugin-youtube
+	url = git@github.com:Zenika/marcel-plugin-youtube.git
+	branch = master
