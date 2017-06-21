@@ -4,6 +4,7 @@
     "flowtype/require-valid-file-annotation": [
       2,
       "always"
-    ]
+    ],
+    "no-console": "error"
   }
 }

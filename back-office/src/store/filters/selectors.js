@@ -1,23 +1,35 @@
 // @flow
 import { createSelector } from 'reselect'
 import { filter, chain } from 'lodash'
+import { pickBy } from 'immutadot'
 import { pluginsSelector } from '../../plugins/selectors'
+import { selectedPluginSelector } from '../../dashboard'
 import type { State } from '../types'
 
 export const pluginFilterSelector = (state: State) => state.filters.plugins
 export const propsFilterSelector = (state: State) => state.filters.props
 
+export const filterByName = (filterString: string) => {
+  const regexPatern: string = chain(filterString)
+    .split('')
+    .without(' ')
+    .join('.*')
+    .value()
+
+  const regexp = RegExp(`.*${regexPatern}.*`, 'i')
+
+  return (item: { name: string }): boolean => regexp.test(item.name)
+}
+
 export const filteredPluginsSeletor = createSelector(
   pluginsSelector,
   pluginFilterSelector,
-  (plugins, pluginFilter) => {
-    const regexPatern: string = chain(pluginFilter)
-      .split('')
-      .without(' ')
-      .join('.*')
-      .value()
+  (plugins, filterString) => filter(plugins, filterByName(filterString)),
+)
 
-    const regexp = RegExp(`.*${regexPatern}.*`, 'i')
-    return filter(plugins, ({ name }) => regexp.test(name))
-  },
+export const selectedPluginPropsFilteredSelector = createSelector(
+  selectedPluginSelector,
+  propsFilterSelector,
+  (plugin, filterString) =>
+    plugin && pickBy(plugin, 'props', filterByName(filterString)),
 )
