@@ -31,6 +31,6 @@ export const filteredPluginsSeletor = createSelector(
 export const selectedPluginPropsFilteredSelector = createSelector(
   selectedPluginSelector,
   propsFilterSelector,
-  (plugin, filterString): PluginInstance =>
-    pickBy(plugin, 'props', filterByName(filterString)),
+  (plugin, filterString): ?PluginInstance =>
+    plugin && pickBy(plugin, 'props', filterByName(filterString)),
 )
