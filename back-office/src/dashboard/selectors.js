@@ -19,10 +19,8 @@ export const selectedDashboardSelector = createSelector(
     selectedName ? dashboards[selectedName] : null,
 )
 
-const findPlugin = (dashboard: ?Dashboard, instanceId: string | null) => {
-  console.log({ dashboard, instanceId, plugin: dashboard.plugins[instanceId] })
-  return dashboard ? (instanceId ? dashboard.plugins[instanceId] : null) : null
-}
+const findPlugin = (dashboard: ?Dashboard, instanceId: string | null) =>
+  dashboard ? (instanceId ? dashboard.plugins[instanceId] : null) : null
 
 export const selectedPluginSelector = createSelector(
   selectedDashboardSelector,
