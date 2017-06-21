@@ -1,0 +1,3 @@
+[submodule "plugins/marcel-plugin-hello"]
+	path = plugins/marcel-plugin-hello
+	url = https://github.com/Zenika/marcel-plugin-hello.git
