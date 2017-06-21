@@ -38,7 +38,8 @@
       "APP_BAR",
       "INPUT",
       "LIST",
-      "SWITCH"
+      "SWITCH",
+      "TABS"
     ],
     "customProperties": {
       "animation-duration": "0.3s",

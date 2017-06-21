@@ -22,3 +22,7 @@
 .MainScreen .right-side-panel {
   border-left: 1px #CCC solid;
 }
+
+.MainScreen section {
+  outline: none;
+}

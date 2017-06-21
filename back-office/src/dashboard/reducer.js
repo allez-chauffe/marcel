@@ -16,6 +16,9 @@ const intialState = {
   dashboard: {
     name: 'Dashboard',
     description: 'Some description',
+    rows: 20,
+    cols: 20,
+    ratio: 16 / 9,
     plugins: {
       'plugin-1#0': {
         name: `Plugin 1`,
@@ -30,11 +33,6 @@ const intialState = {
           prop1: { name: 'prop1', type: 'string', value: 'hello world !' },
           prop2: { name: 'prop2', type: 'number', value: 42 },
           prop3: { name: 'prop3', type: 'boolean', value: true },
-          prop4: {
-            name: 'prop4',
-            type: 'json',
-            value: { collection: ['first', 'second'] },
-          },
         },
       },
     },
@@ -86,6 +84,11 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     case actions.SAVE_LAYOUT: {
       const { layout } = action.payload
       return update(state, 'dashboard.plugins', updatePlugins(layout))
+    }
+    case actions.UPDATE_CONFIG: {
+      const { property, value } = action.payload
+      const parsedValue = !isNaN(value) ? parseFloat(value) : value
+      return set(state, `dashboard.${property}`, parsedValue)
     }
     default:
       return state

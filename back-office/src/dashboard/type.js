@@ -23,6 +23,9 @@ export type PluginInstanceMap = { [instanceId: string]: PluginInstance }
 export type Dashboard = {
   name: string,
   description: string,
+  rows: number,
+  cols: number,
+  ratio: number,
   plugins: PluginInstanceMap,
 }
 
@@ -74,6 +77,11 @@ export type UploadSuccesedAction = {
 export type UploadFailedAction = {
   type: 'DASHBOARD/UPLOAD_FAILED',
   payload: { error: string },
+}
+
+export type UpdateConfigAction = {
+  type: 'DASHBOARD/UPDATE_CONFIG',
+  payload: { property: string, value: string | number },
 }
 
 // eslint-disable-next-line no-use-before-define

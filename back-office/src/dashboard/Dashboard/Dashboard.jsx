@@ -12,7 +12,8 @@ export type PropsType = {
 }
 
 const Dashboard = (props: PropsType) => {
-  const { dashboard: { plugins, name, description }, uploadLayout } = props
+  const { dashboard, uploadLayout } = props
+  const { name, description, rows, cols, ratio, plugins } = dashboard
   return (
     <div className="Dashboard">
       <div className="head">
@@ -29,9 +30,9 @@ const Dashboard = (props: PropsType) => {
         />
       </div>
       <Grid
-        ratio={2}
-        rows={20}
-        cols={20}
+        ratio={ratio}
+        rows={rows}
+        cols={cols}
         layout={values(plugins).map(({ x, y, columns, rows, ...instance }) => ({
           layout: { x, y, h: rows, w: columns },
           plugin: instance,
