@@ -61,3 +61,7 @@
 	path = plugins/marcel-plugin-temperature
 	url = git@github.com:Zenika/marcel-plugin-temperature
 	branch = master
+[submodule "plugins/marcel-plugin-humidity"]
+	path = plugins/marcel-plugin-humidity
+	url = git@github.com:Zenika/marcel-plugin-humidity.git
+	branch = master
