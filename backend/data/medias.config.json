@@ -98,6 +98,14 @@
         "propValues": {
           "socket_url": "http://localhost:5000"
         }
+      },
+      {
+        "componentName": "marcel-plugin-humidity",
+        "eltName": "humidity-item",
+        "files": ["humidity.html"],
+        "propValues": {
+          "socket_url": "http://localhost:5000"
+        }
       }
     ]
   }
