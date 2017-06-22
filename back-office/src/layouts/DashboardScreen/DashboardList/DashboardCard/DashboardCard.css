@@ -1,0 +1,8 @@
+.DashboardCard {
+  margin: 1em;
+}
+
+.DashboardCard p {
+  height: 100px;
+  overflow: hidden;
+}

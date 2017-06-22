@@ -8,7 +8,7 @@
   display: flex;
 }
 
-.AppLayout > main, .AppLayout > main > * {
+.AppLayout > main {
   flex: 1;
 }
 
