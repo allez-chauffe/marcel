@@ -11,36 +11,8 @@ import type {
   PluginInstanceMap,
 } from './type'
 
-const intialState = {
-  selectedPlugin: null,
-  selectedDashboard: null,
-  dashboards: {
-    'Dashboard 1': {
-      name: 'Dashboard 1',
-      description: 'Some description',
-      rows: 20,
-      cols: 20,
-      ratio: 16 / 9,
-      plugins: {
-        'plugin-1#0': {
-          name: `Plugin 1`,
-          elementName: `plugin-1`,
-          instanceId: 'plugin-1#0',
-          icon: 'picture_in_picture_alt',
-          x: 0,
-          y: 0,
-          columns: 2,
-          rows: 3,
-          props: {
-            prop1: { name: 'prop1', type: 'string', value: 'hello world !' },
-            prop2: { name: 'prop2', type: 'number', value: 42 },
-            prop3: { name: 'prop3', type: 'boolean', value: true },
-          },
-        },
-      },
-    },
-  },
-}
+import mockedData from '../mocked-data/dashboards'
+const intialState = mockedData
 
 const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
   return mapValues(plugins, plugin => {

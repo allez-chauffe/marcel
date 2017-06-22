@@ -1,8 +1,9 @@
 //@flow
 import React from 'react'
-import List from 'react-toolbox/lib/list/List'
 import type { Dashboard } from '../../../dashboard/type'
 import DashboardListItem from './DashboardListItem'
+
+import './DashboardList.css'
 
 export type PropsType = {
   dashboards: Dashboard[],
@@ -11,11 +12,11 @@ export type PropsType = {
 const DashboardList = (props: PropsType) => {
   const { dashboards } = props
   return (
-    <List selectable>
+    <div className="DashboardList">
       {dashboards.map(dashboard =>
         <DashboardListItem key={dashboard.name} dashboard={dashboard} />,
       )}
-    </List>
+    </div>
   )
 }
 
