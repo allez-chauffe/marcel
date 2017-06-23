@@ -12,6 +12,11 @@ bower install
 
 Then you have to copy the config.example.json file into config.json and change the addesses to specify the location of the plugin list and the plugins.
 
-Finally you just have the files with your favorite server like nginx.
+Finally you just have to server the files with your favorite server like nginx or with :
+
+```shell
+yarn global add server
+server -s .
+```
 
 For more information on how the plugin loading works, visit this repository : [polymer-application-loader](https://github.com/Sehsyha/polymer-application-loader)

@@ -50,6 +50,12 @@ Then, from project(s) root, execute :
 realize add
 ```
 
+Once every is done, you can launch the server with :
+
+```shell
+go run main.go
+```
+
 ## Credits
 
 * OpenWeatherMap

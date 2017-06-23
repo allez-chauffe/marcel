@@ -6,11 +6,25 @@ MARCEL is a connected mirror that allows you to add plugins to display data abou
 
 The main objective of the project is to be plug and play so anybody can add it on his own mirror and develop their own plugins.
 
+## Setup
+
+To populate every plugins, you have to clone the repository with :
+
+```shell
+git clone --recursive
+```
+
+or after you have cloned the repository :
+
+```shell
+git submodule update
+```
+
 ## Content
 
 Each directory has a specific usage.
 
-* backoffice - Manage the plugins and their configuration
+* back-office - Manage the plugins and their configuration
 * backend - Store the plugins and offer an API to request them
 * frontend - Web application that load the plugins
 * plugins - Links to repositories of available plugins
