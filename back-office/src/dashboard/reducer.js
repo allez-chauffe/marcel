@@ -36,40 +36,62 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       return { ...state, selectedDashboard: action.payload.dashboardName }
     }
     case actions.UNSELECT_DASHBOARD: {
-      return { ...state, selectedDashboard: null }
+      return { ...state, selectedDashboard: null, selectedPlugin: null }
     }
     case actions.ADD_PLUGIN: {
       const instanceId = uuid()
-      return set(state, `dashboard.plugins.${instanceId}`, {
-        ...action.payload.plugin,
-        x: 0,
-        y: 0,
-        columns: 1,
-        rows: 1,
-        instanceId,
-      })
+      const { selectedDashboard } = state
+      return selectedDashboard
+        ? set(state, `dashboards.${selectedDashboard}.plugins.${instanceId}`, {
+            ...action.payload.plugin,
+            x: 0,
+            y: 0,
+            columns: 1,
+            rows: 1,
+            instanceId,
+          })
+        : state
     }
     case actions.DELETE_PLUGIN: {
-      return state.selectedPlugin
-        ? unset(state, `dashboard.plugins.${state.selectedPlugin}`)
+      const { selectedPlugin, selectedDashboard } = state
+      return selectedPlugin
+        ? selectedDashboard
+          ? unset(
+              state,
+              `dashboards.${selectedDashboard}.plugins.${selectedPlugin}`,
+            )
+          : state
         : state
     }
     case actions.CHANGE_PROP: {
       const { instanceId, prop, value } = action.payload
-      return set(
-        state,
-        `dashboard.plugins.${instanceId}.props.${prop.name}.value`,
-        value,
-      )
+      const { selectedDashboard } = state
+      return selectedDashboard
+        ? set(
+            state,
+            `dashboards.${selectedDashboard}.plugins.${instanceId}.props.${prop.name}.value`,
+            value,
+          )
+        : state
     }
     case actions.SAVE_LAYOUT: {
       const { layout } = action.payload
-      return update(state, 'dashboard.plugins', updatePlugins(layout))
+      const { selectedDashboard } = state
+      return selectedDashboard
+        ? update(
+            state,
+            `dashboards.${selectedDashboard}.plugins`,
+            updatePlugins(layout),
+          )
+        : state
     }
     case actions.UPDATE_CONFIG: {
+      const { selectedDashboard } = state
       const { property, value } = action.payload
       const parsedValue = !isNaN(value) ? parseFloat(value) : value
-      return set(state, `dashboard.${property}`, parsedValue)
+      return selectedDashboard
+        ? set(state, `dashboards.${selectedDashboard}.${property}`, parsedValue)
+        : state
     }
     default:
       return state
