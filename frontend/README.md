@@ -10,7 +10,7 @@ First, you have to fetch the bower components:
 bower install
 ```
 
-Then you have to copy the config.example.json file into config.json and change the addesses to specify the location of the plugin list and the plugins.
+Then you have to copy the config.example.json file into config.json and change the addesses to specify the URL of the plugin list and the plugins.
 
 Finally you just have to server the files with your favorite server like nginx or with :
 
