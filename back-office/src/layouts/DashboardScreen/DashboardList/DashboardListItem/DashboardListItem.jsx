@@ -13,10 +13,11 @@ import './DashboardListItem.css'
 export type PropsType = {
   dashboard: Dashboard,
   selectDashboard: () => void,
+  deleteDashboard: () => void,
 }
 
 const DashboardListItem = (props: PropsType) => {
-  const { dashboard, selectDashboard } = props
+  const { dashboard, selectDashboard, deleteDashboard } = props
   return (
     <div>
       <DashboardCard>
@@ -29,7 +30,7 @@ const DashboardListItem = (props: PropsType) => {
         <CardActions className="buttons">
           <Button label="modifier" onClick={selectDashboard} />
           <Button label="ouvrir" />
-          <Button label="supprimer" />
+          <Button label="supprimer" onClick={deleteDashboard} />
         </CardActions>
       </DashboardCard>
     </div>

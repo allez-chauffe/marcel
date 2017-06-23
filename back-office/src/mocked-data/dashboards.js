@@ -4,7 +4,8 @@ export default {
   selectedPlugin: null,
   selectedDashboard: null,
   dashboards: {
-    'Dashboard 1': {
+    dashboard1: {
+      id: 'dashboard1',
       name: 'Dashboard 1',
       description: 'Some description',
       rows: 20,
@@ -28,7 +29,8 @@ export default {
         },
       },
     },
-    'Dashboard 2': {
+    dashboard2: {
+      id: 'dashboard2',
       name: 'Dashboard 2',
       description: `
         Some description dlkfsldk flsdflksjk fljsdklflksdjfl ksdjfl
@@ -57,7 +59,8 @@ export default {
         },
       },
     },
-    'Dashboard 3': {
+    dashboard3: {
+      id: 'dashboard3',
       name: 'Dashboard 3',
       description: 'Some description',
       rows: 20,
@@ -81,7 +84,8 @@ export default {
         },
       },
     },
-    'Dashboard 4': {
+    dashboard4: {
+      id: 'dashboard4',
       name: 'Dashboard 4',
       description: 'Some description',
       rows: 20,
@@ -105,7 +109,8 @@ export default {
         },
       },
     },
-    'Dashboard 5': {
+    dashboard5: {
+      id: 'dashboard5',
       name: 'Dashboard 5',
       description: 'Some description',
       rows: 20,
@@ -129,7 +134,8 @@ export default {
         },
       },
     },
-    'Dashboard 6': {
+    dashboard6: {
+      id: 'dashboard6',
       name: 'Dashboard 6',
       description: `
         Some description dlkfsldk flsdflksjk fljsdklflksdjfl ksdjfl
@@ -164,7 +170,8 @@ export default {
         },
       },
     },
-    'Dashboard 7': {
+    dashboard7: {
+      id: 'dashboard7',
       name: 'Dashboard 7',
       description: 'Some description',
       rows: 20,
