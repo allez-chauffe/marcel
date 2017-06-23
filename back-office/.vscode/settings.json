@@ -1,0 +1,21 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "node_modules": true,
+    ".idea": true,
+    ".vscode": true,
+    "flow-typed": true,
+    ".flowconfig": true,
+    ".eslintrc": true,
+    "env.local": true,
+    "yarn-error.log": true,
+    ".gitignore": true,
+    "yarn.lock": true,
+    "README.md": true,
+    "src/assets": true
+  }
+}

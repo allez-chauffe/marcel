@@ -1,0 +1,6 @@
+.DashboardList {
+  padding: 1em;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}

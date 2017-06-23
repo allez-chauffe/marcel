@@ -11,7 +11,7 @@ import './PluginProps.css'
 
 class PluginProps extends React.Component {
   props: {
-    plugin?: PluginInstance,
+    plugin: ?PluginInstance,
     filter: string,
     changeFilter: string => void,
     deletePlugin: PluginInstance => void,
@@ -36,9 +36,9 @@ class PluginProps extends React.Component {
           value={filter}
           onChange={changeFilter}
         />
-        {values(pluginProps).map(p => (
-          <PluginProp plugin={plugin} prop={p} key={p.name} />
-        ))}
+        {values(pluginProps).map(p =>
+          <PluginProp plugin={plugin} prop={p} key={p.name} />,
+        )}
 
         <Button
           icon="delete"

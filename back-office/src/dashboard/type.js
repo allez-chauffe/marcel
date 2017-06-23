@@ -10,6 +10,7 @@ import type {
 export type Layout = LayoutT
 export type LayoutItem = LayoutItemT
 export type LayoutMap = { [instanceId: string]: ?LayoutItem }
+export type DashboardMap = { [dashboardName: string]: ?Dashboard } //eslint-disable-line
 
 export type PluginInstance = Plugin & {
   instanceId: string,
@@ -35,6 +36,17 @@ export type SelectPluginAction = {
   payload: {
     instanceId: string,
   },
+}
+
+export type SelectDashboardAction = {
+  type: 'DASHBOARD/SELECT_DASHBOARD',
+  payload: {
+    dashboardName: string,
+  },
+}
+
+export type UnselectDashboardAction = {
+  type: 'DASHBOARD/UNSELECT_DASHBOARD',
 }
 
 export type AddPluginAction = {
@@ -89,6 +101,8 @@ export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 
 export type DashboardAction =
   | SelectPluginAction
+  | SelectDashboardAction
+  | UnselectDashboardAction
   | AddPluginAction
   | DeletePluginAction
   | ChangePropAction
@@ -96,9 +110,9 @@ export type DashboardAction =
   | UploadStartedAction
   | UploadSuccesedAction
   | UploadFailedAction
-  | DashboardAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
-  dashboard: Dashboard,
+  selectedDashboard: string | null,
+  dashboards: DashboardMap,
 }
