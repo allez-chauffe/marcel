@@ -29,7 +29,7 @@ const DashboardListItem = (props: PropsType) => {
       <CardActions className="buttons">
         <Button label="modifier" onClick={selectDashboard} />
         <Button label="ouvrir" />
-        <Button label="supprimer" />
+        <Button label="supprimer" onClick={deleteDashboard} />
       </CardActions>
     </DashboardCard>
   )
