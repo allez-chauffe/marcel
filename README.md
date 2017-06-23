@@ -14,7 +14,6 @@ Each directory has a specific usage.
 * backend - Store the plugins and offer an API to request them
 * frontend - Web application that load the plugins
 * plugins - Links to repositories of available plugins
-* speechback - Temporary backend for speech recognition and request analysis
 
 ## License
 
