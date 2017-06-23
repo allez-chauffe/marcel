@@ -16,7 +16,7 @@ const DashboardList = (props: PropsType) => {
     <div className="DashboardList">
       <AddDashboardCard />
       {dashboards.map(dashboard =>
-        <DashboardListItem key={dashboard.name} dashboard={dashboard} />,
+        <DashboardListItem key={dashboard.id} dashboard={dashboard} />,
       )}
     </div>
   )
