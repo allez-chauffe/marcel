@@ -22,6 +22,7 @@ export type PluginInstance = Plugin & {
 
 export type PluginInstanceMap = { [instanceId: string]: PluginInstance }
 export type Dashboard = {
+  id: string,
   name: string,
   description: string,
   rows: number,
@@ -47,6 +48,11 @@ export type SelectDashboardAction = {
 
 export type UnselectDashboardAction = {
   type: 'DASHBOARD/UNSELECT_DASHBOARD',
+}
+
+export type DeleteDashboardAction = {
+  type: 'DASHBOARD/DELETE_DASHBOARD',
+  payload: { dashboardId: string },
 }
 
 export type AddPluginAction = {
@@ -110,6 +116,7 @@ export type DashboardAction =
   | UploadStartedAction
   | UploadSuccesedAction
   | UploadFailedAction
+  | DeleteDashboardAction
 
 export type DashboardState = {
   selectedPlugin: string | null,

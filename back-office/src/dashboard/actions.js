@@ -22,6 +22,7 @@ export const actions = {
   SELECT_PLUGIN: 'DASHBOARD/SELECT_PLUGIN',
   SELECT_DASHBOARD: 'DASHBOARD/SELECT_DASHBOARD',
   UNSELECT_DASHBOARD: 'DASHBOARD/UNSELECT_DASHBOARD',
+  DELETE_DASHBOARD: 'DASHBOARD/DELETE_DASHBOARD',
   ADD_PLUGIN: 'DASHBOARD/ADD_PLUGIN',
   DELETE_PLUGIN: 'DASHBOARD/DELETE_PLUGIN',
   CHANGE_PROP: 'DASHBOARD/CHANGE_PROP',
@@ -46,6 +47,11 @@ export const selectDashboard = (
 
 export const unselectDashboard = (): UnselectDashboardAction => ({
   type: actions.UNSELECT_DASHBOARD,
+})
+
+export const deleteDashboard = (dashboard: Dashboard) => ({
+  type: actions.DELETE_DASHBOARD,
+  payload: { dashboardId: dashboard.id },
 })
 
 export const addPlugin = (plugin: Plugin): AddPluginAction => ({
