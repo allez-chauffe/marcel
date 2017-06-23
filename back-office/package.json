@@ -39,7 +39,8 @@
       "INPUT",
       "LIST",
       "SWITCH",
-      "TABS"
+      "TABS",
+      "CARD"
     ],
     "customProperties": {
       "animation-duration": "0.3s",
