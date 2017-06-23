@@ -19,21 +19,19 @@ export type PropsType = {
 const DashboardListItem = (props: PropsType) => {
   const { dashboard, selectDashboard, deleteDashboard } = props
   return (
-    <div>
-      <DashboardCard>
-        <CardMedia
-          aspectRatio="wide"
-          image="https://placeimg.com/800/450/nature"
-        />
-        <CardTitle title={dashboard.name} />
-        <CardText>{dashboard.description}</CardText>
-        <CardActions className="buttons">
-          <Button label="modifier" onClick={selectDashboard} />
-          <Button label="ouvrir" />
-          <Button label="supprimer" onClick={deleteDashboard} />
-        </CardActions>
-      </DashboardCard>
-    </div>
+    <DashboardCard>
+      <CardMedia
+        aspectRatio="wide"
+        image="https://placeimg.com/800/450/nature"
+      />
+      <CardTitle title={dashboard.name} />
+      <CardText>{dashboard.description}</CardText>
+      <CardActions className="buttons">
+        <Button label="modifier" onClick={selectDashboard} />
+        <Button label="ouvrir" />
+        <Button label="supprimer" />
+      </CardActions>
+    </DashboardCard>
   )
 }
 
