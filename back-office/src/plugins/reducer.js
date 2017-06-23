@@ -1,5 +1,4 @@
 // @flow
-import { range } from 'lodash'
 import type { Reducer } from 'redux'
 import type { State } from './type'
 import type { Action } from '../store/types'

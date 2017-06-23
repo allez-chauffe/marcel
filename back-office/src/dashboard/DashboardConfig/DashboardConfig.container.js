@@ -4,9 +4,11 @@ import DashboardConfig from './DashboardConfig'
 import { selectedDashboardSelector } from '../selectors'
 import { updateConfig } from '../actions'
 
-const mapStateToProps = state => ({
-  dashboard: selectedDashboardSelector(state),
-})
+const mapStateToProps = state => {
+  const dashboard = selectedDashboardSelector(state)
+  if (!dashboard) throw new Error('A dashboard should be selected !')
+  return { dashboard }
+}
 
 const mapDispatchToProps = {
   changeName: updateConfig('name'),

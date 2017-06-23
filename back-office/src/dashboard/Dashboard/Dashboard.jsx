@@ -7,14 +7,11 @@ import type { Dashboard as DashboardT } from '../type'
 import './Dashboard.css'
 
 export type PropsType = {
-  dashboard: ?DashboardT,
+  dashboard: DashboardT,
   uploadLayout: () => void,
 }
 
 const Dashboard = (props: PropsType) => {
-  if (!props.dashboard)
-    throw new Error('Illegal state ! A dashboard should be selected !')
-
   const { dashboard, uploadLayout } = props
   const { name, description, rows, cols, ratio, plugins } = dashboard
   return (
