@@ -1,2 +1,2 @@
 //@flow
-export { default } from './AddDashboardCard'
+export { default } from './AddDashboardCard.container'

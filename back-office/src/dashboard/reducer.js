@@ -33,13 +33,26 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       return { ...state, selectedPlugin: action.payload.instanceId }
     }
     case actions.SELECT_DASHBOARD: {
-      return { ...state, selectedDashboard: action.payload.dashboardName }
+      return { ...state, selectedDashboard: action.payload.dashboardId }
     }
     case actions.UNSELECT_DASHBOARD: {
       return { ...state, selectedDashboard: null }
     }
     case actions.DELETE_DASHBOARD: {
       return unset(state, `dashboards.${action.payload.dashboardId}`)
+    }
+    case actions.ADD_DASHBOARD: {
+      const id = uuid()
+      const newState = set(state, `dashboards.${id}`, {
+        id,
+        name: 'Dashboard',
+        description: '',
+        cols: 20,
+        rows: 20,
+        ratio: 16 / 9,
+        plugins: [],
+      })
+      return { ...newState, selectedDashboard: id }
     }
     case actions.ADD_PLUGIN: {
       const instanceId = uuid()

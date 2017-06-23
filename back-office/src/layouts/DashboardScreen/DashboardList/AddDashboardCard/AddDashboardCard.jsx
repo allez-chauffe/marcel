@@ -6,11 +6,21 @@ import DashboardCard from '../DashboardCard'
 
 import './AddDashboardCard.css'
 
-const AddDashboardCard = () =>
-  <DashboardCard className="AddDashboardCard">
-    <CardText className="addText">
-      <FontIcon value="add" className="addIcon" />
-    </CardText>
-  </DashboardCard>
+export type PropsType = {
+  addDashboard: () => void,
+}
+
+const AddDashboardCard = (props: PropsType) => {
+  const { addDashboard } = props
+  return (
+    <div onClick={addDashboard}>
+      <DashboardCard className="AddDashboardCard">
+        <CardText className="addText">
+          <FontIcon value="add" className="addIcon" />
+        </CardText>
+      </DashboardCard>
+    </div>
+  )
+}
 
 export default AddDashboardCard
