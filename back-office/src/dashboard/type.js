@@ -42,7 +42,7 @@ export type SelectPluginAction = {
 export type SelectDashboardAction = {
   type: 'DASHBOARD/SELECT_DASHBOARD',
   payload: {
-    dashboardName: string,
+    dashboardId: string,
   },
 }
 
@@ -53,6 +53,10 @@ export type UnselectDashboardAction = {
 export type DeleteDashboardAction = {
   type: 'DASHBOARD/DELETE_DASHBOARD',
   payload: { dashboardId: string },
+}
+
+export type AddDashboardAction = {
+  type: 'DASHBOARD/ADD_DASHBOARD',
 }
 
 export type AddPluginAction = {
@@ -117,6 +121,7 @@ export type DashboardAction =
   | UploadSuccesedAction
   | UploadFailedAction
   | DeleteDashboardAction
+  | AddDashboardAction
 
 export type DashboardState = {
   selectedPlugin: string | null,

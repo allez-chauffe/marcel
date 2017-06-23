@@ -2,7 +2,7 @@
 import type { Reducer } from 'redux'
 import { actions } from './actions'
 import { mapValues } from 'lodash'
-import { set, update, unset } from 'immutadot'
+import { set, update, unset, chain } from 'immutadot'
 import uuid from 'uuid/v4'
 import type {
   DashboardAction,
@@ -33,13 +33,28 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       return { ...state, selectedPlugin: action.payload.instanceId }
     }
     case actions.SELECT_DASHBOARD: {
-      return { ...state, selectedDashboard: action.payload.dashboardName }
+      return { ...state, selectedDashboard: action.payload.dashboardId }
     }
     case actions.UNSELECT_DASHBOARD: {
       return { ...state, selectedDashboard: null }
     }
     case actions.DELETE_DASHBOARD: {
       return unset(state, `dashboards.${action.payload.dashboardId}`)
+    }
+    case actions.ADD_DASHBOARD: {
+      const id = uuid()
+      return chain(state)
+        .set(`dashboards.${id}`, {
+          id,
+          name: 'Dashboard',
+          description: '',
+          cols: 20,
+          rows: 20,
+          ratio: 16 / 9,
+          plugins: [],
+        })
+        .set('selectedDashboard', id)
+        .value()
     }
     case actions.ADD_PLUGIN: {
       const instanceId = uuid()
