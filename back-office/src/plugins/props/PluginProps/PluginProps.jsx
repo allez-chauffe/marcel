@@ -2,7 +2,6 @@
 import React from 'react'
 import { values } from 'lodash'
 import Button from 'react-toolbox/lib/button/Button'
-import Input from 'react-toolbox/lib/input/Input'
 
 import { SearchField } from '../../../common'
 import PluginProp from '../PluginProp'
