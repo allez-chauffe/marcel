@@ -16,7 +16,7 @@
         }
       },
       {
-        "componentName": "marcel-plugin-speech",
+        "componentName": "marcel-plugin-speech/front",
         "eltName": "speech-item",
         "files": ["speech.html"],
         "propValues": {
