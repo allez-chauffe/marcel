@@ -1,4 +1,9 @@
-##Setup
+# Backend
+
+The main purpose of this part is to serve the plugin list, configured by the back-office.
+
+## Setup
+
 ```go
 go get github.com/briandowns/openweathermap
 go get github.com/GwennaelBuchet/openweathermap
@@ -26,24 +31,35 @@ export MARCEL_LOG_FILE="path_to_log_file" # defaults to $PWD/marcel.log
 ```
 
 Build cross architecture :
+
 ``` shell
 env GOOS=linux GOARCH=arm go build -o ./bin/MARCEL
 ```
 
 In order to use Realize to manage your local builds :
+
 ```shell
 go get github.com/tockins/realize
 ```
-(https://tockins.github.io/realize/)
+
+[Realize](https://tockins.github.io/realize/)
 
 Then, from project(s) root, execute :
+
 ```shell
 realize add
 ```
 
-##Credits
- - OpenWeatherMap
- - OpenWeatherMap Go API by briandowns (http://briandowns.github.io/openweathermap/)
- - Twitter Go API by Dalton Hubble (https://github.com/dghubble/go-twitter)
- - MapStructure from Mitchellh (https://github.com/mitchellh/mapstructure)
- - Go-Swagger.io (https://goswagger.io)
+Once every is done, you can launch the server with :
+
+```shell
+go run main.go
+```
+
+## Credits
+
+* OpenWeatherMap
+* [OpenWeatherMap](http://briandowns.github.io/openweathermap/) Go API by briandowns
+* [Twitter](https://github.com/dghubble/go-twitter) Go API by Dalton Hubble
+* [MapStructure](https://github.com/mitchellh/mapstructure) from Mitchellh
+* [Go-Swagger.io](https://goswagger.io)
