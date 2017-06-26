@@ -1,6 +1,8 @@
 //@flow
 import React from 'react'
+import { find } from 'lodash'
 import Input from 'react-toolbox/lib/input/Input'
+import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
 import type { Dashboard } from '../type'
 
 import './DashboardConfig.css'
@@ -25,6 +27,7 @@ const DashboardConfig = (props: PropsType) => {
     changeRatio,
   } = props
   const { name, description, cols, rows, ratio } = dashboard
+  // const ratio = find(ratios, { value: rawRatio })
 
   return (
     <div className="DashboardConfig">
@@ -47,11 +50,15 @@ const DashboardConfig = (props: PropsType) => {
         onChange={changeRows}
         type="number"
       />
-      <Input
-        label="Ratio de l'écran"
+      <Dropdown
+        source={[
+          { label: '16/9', value: 16 / 9 },
+          { label: '16/9 (portrait)', value: 9 / 16 },
+          { label: '4/3', value: 4 / 3 },
+          { label: '4/3 (protrait)', value: 3 / 4 },
+        ]}
         value={ratio}
         onChange={changeRatio}
-        type="number"
       />
     </div>
   )
