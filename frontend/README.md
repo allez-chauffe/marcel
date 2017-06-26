@@ -15,7 +15,7 @@ Then you have to copy the config.example.json file into config.json and change t
 Finally you just have to server the files with your favorite server like nginx or with :
 
 ```shell
-yarn global add server
+yarn global add serve
 server -s .
 ```
 
