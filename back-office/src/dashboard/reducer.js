@@ -51,7 +51,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
           cols: 20,
           rows: 20,
           ratio: 16 / 9,
-          plugins: [],
+          plugins: {},
         })
         .set('selectedDashboard', id)
         .value()
