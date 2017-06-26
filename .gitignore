@@ -59,3 +59,4 @@ bower_components
 config.js
 google_api_key_file.json
 .DS_Store
+medias.config.json
