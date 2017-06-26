@@ -38,6 +38,21 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     case actions.UNSELECT_DASHBOARD: {
       return { ...state, selectedDashboard: null, selectedPlugin: null }
     }
+    case actions.REQUIRE_DASHBOARD_DELETION: {
+      return { ...state, deletingDashboard: action.payload.dashboardId }
+    }
+    case actions.CONFIRM_DASHBOARD_DELETION: {
+      const { deletingDashboard } = state
+      return deletingDashboard
+        ? chain(state)
+            .set('deletingDashboard', null)
+            .unset(`dashboards.${deletingDashboard}`)
+            .value()
+        : { ...state, deletingDashboard: null }
+    }
+    case actions.CANCEL_DASHBOARD_DELETION: {
+      return { ...state, deletingDashboard: null }
+    }
     case actions.DELETE_DASHBOARD: {
       return unset(state, `dashboards.${action.payload.dashboardId}`)
     }
