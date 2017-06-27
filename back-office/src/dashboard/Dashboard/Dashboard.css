@@ -1,0 +1,15 @@
+.Dashboard {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.Dashboard .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Dashboard .head button {
+  background-color: green !important;
+}

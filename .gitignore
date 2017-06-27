@@ -60,3 +60,4 @@ config.js
 google_api_key_file.json
 medias.config.json
 .DS_Store
+medias.config.json

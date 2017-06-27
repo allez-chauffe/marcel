@@ -8,18 +8,7 @@
     ],
     "components": [
       {
-        "componentName": "devfest",
-        "eltName": "devfest-item",
-        "files": ["devfest.html"],
-        "propValues": {
-          "talks_url": "plugins/devfest/talks.json",
-          "speakers_url": "plugins/devfest/speakers.json",
-          "socket_url": "http://localhost:8080",
-          "times_url": "plugins/devfest/times.json"
-        }
-      },
-      {
-        "componentName": "youtube",
+        "componentName": "marcel-plugin-youtube",
         "eltName": "youtube-item",
         "files": ["youtube.html"],
         "propValues": {
@@ -27,21 +16,21 @@
         }
       },
       {
-        "componentName": "speech",
+        "componentName": "marcel-plugin-speech/front",
         "eltName": "speech-item",
         "files": ["speech.html"],
         "propValues": {
-          "loader_url": "plugins/speech/loader.jpg",
+          "loader_url": "plugins/marcel-plugin-speech/loader.jpg",
           "socket_url": "http://localhost:8080",
           "default_message": "Bonjour à tous, je suis MARCEL !"
         }
       },
       {
-        "componentName": "marcel",
+        "componentName": "marcel-plugin-marcel",
         "eltName": "marcel-item",
         "files": ["marcel.html"],
         "propValues": {
-          "logo_url": "plugins/logo/zenika.png",
+          "logo_url": "plugins/marcel-plugin-logo/zenika.png",
           "message_text1": "Bienvenue",
           "message_text2": "à Zenika Lille",
           "github_users": [
@@ -90,6 +79,32 @@
           "soundtouch_url": "http://10.0.10.166:8090/now_playing",
           "weather_url": "http://localhost:8090/api/v1/weather/forecast/5",
           "calendar_url": "http://localhost:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK"
+        }
+      }
+    ]
+  },
+   {
+    "ID": 2,
+    "styles": [
+      "css/style.css",
+      "css/font-awesome.min.css",
+      "css/weather-icons.min.css"
+    ],
+    "components": [
+      {
+        "componentName": "marcel-plugin-temperature",
+        "eltName": "temperature-item",
+        "files": ["temperature.html"],
+        "propValues": {
+          "socket_url": "http://localhost:5000"
+        }
+      },
+      {
+        "componentName": "marcel-plugin-humidity",
+        "eltName": "humidity-item",
+        "files": ["humidity.html"],
+        "propValues": {
+          "socket_url": "http://localhost:5000"
         }
       }
     ]

@@ -1,0 +1,30 @@
+.MainScreen {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.MainScreen .left-side-panel, .MainScreen .right-side-panel {
+  width: 20%;
+  min-width: 15em;
+  box-shadow: 0 0 1.5em 0.05em #DDD;
+  overflow-y: auto;
+}
+
+.MainScreen .main-panel {
+  flex: 1;
+  padding: 1em 3em 1em 3em;
+  display: flex;
+}
+
+.MainScreen .left-side-panel {
+  border-right: 1px #CCC solid;
+}
+
+.MainScreen .right-side-panel {
+  border-left: 1px #CCC solid;
+}
+
+.MainScreen section {
+  outline: none;
+}
