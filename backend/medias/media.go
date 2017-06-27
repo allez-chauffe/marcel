@@ -5,28 +5,43 @@ import (
 	"fmt"
 	"reflect"
 )
+
 /**
 The global attributes for a Media
  */
 type Media struct {
-	ID      int    `json:"id"`
-	Name    string `json:"name"`
-	Styles []string `json:"styles"`
-	Components []MediaPlugin `json:"components"`
-}
-
-type MediaConfig struct {
-	Styles []string `json:"styles"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Rows        int `json:"rows"`
+	Cols        int `json:"cols"`
+	Styles      []string `json:"styles-var"`
+	Plugins     []MediaPlugin `json:"plugins"`
 }
 
 /**
 Properties and configuration for a plugin used in the media
  */
 type MediaPlugin struct {
-	ComponentName       string `json:"componentName"`
-	EltName    string `json:"eltName"`
-	Files      []string `json:"files"`
-	PropValues map[string]interface{} `json:"propValues"` //MediaPluginProps `json:"propValues"`
+	InstanceId string `json:"instanceId"`
+	Name       string `json:"name"`
+	FrontEnd   MediaPluginFrontEnd `json:"front-end"`
+	BackEnd    MediaPluginBackEnd `json:"back-end"`
+}
+
+type MediaPluginFrontEnd struct {
+	Files   []string `json:"files"`
+	EltName string `json:"eltName"`
+	X       int `json:"x"`
+	Y       int `json:"y"`
+	Rows    int `json:"rows"`
+	Cols    int `json:"cols"`
+	Props   map[string]interface{} `json:"props"`
+}
+
+type MediaPluginBackEnd struct {
+	Ports []int `json:"ports"`
+	Props map[string]interface{} `json:"props"`
 }
 
 /**
@@ -57,7 +72,6 @@ func SetField(obj interface{}, name string, value interface{}) error {
 	structFieldValue.Set(val)
 	return nil
 }
-
 
 func (s *Media) FillStruct(m map[string]interface{}) error {
 	for k, v := range m {
