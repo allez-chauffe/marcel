@@ -27,7 +27,6 @@ const DashboardConfig = (props: PropsType) => {
     changeRatio,
   } = props
   const { name, description, cols, rows, ratio } = dashboard
-  // const ratio = find(ratios, { value: rawRatio })
 
   return (
     <div className="DashboardConfig">
