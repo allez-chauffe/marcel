@@ -21,10 +21,6 @@
 	path = plugins/marcel-plugin-logo
 	url = git@github.com:Zenika/marcel-plugin-logo.git
 	branch = master
-[submodule "plugins/marcel-plugin-marcel"]
-	path = plugins/marcel-plugin-marcel
-	url = git@github.com:Zenika/marcel-plugin-marcel.git
-	branch = master
 [submodule "plugins/marcel-plugin-message"]
 	path = plugins/marcel-plugin-message
 	url = git@github.com:Zenika/marcel-plugin-message.git
@@ -65,3 +61,12 @@
 	path = plugins/marcel-plugin-humidity
 	url = git@github.com:Zenika/marcel-plugin-humidity.git
 	branch = master
+[submodule "plugins/marcel-plugin-birthday"]
+	path = plugins/marcel-plugin-birthday
+	url = git@github.com:Zenika/marcel-plugin-birthday.git
+[submodule "plugins/marcel-plugin-marcel"]
+	path = plugins/marcel-plugin-marcel
+	url = git@github.com:Zenika/marcel-plugin-marcel.git
+[submodule "plugins/marcel-plugin-gitlab"]
+	path = plugins/marcel-plugin-gitlab
+	url = https://github.com/Zenika/marcel-plugin-gitlab
