@@ -67,3 +67,6 @@
 [submodule "plugins/marcel-plugin-marcel"]
 	path = plugins/marcel-plugin-marcel
 	url = git@github.com:Zenika/marcel-plugin-marcel.git
+[submodule "plugins/marcel-plugin-gitlab"]
+	path = plugins/marcel-plugin-gitlab
+	url = https://github.com/Zenika/marcel-plugin-gitlab
