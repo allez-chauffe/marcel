@@ -34,7 +34,7 @@ func LoadMedias() {
 	log.Print("Medias configurations is loaded...")
 }
 
-func GetMedia(idMedia int) (*Media, error) {
+func GetMedia(idMedia string) (*Media, error) {
 	for _, media := range Medias {
 		if idMedia == media.ID {
 			return &media, nil

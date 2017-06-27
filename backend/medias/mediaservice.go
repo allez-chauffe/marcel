@@ -5,15 +5,13 @@ import (
 	"encoding/json"
 	"log"
 	"github.com/gorilla/mux"
-	"strconv"
 )
 
 func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	f := vars["idMedia"]
-	idMedia, _ := strconv.Atoi(f)
+	idMedia := vars["idMedia"]
 
-	m, err := /*Manager.*/GetMedia(idMedia)
+	m, err := GetMedia(idMedia)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return
@@ -29,7 +27,7 @@ func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleGetMedias(w http.ResponseWriter, r *http.Request) {
-	b, err := json.Marshal(/*Manager.*/Medias)
+	b, err := json.Marshal(Medias)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return
