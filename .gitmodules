@@ -65,3 +65,6 @@
 	path = plugins/marcel-plugin-humidity
 	url = git@github.com:Zenika/marcel-plugin-humidity.git
 	branch = master
+[submodule "plugins/marcel-plugin-gitlab"]
+	path = plugins/marcel-plugin-gitlab
+	url = https://github.com/Zenika/marcel-plugin-gitlab

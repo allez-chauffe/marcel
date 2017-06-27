@@ -51,6 +51,10 @@
             "Sehsyha",
             "P0ppoff"
           ],
+          "gitlab_usernames": [
+            "P0ppoff"
+          ],
+          "gitlab_token": "GITLAB_PRIVATE_TOKEN",
           "github_client_id": "GITHUB_CLIENT_ID",
           "github_client_secret": "GITHUB_CLIENT_SECRET",
           "twitter_api": "http://localhost:8090/api/v1/twitter/timeline",
