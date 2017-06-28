@@ -15,7 +15,7 @@ type Media struct {
 	Description string `json:"description"`
 	Rows        int `json:"rows"`
 	Cols        int `json:"cols"`
-	Styles      []string `json:"styles-var"`
+	Stylesvar   map[string]interface{} `json:"stylesvar"`
 	Plugins     []MediaPlugin `json:"plugins"`
 }
 
@@ -25,8 +25,8 @@ Properties and configuration for a plugin used in the media
 type MediaPlugin struct {
 	InstanceId string `json:"instanceId"`
 	Name       string `json:"name"`
-	FrontEnd   MediaPluginFrontEnd `json:"front-end"`
-	BackEnd    MediaPluginBackEnd `json:"back-end"`
+	FrontEnd   MediaPluginFrontEnd `json:"frontend"`
+	BackEnd    MediaPluginBackEnd `json:"backend"`
 }
 
 type MediaPluginFrontEnd struct {
@@ -42,13 +42,6 @@ type MediaPluginFrontEnd struct {
 type MediaPluginBackEnd struct {
 	Ports []int `json:"ports"`
 	Props map[string]interface{} `json:"props"`
-}
-
-/**
-Because we don't know what will compounds the props for a plugin, we use a map[string] interface{}
- */
-type MediaPluginProps struct {
-	X map[string]interface{} `json:"-"` //map[string]string
 }
 
 func SetField(obj interface{}, name string, value interface{}) error {
