@@ -1,25 +1,20 @@
 //@flow
 import React from 'react'
 import type { Children } from 'react'
+import LoginForm from '../LoginForm'
 
 import './Auth.css'
 
 export type PropsType = {
   children: Children,
   isLoggedIn: boolean,
-  login: () => void,
 }
 
 const Auth = (props: PropsType) => {
-  const { children, isLoggedIn, login } = props
+  const { children, isLoggedIn } = props
   return (
     <div className="Auth">
-      {isLoggedIn
-        ? children
-        : <div>
-            You are not logged In ! Please login before blabla
-            <button onClick={login}>Login</button>
-          </div>}
+      {isLoggedIn ? children : <LoginForm />}
     </div>
   )
 }

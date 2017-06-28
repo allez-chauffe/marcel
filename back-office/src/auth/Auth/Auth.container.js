@@ -1,7 +1,7 @@
 //@flow
 import { connect } from 'react-redux'
 import { isLoggedInSelector } from '../selectors'
-import { login, logout } from '../actions'
+import { login } from '../actions'
 import type { State } from '../../store'
 
 import Auth from './Auth'
