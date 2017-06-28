@@ -28,5 +28,5 @@
 
 .Grid > .displayGrid > .row > .cell {
   flex: 1;
-  border: 1px #CCC dotted;
+  border: 1px #DDD dotted;
 }
