@@ -1,8 +1,8 @@
 package plugins
 
 type Plugin struct {
-	ID     int    `json:"id"`
-	Name   string `json:"title"`
+	ID     int           `json:"id"`
+	Name   string        `json:"title"`
 	Params []PluginParam `json:"params"`
 }
 

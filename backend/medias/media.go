@@ -8,39 +8,39 @@ import (
 
 /**
 The global attributes for a Media
- */
+*/
 type Media struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Rows        int `json:"rows"`
-	Cols        int `json:"cols"`
+	ID          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Rows        int                    `json:"rows"`
+	Cols        int                    `json:"cols"`
 	Stylesvar   map[string]interface{} `json:"stylesvar"`
-	Plugins     []MediaPlugin `json:"plugins"`
+	Plugins     []MediaPlugin          `json:"plugins"`
 }
 
 /**
 Properties and configuration for a plugin used in the media
- */
+*/
 type MediaPlugin struct {
-	InstanceId string `json:"instanceId"`
-	Name       string `json:"name"`
+	InstanceId string              `json:"instanceId"`
+	Name       string              `json:"name"`
 	FrontEnd   MediaPluginFrontEnd `json:"frontend"`
-	BackEnd    MediaPluginBackEnd `json:"backend"`
+	BackEnd    MediaPluginBackEnd  `json:"backend"`
 }
 
 type MediaPluginFrontEnd struct {
-	Files   []string `json:"files"`
-	EltName string `json:"eltName"`
-	X       int `json:"x"`
-	Y       int `json:"y"`
-	Rows    int `json:"rows"`
-	Cols    int `json:"cols"`
+	Files   []string               `json:"files"`
+	EltName string                 `json:"eltName"`
+	X       int                    `json:"x"`
+	Y       int                    `json:"y"`
+	Rows    int                    `json:"rows"`
+	Cols    int                    `json:"cols"`
 	Props   map[string]interface{} `json:"props"`
 }
 
 type MediaPluginBackEnd struct {
-	Ports []int `json:"ports"`
+	Ports []int                  `json:"ports"`
 	Props map[string]interface{} `json:"props"`
 }
 
