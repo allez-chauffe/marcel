@@ -1,6 +1,8 @@
 //@flow
 import { keyBy, values } from 'lodash'
 import { pick } from 'lodash/fp'
+import { toastr } from 'react-redux-toastr'
+
 import { selectedDashboardSelector } from './selectors'
 import type { Plugin, Prop } from '../plugins'
 import type {
@@ -131,6 +133,7 @@ export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
   console.log('Upload to the server : ', JSON.stringify(requestBody, null, 2))
 
   dispatch({ type: actions.UPLOAD_SUCCESSED })
+  toastr.success('Enregistré', 'Le dashboard à bien été enregistré')
 }
 
 export const updateConfig = (property: string) => (
