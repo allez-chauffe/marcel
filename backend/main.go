@@ -13,6 +13,11 @@ import (
 	"strings"
 )
 
+//todo : service to create a new media
+//todo : service to log with jwt (or at least a token based system)
+//todo : service to delete a media
+//todo : service to save an existing media
+
 var logFile string = os.Getenv("MARCEL_LOG_FILE")
 //current version of the API
 const MARCEL_API_VERSION = "1"
@@ -49,7 +54,7 @@ func main() {
 	s.HandleFunc("/agenda/incoming/{nbEvents:[0-9]*}", agenda.GetNextEvents).Methods("GET")
 	s.HandleFunc("/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.HandleGetMedia).Methods("GET")
-	s.HandleFunc("/medias", medias.HandleGetMedias).Methods("GET")
+	s.HandleFunc("/medias", medias.HandleGetAll).Methods("GET")
 
 	handler := c.Handler(r)
 
