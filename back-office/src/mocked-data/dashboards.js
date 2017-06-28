@@ -3,6 +3,7 @@
 export default {
   selectedPlugin: null,
   selectedDashboard: null,
+  deletingDashboard: null,
   dashboards: {
     dashboard1: {
       id: 'dashboard1',

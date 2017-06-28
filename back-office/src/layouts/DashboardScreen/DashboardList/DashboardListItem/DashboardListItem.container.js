@@ -2,7 +2,10 @@
 import { connect } from 'react-redux'
 import type { Dispatch } from 'redux'
 import type { Dashboard } from '../../../../dashboard/type'
-import { selectDashboard, deleteDashboard } from '../../../../dashboard'
+import {
+  selectDashboard,
+  requireDashboardDeletion,
+} from '../../../../dashboard'
 import DashboarItem from './DashboardListItem'
 
 const mapDispatchToProps = (
@@ -10,7 +13,7 @@ const mapDispatchToProps = (
   ownProps: { dashboard: Dashboard },
 ) => ({
   selectDashboard: () => dispatch(selectDashboard(ownProps.dashboard)),
-  deleteDashboard: () => dispatch(deleteDashboard(ownProps.dashboard)),
+  deleteDashboard: () => dispatch(requireDashboardDeletion(ownProps.dashboard)),
 })
 
 export default connect(null, mapDispatchToProps)(DashboarItem)

@@ -17,12 +17,19 @@ import type {
   SelectDashboardAction,
   UnselectDashboardAction,
   AddDashboardAction,
+  DeleteDashboardAction,
+  RequireDashboardDeletionAction,
+  ConfirmDashboardDeletionAction,
+  CancelDashboardDeletionAction,
 } from './type'
 
 export const actions = {
   SELECT_PLUGIN: 'DASHBOARD/SELECT_PLUGIN',
   SELECT_DASHBOARD: 'DASHBOARD/SELECT_DASHBOARD',
   UNSELECT_DASHBOARD: 'DASHBOARD/UNSELECT_DASHBOARD',
+  REQUIRE_DASHBOARD_DELETION: 'DASHBOARD/REQUIRE_DASHBOARD_DELETION',
+  CONFIRM_DASHBOARD_DELETION: 'DASHBOARD/CONFIRM_DASHBOARD_DELETION',
+  CANCEL_DASHBOARD_DELETION: 'DASHBOARD/CANCEL_DASHBOARD_DELETION',
   DELETE_DASHBOARD: 'DASHBOARD/DELETE_DASHBOARD',
   ADD_DASHBOARD: 'DASHBOARD/ADD_DASHBOARD',
   ADD_PLUGIN: 'DASHBOARD/ADD_PLUGIN',
@@ -51,7 +58,24 @@ export const unselectDashboard = (): UnselectDashboardAction => ({
   type: actions.UNSELECT_DASHBOARD,
 })
 
-export const deleteDashboard = (dashboard: Dashboard) => ({
+export const requireDashboardDeletion = (
+  dashboard: Dashboard,
+): RequireDashboardDeletionAction => ({
+  type: actions.REQUIRE_DASHBOARD_DELETION,
+  payload: { dashboardId: dashboard.id },
+})
+
+export const confirmDashboardDeletion = (): ConfirmDashboardDeletionAction => ({
+  type: actions.CONFIRM_DASHBOARD_DELETION,
+})
+
+export const cancelDashboardDeletion = (): CancelDashboardDeletionAction => ({
+  type: actions.CANCEL_DASHBOARD_DELETION,
+})
+
+export const deleteDashboard = (
+  dashboard: Dashboard,
+): DeleteDashboardAction => ({
   type: actions.DELETE_DASHBOARD,
   payload: { dashboardId: dashboard.id },
 })

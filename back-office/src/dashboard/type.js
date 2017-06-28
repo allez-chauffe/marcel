@@ -50,6 +50,19 @@ export type UnselectDashboardAction = {
   type: 'DASHBOARD/UNSELECT_DASHBOARD',
 }
 
+export type RequireDashboardDeletionAction = {
+  type: 'DASHBOARD/REQUIRE_DASHBOARD_DELETION',
+  payload: { dashboardId: string },
+}
+
+export type ConfirmDashboardDeletionAction = {
+  type: 'DASHBOARD/CONFIRM_DASHBOARD_DELETION',
+}
+
+export type CancelDashboardDeletionAction = {
+  type: 'DASHBOARD/CANCEL_DASHBOARD_DELETION',
+}
+
 export type DeleteDashboardAction = {
   type: 'DASHBOARD/DELETE_DASHBOARD',
   payload: { dashboardId: string },
@@ -120,11 +133,15 @@ export type DashboardAction =
   | UploadStartedAction
   | UploadSuccesedAction
   | UploadFailedAction
+  | RequireDashboardDeletionAction
+  | ConfirmDashboardDeletionAction
+  | CancelDashboardDeletionAction
   | DeleteDashboardAction
   | AddDashboardAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
   selectedDashboard: string | null,
+  deletingDashboard: string | null,
   dashboards: DashboardMap,
 }
