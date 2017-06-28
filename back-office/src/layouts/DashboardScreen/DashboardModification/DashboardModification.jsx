@@ -15,7 +15,7 @@ class DashboardModification extends React.Component {
   render() {
     const { currentTab } = this.state
     return (
-      <div className="MainScreen">
+      <div className="DashboardModification">
         <div className="left-side-panel">
           <Tabs index={currentTab} onChange={this.onTabChange}>
             <Tab label="Configuration">
