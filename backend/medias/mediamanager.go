@@ -1,11 +1,12 @@
 package medias
 
 import (
-	"io/ioutil"
 	"encoding/json"
 	"errors"
-	"log"
 	"github.com/mitchellh/mapstructure"
+	"io/ioutil"
+	"log"
+	"github.com/Zenika/MARCEL/backend/commons"
 )
 
 var Medias []Media
@@ -42,4 +43,13 @@ func GetMedia(idMedia string) (*Media, error) {
 	}
 
 	return nil, errors.New("NO_MEDIA_FOUND")
+}
+
+func CreateMedia() (*Media) {
+	newMedia := new(Media)
+	newMedia.ID = commons.GetUID()
+
+	//SaveMedia(newMedia)
+
+	return newMedia
 }
