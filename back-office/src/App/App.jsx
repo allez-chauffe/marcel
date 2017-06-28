@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { Provider } from 'react-redux'
 
 import ReduxToastr from 'react-redux-toastr'
+import 'react-redux-toastr/lib/css/react-redux-toastr.min.css'
 
 import '../assets/react-toolbox/theme.css'
 import ThemeProvider from 'react-toolbox/lib/ThemeProvider'
