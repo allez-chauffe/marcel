@@ -55,6 +55,7 @@ func main() {
 	s.HandleFunc("/twitter/timeline/{nbTweets:[0-9]*}", twitter.GetTimeline).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.HandleGetMedia).Methods("GET")
 	s.HandleFunc("/medias", medias.HandleGetAll).Methods("GET")
+	s.HandleFunc("/medias/create", medias.HandleCreate).Methods("GET")
 
 	handler := c.Handler(r)
 
