@@ -2,28 +2,33 @@ package main
 
 import (
 	"github.com/Zenika/MARCEL/backend/agenda"
-	"github.com/Zenika/MARCEL/backend/weather"
-	"github.com/Zenika/MARCEL/backend/twitter"
 	"github.com/Zenika/MARCEL/backend/medias"
+	"github.com/Zenika/MARCEL/backend/twitter"
+	"github.com/Zenika/MARCEL/backend/weather"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"net/http"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 )
 
+//todo : service to return a media configuration for the frontend (ie: everything but the back props for plugins)
 //todo : service to create a new media
 //todo : service to log with jwt (or at least a token based system)
 //todo : service to delete a media
 //todo : service to save an existing media
+//todo : service to return list of all plugins
+//todo : service to add a plugin to a media
+//todo : plugin : import a new one
+//todo : plugin : run plugins
 
 var logFile string = os.Getenv("MARCEL_LOG_FILE")
+
 //current version of the API
 const MARCEL_API_VERSION = "1"
 
 func main() {
-
 	if len(logFile) == 0 {
 		logFile = "marcel.log"
 	}
@@ -65,6 +70,9 @@ func main() {
 	log.Printf("Server is started and listening on port %v", 8090)
 }
 
+/**
+Expose endpoints into the logs
+ */
 func ExposeAPI(r *mux.Router) {
 	//export API to the log
 	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
