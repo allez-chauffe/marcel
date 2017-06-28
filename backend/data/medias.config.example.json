@@ -82,7 +82,9 @@
           ],
           "soundtouch_url": "http://10.0.10.166:8090/now_playing",
           "weather_url": "http://localhost:8090/api/v1/weather/forecast/5",
-          "calendar_url": "http://localhost:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK"
+          "calendar_url": "http://localhost:8090/api/v1/agenda/incoming/50?json_callback=JSON_CALLBACK",
+          "birthday_url": "http://localhost:5000",
+          "birthday_agency": "Lille"
         }
       }
     ]
