@@ -2,6 +2,7 @@
 import React from 'react'
 import AppBar from 'react-toolbox/lib/app_bar/AppBar'
 import DashboardScreen from '../DashboardScreen'
+import { Auth } from '../../auth'
 
 import './AppLayout.css'
 
@@ -22,7 +23,9 @@ const AppLayout = (props: PropsType) => {
         />
       </header>
       <main>
-        <DashboardScreen />
+        <Auth>
+          <DashboardScreen />
+        </Auth>
       </main>
       <footer>
         <AppBar />
