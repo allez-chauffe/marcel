@@ -40,6 +40,7 @@ class LoginForm extends React.Component {
           />
           <Input
             label="Mot de passe"
+            type="password"
             value={password}
             onChange={changePassword}
             onKeyDown={this.onKeyDown}
