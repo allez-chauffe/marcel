@@ -40,7 +40,8 @@
       "LIST",
       "SWITCH",
       "TABS",
-      "CARD"
+      "CARD",
+      "DROPDOWN"
     ],
     "customProperties": {
       "animation-duration": "0.3s",
