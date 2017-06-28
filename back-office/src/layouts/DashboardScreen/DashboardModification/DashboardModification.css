@@ -11,6 +11,7 @@
   min-width: 15em;
   box-shadow: 0 0 1.5em 0.05em #DDD;
   overflow-y: auto;
+  z-index: -100;
 }
 
 .DashboardModification .main-panel {
