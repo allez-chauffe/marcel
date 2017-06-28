@@ -21,6 +21,7 @@ import type {
   RequireDashboardDeletionAction,
   ConfirmDashboardDeletionAction,
   CancelDashboardDeletionAction,
+  ToggleDisplayGridAction,
 } from './type'
 
 export const actions = {
@@ -40,6 +41,7 @@ export const actions = {
   UPLOAD_SUCCESSED: 'DASHBOARD/UPLOAD_SUCCESSED',
   UPLOAD_FAILED: 'DASHBOARD/UPLOAD_FAILED',
   UPDATE_CONFIG: 'DASHBOARD/UPDATE_CONFIG',
+  TOGGLE_DISPLAY_GRID: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -138,4 +140,8 @@ export const updateConfig = (property: string) => (
 ): UpdateConfigAction => ({
   type: actions.UPDATE_CONFIG,
   payload: { property, value },
+})
+
+export const toggleDisplayGrid = (): ToggleDisplayGridAction => ({
+  type: actions.TOGGLE_DISPLAY_GRID,
 })

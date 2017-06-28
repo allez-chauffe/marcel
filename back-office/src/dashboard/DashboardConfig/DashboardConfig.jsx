@@ -1,23 +1,25 @@
 //@flow
 import React from 'react'
-import { find } from 'lodash'
 import Input from 'react-toolbox/lib/input/Input'
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
+import Switch from 'react-toolbox/lib/switch/Switch'
 import type { Dashboard } from '../type'
 
 import './DashboardConfig.css'
 
 export type PropsType = {
   dashboard: Dashboard,
+  displayGrid: boolean,
   changeName: string => void,
   changeDescription: string => void,
   changeCols: number => void,
   changeRows: number => void,
   changeRatio: number => void,
+  toggleDisplayGrid: () => void,
 }
 
 const DashboardConfig = (props: PropsType) => {
-  const { dashboard } = props
+  const { dashboard, displayGrid } = props
 
   const {
     changeName,
@@ -25,6 +27,7 @@ const DashboardConfig = (props: PropsType) => {
     changeCols,
     changeRows,
     changeRatio,
+    toggleDisplayGrid,
   } = props
   const { name, description, cols, rows, ratio } = dashboard
 
@@ -58,6 +61,11 @@ const DashboardConfig = (props: PropsType) => {
         ]}
         value={ratio}
         onChange={changeRatio}
+      />
+      <Switch
+        label="Afficher la grille"
+        checked={displayGrid}
+        onChange={toggleDisplayGrid}
       />
     </div>
   )

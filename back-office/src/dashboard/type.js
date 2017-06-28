@@ -119,6 +119,10 @@ export type UpdateConfigAction = {
   payload: { property: string, value: string | number },
 }
 
+export type ToggleDisplayGridAction = {
+  type: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
+}
+
 // eslint-disable-next-line no-use-before-define
 export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 
@@ -138,10 +142,12 @@ export type DashboardAction =
   | CancelDashboardDeletionAction
   | DeleteDashboardAction
   | AddDashboardAction
+  | ToggleDisplayGridAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
   selectedDashboard: string | null,
   deletingDashboard: string | null,
+  displayGrid: boolean,
   dashboards: DashboardMap,
 }
