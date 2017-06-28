@@ -12,6 +12,10 @@
   flex: 1;
 }
 
+.AppLayout > main > .Auth {
+  flex: 1;
+}
+
 .AppLayout > header, .AppLayout > footer {
   z-index: 100;
 }

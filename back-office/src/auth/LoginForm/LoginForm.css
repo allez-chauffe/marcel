@@ -1,0 +1,8 @@
+.LoginForm {
+  padding: 1em;
+  display: flex;
+}
+
+.LoginForm > .actions {
+  display: flex;
+}

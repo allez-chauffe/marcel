@@ -9,3 +9,21 @@
 .Grid .react-grid-item.selected {
   border-color: red;
 }
+
+.Grid > .displayGrid {
+  padding-top: 2px;
+  padding-left: 2px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.Grid > .displayGrid > .row {
+  flex: 1;
+  display: flex;
+}
+
+.Grid > .displayGrid > .row > .cell {
+  flex: 1;
+  border: 1px #CCC dotted;
+}

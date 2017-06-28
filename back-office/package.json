@@ -9,6 +9,7 @@
     "react-dom": "^15.5.4",
     "react-grid-layout": "https://github.com/EmrysMyrddin/react-grid-layout.git#temp_with_build",
     "react-redux": "^5.0.4",
+    "react-redux-toastr": "^7.0.0",
     "react-sizeme": "^2.3.2",
     "react-toolbox": "^2.0.0-beta.8",
     "redux": "^3.6.0",
@@ -40,7 +41,8 @@
       "LIST",
       "SWITCH",
       "TABS",
-      "CARD"
+      "CARD",
+      "DROPDOWN"
     ],
     "customProperties": {
       "animation-duration": "0.3s",

@@ -5,7 +5,8 @@
 }
 
 .MainScreen .left-side-panel, .MainScreen .right-side-panel {
-  width: 25em;
+  width: 20%;
+  min-width: 15em;
   box-shadow: 0 0 1.5em 0.05em #DDD;
   overflow-y: auto;
 }

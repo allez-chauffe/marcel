@@ -7,7 +7,7 @@ import { Dashboard, DashboardConfig } from '../../../dashboard'
 
 import './DashboardModification.css'
 
-class MainScreen extends React.Component {
+class DashboardModification extends React.Component {
   state = { currentTab: 0 }
 
   onTabChange = (index: number) => this.setState({ currentTab: index })
@@ -37,4 +37,4 @@ class MainScreen extends React.Component {
   }
 }
 
-export default MainScreen
+export default DashboardModification

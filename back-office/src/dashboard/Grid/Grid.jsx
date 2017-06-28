@@ -1,5 +1,6 @@
 //@flow
 import React from 'react'
+import { range } from 'lodash'
 import ReactGridLayout from 'react-grid-layout'
 
 import './Grid.css'
@@ -46,7 +47,18 @@ const Grid = (props: Props) => {
 
   return (
     <div className="Grid">
+      <div
+        className="displayGrid"
+        style={{ width: gridWidth, height: gridHeight - 10 }}
+      >
+        {range(rows).map(i =>
+          <div className="row" key={i}>
+            {range(cols).map(j => <div className="cell" key={j} />)}
+          </div>,
+        )}
+      </div>
       <ReactGridLayout
+        containerPadding={[5, 5]}
         cols={cols}
         width={gridWidth}
         rowHeight={rowHeight}
