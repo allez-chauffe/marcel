@@ -6,31 +6,34 @@ import {
   SortableHandle,
   arrayMove,
 } from 'react-sortable-hoc'
+import List from 'react-toolbox/lib/list/List'
+import ListItem from 'react-toolbox/lib/list/ListItem'
+import FontIcon from 'react-toolbox/lib/font_icon/FontIcon'
 import type { Plugin } from '../../type'
 
-export type PropsType = {
-  plugins: Plugin[],
-  name: string,
-  value: Plugin[],
-  onChange: (Plugin[]) => void,
-}
+import './PluginListProp.css'
+
+const DragHandle = SortableHandle(() => <FontIcon value="menu" />)
 
 const SortablePlugin = SortableElement(({ plugin }) =>
-  <li>
-    {plugin.name}
-  </li>,
+  <ListItem caption={plugin.name} ripple={false} leftIcon={<DragHandle />} />,
 )
 
 const SortablePluginList = SortableContainer(({ plugins }) =>
-  <ol>
+  <List>
     {plugins.map((plugin, index) =>
       <SortablePlugin key={plugin.elementName} index={index} plugin={plugin} />,
     )}
-  </ol>,
+  </List>,
 )
 
 class PluginListProp extends React.Component {
-  props: PropsType
+  props: {
+    plugins: Plugin[],
+    name: string,
+    value: Plugin[],
+    onChange: (Plugin[]) => void,
+  }
 
   onSortEnd = (oldIndex: number, newIndex: number) => {
     this.props.onChange(arrayMove(this.props.value, oldIndex, newIndex))
@@ -38,7 +41,14 @@ class PluginListProp extends React.Component {
 
   render() {
     const { value } = this.props
-    return <SortablePluginList plugins={value} onSortEnd={this.onSortEnd} />
+    return (
+      <SortablePluginList
+        helperClass="sortablePlugin"
+        plugins={value}
+        onSortEnd={this.onSortEnd}
+        useDragHandle={true}
+      />
+    )
   }
 }
 
