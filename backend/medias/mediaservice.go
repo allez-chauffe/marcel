@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
+func HandleGet(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idMedia := vars["idMedia"]
 
