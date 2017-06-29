@@ -1,4 +1,5 @@
 //@flow
+import type { Dispatch } from 'redux'
 import type { Plugin, Prop } from '../plugins'
 import type { State } from '../store'
 
@@ -76,8 +77,15 @@ export type AddPluginAction = {
   type: 'DASHBOARD/ADD_PLUGIN',
   payload: {
     plugin: Plugin,
+    x: number,
+    y: number,
   },
 }
+
+export type AddPluginThunkAction = (
+  dispatch: Dispatch<AddPluginAction>,
+  getState: () => State,
+) => void
 
 export type DeletePluginAction = {
   type: 'DASHBOARD/DELETE_PLUGIN',

@@ -77,8 +77,8 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       return selectedDashboard
         ? set(state, `dashboards.${selectedDashboard}.plugins.${instanceId}`, {
             ...action.payload.plugin,
-            x: 0,
-            y: 0,
+            x: action.payload.x,
+            y: action.payload.y,
             columns: 1,
             rows: 1,
             instanceId,
