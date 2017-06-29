@@ -1,5 +1,5 @@
 // @flow
-export type PropBase = { name: string }
+export type PropBase = { name: string, description: string }
 
 export type Prop =
   | ({ type: 'string', value: string } & PropBase)
