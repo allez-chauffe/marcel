@@ -2,6 +2,7 @@
 import React from 'react'
 import Input from 'react-toolbox/lib/input/Input'
 import Switch from 'react-toolbox/lib/switch/Switch'
+import { PluginListProp } from '../../plugins'
 import type { Prop } from '../../plugins'
 
 export type PropsType = {
@@ -33,6 +34,11 @@ const AutoTypeField = (props: PropsType) => {
         name={name}
         onChange={onChange}
       />
+    )
+  }
+  if (value.type === 'pluginList') {
+    return (
+      <PluginListProp name={name} value={value.value} onChange={onChange} />
     )
   }
 
