@@ -35,7 +35,8 @@ class PluginListProp extends React.Component {
     onChange: (Plugin[]) => void,
   }
 
-  onSortEnd = (oldIndex: number, newIndex: number) => {
+  onSortEnd = (swap: { oldIndex: number, newIndex: number }) => {
+    const { oldIndex, newIndex } = swap
     this.props.onChange(arrayMove(this.props.value, oldIndex, newIndex))
   }
 
