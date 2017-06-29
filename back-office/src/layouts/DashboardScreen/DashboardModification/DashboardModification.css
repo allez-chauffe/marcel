@@ -9,9 +9,7 @@
 .DashboardModification .right-side-panel {
   width: 20%;
   min-width: 15em;
-  box-shadow: 0 0 1.5em 0.05em #DDD;
   overflow-y: auto;
-  z-index: -100;
 }
 
 .DashboardModification .main-panel {
@@ -21,11 +19,11 @@
 }
 
 .DashboardModification .left-side-panel {
-  border-right: 1px #CCC solid;
+  border-right: 1px #ccc solid;
 }
 
 .DashboardModification .right-side-panel {
-  border-left: 1px #CCC solid;
+  border-left: 1px #ccc solid;
 }
 
 .DashboardModification section {
