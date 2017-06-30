@@ -58,9 +58,10 @@ const Grid = (props: Props) => {
         )}
       </div>
       <ReactGridLayout
+        style={{ width: gridWidth }}
         containerPadding={[5, 5]}
-        cols={cols}
         width={gridWidth}
+        cols={cols}
         rowHeight={rowHeight}
         verticalCompact={false}
         maxRows={rows}
