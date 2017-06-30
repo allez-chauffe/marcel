@@ -11,6 +11,7 @@
     "react-redux": "^5.0.4",
     "react-redux-toastr": "^7.0.0",
     "react-sizeme": "^2.3.2",
+    "react-sortable-hoc": "^0.6.3",
     "react-toolbox": "^2.0.0-beta.8",
     "redux": "^3.6.0",
     "redux-actions": "^2.0.3",
