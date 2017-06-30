@@ -5,7 +5,11 @@ import ListItem from 'react-toolbox/lib/list/ListItem'
 import FontIcon from 'react-toolbox/lib/font_icon/FontIcon'
 import type { Plugin } from '../../../type'
 
-const DragHandle = SortableHandle(() => <FontIcon value="menu" />)
+import './SortablePlugin.css'
+
+const DragHandle = SortableHandle(() =>
+  <FontIcon value="menu" className="grab" />,
+)
 
 class SortablePlugin extends React.Component {
   props: {
@@ -26,7 +30,7 @@ class SortablePlugin extends React.Component {
         rightIcon={
           <FontIcon
             value="delete"
-            style={{ color: 'red' }}
+            style={{ color: 'red', cursor: 'pointer' }}
             onClick={this.onDelete}
           />
         }

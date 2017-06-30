@@ -4,7 +4,7 @@ import { pluginsSelector } from '../../../../plugins'
 import AddPlugin from './AddPlugin'
 
 const mapStateToProps = (state: State) => ({
-  plugins: pluginsSelector(state),
+  availablePlugins: pluginsSelector(state),
 })
 
 export default connect(mapStateToProps)(AddPlugin)

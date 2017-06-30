@@ -52,7 +52,7 @@ class PluginListProp extends React.Component {
           onSortEnd={this.onSortEnd}
           useDragHandle={true}
         />
-        <AddPlugin addPlugin={this.addPlugin} />
+        <AddPlugin addPlugin={this.addPlugin} plugins={value} />
       </div>
     )
   }

@@ -1,21 +1,32 @@
 //@flow
 import React from 'react'
+import { without } from 'lodash'
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
 import type { Plugin } from '../../../../plugins'
 
-export type PropsType = {
-  plugins: Plugin[],
-  addPlugin: Plugin => void,
-}
+class AddPlugin extends React.Component {
+  props: {
+    availablePlugins: Plugin[],
+    plugins: Plugin[],
+    addPlugin: Plugin => void,
+  }
 
-const AddPlugin = (props: PropsType) => {
-  const { plugins, addPlugin } = props
-  const source = [
-    { value: -1, label: 'Ajouter un plugin' },
-    ...plugins.map(plugin => ({ value: plugin, label: plugin.name })),
-  ]
+  addPlugin = (plugin: Plugin) => {
+    if (plugin !== -1) this.props.addPlugin(plugin)
+  }
 
-  return <Dropdown source={source} value={-1} onChange={addPlugin} />
+  render() {
+    const { plugins, availablePlugins } = this.props
+    const source = [
+      { value: -1, label: 'Ajouter un plugin' },
+      ...without(availablePlugins, ...plugins).map(plugin => ({
+        value: plugin,
+        label: plugin.name,
+      })),
+    ]
+
+    return <Dropdown source={source} value={-1} onChange={this.addPlugin} />
+  }
 }
 
 export default AddPlugin
