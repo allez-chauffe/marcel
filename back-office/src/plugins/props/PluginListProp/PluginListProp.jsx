@@ -1,5 +1,6 @@
 //@flow
 import React from 'react'
+import { without } from 'lodash'
 import {
   SortableElement,
   SortableContainer,
@@ -15,14 +16,45 @@ import './PluginListProp.css'
 
 const DragHandle = SortableHandle(() => <FontIcon value="menu" />)
 
-const SortablePlugin = SortableElement(({ plugin }) =>
-  <ListItem caption={plugin.name} ripple={false} leftIcon={<DragHandle />} />,
-)
+class PluginList extends React.Component {
+  props: {
+    plugin: Plugin,
+    onDelete: Plugin => void,
+  }
 
-const SortablePluginList = SortableContainer(({ plugins }) =>
+  onDelete = () => {
+    this.props.onDelete(this.props.plugin)
+  }
+
+  render() {
+    return (
+      <ListItem
+        caption={this.props.plugin.name}
+        ripple={false}
+        leftIcon={<DragHandle />}
+        rightIcon={
+          <FontIcon
+            value="delete"
+            style={{ color: 'red' }}
+            onClick={this.onDelete}
+          />
+        }
+      />
+    )
+  }
+}
+
+const SortablePlugin = SortableElement(PluginList)
+
+const SortablePluginList = SortableContainer(({ plugins, onDelete }) =>
   <List>
     {plugins.map((plugin, index) =>
-      <SortablePlugin key={plugin.elementName} index={index} plugin={plugin} />,
+      <SortablePlugin
+        key={plugin.elementName}
+        index={index}
+        plugin={plugin}
+        onDelete={onDelete}
+      />,
     )}
   </List>,
 )
@@ -40,10 +72,14 @@ class PluginListProp extends React.Component {
     this.props.onChange(arrayMove(this.props.value, oldIndex, newIndex))
   }
 
+  onDelete = (plugin: Plugin) =>
+    this.props.onChange(without(this.props.value, plugin))
+
   render() {
     const { value } = this.props
     return (
       <SortablePluginList
+        onDelete={this.onDelete}
         helperClass="sortablePlugin"
         plugins={value}
         onSortEnd={this.onSortEnd}
