@@ -126,6 +126,9 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         ? set(state, `dashboards.${selectedDashboard}.${property}`, parsedValue)
         : state
     }
+    case actions.TOGGLE_DISPLAY_GRID: {
+      return { ...state, displayGrid: !state.displayGrid }
+    }
     default:
       return state
   }

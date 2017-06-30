@@ -4,6 +4,7 @@ export default {
   selectedPlugin: null,
   selectedDashboard: null,
   deletingDashboard: null,
+  displayGrid: true,
   dashboards: {
     dashboard1: {
       id: 'dashboard1',
