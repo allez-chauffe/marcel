@@ -1,0 +1,27 @@
+machine:
+  node:
+    version: 8.0.0
+  post: 
+    - npm install -g yarn
+    - npm install -g bower
+  environment:
+    NODE_ENV: production
+
+dependencies:
+  pre: 
+    - rm -rf ~/.go_workspace/src/github.com/Zenika
+    - mkdir -p ~/.go_workspace/src/github.com/Zenika
+    - ln -s MARCEL ~/.go_workspace/src/github.com/Zenika/MARCEL
+  override:
+    - cd ~/MARCEL/back-office && yarn
+    - cd ~/MARCEL/frontend && bower install
+    - ~/MARCEL/scripts/install_go_deps.sh
+
+test:
+  pre: 
+    - cd ~/MARCEL/back-office && yarn build
+    - cd ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice && go install
+  override:
+    - cd ~/MARCEL/back-office && yarn lint
+    - yarn test
+    - cd ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice && go test .
