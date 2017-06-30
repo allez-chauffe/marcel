@@ -1,4 +1,5 @@
 //@flow
+import { toastr } from 'react-redux-toastr'
 import type {
   LoginAction,
   LogoutAction,
@@ -23,14 +24,15 @@ export const login = (): LoginAction => (dispatch, getState) => {
   const login = loginSelector(state)
   const password = passwordSelector(state)
 
-  dispatch(
-    login === 'admin' && password === 'admin'
-      ? { type: actions.LOGIN_SUCCESS, payload: { token: 'myAuthToken' } }
-      : {
-          type: actions.LOGIN_FAIL,
-          payload: { error: 'Wrong login or password' },
-        },
-  )
+  if (login === 'admin' && password === 'admin')
+    dispatch({ type: actions.LOGIN_SUCCESS, payload: { token: 'myAuthToken' } })
+  else {
+    toastr.error('Erreur', 'Login ou mot de passe incorrect')
+    dispatch({
+      type: actions.LOGIN_FAIL,
+      payload: { error: 'Wrong login or password' },
+    })
+  }
 }
 
 export const logout = (): LogoutAction => ({
