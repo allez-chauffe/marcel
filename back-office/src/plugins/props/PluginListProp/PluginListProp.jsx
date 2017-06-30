@@ -5,6 +5,7 @@ import { SortableContainer, arrayMove } from 'react-sortable-hoc'
 import List from 'react-toolbox/lib/list/List'
 import type { Plugin } from '../../type'
 import SortablePlugin from './SortablePlugin'
+import AddPlugin from './AddPlugin'
 
 import './PluginListProp.css'
 
@@ -34,19 +35,25 @@ class PluginListProp extends React.Component {
     this.props.onChange(arrayMove(this.props.value, oldIndex, newIndex))
   }
 
-  onDelete = (plugin: Plugin) =>
+  addPlugin = (plugin: Plugin) =>
+    this.props.onChange([...this.props.value, plugin])
+
+  deletePlugin = (plugin: Plugin) =>
     this.props.onChange(without(this.props.value, plugin))
 
   render() {
     const { value } = this.props
     return (
-      <SortablePluginList
-        onDelete={this.onDelete}
-        helperClass="sortablePlugin"
-        plugins={value}
-        onSortEnd={this.onSortEnd}
-        useDragHandle={true}
-      />
+      <div>
+        <SortablePluginList
+          onDelete={this.deletePlugin}
+          helperClass="sortablePlugin"
+          plugins={value}
+          onSortEnd={this.onSortEnd}
+          useDragHandle={true}
+        />
+        <AddPlugin addPlugin={this.addPlugin} />
+      </div>
     )
   }
 }
