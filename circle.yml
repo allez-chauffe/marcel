@@ -20,8 +20,8 @@ dependencies:
 test:
   pre: 
     - cd ~/MARCEL/back-office && yarn build
-    - cd ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice && go install
+    #- cd ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice && go install
   override:
-    - cd ~/MARCEL/back-office && yarn lint
-    - yarn test
-    - cd ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice && go test .
+    #- cd ~/MARCEL/back-office && yarn lint
+    #- yarn test
+    #- cd ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice && go test .
