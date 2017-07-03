@@ -13,24 +13,23 @@ dependencies:
     #- mkdir -p ~/.go_workspace/src/github.com/Zenika
     #- ln -s MARCEL ~/.go_workspace/src/github.com/Zenika/MARCEL
   override:
-    - yarn
-        pwd : back-office
-    - bower install
+    - yarn:
+        pwd: back-office
+    - bower install:
         pwd: frontend
     #- ./install_go_deps.sh
     #  pwd: scripts
   cache_directories:
     - ~/.cache/yarn
 
-
 test:
   pre: 
-    - yarn build
+    - yarn build:
+        pwd: back-office
     #- go install
     #  pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
-        pwd: back-office
   override:
-    - yarn test
+    - yarn test:
         pwd: back-office
     #- go test .
     #  pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
