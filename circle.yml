@@ -39,3 +39,12 @@ test:
     #- go test .
     #    pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
 
+deployement:
+  pre:
+    - tar -czvf back-office.tar.gz back-office/build
+    - tar -czvf frontend.tar.gz frontend
+  override:
+    - scp -i MARCEL_key_pair.pem back-office.tar.gz frontend.tar.gz ubuntu@35.158.222.144:~/
+    - ssh -i MARCEL_key_pair.pem ubuntu@35.158.222.144 "./deploy.sh"
+  post:
+    - mv *.tar.gz $CIRCLE_ARTIFACTS
