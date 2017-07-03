@@ -6,7 +6,7 @@ machine:
     - npm install -g bower
   environment:
     NODE_ENV: production
-    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/back-office/node_modules/.bin"
+    PATH: "$PATH:~/MARCEL/back-office/node_modules/.bin && echo path"
 
 dependencies:
   pre: 
