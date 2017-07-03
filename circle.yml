@@ -4,7 +4,7 @@ machine:
   post: 
     - npm install -g yarn
     - npm install -g bower
-    - npm install -g polymer-cli
+    #- npm install -g polymer-cli
   environment:
     PATH: "$PATH:~/MARCEL/back-office/node_modules/.bin"
 
@@ -38,3 +38,4 @@ test:
         pwd: back-office
     #- go test .
     #    pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
+
