@@ -3,7 +3,7 @@ machine:
     version: 8.0.0
   post: 
     - npm install -g yarn
-    #- npm install -g bower
+    - npm install -g bower
   environment:
     PATH: "$PATH:~/MARCEL/back-office/node_modules/.bin"
 
@@ -14,7 +14,7 @@ dependencies:
     #- ln -s MARCEL ~/.go_workspace/src/github.com/Zenika/MARCEL
   override:
     - cd ~/MARCEL/back-office && yarn
-    #- cd ~/MARCEL/frontend && bower install
+    - cd ~/MARCEL/frontend && bower install
     #- ~/MARCEL/scripts/install_go_deps.sh
   cache_directories:
     - ~/.cache/yarn
@@ -25,7 +25,7 @@ test:
     #- cd ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice && go install
     - cd ~/MARCEL/back-office && yarn build
   override:
-    #- cd ~/MARCEL/back-office
-    #- yarn lint
-    #- yarn test
+    - cd ~/MARCEL/back-office
+    - yarn lint
+    - yarn test
     #- cd ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice && go test .
