@@ -43,7 +43,7 @@ deployment:
   pre:
     - tar -czvf back-office.tar.gz back-office/build
     - tar -czvf frontend.tar.gz frontend
-    - echo $INTEGRATION_SERVER_PEM_KEY > integration_key.pem
+    - echo $INTEGRATION_SERVER_PEM_KEY > integration_key.pem && chmode 400 integration_key.pem
   override:
     - scp -i integration_key.pem back-office.tar.gz frontend.tar.gz ubuntu@35.158.222.144:~/
     - ssh -i integration_key.pem ubuntu@35.158.222.144 "./deploy.sh"
