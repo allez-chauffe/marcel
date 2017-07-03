@@ -6,10 +6,11 @@ machine:
     - npm install -g bower
   environment:
     NODE_ENV: production
-    PATH: "$PATH:~/MARCEL/back-office/node_modules/.bin && echo path"
+    PATH: "$PATH:~/MARCEL/back-office/node_modules/.bin"
 
 dependencies:
   pre: 
+    - echo $PATH
     - rm -rf ~/.go_workspace/src/github.com/Zenika
     - mkdir -p ~/.go_workspace/src/github.com/Zenika
     - ln -s MARCEL ~/.go_workspace/src/github.com/Zenika/MARCEL
