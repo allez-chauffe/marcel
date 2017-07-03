@@ -39,7 +39,7 @@ test:
     #- go test .
     #    pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
 
-deployement:
+deployment:
   pre:
     - tar -czvf back-office.tar.gz back-office/build
     - tar -czvf frontend.tar.gz frontend
