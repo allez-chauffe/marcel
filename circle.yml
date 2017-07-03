@@ -16,6 +16,9 @@ dependencies:
     - cd ~/MARCEL/back-office && yarn
     #- cd ~/MARCEL/frontend && bower install
     #- ~/MARCEL/scripts/install_go_deps.sh
+  cache_directories:
+    - ~/.cache/yarn
+
 
 test:
   pre: 
