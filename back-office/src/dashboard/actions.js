@@ -1,5 +1,5 @@
 //@flow
-import { keyBy, values } from 'lodash'
+import { keyBy, values, range, forEach, findIndex, some } from 'lodash'
 import { pick } from 'lodash/fp'
 import { toastr } from 'react-redux-toastr'
 
@@ -8,7 +8,7 @@ import type { Plugin, Prop } from '../plugins'
 import type {
   SelectPluginAction,
   PluginInstance,
-  AddPluginAction,
+  AddPluginThunkAction,
   DeletePluginAction,
   SaveLayoutAction,
   UpdateConfigAction,
@@ -23,6 +23,7 @@ import type {
   RequireDashboardDeletionAction,
   ConfirmDashboardDeletionAction,
   CancelDashboardDeletionAction,
+  ToggleDisplayGridAction,
 } from './type'
 
 export const actions = {
@@ -42,6 +43,7 @@ export const actions = {
   UPLOAD_SUCCESSED: 'DASHBOARD/UPLOAD_SUCCESSED',
   UPLOAD_FAILED: 'DASHBOARD/UPLOAD_FAILED',
   UPDATE_CONFIG: 'DASHBOARD/UPDATE_CONFIG',
+  TOGGLE_DISPLAY_GRID: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -86,10 +88,40 @@ export const addDashboard = (): AddDashboardAction => ({
   type: actions.ADD_DASHBOARD,
 })
 
-export const addPlugin = (plugin: Plugin): AddPluginAction => ({
-  type: actions.ADD_PLUGIN,
-  payload: { plugin },
-})
+export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (
+  dispatch,
+  getState,
+) => {
+  const dashboard: ?Dashboard = selectedDashboardSelector(getState())
+  if (!dashboard)
+    return toastr.error(
+      "Erreur: Impossible d'ajouter un plugin",
+      'Un dashboard doit être sélectionné',
+    )
+
+  const { rows, cols, plugins: pluginsMap } = dashboard
+  const plugins: PluginInstance[] = values(pluginsMap)
+
+  const freeSpaceMatrix = range(cols).map(() => range(rows).map(() => true))
+
+  forEach(plugins, plugin =>
+    range(plugin.x, plugin.x + plugin.columns).forEach(x =>
+      range(plugin.y, plugin.y + plugin.rows).forEach(y => {
+        freeSpaceMatrix[x][y] = false
+      }),
+    ),
+  )
+
+  const freeSpaceX = findIndex(freeSpaceMatrix, some)
+  if (freeSpaceX === -1)
+    return toastr.error('Erreur !', "Il n'y a plus de place pour ce plugin")
+  const freeSpaceY = findIndex(freeSpaceMatrix[freeSpaceX])
+
+  dispatch({
+    type: actions.ADD_PLUGIN,
+    payload: { plugin, x: freeSpaceX, y: freeSpaceY },
+  })
+}
 
 export const deletePlugin = (plugin: Plugin): DeletePluginAction => ({
   type: actions.DELETE_PLUGIN,
@@ -141,4 +173,8 @@ export const updateConfig = (property: string) => (
 ): UpdateConfigAction => ({
   type: actions.UPDATE_CONFIG,
   payload: { property, value },
+})
+
+export const toggleDisplayGrid = (): ToggleDisplayGridAction => ({
+  type: actions.TOGGLE_DISPLAY_GRID,
 })

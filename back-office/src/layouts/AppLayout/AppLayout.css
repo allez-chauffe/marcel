@@ -1,19 +1,10 @@
 .AppLayout {
-  display: flex;
-  flex-direction: column;
   height: 100%;
 }
 
 .AppLayout > main {
-  display: flex;
-}
-
-.AppLayout > main {
-  flex: 1;
-}
-
-.AppLayout > main > .Auth {
-  flex: 1;
+  height: calc(100% - 64px * 2);
+  width: 100%;
 }
 
 .AppLayout > header, .AppLayout > footer {
