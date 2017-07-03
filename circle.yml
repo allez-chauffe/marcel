@@ -27,8 +27,8 @@ compile:
   override:
     - yarn build:
         pwd: back-office
-    - polymer build:
-        pwd: frontend
+    #- polymer build:
+    #    pwd: frontend
     #- go install:
     #    pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
 
