@@ -4,6 +4,7 @@ machine:
   post: 
     - npm install -g yarn
     - npm install -g bower
+    - npm install -g polymer-cli
   environment:
     PATH: "$PATH:~/MARCEL/back-office/node_modules/.bin"
 
@@ -22,14 +23,18 @@ dependencies:
   cache_directories:
     - ~/.cache/yarn
 
-test:
-  pre: 
+compile:
+  override:
     - yarn build:
         pwd: back-office
-    #- go install
-    #  pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
+    - polymer build:
+        pwd: frontend
+    #- go install:
+    #    pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
+
+test:
   override:
     - yarn test:
         pwd: back-office
     #- go test .
-    #  pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
+    #    pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
