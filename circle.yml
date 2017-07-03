@@ -41,7 +41,7 @@ test:
 
 deployment:
   pre:
-    - tar -czvf back-office.tar.gz back-office/build
+    - tar -czvf back-office.tar.gz back-office/build/*
     - tar -czvf frontend.tar.gz frontend
     - echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
     - chmod 400 integration_key.pem
