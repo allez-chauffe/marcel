@@ -30,6 +30,7 @@ func LoadMedias() {
 		if err != nil {
 			panic(err)
 		}
+		Medias = append(Medias, media)
 
 	}
 
