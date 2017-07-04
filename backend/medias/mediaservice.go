@@ -26,6 +26,19 @@ func HandleGet(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(b))
 }
 
+func HandlePost(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idMedia := vars["idMedia"]
+
+	_, err := GetMedia(idMedia)
+	if err != nil {
+		writeResponseWithError(w, http.StatusNotFound)
+		return
+	}
+
+	//todo : save
+}
+
 func HandleGetAll(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(Medias)
 	if err != nil {
