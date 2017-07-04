@@ -41,14 +41,17 @@ test:
 
 deployment:
   pre:
-    - tar -czvf back-office.tar.gz build && mv back-office.tar.gz ..:
+    - docker image build -t marcel-back-office .:
         pwd: back-office
-    - tar -czvf frontend.tar.gz frontend
+    - docker image save marcel-back-office -o marcel-back-office.tar
+    - docker image build -t marcel-frontend .:
+        pwd: frontend
+    - docker image save marcel-frontend -o marcel-frontend.tar
     - echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
     - chmod 400 integration_key.pem
   override:
-    - scp -i integration_key.pem back-office.tar.gz frontend.tar.gz ubuntu@35.158.222.144:~/
+    - scp -i integration_key.pem marcel-back-office.tar marcel-frontend.tar ubuntu@35.158.222.144:~/
     - ssh -i integration_key.pem ubuntu@35.158.222.144 "./deploy.sh"
   post:
     - rm -f integration_key.pem
-    - mv *.tar.gz $CIRCLE_ARTIFACTS
+    - mv *.tar $CIRCLE_ARTIFACTS
