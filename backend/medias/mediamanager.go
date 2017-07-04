@@ -32,7 +32,6 @@ func LoadMedias() {
 			panic(err)
 		}
 		Medias = append(Medias, media)
-
 	}
 
 	log.Print("Medias configurations is loaded...")
