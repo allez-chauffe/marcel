@@ -45,10 +45,10 @@ deployment:
   pre:
     - docker build -t marcel-back-office .:
         pwd: back-office
-    - docker save marcel-back-office -o marcel-back-office.tar
+    - docker save -o marcel-back-office.tar marcel-back-office
     - docker build -t marcel-frontend .:
         pwd: frontend
-    - docker save marcel-frontend -o marcel-frontend.tar
+    - docker save -o marcel-frontend.tar marcel-frontend
     - echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
     - chmod 400 integration_key.pem
   override:
