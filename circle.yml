@@ -1,6 +1,8 @@
 machine:
   node:
     version: 8.0.0
+  services:
+    - docker
   post: 
     - npm install -g yarn
     - npm install -g bower
