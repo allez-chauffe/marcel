@@ -1,5 +1,8 @@
 .Grid {
-  flex: 1;
+  display: flex;
+  justify-content: center;
+  height: calc(100% - 100px);
+  width: 100%;
 }
 
 .Grid .react-grid-layout, .Grid .react-grid-item {
@@ -8,4 +11,22 @@
 
 .Grid .react-grid-item.selected {
   border-color: red;
+}
+
+.Grid > .displayGrid {
+  padding-top: 2px;
+  padding-left: 2px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.Grid > .displayGrid > .row {
+  flex: 1;
+  display: flex;
+}
+
+.Grid > .displayGrid > .row > .cell {
+  flex: 1;
+  border: 1px #DDD dotted;
 }

@@ -1,20 +1,18 @@
 package twitter
 
-
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
-	"log"
 
-	"github.com/dghubble/go-twitter/twitter"
 	"github.com/Zenika/MARCEL/backend/auth"
+	"github.com/dghubble/go-twitter/twitter"
 	"github.com/gorilla/mux"
 )
 
-
 func GetTimeline(w http.ResponseWriter, r *http.Request) {
-	client := auth.RequireTwitterClient();
+	client := auth.RequireTwitterClient()
 	vars := mux.Vars(r)
 	e := vars["nbTweets"]
 	nbTweets, _ := strconv.Atoi(e)

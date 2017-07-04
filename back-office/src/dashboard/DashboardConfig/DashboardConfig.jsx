@@ -1,21 +1,25 @@
 //@flow
 import React from 'react'
 import Input from 'react-toolbox/lib/input/Input'
+import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
+import Switch from 'react-toolbox/lib/switch/Switch'
 import type { Dashboard } from '../type'
 
 import './DashboardConfig.css'
 
 export type PropsType = {
   dashboard: Dashboard,
+  displayGrid: boolean,
   changeName: string => void,
   changeDescription: string => void,
   changeCols: number => void,
   changeRows: number => void,
   changeRatio: number => void,
+  toggleDisplayGrid: () => void,
 }
 
 const DashboardConfig = (props: PropsType) => {
-  const { dashboard } = props
+  const { dashboard, displayGrid } = props
 
   const {
     changeName,
@@ -23,6 +27,7 @@ const DashboardConfig = (props: PropsType) => {
     changeCols,
     changeRows,
     changeRatio,
+    toggleDisplayGrid,
   } = props
   const { name, description, cols, rows, ratio } = dashboard
 
@@ -47,11 +52,20 @@ const DashboardConfig = (props: PropsType) => {
         onChange={changeRows}
         type="number"
       />
-      <Input
-        label="Ratio de l'écran"
+      <Dropdown
+        source={[
+          { label: '16/9', value: 16 / 9 },
+          { label: '16/9 (portrait)', value: 9 / 16 },
+          { label: '4/3', value: 4 / 3 },
+          { label: '4/3 (protrait)', value: 3 / 4 },
+        ]}
         value={ratio}
         onChange={changeRatio}
-        type="number"
+      />
+      <Switch
+        label="Afficher la grille"
+        checked={displayGrid}
+        onChange={toggleDisplayGrid}
       />
     </div>
   )

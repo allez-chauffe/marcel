@@ -1,19 +1,17 @@
 package medias
 
 import (
-	"net/http"
 	"encoding/json"
-	"log"
 	"github.com/gorilla/mux"
-	"strconv"
+	"log"
+	"net/http"
 )
 
 func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	f := vars["idMedia"]
-	idMedia, _ := strconv.Atoi(f)
+	idMedia := vars["idMedia"]
 
-	m, err := /*Manager.*/GetMedia(idMedia)
+	m, err := GetMedia(idMedia)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return
@@ -28,8 +26,22 @@ func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(b))
 }
 
-func HandleGetMedias(w http.ResponseWriter, r *http.Request) {
-	b, err := json.Marshal(/*Manager.*/Medias)
+func HandleGetAll(w http.ResponseWriter, r *http.Request) {
+	b, err := json.Marshal(Medias)
+	if err != nil {
+		writeResponseWithError(w, http.StatusNotFound)
+		return
+	}
+
+	w.Write([]byte(b))
+}
+
+func HandleCreate(w http.ResponseWriter, r *http.Request) {
+	//get a new media
+	newMedia := CreateMedia()
+
+	//return it to the client
+	b, err := json.Marshal(*newMedia)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return

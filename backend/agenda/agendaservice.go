@@ -2,11 +2,11 @@ package agenda
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
-	"log"
-	"os"
 
 	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/gorilla/mux"
@@ -19,7 +19,7 @@ func GetNextEvents(w http.ResponseWriter, r *http.Request) {
 
 	var err error = nil
 
-	Google_API_client := auth.RequireGoogleClient();
+	Google_API_client := auth.RequireGoogleClient()
 	calendarService, err = calendar.New(Google_API_client)
 
 	if err != nil {

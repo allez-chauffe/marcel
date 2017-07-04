@@ -79,7 +79,7 @@ func GetForecastWeatherHandler(w http.ResponseWriter, r *http.Request) {
 		j, err := json.Marshal(wd)
 		if err != nil {
 			log.Fatal(err)
-		}	
+		}
 		w.Write([]byte(j))
 	}
 }
