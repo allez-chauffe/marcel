@@ -10,9 +10,9 @@ import (
 	//"github.com/Zenika/MARCEL/backend/plugins"
 )
 
-var logFile string = os.Getenv("MARCEL_LOG_FILE")
 //current version of the API
 const MARCEL_API_VERSION = "1"
+var logFile string = os.Getenv("MARCEL_LOG_FILE")
 
 type App struct {
 	Router http.Handler
@@ -44,10 +44,10 @@ func (a *App) initializeRoutes() {
 
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
-	s.HandleFunc("/medias", medias.HandleGetAll).Methods("GET")
-	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.HandleGet).Methods("GET")
-	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.HandlePost).Methods("POST")
-	s.HandleFunc("/medias/create", medias.HandleCreate).Methods("GET")
+	s.HandleFunc("/medias", medias.GetAllHandler).Methods("GET")
+	s.HandleFunc("/medias/{idMedia}", medias.GetHandler).Methods("GET")
+	s.HandleFunc("/medias/{idMedia}", medias.PostHandler).Methods("POST")
+	s.HandleFunc("/medias/create", medias.CreateHandler).Methods("GET")
 
 	a.Router = c.Handler(r)
 }
