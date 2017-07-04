@@ -8,10 +8,10 @@ You can run the application with docker by running the commands in this director
 
 ```shell
 docker build -t marcel-front .
-docker run -p 80:80 -it marcel-front
+docker run -p 80:80 -v /path/to/plugins/directory:/usr/share/nginx/html/plugins -it marcel-front
 ```
 
-Note that you also have to run the backend to have the plugins.
+Note that you also have to run the backend to have the list of plugins.
 
 ## Installation
 
