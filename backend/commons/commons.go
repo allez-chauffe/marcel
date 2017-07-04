@@ -4,8 +4,6 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
-	"net/http"
-	"encoding/json"
 )
 
 func init() {
