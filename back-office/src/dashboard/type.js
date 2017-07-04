@@ -1,4 +1,5 @@
 //@flow
+import type { Dispatch } from 'redux'
 import type { Plugin, Prop } from '../plugins'
 import type { State } from '../store'
 
@@ -50,6 +51,19 @@ export type UnselectDashboardAction = {
   type: 'DASHBOARD/UNSELECT_DASHBOARD',
 }
 
+export type RequireDashboardDeletionAction = {
+  type: 'DASHBOARD/REQUIRE_DASHBOARD_DELETION',
+  payload: { dashboardId: string },
+}
+
+export type ConfirmDashboardDeletionAction = {
+  type: 'DASHBOARD/CONFIRM_DASHBOARD_DELETION',
+}
+
+export type CancelDashboardDeletionAction = {
+  type: 'DASHBOARD/CANCEL_DASHBOARD_DELETION',
+}
+
 export type DeleteDashboardAction = {
   type: 'DASHBOARD/DELETE_DASHBOARD',
   payload: { dashboardId: string },
@@ -63,8 +77,15 @@ export type AddPluginAction = {
   type: 'DASHBOARD/ADD_PLUGIN',
   payload: {
     plugin: Plugin,
+    x: number,
+    y: number,
   },
 }
+
+export type AddPluginThunkAction = (
+  dispatch: Dispatch<AddPluginAction>,
+  getState: () => State,
+) => void
 
 export type DeletePluginAction = {
   type: 'DASHBOARD/DELETE_PLUGIN',
@@ -106,6 +127,10 @@ export type UpdateConfigAction = {
   payload: { property: string, value: string | number },
 }
 
+export type ToggleDisplayGridAction = {
+  type: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
+}
+
 // eslint-disable-next-line no-use-before-define
 export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 
@@ -120,11 +145,17 @@ export type DashboardAction =
   | UploadStartedAction
   | UploadSuccesedAction
   | UploadFailedAction
+  | RequireDashboardDeletionAction
+  | ConfirmDashboardDeletionAction
+  | CancelDashboardDeletionAction
   | DeleteDashboardAction
   | AddDashboardAction
+  | ToggleDisplayGridAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
   selectedDashboard: string | null,
+  deletingDashboard: string | null,
+  displayGrid: boolean,
   dashboards: DashboardMap,
 }
