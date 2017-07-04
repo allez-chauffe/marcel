@@ -1,5 +1,7 @@
 package main
 
+//go:generate swagger generate spec
+
 import "github.com/Zenika/MARCEL/backend/app"
 
 //todo : service to return a media configuration for the frontend (ie: everything but the back props for plugins)
