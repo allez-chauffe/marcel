@@ -33,19 +33,19 @@ compile:
     #- polymer build:
     #    pwd: frontend
     - go build:
-        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
+        pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 test:
   override:
     - yarn test:
         pwd: back-office
     - go test .:
-        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
+        pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 deployment:
   pre:
     - go install:
-        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
+        pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
     - docker build -t marcel-back-office .:
         pwd: back-office
     - docker save -o marcel-back-office.tar marcel-back-office
