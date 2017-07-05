@@ -59,4 +59,4 @@ deployment:
     - ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
   post:
     - rm -f integration_key.pem
-    - mv *.tar ~/.og_workspace/bin/backend $CIRCLE_ARTIFACTS
+    - mv *.tar ~/.go_workspace/bin/backend $CIRCLE_ARTIFACTS
