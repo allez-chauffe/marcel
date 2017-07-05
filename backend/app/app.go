@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	//"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/Zenika/MARCEL/backend/apidoc"
 )
 
 //current version of the API
@@ -29,9 +30,8 @@ func (a *App) Initialize() {
 
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
-	log.Printf("Server is started and listening on port %v", 8090)
+	log.Printf("Server is started and listening on port %v", addr)
 }
-
 
 func (a *App) initializeRoutes() {
 
@@ -48,10 +48,10 @@ func (a *App) initializeRoutes() {
 	s.HandleFunc("/medias/{idMedia}", medias.GetHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia}", medias.PostHandler).Methods("POST")
 	s.HandleFunc("/medias/create", medias.CreateHandler).Methods("GET")
+	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
 
 	a.Router = c.Handler(r)
 }
-
 
 func (a* App) initializeLog() {
 	if len(logFile) == 0 {

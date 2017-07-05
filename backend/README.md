@@ -42,7 +42,7 @@ Once every is done, you can launch the server with :
 go run main.go
 ```
 
-###Swagger API
+###Swagger.json generation
 
 Install library :
 ```
