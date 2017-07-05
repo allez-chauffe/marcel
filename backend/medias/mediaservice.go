@@ -7,6 +7,15 @@ import (
 	"net/http"
 )
 
+// swagger:route GET /medias/{idMedia} getMediaByID
+//
+// Gets information of a media
+//
+//     Produces:
+//     - application/json
+//
+//     Schemes: http, https
+// swagger:parameters idMedia
 func GetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idMedia := vars["idMedia"]
@@ -26,6 +35,15 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(b))
 }
 
+// swagger:route POST /medias/{idMedia} setMedias
+//
+// Posts information for a media
+//
+//     Consumes:
+//     - application/json
+//
+//     Schemes: http, https
+// swagger:parameters idMedia
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idMedia := vars["idMedia"]
@@ -39,6 +57,14 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	//todo : save
 }
 
+// swagger:route GET /medias getMedias
+//
+// Gets information of all medias
+//
+//     Produces:
+//     - application/json
+//
+//     Schemes: http, https
 func GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(Medias)
 	if err != nil {
@@ -49,6 +75,14 @@ func GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(b))
 }
 
+// swagger:route GET /medias createMedia
+//
+// Gets information of all medias
+//
+//     Produces:
+//     - application/json
+//
+//     Schemes: http, https
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	//get a new media
 	newMedia := CreateMedia()

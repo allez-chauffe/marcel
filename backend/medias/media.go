@@ -6,10 +6,15 @@ import (
 	"reflect"
 )
 
-/**
-The global attributes for a Media
-*/
+// Media represents a media configuration
+//
+// swagger:model
 type Media struct {
+	// the id for this media
+	//
+	// required: true
+	// unique: true
+	// min: 1
 	ID          string                 `json:"id"`
 	Name        string                 `json:"name"`
 	Description string                 `json:"description"`
@@ -19,9 +24,11 @@ type Media struct {
 	Plugins     []MediaPlugin          `json:"plugins"`
 }
 
-/**
-Properties and configuration for a plugin used in the media
-*/
+// MediaPlugin represents a plugin configuration for the media
+//
+// Properties and configuration for a plugin used in the media
+//
+// swagger:model
 type MediaPlugin struct {
 	InstanceId string              `json:"instanceId"`
 	Name       string              `json:"name"`
