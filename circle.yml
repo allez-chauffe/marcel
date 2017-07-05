@@ -32,16 +32,16 @@ compile:
     #- polymer build:
     #    pwd: frontend
     - go build:
-        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
+        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
     - go install:
-        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
+        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 test:
   override:
     - yarn test:
         pwd: back-office
     - go test .:
-        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backoffice
+        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 deployment:
   pre:
