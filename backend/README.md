@@ -36,25 +36,27 @@ Build cross architecture :
 env GOOS=linux GOARCH=arm go build -o ./bin/MARCEL
 ```
 
-In order to use Realize to manage your local builds :
-
-```shell
-go get github.com/tockins/realize
-```
-
-[Realize](https://tockins.github.io/realize/)
-
-Then, from project(s) root, execute :
-
-```shell
-realize add
-```
-
 Once every is done, you can launch the server with :
 
 ```shell
 go run main.go
 ```
+
+###Swagger API
+
+Install library :
+```
+go get -u github.com/go-swagger/go-swagger/cmd/swagger
+```
+
+Generate the API doc :
+```
+swagger generate spec -o ./swagger.json
+```
+
+Run Swagger UI :
+
+
 
 ## Credits
 

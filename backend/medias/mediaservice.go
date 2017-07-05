@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
+func GetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idMedia := vars["idMedia"]
 
@@ -26,7 +26,20 @@ func HandleGetMedia(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(b))
 }
 
-func HandleGetAll(w http.ResponseWriter, r *http.Request) {
+func PostHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idMedia := vars["idMedia"]
+
+	_, err := GetMedia(idMedia)
+	if err != nil {
+		writeResponseWithError(w, http.StatusNotFound)
+		return
+	}
+
+	//todo : save
+}
+
+func GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(Medias)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
@@ -36,7 +49,7 @@ func HandleGetAll(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(b))
 }
 
-func HandleCreate(w http.ResponseWriter, r *http.Request) {
+func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	//get a new media
 	newMedia := CreateMedia()
 
