@@ -2,11 +2,12 @@
   height: 453px;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
 }
 
 .AddDashboardCard:hover {
-  background-color: #EEE;
+  background-color: #eee;
 }
 
 .AddDashboardCard .addText {
