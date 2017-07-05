@@ -1,11 +1,11 @@
 .ColorPicker .input {
+  margin: 1em 0;
   display: flex;
-  font-size: 14px;
+  align-items: center;
 }
 
 .ColorPicker .label {
-  margin-top: 0.3em;
-  margin-left: 0.2em;
+  margin-left: 1em;
 }
 
 .ColorPicker .cover {
@@ -22,9 +22,6 @@
 }
 
 .ColorPicker .swatch {
-  padding: 0.1em;
-  margin: 0.4em;
-  background: #fff;
   border-radius: 1px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, .1);
   display: inline-block;
