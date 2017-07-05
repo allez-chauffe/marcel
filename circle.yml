@@ -53,7 +53,7 @@ deployment:
     - chmod 400 integration_key.pem
   override:
     - scp -i integration_key.pem marcel-back-office.tar marcel-frontend.tar ubuntu@35.158.222.144:~/
-    - ssh -i integration_key.pem ubuntu@35.158.222.144 "./deploy.sh"
+    - ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
   post:
     - rm -f integration_key.pem
     - mv *.tar $CIRCLE_ARTIFACTS
