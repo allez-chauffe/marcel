@@ -1,3 +1,7 @@
 .DashboardConfig {
   padding: 0.5em;
 }
+
+.DashboardConfig .gridDisplay span {
+  font-size: 16px !important;
+}

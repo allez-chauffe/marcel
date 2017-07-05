@@ -16,6 +16,10 @@ export type PropsType = {
   changeCols: number => void,
   changeRows: number => void,
   changeRatio: number => void,
+  changeBackgroundColor: string => void,
+  changePrimaryColor: string => void,
+  changeSecondaryColor: string => void,
+  changeFontFamily: string => void,
   toggleDisplayGrid: () => void,
 }
 
@@ -29,6 +33,10 @@ const DashboardConfig = (props: PropsType) => {
     changeRows,
     changeRatio,
     toggleDisplayGrid,
+    changeBackgroundColor,
+    changePrimaryColor,
+    changeSecondaryColor,
+    changeFontFamily,
   } = props
   const { name, description, cols, rows, ratio } = dashboard
 
@@ -64,16 +72,32 @@ const DashboardConfig = (props: PropsType) => {
         onChange={changeRatio}
       />
       <ColorPicker
-        value="#700"
-        onChange={console.log.bind(console)}
+        value={dashboard.stylesvar['background-color']}
+        onChange={changeBackgroundColor}
         label="Background color"
       />
-      <Switch
-        style={{ fontSize: '16px' }}
-        label="Afficher la grille"
-        checked={displayGrid}
-        onChange={toggleDisplayGrid}
+      <ColorPicker
+        value={dashboard.stylesvar['primary-color']}
+        onChange={changePrimaryColor}
+        label="Primary color"
       />
+      <ColorPicker
+        value={dashboard.stylesvar['secondary-color']}
+        onChange={changeSecondaryColor}
+        label="Secondary color"
+      />
+      <Input
+        label="Font family"
+        value={dashboard.stylesvar['font-family']}
+        onChange={changeFontFamily}
+      />
+      <div className="gridDisplay">
+        <Switch
+          label="Afficher la grille"
+          checked={displayGrid}
+          onChange={toggleDisplayGrid}
+        />
+      </div>
     </div>
   )
 }
