@@ -34,8 +34,6 @@ compile:
     #    pwd: frontend
     - go build:
         pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
-    - go install:
-        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 test:
   override:
@@ -46,6 +44,8 @@ test:
 
 deployment:
   pre:
+    - go install:
+        pwd: ~/.go_workspace/src/github.com/Zenika/MARCEL/backend
     - docker build -t marcel-back-office .:
         pwd: back-office
     - docker save -o marcel-back-office.tar marcel-back-office
@@ -55,8 +55,8 @@ deployment:
     - echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
     - chmod 400 integration_key.pem
   override:
-    - scp -i integration_key.pem marcel-back-office.tar marcel-frontend.tar ubuntu@35.158.222.144:~/
+    - scp -i integration_key.pem marcel-back-office.tar marcel-frontend.tar ~/.go_workspace/bin/backend ubuntu@35.158.222.144:~/
     - ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
   post:
     - rm -f integration_key.pem
-    - mv *.tar $CIRCLE_ARTIFACTS
+    - mv *.tar ~/.og_workspace/bin/backend $CIRCLE_ARTIFACTS
