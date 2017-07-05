@@ -3,6 +3,7 @@ import React from 'react'
 import Input from 'react-toolbox/lib/input/Input'
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
 import Switch from 'react-toolbox/lib/switch/Switch'
+import { ColorPicker } from '../../common'
 import type { Dashboard } from '../type'
 
 import './DashboardConfig.css'
@@ -62,7 +63,13 @@ const DashboardConfig = (props: PropsType) => {
         value={ratio}
         onChange={changeRatio}
       />
+      <ColorPicker
+        value="#700"
+        onChange={console.log.bind(console)}
+        label="Background color"
+      />
       <Switch
+        style={{ fontSize: '16px' }}
         label="Afficher la grille"
         checked={displayGrid}
         onChange={toggleDisplayGrid}

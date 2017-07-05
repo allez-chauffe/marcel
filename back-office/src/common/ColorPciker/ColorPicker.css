@@ -1,0 +1,38 @@
+.ColorPicker .input {
+  display: flex;
+  font-size: 14px;
+}
+
+.ColorPicker .label {
+  margin-top: 0.3em;
+  margin-left: 0.2em;
+}
+
+.ColorPicker .cover {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.ColorPicker .popover {
+  position: absolute;
+  z-index: 100;
+}
+
+.ColorPicker .swatch {
+  padding: 0.1em;
+  margin: 0.4em;
+  background: #fff;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .1);
+  display: inline-block;
+  cursor: pointer;
+}
+
+.ColorPicker .color {
+  width: 2.5em;
+  height: 14px;
+  border-radius: 2px;
+}
