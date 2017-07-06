@@ -61,3 +61,4 @@ google_api_key_file.json
 medias.config.json
 .DS_Store
 /backend/data/plugins.catalog.json
+/backend/swagger.json
