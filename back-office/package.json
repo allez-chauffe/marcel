@@ -44,7 +44,8 @@
       "SWITCH",
       "TABS",
       "CARD",
-      "DROPDOWN"
+      "DROPDOWN",
+      "PROGRESS_BAR"
     ],
     "customProperties": {
       "animation-duration": "0.3s",
