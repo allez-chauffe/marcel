@@ -2,7 +2,7 @@
   "last_id": 1,
   "medias": [
     {
-      "id": "1",
+      "id": 1,
       "name": "Dahsboard 1",
       "description": "Some description",
       "rows": 20,
@@ -15,7 +15,7 @@
       },
       "plugins": [
         {
-          "instanceId": "1",
+          "instanceId": 1,
           "name": "DevFest Lille",
           "frontend": {
             "files": [
