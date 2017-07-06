@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
+	"net/http"
+	"log"
 )
 
 func init() {
@@ -27,4 +29,16 @@ func randomString(l int) string {
 
 func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
+}
+
+
+func WriteResponseWithError(w http.ResponseWriter, errorCode int) {
+	w.WriteHeader(errorCode)
+}
+
+func Check(e error) {
+	if e != nil {
+		log.Fatal(e)
+		panic(e)
+	}
 }
