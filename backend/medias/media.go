@@ -6,6 +6,14 @@ import (
 	"reflect"
 )
 
+// MediasConfig encapsulates all configuration data
+//
+// swagger:model
+type MediasConfiguration struct {
+	LastID   int     `json:"last_id"`
+	Medias   []Media `json:"medias"`
+}
+
 // Media represents a media configuration
 //
 // swagger:model
