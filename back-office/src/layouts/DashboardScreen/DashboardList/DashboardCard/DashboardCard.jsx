@@ -9,13 +9,15 @@ export type PropsType = {
   children: Children,
   style?: { [prop: string]: string },
   className?: string,
+  onClick?: MouseEvent => void,
 }
 
 const DashboardCard = (props: PropsType) => {
-  const { children, style, className } = props
+  const { children, style, className, onClick } = props
   return (
     <Card
-      style={{ width: '400px', ...style }}
+      onClick={onClick}
+      style={{ ...style }}
       className={`DashboardCard ${className || ''}`}
     >
       {children}

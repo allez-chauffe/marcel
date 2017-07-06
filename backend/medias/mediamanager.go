@@ -9,9 +9,10 @@ import (
 	"github.com/Zenika/MARCEL/backend/commons"
 )
 
-var Medias []Media
-
 const MEDIAS_CONFIG_FILE string = "data/medias.config.json"
+
+//List of Loaded Medias
+var Medias []Media
 
 func LoadMedias() {
 	log.Printf("Start Loading Medias from DB")
@@ -30,7 +31,7 @@ func LoadMedias() {
 		if err != nil {
 			panic(err)
 		}
-
+		Medias = append(Medias, media)
 	}
 
 	log.Print("Medias configurations is loaded...")

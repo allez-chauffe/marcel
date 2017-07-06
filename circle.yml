@@ -1,0 +1,62 @@
+machine:
+  node:
+    version: 8.0.0
+  services:
+    - docker
+  post: 
+    - npm install -g yarn
+    - npm install -g bower
+    #- npm install -g polymer-cli
+  environment:
+    PATH: "$PATH:~/MARCEL/back-office/node_modules/.bin"
+
+dependencies:
+  pre: 
+    - rm -rf ~/.go_workspace/src/github.com/Zenika
+    - mkdir -p ~/.go_workspace/src/github.com/Zenika/MARCEL
+    - ln -s `pwd` ~/.go_workspace/src/github.com/Zenika/MARCEL/backend:
+        pwd: backend
+  override:
+    - yarn:
+        pwd: back-office
+    - bower install:
+        pwd: frontend
+    - ./install_go_deps.sh:
+        pwd: scripts
+  cache_directories:
+    - ~/.cache/yarn
+
+compile:
+  override:
+    - yarn build:
+        pwd: back-office
+    #- polymer build:
+    #    pwd: frontend
+    - go build:
+        pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
+
+test:
+  override:
+    - yarn test:
+        pwd: back-office
+    - go test .:
+        pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
+
+deployment:
+  dev:
+    branch: dev
+    commands:
+      - go install:
+          pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
+      - docker build -t marcel-back-office .:
+          pwd: back-office
+      - docker save -o marcel-back-office.tar marcel-back-office
+      - docker build -t marcel-frontend .:
+          pwd: frontend
+      - docker save -o marcel-frontend.tar marcel-frontend
+      - echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
+      - chmod 400 integration_key.pem
+      - scp -i integration_key.pem marcel-back-office.tar marcel-frontend.tar ~/.go_workspace/bin/backend ubuntu@35.158.222.144:~/
+      - ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
+      - rm -f integration_key.pem
+      - mv *.tar ~/.go_workspace/bin/backend $CIRCLE_ARTIFACTS

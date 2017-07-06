@@ -19,8 +19,12 @@ const DeleteDahboardDialog = (props: PropsType) => {
       onEscKeyDown={cancelDeletion}
       onOverlayClick={cancelDeletion}
       actions={[
-        { label: 'Anuler', onClick: cancelDeletion },
-        { label: 'Supprimer', onClick: confirmDeletion },
+        { label: 'Anuler', onClick: cancelDeletion, icon: 'cancel' },
+        {
+          label: 'Supprimer',
+          onClick: confirmDeletion,
+          icon: 'delete_forever',
+        },
       ]}
     >
       Attention, Cette action est définitive et ne pourra pas être annulée.
