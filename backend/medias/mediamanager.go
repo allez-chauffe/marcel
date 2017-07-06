@@ -7,18 +7,30 @@ import (
 	"io/ioutil"
 	"log"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"os"
+	"fmt"
 )
 
-const MEDIAS_CONFIG_FILE string = "data/medias.config.json"
+const MEDIAS_CONFIG_PATH string = "data"
+const MEDIAS_CONFIG_FILENAME string = "medias.config.json"
+
+var mediasConfigFullpath string = ""
 
 //List of Loaded Medias
 var Medias []Media
 
+func init() {
+	mediasConfigFullpath = fmt.Sprintf("%s%c%s", MEDIAS_CONFIG_PATH, os.PathSeparator, MEDIAS_CONFIG_FILENAME)
+}
+
+// LoadMedias loads medias configuration from DB and stor it in memory
 func LoadMedias() {
-	log.Printf("Start Loading Medias from DB")
+	log.Printf("Start Loading Medias from DB.")
+
+	CreateSaveFileIfNotExist(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	//Medias configurations are loaded from a JSON file on the FS.
-	content, err := ioutil.ReadFile(MEDIAS_CONFIG_FILE)
+	content, err := ioutil.ReadFile(mediasConfigFullpath)
 	check(err)
 
 	var obj []interface{}
@@ -37,6 +49,7 @@ func LoadMedias() {
 	log.Print("Medias configurations is loaded...")
 }
 
+// GetMedia Return the media with this id
 func GetMedia(idMedia string) (*Media, error) {
 	for _, media := range Medias {
 		if idMedia == media.ID {
@@ -47,9 +60,7 @@ func GetMedia(idMedia string) (*Media, error) {
 	return nil, errors.New("NO_MEDIA_FOUND")
 }
 
-/**
-Create a new Media, save it into memory.
- */
+// CreateMedia Create a new Media, save it into memory and commit
 func CreateMedia() (*Media) {
 	newMedia := new(Media)
 	newMedia.ID = commons.GetUID()
@@ -60,9 +71,7 @@ func CreateMedia() (*Media) {
 	return newMedia
 }
 
-/**
-Remove media from memory.
- */
+// RemoveMedia Remove media from memory and commit
 func RemoveMedia(media *Media) {
 	i := GetMediaPosition(media)
 
@@ -73,9 +82,7 @@ func RemoveMedia(media *Media) {
 	Commit()
 }
 
-/**
-Return position of a media in the list
- */
+// GetMediaPosition Return position of a media in the list
 func GetMediaPosition(media *Media) int {
 	for p, m := range Medias {
 		if m.ID == media.ID {
@@ -85,9 +92,8 @@ func GetMediaPosition(media *Media) int {
 	return -1
 }
 
-/**
-Save media information in memory.
- */
+
+// SaveMedia Save media information in memory.
 func SaveMedia(media *Media) {
 	RemoveMedia(media)
 	Medias = append(Medias, *media)
@@ -95,10 +101,38 @@ func SaveMedia(media *Media) {
 	Commit()
 }
 
-/**
-Save all medias in DB. Here DB is a JSON file
- */
+// Commit Save all medias in DB.
+// Here DB is a JSON file
 func Commit() {
-	content, _ :=json.Marshal(Medias)
-	ioutil.WriteFile(MEDIAS_CONFIG_FILE, content, 0644)
+	content, _ := json.Marshal(Medias)
+
+	err := ioutil.WriteFile(mediasConfigFullpath, content, 0644)
+
+	if err != nil {
+		log.Println("Cannot save medias configuration:")
+		log.Panic(err)
+	}
+}
+
+// CreateSaveFileIfNotExist check if the save file for medias exists and create it if not.
+func CreateSaveFileIfNotExist(filePath string, fileName string) {
+
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		log.Println("Data directory did not exist. Create it.")
+		os.Mkdir(filePath, 0755)
+	}
+
+	var fullPath string = fmt.Sprintf("%s%c%s", filePath, os.PathSeparator, fileName)
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		content := "[\n]"
+
+		f, err := os.Create(fullPath)
+		check(err)
+
+		f.WriteString(content)
+
+		log.Println("Medias configuration file created at %v", fullPath)
+
+		f.Close()
+	}
 }
