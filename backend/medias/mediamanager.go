@@ -8,66 +8,66 @@ import (
 	"log"
 	"os"
 	"fmt"
+	"github.com/Zenika/MARCEL/backend/commons"
 )
 
 const MEDIAS_CONFIG_PATH string = "data"
 const MEDIAS_CONFIG_FILENAME string = "medias.config.json"
 
-var mediasConfigFullpath string = fmt.Sprintf("%s%c%s", MEDIAS_CONFIG_PATH, os.PathSeparator, MEDIAS_CONFIG_FILENAME)
+type MediaManager struct {
+	mediasConfigFullpath string
+	MediasConfig         *MediasConfiguration
+}
+
+func NewMediaManager() *MediaManager {
+	mediaManager := new(MediaManager)
+
+	mediaManager.mediasConfigFullpath = fmt.Sprintf("%s%c%s", MEDIAS_CONFIG_PATH, os.PathSeparator, MEDIAS_CONFIG_FILENAME)
+	mediaManager.MediasConfig = new(MediasConfiguration)
+
+	return mediaManager
+}
 
 //List of Loaded Medias
 //var Medias []Media
-var MediasConfig MediasConfiguration
 
 // LoadMedias loads medias configuration from DB and stor it in memory
-func LoadMedias() {
+func (m *MediaManager) LoadMedias() {
 	log.Printf("Start Loading Medias from DB.")
 
-	MediasConfig = MediasConfiguration{}
-	CreateSaveFileIfNotExist(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	m.CreateSaveFileIfNotExist(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	//Medias configurations are loaded from a JSON file on the FS.
-	content, err := ioutil.ReadFile(mediasConfigFullpath)
-	check(err)
+	content, err := ioutil.ReadFile(m.mediasConfigFullpath)
+	commons.Check(err)
 
 	var obj interface{}
 	json.Unmarshal([]byte(content), &obj)
-	err = mapstructure.Decode(obj.(map[string]interface{}), &MediasConfig)
+	err = mapstructure.Decode(obj.(map[string]interface{}), m.MediasConfig)
 	if err != nil {
 		panic(err)
 	}
 
-	//MediasConfig.LastID = len(obj)
-	//Map the json to the MediasConfig structure
-	/*for _, b := range obj {
-		var media Media
-		err = mapstructure.Decode(b.(map[string]interface{}), &media)
-		if err != nil {
-			panic(err)
-		}
-		MediasConfig.Medias = append(MediasConfig.Medias, media)
-	}*/
-
 	log.Print("Medias configurations is loaded...")
 }
 
-func GetMediasConfiguration() (*MediasConfiguration) {
+func (m *MediaManager) GetMediasConfiguration() (*MediasConfiguration) {
 	log.Println("Getting global medias config")
 
-	return &MediasConfig
+	return m.MediasConfig
 }
 
-func GetMedias() ([]Media) {
+func (m *MediaManager) GetMedias() ([]Media) {
 	log.Println("Getting all medias")
 
-	return MediasConfig.Medias
+	return m.MediasConfig.Medias
 }
 
 // GetMedia Return the media with this id
-func GetMedia(idMedia int) (*Media, error) {
+func (m *MediaManager) GetMedia(idMedia int) (*Media, error) {
 
 	log.Println("Getting media with id: ", idMedia)
-	for _, media := range MediasConfig.Medias {
+	for _, media := range m.MediasConfig.Medias {
 		if idMedia == media.ID {
 			return &media, nil
 		}
@@ -77,36 +77,35 @@ func GetMedia(idMedia int) (*Media, error) {
 }
 
 // CreateMedia Create a new Media, save it into memory and commit
-func CreateMedia() (*Media) {
+func (m *MediaManager) CreateMedia() (*Media) {
 
 	log.Println("Creating media")
 
-
-	MediasConfig.LastID = MediasConfig.LastID +1
+	m.MediasConfig.LastID = m.MediasConfig.LastID + 1
 
 	newMedia := new(Media)
-	newMedia.ID = MediasConfig.LastID //commons.GetUID()
+	newMedia.ID = m.MediasConfig.LastID //commons.GetUID()
 
-	SaveMedia(newMedia)
+	m.SaveMedia(newMedia)
 
 	return newMedia
 }
 
 // RemoveMedia Remove media from memory and commit
-func RemoveMedia(media *Media) {
+func (m *MediaManager) RemoveMedia(media *Media) {
 	log.Println("Removing media")
-	i := GetMediaPosition(media)
+	i := m.GetMediaPosition(media)
 
 	if i >= 0 {
-		MediasConfig.Medias = append(MediasConfig.Medias[:i], MediasConfig.Medias[i+1:]...)
+		m.MediasConfig.Medias = append(m.MediasConfig.Medias[:i], m.MediasConfig.Medias[i+1:]...)
 	}
 
-	Commit()
+	m.Commit()
 }
 
 // GetMediaPosition Return position of a media in the list
-func GetMediaPosition(media *Media) int {
-	for p, m := range MediasConfig.Medias {
+func (m *MediaManager) GetMediaPosition(media *Media) int {
+	for p, m := range m.MediasConfig.Medias {
 		if m.ID == media.ID {
 			return p
 		}
@@ -115,20 +114,20 @@ func GetMediaPosition(media *Media) int {
 }
 
 // SaveMedia Save media information in memory.
-func SaveMedia(media *Media) {
+func (m *MediaManager) SaveMedia(media *Media) {
 	log.Println("Saving media")
-	RemoveMedia(media)
-	MediasConfig.Medias = append(MediasConfig.Medias, *media)
+	m.RemoveMedia(media)
+	m.MediasConfig.Medias = append(m.MediasConfig.Medias, *media)
 
-	Commit()
+	m.Commit()
 }
 
 // Commit Save all medias in DB.
 // Here DB is a JSON file
-func Commit() {
-	content, _ := json.Marshal(MediasConfig)
+func (m *MediaManager) Commit() {
+	content, _ := json.Marshal(m.MediasConfig)
 
-	err := ioutil.WriteFile(mediasConfigFullpath, content, 0644)
+	err := ioutil.WriteFile(m.mediasConfigFullpath, content, 0644)
 
 	if err != nil {
 		log.Println("Cannot save medias configuration:")
@@ -137,7 +136,7 @@ func Commit() {
 }
 
 // CreateSaveFileIfNotExist check if the save file for medias exists and create it if not.
-func CreateSaveFileIfNotExist(filePath string, fileName string) {
+func (m *MediaManager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		log.Println("Data directory did not exist. Create it.")
@@ -146,15 +145,18 @@ func CreateSaveFileIfNotExist(filePath string, fileName string) {
 
 	var fullPath string = fmt.Sprintf("%s%c%s", filePath, os.PathSeparator, fileName)
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-		content := "[\n]"
 
 		f, err := os.Create(fullPath)
-		check(err)
+		commons.Check(err)
 
-		f.WriteString(content)
+		//content := "[\n]"
+		//f.WriteString(content)
 
 		log.Println("Medias configuration file created at %v", fullPath)
 
 		f.Close()
+
+		//commit a first time to ensure the configuration has been saved
+		m.Commit()
 	}
 }
