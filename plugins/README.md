@@ -27,3 +27,15 @@ And use it as a custom element
 ```html
 <datetime-item></datetime-item>
 ```
+
+## Build
+
+The best way to build your plugin is to use macel-builder.
+
+```shell
+npm i -g marcel-builder
+cd plugin-front-folder
+marcel-builder
+```
+
+Il will create an index.html in a new build directory which will contain everything your plugin must have to run.
