@@ -13,11 +13,14 @@ import (
 
 //current version of the API
 const MARCEL_API_VERSION = "1"
+
 var logFileName string = os.Getenv("MARCEL_LOG_FILE")
 var logFile *os.File
 
 type App struct {
 	Router http.Handler
+
+	mediaService medias.MediaService
 }
 
 func (a *App) Initialize() {
@@ -49,17 +52,17 @@ func (a *App) initializeRoutes() {
 
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
-	s.HandleFunc("/medias", medias.GetAllHandler).Methods("GET")
-	s.HandleFunc("/medias/config", medias.GetConfigHandler).Methods("GET")
-	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.GetHandler).Methods("GET")
-	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.PostHandler).Methods("POST")
-	s.HandleFunc("/medias/create", medias.CreateHandler).Methods("GET")
+	s.HandleFunc("/medias", a.mediaService.GetAllHandler).Methods("GET")
+	s.HandleFunc("/medias/config", a.mediaService.GetConfigHandler).Methods("GET")
+	s.HandleFunc("/medias/create", a.mediaService.CreateHandler).Methods("GET")
+	s.HandleFunc("/medias/{idMedia:[0-9]*}", a.mediaService.GetHandler).Methods("GET")
+	s.HandleFunc("/medias/{idMedia:[0-9]*}", a.mediaService.PostHandler).Methods("POST")
 	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
 
 	a.Router = c.Handler(r)
 }
 
-func (a* App) initializeLog() {
+func (a *App) initializeLog() {
 	if len(logFileName) == 0 {
 		logFileName = "marcel.log"
 	}
@@ -71,12 +74,12 @@ func (a* App) initializeLog() {
 	log.SetOutput(logFile)
 }
 
-func (a* App) initializeData() {
+func (a *App) initializeData() {
 
 	//Load plugins list from DB
 	//plugins.LoadPluginsCatalog()
 
 	//Load Medias configuration from DB
-	medias.LoadMedias()
+	a.mediaService = medias.NewMediaService()
+	a.mediaService.GetMediaManager().LoadMedias()
 }
-
