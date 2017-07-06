@@ -3,11 +3,26 @@ package medias
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 	"strconv"
+	"github.com/Zenika/MARCEL/backend/commons"
 )
 
+type MediaService struct {
+	mediaManager *MediaManager
+}
+
+func NewMediaService() MediaService {
+	mediaService := MediaService{}
+
+	mediaService.mediaManager = NewMediaManager()
+
+	return mediaService
+}
+
+func (m *MediaService) GetMediaManager() (*MediaManager) {
+	return m.mediaManager
+}
 
 // swagger:route GET /medias/config GetConfigHandler
 //
@@ -17,12 +32,12 @@ import (
 //     - application/json
 //
 //     Schemes: http, https
-func GetConfigHandler(w http.ResponseWriter, r *http.Request) {
+func (m *MediaService) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 
-	c:= GetMediasConfiguration()
+	c := m.mediaManager.GetMediasConfiguration()
 	b, err := json.Marshal(c)
 	if err != nil {
-		writeResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponseWithError(w, http.StatusNotFound)
 		return
 	}
 
@@ -37,18 +52,17 @@ func GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //     - application/json
 //
 //     Schemes: http, https
-func GetAllHandler(w http.ResponseWriter, r *http.Request) {
+func (m *MediaService) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 
-	m := GetMedias()
-	b, err := json.Marshal(m)
+	media := m.mediaManager.GetMedias()
+	b, err := json.Marshal(media)
 	if err != nil {
-		writeResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponseWithError(w, http.StatusNotFound)
 		return
 	}
 
 	w.Write([]byte(b))
 }
-
 
 // swagger:route GET /medias/{idMedia} GetHandler
 //
@@ -59,25 +73,25 @@ func GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 // swagger:parameters idMedia
-func GetHandler(w http.ResponseWriter, r *http.Request) {
+func (m *MediaService) GetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
 
 	idMedia, err := strconv.Atoi(attr)
 	if err != nil {
-		writeResponseWithError(w, http.StatusBadRequest)
+		commons.WriteResponseWithError(w, http.StatusBadRequest)
 		return
 	}
 
-	m, err := GetMedia(idMedia)
+	media, err := m.mediaManager.GetMedia(idMedia)
 	if err != nil {
-		writeResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponseWithError(w, http.StatusNotFound)
 		return
 	}
 
-	b, err := json.Marshal(*m)
+	b, err := json.Marshal(*media)
 	if err != nil {
-		writeResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponseWithError(w, http.StatusNotFound)
 		return
 	}
 
@@ -93,19 +107,19 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 // swagger:parameters idMedia
-func PostHandler(w http.ResponseWriter, r *http.Request) {
+func (m *MediaService) PostHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
 
 	idMedia, err := strconv.Atoi(attr)
 	if err != nil {
-		writeResponseWithError(w, http.StatusBadRequest)
+		commons.WriteResponseWithError(w, http.StatusBadRequest)
 		return
 	}
 
-	_, err = GetMedia(idMedia)
+	_, err = m.mediaManager.GetMedia(idMedia)
 	if err != nil {
-		writeResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponseWithError(w, http.StatusNotFound)
 		return
 	}
 
@@ -120,27 +134,17 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 //     - application/json
 //
 //     Schemes: http, https
-func CreateHandler(w http.ResponseWriter, r *http.Request) {
+func (m *MediaService) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	//get a new media
-	newMedia := CreateMedia()
+	newMedia := m.mediaManager.CreateMedia()
 
 	//return it to the client
 	b, err := json.Marshal(*newMedia)
 	if err != nil {
-		writeResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponseWithError(w, http.StatusNotFound)
 		return
 	}
 
 	w.Write([]byte(b))
 }
 
-func writeResponseWithError(w http.ResponseWriter, errorCode int) {
-	w.WriteHeader(errorCode)
-}
-
-func check(e error) {
-	if e != nil {
-		log.Fatal(e)
-		panic(e)
-	}
-}
