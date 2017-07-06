@@ -10,8 +10,8 @@ import (
 //
 // swagger:model
 type MediasConfiguration struct {
-	LastID   int     `json:"last_id"`
-	Medias   []Media `json:"medias"`
+	LastID int     `json:"last_id"`
+	Medias []Media `json:"medias"`
 }
 
 // Media represents a media configuration
@@ -23,7 +23,7 @@ type Media struct {
 	// required: true
 	// unique: true
 	// min: 1
-	ID          string                 `json:"id"`
+	ID          int                    `json:"id"`
 	Name        string                 `json:"name"`
 	Description string                 `json:"description"`
 	Rows        int                    `json:"rows"`
@@ -38,7 +38,7 @@ type Media struct {
 //
 // swagger:model
 type MediaPlugin struct {
-	InstanceId string              `json:"instanceId"`
+	InstanceId int              `json:"instanceId"`
 	Name       string              `json:"name"`
 	FrontEnd   MediaPluginFrontEnd `json:"frontend"`
 	BackEnd    MediaPluginBackEnd  `json:"backend"`
