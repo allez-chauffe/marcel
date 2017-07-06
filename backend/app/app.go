@@ -13,7 +13,8 @@ import (
 
 //current version of the API
 const MARCEL_API_VERSION = "1"
-var logFile string = os.Getenv("MARCEL_LOG_FILE")
+var logFileName string = os.Getenv("MARCEL_LOG_FILE")
+var logFile *os.File
 
 type App struct {
 	Router http.Handler
@@ -31,6 +32,10 @@ func (a *App) Initialize() {
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 	log.Printf("Server is started and listening on port %v", addr)
+
+	defer logFile.Close()
+
+	select {}
 }
 
 func (a *App) initializeRoutes() {
@@ -54,15 +59,15 @@ func (a *App) initializeRoutes() {
 }
 
 func (a* App) initializeLog() {
-	if len(logFile) == 0 {
-		logFile = "marcel.log"
+	if len(logFileName) == 0 {
+		logFileName = "marcel.log"
 	}
-	f, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	var err error = nil
+	logFile, err = os.OpenFile(logFileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
-	log.SetOutput(f)
+	log.SetOutput(logFile)
 }
 
 func (a* App) initializeData() {
