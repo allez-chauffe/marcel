@@ -5,9 +5,52 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 )
 
-// swagger:route GET /medias/{idMedia} getMediaByID
+
+// swagger:route GET /medias/config GetConfigHandler
+//
+// Gets information of all medias
+//
+//     Produces:
+//     - application/json
+//
+//     Schemes: http, https
+func GetConfigHandler(w http.ResponseWriter, r *http.Request) {
+
+	c:= GetMediasConfiguration()
+	b, err := json.Marshal(c)
+	if err != nil {
+		writeResponseWithError(w, http.StatusNotFound)
+		return
+	}
+
+	w.Write([]byte(b))
+}
+
+// swagger:route GET /medias GetAllHandler
+//
+// Gets information of all medias
+//
+//     Produces:
+//     - application/json
+//
+//     Schemes: http, https
+func GetAllHandler(w http.ResponseWriter, r *http.Request) {
+
+	m := GetMedias()
+	b, err := json.Marshal(m)
+	if err != nil {
+		writeResponseWithError(w, http.StatusNotFound)
+		return
+	}
+
+	w.Write([]byte(b))
+}
+
+
+// swagger:route GET /medias/{idMedia} GetHandler
 //
 // Gets information of a media
 //
@@ -18,7 +61,13 @@ import (
 // swagger:parameters idMedia
 func GetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	idMedia := vars["idMedia"]
+	attr := vars["idMedia"]
+
+	idMedia, err := strconv.Atoi(attr)
+	if err != nil {
+		writeResponseWithError(w, http.StatusBadRequest)
+		return
+	}
 
 	m, err := GetMedia(idMedia)
 	if err != nil {
@@ -35,7 +84,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(b))
 }
 
-// swagger:route POST /medias/{idMedia} setMedias
+// swagger:route POST /medias/{idMedia} PostHandler
 //
 // Posts information for a media
 //
@@ -46,9 +95,15 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 // swagger:parameters idMedia
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	idMedia := vars["idMedia"]
+	attr := vars["idMedia"]
 
-	_, err := GetMedia(idMedia)
+	idMedia, err := strconv.Atoi(attr)
+	if err != nil {
+		writeResponseWithError(w, http.StatusBadRequest)
+		return
+	}
+
+	_, err = GetMedia(idMedia)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return
@@ -57,26 +112,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	//todo : save
 }
 
-// swagger:route GET /medias getMedias
-//
-// Gets information of all medias
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
-func GetAllHandler(w http.ResponseWriter, r *http.Request) {
-
-	b, err := json.Marshal(MediasConfig.Medias)
-	if err != nil {
-		writeResponseWithError(w, http.StatusNotFound)
-		return
-	}
-
-	w.Write([]byte(b))
-}
-
-// swagger:route GET /medias createMedia
+// swagger:route GET /medias CreateHandler
 //
 // Gets information of all medias
 //

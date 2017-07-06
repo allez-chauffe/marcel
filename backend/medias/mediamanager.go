@@ -6,7 +6,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"io/ioutil"
 	"log"
-	"github.com/Zenika/MARCEL/backend/commons"
 	"os"
 	"fmt"
 )
@@ -24,35 +23,48 @@ var MediasConfig MediasConfiguration
 func LoadMedias() {
 	log.Printf("Start Loading Medias from DB.")
 
+	MediasConfig = MediasConfiguration{}
 	CreateSaveFileIfNotExist(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	//Medias configurations are loaded from a JSON file on the FS.
 	content, err := ioutil.ReadFile(mediasConfigFullpath)
 	check(err)
 
-	var obj []interface{}
+	var obj interface{}
 	json.Unmarshal([]byte(content), &obj)
+	err = mapstructure.Decode(obj.(map[string]interface{}), &MediasConfig)
+	if err != nil {
+		panic(err)
+	}
 
+	//MediasConfig.LastID = len(obj)
 	//Map the json to the MediasConfig structure
-	for _, b := range obj {
+	/*for _, b := range obj {
 		var media Media
 		err = mapstructure.Decode(b.(map[string]interface{}), &media)
 		if err != nil {
 			panic(err)
 		}
 		MediasConfig.Medias = append(MediasConfig.Medias, media)
-	}
+	}*/
 
 	log.Print("Medias configurations is loaded...")
 }
 
-func GetAll() (*MediasConfiguration) {
+func GetMediasConfiguration() (*MediasConfiguration) {
 	log.Println("Getting global medias config")
 
+	return &MediasConfig
+}
+
+func GetMedias() ([]Media) {
+	log.Println("Getting all medias")
+
+	return MediasConfig.Medias
 }
 
 // GetMedia Return the media with this id
-func GetMedia(idMedia string) (*Media, error) {
+func GetMedia(idMedia int) (*Media, error) {
 
 	log.Println("Getting media with id: ", idMedia)
 	for _, media := range MediasConfig.Medias {
@@ -68,11 +80,14 @@ func GetMedia(idMedia string) (*Media, error) {
 func CreateMedia() (*Media) {
 
 	log.Println("Creating media")
+
+
+	MediasConfig.LastID = MediasConfig.LastID +1
+
 	newMedia := new(Media)
-	newMedia.ID = commons.GetUID()
+	newMedia.ID = MediasConfig.LastID //commons.GetUID()
 
 	SaveMedia(newMedia)
-	Commit()
 
 	return newMedia
 }
