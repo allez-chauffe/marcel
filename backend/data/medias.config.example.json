@@ -1,44 +1,47 @@
-[
-  {
-    "id": "averylonguuid1337",
-    "name": "Dahsboard 1",
-    "description": "Some description",
-    "rows": 20,
-    "cols": 20,
-    "stylesvar": {
-      "primary-color": "#FFF",
-      "secondary-color": "#F00",
-      "background-color": "#000",
-      "font-family": "Roboto"
-    },
-    "plugins": [
-      {
-        "instanceId": "plugin_guuid",
-        "name": "DevFest Lille",
-        "frontend": {
-          "files": [
-            "devfest.html"
-          ],
-          "eltName": "devfest",
-          "x": 0,
-          "y": 0,
-          "cols": 3,
-          "rows": 3,
-          "props": {
-            "prop1": "value 1",
-            "prop2": "value 2"
-          }
-        },
-        "backend": {
-          "ports": [
-            8082
-          ],
-          "props": {
-            "googleAPIKey": "yyy",
-            "aaa": "bbb"
+{
+  "last_id": 1,
+  "medias": [
+    {
+      "id": "1",
+      "name": "Dahsboard 1",
+      "description": "Some description",
+      "rows": 20,
+      "cols": 20,
+      "stylesvar": {
+        "primary-color": "#FFF",
+        "secondary-color": "#F00",
+        "background-color": "#000",
+        "font-family": "Roboto"
+      },
+      "plugins": [
+        {
+          "instanceId": "1",
+          "name": "DevFest Lille",
+          "frontend": {
+            "files": [
+              "devfest.html"
+            ],
+            "eltName": "devfest",
+            "x": 0,
+            "y": 0,
+            "cols": 3,
+            "rows": 3,
+            "props": {
+              "prop1": "value 1",
+              "prop2": "value 2"
+            }
+          },
+          "backend": {
+            "ports": [
+              8082
+            ],
+            "props": {
+              "googleAPIKey": "yyy",
+              "aaa": "bbb"
+            }
           }
         }
-      }
-    ]
-  }
-]
+      ]
+    }
+  ]
+}
