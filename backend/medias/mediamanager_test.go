@@ -1,12 +1,12 @@
 package medias
 
 import (
-	"testing"
+	/*"testing"
 	"os"
-	"fmt"
+	"fmt"*/
 )
 
-func TestCreateSaveFileIfNotExist(t *testing.T) {
+/*func TestCreateSaveFileIfNotExist(t *testing.T) {
 	dir := "data_test"
 	file := "media.config.test"
 
@@ -18,7 +18,8 @@ func TestCreateSaveFileIfNotExist(t *testing.T) {
 
 	var fullPath string = fmt.Sprintf("%s%c%s", dir, os.PathSeparator, file)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		CreateSaveFileIfNotExist(dir, file)
+		mediaManager := NewMediaManager()
+		mediaManager.CreateSaveFileIfNotExist(dir, file)
 
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 			t.Error(err)
@@ -27,4 +28,7 @@ func TestCreateSaveFileIfNotExist(t *testing.T) {
 		os.Remove(dir)
 	}
 
+
+	t.Logf("ok")
 }
+*/
