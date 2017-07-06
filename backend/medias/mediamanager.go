@@ -14,14 +14,10 @@ import (
 const MEDIAS_CONFIG_PATH string = "data"
 const MEDIAS_CONFIG_FILENAME string = "medias.config.json"
 
-var mediasConfigFullpath string = ""
+var mediasConfigFullpath string = fmt.Sprintf("%s%c%s", MEDIAS_CONFIG_PATH, os.PathSeparator, MEDIAS_CONFIG_FILENAME)
 
 //List of Loaded Medias
 var Medias []Media
-
-func init() {
-	mediasConfigFullpath = fmt.Sprintf("%s%c%s", MEDIAS_CONFIG_PATH, os.PathSeparator, MEDIAS_CONFIG_FILENAME)
-}
 
 // LoadMedias loads medias configuration from DB and stor it in memory
 func LoadMedias() {
@@ -51,6 +47,8 @@ func LoadMedias() {
 
 // GetMedia Return the media with this id
 func GetMedia(idMedia string) (*Media, error) {
+
+	log.Println("Getting media with id: ", idMedia)
 	for _, media := range Medias {
 		if idMedia == media.ID {
 			return &media, nil
@@ -62,6 +60,8 @@ func GetMedia(idMedia string) (*Media, error) {
 
 // CreateMedia Create a new Media, save it into memory and commit
 func CreateMedia() (*Media) {
+
+	log.Println("Creating media")
 	newMedia := new(Media)
 	newMedia.ID = commons.GetUID()
 
@@ -73,6 +73,7 @@ func CreateMedia() (*Media) {
 
 // RemoveMedia Remove media from memory and commit
 func RemoveMedia(media *Media) {
+	log.Println("Removing media")
 	i := GetMediaPosition(media)
 
 	if i >= 0 {
@@ -95,6 +96,7 @@ func GetMediaPosition(media *Media) int {
 
 // SaveMedia Save media information in memory.
 func SaveMedia(media *Media) {
+	log.Println("Saving media")
 	RemoveMedia(media)
 	Medias = append(Medias, *media)
 
