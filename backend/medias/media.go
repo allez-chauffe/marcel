@@ -10,7 +10,7 @@ import (
 //
 // swagger:model
 type MediasConfiguration struct {
-	LastID int     `json:"last_id"`
+	LastID int     `json:"lastid"`
 	Medias []Media `json:"medias"`
 }
 
