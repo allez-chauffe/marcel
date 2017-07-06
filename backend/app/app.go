@@ -50,6 +50,7 @@ func (a *App) initializeRoutes() {
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
 	s.HandleFunc("/medias", medias.GetAllHandler).Methods("GET")
+	s.HandleFunc("/medias/config", medias.GetConfigHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.GetHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}", medias.PostHandler).Methods("POST")
 	s.HandleFunc("/medias/create", medias.CreateHandler).Methods("GET")
