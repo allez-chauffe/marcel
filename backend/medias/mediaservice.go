@@ -66,7 +66,8 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	b, err := json.Marshal(Medias)
+
+	b, err := json.Marshal(MediasConfig.Medias)
 	if err != nil {
 		writeResponseWithError(w, http.StatusNotFound)
 		return
