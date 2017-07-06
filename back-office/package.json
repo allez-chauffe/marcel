@@ -18,7 +18,8 @@
     "redux-logger": "^3.0.1",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "flow-bin": "^0.48.0",
