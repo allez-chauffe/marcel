@@ -17,7 +17,8 @@ const MEDIAS_CONFIG_FILENAME string = "medias.config.json"
 var mediasConfigFullpath string = fmt.Sprintf("%s%c%s", MEDIAS_CONFIG_PATH, os.PathSeparator, MEDIAS_CONFIG_FILENAME)
 
 //List of Loaded Medias
-var Medias []Media
+//var Medias []Media
+var MediasConfig MediasConfiguration
 
 // LoadMedias loads medias configuration from DB and stor it in memory
 func LoadMedias() {
@@ -32,24 +33,29 @@ func LoadMedias() {
 	var obj []interface{}
 	json.Unmarshal([]byte(content), &obj)
 
-	//Map the json to the Media structure
+	//Map the json to the MediasConfig structure
 	for _, b := range obj {
 		var media Media
 		err = mapstructure.Decode(b.(map[string]interface{}), &media)
 		if err != nil {
 			panic(err)
 		}
-		Medias = append(Medias, media)
+		MediasConfig.Medias = append(MediasConfig.Medias, media)
 	}
 
 	log.Print("Medias configurations is loaded...")
+}
+
+func GetAll() (*MediasConfiguration) {
+	log.Println("Getting global medias config")
+
 }
 
 // GetMedia Return the media with this id
 func GetMedia(idMedia string) (*Media, error) {
 
 	log.Println("Getting media with id: ", idMedia)
-	for _, media := range Medias {
+	for _, media := range MediasConfig.Medias {
 		if idMedia == media.ID {
 			return &media, nil
 		}
@@ -77,7 +83,7 @@ func RemoveMedia(media *Media) {
 	i := GetMediaPosition(media)
 
 	if i >= 0 {
-		Medias = append(Medias[:i], Medias[i+1:]...)
+		MediasConfig.Medias = append(MediasConfig.Medias[:i], MediasConfig.Medias[i+1:]...)
 	}
 
 	Commit()
@@ -85,7 +91,7 @@ func RemoveMedia(media *Media) {
 
 // GetMediaPosition Return position of a media in the list
 func GetMediaPosition(media *Media) int {
-	for p, m := range Medias {
+	for p, m := range MediasConfig.Medias {
 		if m.ID == media.ID {
 			return p
 		}
@@ -93,12 +99,11 @@ func GetMediaPosition(media *Media) int {
 	return -1
 }
 
-
 // SaveMedia Save media information in memory.
 func SaveMedia(media *Media) {
 	log.Println("Saving media")
 	RemoveMedia(media)
-	Medias = append(Medias, *media)
+	MediasConfig.Medias = append(MediasConfig.Medias, *media)
 
 	Commit()
 }
@@ -106,7 +111,7 @@ func SaveMedia(media *Media) {
 // Commit Save all medias in DB.
 // Here DB is a JSON file
 func Commit() {
-	content, _ := json.Marshal(Medias)
+	content, _ := json.Marshal(MediasConfig)
 
 	err := ioutil.WriteFile(mediasConfigFullpath, content, 0644)
 
