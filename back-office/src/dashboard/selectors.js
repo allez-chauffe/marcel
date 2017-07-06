@@ -17,6 +17,8 @@ export const deletingDashboardSelector = (state: State) =>
 
 export const displayGridSelector = (state: State) => state.dashboard.displayGrid
 
+export const isLoadingSelector = (state: State) => state.dashboard.loading
+
 export const selectedDashboardSelector = createSelector(
   dashboardsSelector,
   selectedDashboardNameSelector,

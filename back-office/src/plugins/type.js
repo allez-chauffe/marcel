@@ -13,7 +13,7 @@ export type Plugin = {
   name: string,
   props: { [propName: string]: ?Prop },
   icon: string,
-  elementName: string,
+  eltName: string,
 }
 
 export type State = Plugin[]

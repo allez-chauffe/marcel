@@ -1,9 +1,9 @@
 //@flow
-import { keyBy } from 'lodash'
+import { keyBy, omit } from 'lodash'
 
 import type { Dashboard, DashboardMap } from '../dashboard/type'
 
-const baseUrl = 'http://localhost:8090/v1/'
+const baseUrl = 'http://localhost:8090/api/v1/'
 
 const request = (url: string, options?) => fetch(baseUrl + url, options)
 
@@ -17,27 +17,25 @@ const post = (url: string, body: ?mixed) =>
   })
 
 const backend = {
-  getAllDashboards: (): Promise<DashboardMap> =>
-    get('medias')
-      .then(response => {
-        if (response.status !== 200) throw response
-        return response.json()
-      })
-      .then((dashboards: Dashboard[]) => keyBy(dashboards, 'id')),
+  getAllDashboards: () =>
+    get('medias').then(response => {
+      if (response.status !== 200) throw response
+      return response.json()
+    }),
 
-  getDashboard: (dashboardId: string): Promise<Dashboard> =>
+  getDashboard: (dashboardId: string) =>
     get(`medias/${dashboardId}`).then(response => {
       if (response.status !== 200) throw response
       return response.json()
     }),
 
-  createDashboard: (): Promise<Dashboard> =>
+  createDashboard: () =>
     get('medias/create').then(response => {
       if (response.status !== 200) throw response
       return response.json()
     }),
 
-  saveDashboard: (dashboard: Dashboard): Promise<void> =>
+  saveDashboard: (dashboard: Dashboard) =>
     post(`medias/${dashboard.id}`, dashboard).then(response => {
       if (response.status !== 200) throw response
     }),

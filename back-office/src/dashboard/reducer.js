@@ -1,7 +1,7 @@
 //@flow
 import type { Reducer } from 'redux'
 import { actions } from './actions'
-import { mapValues } from 'lodash'
+import { mapValues, keyBy } from 'lodash'
 import { set, update, unset, chain } from 'immutadot'
 import uuid from 'uuid/v4'
 import type {
@@ -17,6 +17,7 @@ const intialState = {
   selectedDashboard: null,
   deletingDashboard: null,
   displayGrid: true,
+  loading: false,
   dashboards: mockedData,
 }
 
@@ -85,7 +86,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
             ...action.payload.plugin,
             x: action.payload.x,
             y: action.payload.y,
-            columns: 1,
+            cols: 1,
             rows: 1,
             instanceId,
           })
@@ -134,6 +135,16 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     }
     case actions.TOGGLE_DISPLAY_GRID: {
       return { ...state, displayGrid: !state.displayGrid }
+    }
+    case actions.DASHBOARD_LIST_REQUEST_STARTED: {
+      return { ...state, loading: true }
+    }
+    case actions.DASHBOARD_LIST_REQUEST_SUCCESSED: {
+      const dashboards = keyBy(action.payload.dashboards, 'id')
+      return { ...state, loading: false, dashboards }
+    }
+    case actions.DASHBOARD_LIST_REQUEST_FAILED: {
+      return { ...state, loading: false }
     }
     default:
       return state

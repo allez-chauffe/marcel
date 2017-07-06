@@ -4,7 +4,7 @@ import { range } from 'lodash'
 export default [
   {
     name: `Container 1`,
-    elementName: `container-${1}`,
+    eltName: `container-${1}`,
     icon: 'picture_in_picture_alt',
     props: {
       plugins: {
@@ -15,9 +15,28 @@ export default [
       },
     },
   },
+  {
+    name: 'DevFest Lille',
+    eltName: 'devfest',
+    icon: 'picture_in_picture_alt',
+    props: {
+      prop1: {
+        name: 'prop1',
+        description: '',
+        type: 'string',
+        value: 'value 1',
+      },
+      prop2: {
+        name: 'prop2',
+        description: '',
+        type: 'string',
+        value: 'value2',
+      },
+    },
+  },
   ...range(20).map(i => ({
     name: `Plugin ${i}`,
-    elementName: `plugin-${i}`,
+    eltName: `plugin-${i}`,
     icon: 'picture_in_picture_alt',
     props: {
       prop1: {

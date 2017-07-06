@@ -11,12 +11,12 @@ export default {
     plugins: {
       'container-1#0': {
         name: `Container 1`,
-        elementName: `container-1`,
+        eltName: `container-1`,
         instanceId: 'container-1#0',
         icon: 'picture_in_picture_alt',
         x: 0,
         y: 0,
-        columns: 2,
+        cols: 2,
         rows: 3,
         props: {
           plugins: {
@@ -44,12 +44,12 @@ export default {
     plugins: {
       'plugin-1#0': {
         name: `Plugin 1`,
-        elementName: `plugin-1`,
+        eltName: `plugin-1`,
         instanceId: 'plugin-1#0',
         icon: 'picture_in_picture_alt',
         x: 0,
         y: 0,
-        columns: 2,
+        cols: 2,
         rows: 3,
         props: {
           prop1: {
@@ -84,12 +84,12 @@ export default {
     plugins: {
       'plugin-1#0': {
         name: `Plugin 1`,
-        elementName: `plugin-1`,
+        eltName: `plugin-1`,
         instanceId: 'plugin-1#0',
         icon: 'picture_in_picture_alt',
         x: 0,
         y: 0,
-        columns: 2,
+        cols: 2,
         rows: 3,
         props: {
           prop1: {
@@ -124,12 +124,12 @@ export default {
     plugins: {
       'plugin-1#0': {
         name: `Plugin 1`,
-        elementName: `plugin-1`,
+        eltName: `plugin-1`,
         instanceId: 'plugin-1#0',
         icon: 'picture_in_picture_alt',
         x: 0,
         y: 0,
-        columns: 2,
+        cols: 2,
         rows: 3,
         props: {
           prop1: {
@@ -164,12 +164,12 @@ export default {
     plugins: {
       'plugin-1#0': {
         name: `Plugin 1`,
-        elementName: `plugin-1`,
+        eltName: `plugin-1`,
         instanceId: 'plugin-1#0',
         icon: 'picture_in_picture_alt',
         x: 0,
         y: 0,
-        columns: 2,
+        cols: 2,
         rows: 3,
         props: {
           prop1: {
@@ -215,12 +215,12 @@ export default {
     plugins: {
       'plugin-1#0': {
         name: `Plugin 1`,
-        elementName: `plugin-1`,
+        eltName: `plugin-1`,
         instanceId: 'plugin-1#0',
         icon: 'picture_in_picture_alt',
         x: 0,
         y: 0,
-        columns: 2,
+        cols: 2,
         rows: 3,
         props: {
           prop1: {
@@ -255,12 +255,12 @@ export default {
     plugins: {
       'plugin-1#0': {
         name: `Plugin 1`,
-        elementName: `plugin-1`,
+        eltName: `plugin-1`,
         instanceId: 'plugin-1#0',
         icon: 'picture_in_picture_alt',
         x: 0,
         y: 0,
-        columns: 2,
+        cols: 2,
         rows: 3,
         props: {
           prop1: {
