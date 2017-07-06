@@ -3,6 +3,7 @@ import { keyBy, values, range, forEach, findIndex, some } from 'lodash'
 import { pick } from 'lodash/fp'
 import { toastr } from 'react-redux-toastr'
 
+import { backend } from '../api'
 import { selectedDashboardSelector } from './selectors'
 import type { Plugin, Prop } from '../plugins'
 import type {
@@ -152,20 +153,26 @@ export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
 
   dispatch({ type: actions.UPLOAD_STARTED })
 
-  const { name, description, plugins } = dashboard
-  const requestBody = {
-    name,
-    description,
-    plugins: values(plugins).map(
-      pick(['elementName', 'instanceId', 'props', 'x', 'y', 'columns', 'rows']),
-    ),
-  }
+  // const { name, description, plugins } = dashboard
+  // const requestBody = {
+  //   name,
+  //   description,
+  //   plugins: values(plugins).map(
+  //     pick(['elementName', 'instanceId', 'props', 'x', 'y', 'columns', 'rows']),
+  //   ),
+  // }
 
-  // eslint-disable-next-line no-console
-  console.log('Upload to the server : ', JSON.stringify(requestBody, null, 2))
-
-  dispatch({ type: actions.UPLOAD_SUCCESSED })
-  toastr.success('Enregistré', 'Le dashboard à bien été enregistré')
+  backend
+    .saveDashboard(dashboard)
+    .then(() => {
+      dispatch({ type: actions.UPLOAD_SUCCESSED })
+      toastr.success('Enregistré', 'Le dashboard à bien été enregistré')
+    })
+    .catch(error => {
+      dispatch({ type: actions.UPLOAD_FAILED, payload: { error } })
+      toastr.error("Erreur lors de l'enregistrement")
+      console.error(error)
+    })
 }
 
 export const updateConfig = (property: string) => (

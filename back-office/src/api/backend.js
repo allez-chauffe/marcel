@@ -16,31 +16,31 @@ const post = (url: string, body: ?mixed) =>
     body: body ? JSON.stringify(body) : null,
   })
 
-class Backend {
-  getAllDashboards = (): Promise<DashboardMap> =>
+const backend = {
+  getAllDashboards: (): Promise<DashboardMap> =>
     get('medias')
       .then(response => {
         if (response.status !== 200) throw response
         return response.json()
       })
-      .then((dashboards: Dashboard[]) => keyBy(dashboards, 'id'))
+      .then((dashboards: Dashboard[]) => keyBy(dashboards, 'id')),
 
-  getDashboard = (dashboardId: string): Promise<Dashboard> =>
+  getDashboard: (dashboardId: string): Promise<Dashboard> =>
     get(`medias/${dashboardId}`).then(response => {
       if (response.status !== 200) throw response
       return response.json()
-    })
+    }),
 
-  createDashboard = (): Promise<Dashboard> =>
+  createDashboard: (): Promise<Dashboard> =>
     get('medias/create').then(response => {
       if (response.status !== 200) throw response
       return response.json()
-    })
+    }),
 
-  saveDashboard = (dashboard: Dashboard): Promise<void> =>
+  saveDashboard: (dashboard: Dashboard): Promise<void> =>
     post(`medias/${dashboard.id}`, dashboard).then(response => {
       if (response.status !== 200) throw response
-    })
+    }),
 }
 
-export default Backend
+export default backend
