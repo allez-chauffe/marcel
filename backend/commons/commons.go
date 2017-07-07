@@ -32,8 +32,8 @@ func randInt(min int, max int) int {
 }
 
 
-func WriteResponseWithError(w http.ResponseWriter, errorCode int) {
-	w.WriteHeader(errorCode)
+func WriteResponse(w http.ResponseWriter, statusCode int) {
+	w.WriteHeader(statusCode)
 }
 
 func Check(e error) {
