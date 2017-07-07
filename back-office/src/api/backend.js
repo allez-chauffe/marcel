@@ -28,21 +28,13 @@ const backend = {
     }),
 
   createDashboard: () =>
-    get('medias/create')
-      .then(response => {
-        if (response.status !== 200) throw response
-        return response.json()
-      })
-      .then(dashboard => ({
-        ...dashboard,
-        name: 'Dashboard',
-        rows: 10,
-        cols: 10,
-        plugiins: [],
-      })),
+    get('medias/create').then(response => {
+      if (response.status !== 200) throw response
+      return response.json()
+    }),
 
   saveDashboard: (dashboard: Dashboard) =>
-    post(`medias/${dashboard.id}`, dashboard).then(response => {
+    post(`medias`, dashboard).then(response => {
       if (response.status !== 200) throw response
     }),
 }
