@@ -173,15 +173,6 @@ export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
 
   dispatch({ type: actions.UPLOAD_STARTED })
 
-  // const { name, description, plugins } = dashboard
-  // const requestBody = {
-  //   name,
-  //   description,
-  //   plugins: values(plugins).map(
-  //     pick(['elementName', 'instanceId', 'props', 'x', 'y', 'columns', 'rows']),
-  //   ),
-  // }
-
   backend
     .saveDashboard(dashboard)
     .then(() => {
