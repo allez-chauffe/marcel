@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"io/ioutil"
 )
 
 type MediaService struct {
@@ -37,7 +38,7 @@ func (m *MediaService) GetConfigHandler(w http.ResponseWriter, r *http.Request) 
 	c := m.mediaManager.GetMediasConfiguration()
 	b, err := json.Marshal(c)
 	if err != nil {
-		commons.WriteResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound)
 		return
 	}
 
@@ -57,7 +58,7 @@ func (m *MediaService) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.mediaManager.GetMedias()
 	b, err := json.Marshal(media)
 	if err != nil {
-		commons.WriteResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound)
 		return
 	}
 
@@ -79,26 +80,26 @@ func (m *MediaService) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 	idMedia, err := strconv.Atoi(attr)
 	if err != nil {
-		commons.WriteResponseWithError(w, http.StatusBadRequest)
+		commons.WriteResponse(w, http.StatusBadRequest)
 		return
 	}
 
 	media, err := m.mediaManager.GetMedia(idMedia)
 	if err != nil {
-		commons.WriteResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound)
 		return
 	}
 
 	b, err := json.Marshal(*media)
 	if err != nil {
-		commons.WriteResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound)
 		return
 	}
 
 	w.Write([]byte(b))
 }
 
-// swagger:route POST /medias/{idMedia} PostHandler
+// swagger:route POST /medias PostHandler
 //
 // Posts information for a media
 //
@@ -106,24 +107,17 @@ func (m *MediaService) GetHandler(w http.ResponseWriter, r *http.Request) {
 //     - application/json
 //
 //     Schemes: http, https
-// swagger:parameters idMedia
 func (m *MediaService) PostHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	attr := vars["idMedia"]
-
-	idMedia, err := strconv.Atoi(attr)
+	//to be tested : decoder := json.NewDecoder(r.Body)
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		commons.WriteResponseWithError(w, http.StatusBadRequest)
-		return
+		commons.WriteResponse(w, http.StatusBadRequest)
 	}
 
-	_, err = m.mediaManager.GetMedia(idMedia)
-	if err != nil {
-		commons.WriteResponseWithError(w, http.StatusNotFound)
-		return
-	}
+	var media *Media = NewMedia()
+	err = json.Unmarshal(body, &media)
 
-	//todo : save
+	m.mediaManager.SaveMedia(media)
 }
 
 // swagger:route GET /medias CreateHandler
@@ -141,7 +135,7 @@ func (m *MediaService) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	//return it to the client
 	b, err := json.Marshal(*newMedia)
 	if err != nil {
-		commons.WriteResponseWithError(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound)
 		return
 	}
 
