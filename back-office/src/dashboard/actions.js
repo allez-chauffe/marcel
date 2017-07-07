@@ -101,12 +101,18 @@ export const deleteDashboard = (
 })
 
 export const addDashboard = (): AddDashboardThunkAction => dispatch => {
-  backend.createDashboard().then(dashboard =>
-    dispatch({
-      type: actions.ADD_DASHBOARD,
-      payload: { dashboard: { ...dashboard, ratio: 16 / 9 } },
-    }),
-  )
+  backend
+    .createDashboard()
+    .then(dashboard =>
+      dispatch({
+        type: actions.ADD_DASHBOARD,
+        payload: { dashboard: { ...dashboard, ratio: 16 / 9 } },
+      }),
+    )
+    .catch(error => {
+      toastr.error('Erreur lors de la création du dashboard')
+      console.error(error)
+    })
 }
 
 export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (
