@@ -56,7 +56,7 @@ func (a *App) initializeRoutes() {
 	s.HandleFunc("/medias/config", a.mediaService.GetConfigHandler).Methods("GET")
 	s.HandleFunc("/medias/create", a.mediaService.CreateHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}", a.mediaService.GetHandler).Methods("GET")
-	s.HandleFunc("/medias/{idMedia:[0-9]*}", a.mediaService.PostHandler).Methods("POST")
+	s.HandleFunc("/medias", a.mediaService.PostHandler).Methods("POST")
 	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
 
 	a.Router = c.Handler(r)
