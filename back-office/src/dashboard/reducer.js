@@ -11,14 +11,13 @@ import type {
   PluginInstanceMap,
 } from './type'
 
-import mockedData from '../mocked-data/dashboards'
 const intialState = {
   selectedPlugin: null,
   selectedDashboard: null,
   deletingDashboard: null,
   displayGrid: true,
   loading: false,
-  dashboards: mockedData,
+  dashboards: {},
 }
 
 const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {

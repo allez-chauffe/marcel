@@ -1,7 +1,5 @@
 //@flow
-import { keyBy, omit } from 'lodash'
-
-import type { Dashboard, DashboardMap } from '../dashboard/type'
+import type { Dashboard } from '../dashboard/type'
 
 const baseUrl = 'http://localhost:8090/api/v1/'
 
@@ -37,6 +35,7 @@ const backend = {
       })
       .then(dashboard => ({
         ...dashboard,
+        name: 'Dashboard',
         rows: 10,
         cols: 10,
         plugiins: [],
