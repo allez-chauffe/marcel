@@ -29,7 +29,7 @@ import type {
   DashboardThunk,
   SelectDashboardAction,
   UnselectDashboardAction,
-  AddDashboardAction,
+  AddDashboardThunkAction,
   DeleteDashboardAction,
   RequireDashboardDeletionAction,
   ConfirmDashboardDeletionAction,
@@ -100,9 +100,14 @@ export const deleteDashboard = (
   payload: { dashboardId: dashboard.id },
 })
 
-export const addDashboard = (): AddDashboardAction => ({
-  type: actions.ADD_DASHBOARD,
-})
+export const addDashboard = (): AddDashboardThunkAction => dispatch => {
+  backend.createDashboard().then(dashboard =>
+    dispatch({
+      type: actions.ADD_DASHBOARD,
+      payload: { dashboard: { ...dashboard, ratio: 16 / 9 } },
+    }),
+  )
+}
 
 export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (
   dispatch,

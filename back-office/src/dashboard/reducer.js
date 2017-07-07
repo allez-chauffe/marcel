@@ -64,18 +64,10 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       return unset(state, `dashboards.${action.payload.dashboardId}`)
     }
     case actions.ADD_DASHBOARD: {
-      const id = uuid()
+      const { dashboard } = action.payload
       return chain(state)
-        .set(`dashboards.${id}`, {
-          id,
-          name: 'Dashboard',
-          description: '',
-          cols: 20,
-          rows: 20,
-          ratio: 16 / 9,
-          plugins: {},
-        })
-        .set('selectedDashboard', id)
+        .set(`dashboards.${dashboard.id}`, dashboard)
+        .set('selectedDashboard', dashboard.id)
         .value()
     }
     case actions.ADD_PLUGIN: {

@@ -71,7 +71,10 @@ export type DeleteDashboardAction = {
 
 export type AddDashboardAction = {
   type: 'DASHBOARD/ADD_DASHBOARD',
+  payload: { dashboard: Dashboard },
 }
+
+export type AddDashboardThunkAction = (Dispatch<AddDashboardAction>) => void
 
 export type AddPluginAction = {
   type: 'DASHBOARD/ADD_PLUGIN',
