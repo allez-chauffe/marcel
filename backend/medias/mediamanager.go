@@ -23,7 +23,7 @@ func NewMediaManager() *MediaManager {
 	mediaManager := new(MediaManager)
 
 	mediaManager.mediasConfigFullpath = fmt.Sprintf("%s%c%s", MEDIAS_CONFIG_PATH, os.PathSeparator, MEDIAS_CONFIG_FILENAME)
-	mediaManager.MediasConfig = new(MediasConfiguration)
+	mediaManager.MediasConfig = NewMediasConfiguration()//new(MediasConfiguration)
 
 	return mediaManager
 }
@@ -83,9 +83,10 @@ func (m *MediaManager) CreateMedia() (*Media) {
 
 	m.MediasConfig.LastID = m.MediasConfig.LastID + 1
 
-	newMedia := new(Media)
+	newMedia := NewMedia()
 	newMedia.ID = m.MediasConfig.LastID //commons.GetUID()
 
+	//save it into the MediasConfiguration
 	m.SaveMedia(newMedia)
 
 	return newMedia
