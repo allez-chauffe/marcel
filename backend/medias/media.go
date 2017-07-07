@@ -14,6 +14,15 @@ type MediasConfiguration struct {
 	Medias []Media `json:"medias"`
 }
 
+func NewMediasConfiguration() *MediasConfiguration {
+	var mediasConfiguration = new(MediasConfiguration)
+
+	mediasConfiguration.LastID = 0
+	mediasConfiguration.Medias = []Media{}
+
+	return mediasConfiguration
+}
+
 // Media represents a media configuration
 //
 // swagger:model
@@ -30,6 +39,15 @@ type Media struct {
 	Cols        int                    `json:"cols"`
 	Stylesvar   map[string]interface{} `json:"stylesvar"`
 	Plugins     []MediaPlugin          `json:"plugins"`
+}
+
+func NewMedia() *Media {
+	var media = new(Media)
+
+	media.Stylesvar = make(map[string]interface{})
+	media.Plugins = []MediaPlugin{}
+
+	return media
 }
 
 // MediaPlugin represents a plugin configuration for the media
