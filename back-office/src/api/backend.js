@@ -51,7 +51,10 @@ const backend = {
     })
   },
 
-  getAvailablePlugins: () => new Promise(resolve => resolve(availablePlugins)),
+  getAvailablePlugins: () =>
+    new Promise(resolve => {
+      setTimeout(() => resolve(availablePlugins), 1000)
+    }),
 }
 
 export default backend

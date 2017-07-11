@@ -64,4 +64,5 @@ export type LoadersState = {
   config: boolean,
   dashboards: boolean,
   plugins: boolean,
+  initial: boolean,
 }
