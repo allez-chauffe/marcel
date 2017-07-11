@@ -3,6 +3,7 @@ import React from 'react'
 import Input from 'react-toolbox/lib/input/Input'
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
 import Switch from 'react-toolbox/lib/switch/Switch'
+import { ColorPicker } from '../../common'
 import type { Dashboard } from '../type'
 
 import './DashboardConfig.css'
@@ -15,6 +16,10 @@ export type PropsType = {
   changeCols: number => void,
   changeRows: number => void,
   changeRatio: number => void,
+  changeBackgroundColor: string => void,
+  changePrimaryColor: string => void,
+  changeSecondaryColor: string => void,
+  changeFontFamily: string => void,
   toggleDisplayGrid: () => void,
 }
 
@@ -28,6 +33,10 @@ const DashboardConfig = (props: PropsType) => {
     changeRows,
     changeRatio,
     toggleDisplayGrid,
+    changeBackgroundColor,
+    changePrimaryColor,
+    changeSecondaryColor,
+    changeFontFamily,
   } = props
   const { name, description, cols, rows, ratio } = dashboard
 
@@ -62,11 +71,33 @@ const DashboardConfig = (props: PropsType) => {
         value={ratio}
         onChange={changeRatio}
       />
-      <Switch
-        label="Afficher la grille"
-        checked={displayGrid}
-        onChange={toggleDisplayGrid}
+      <ColorPicker
+        value={dashboard.stylesvar['background-color']}
+        onChange={changeBackgroundColor}
+        label="Background color"
       />
+      <ColorPicker
+        value={dashboard.stylesvar['primary-color']}
+        onChange={changePrimaryColor}
+        label="Primary color"
+      />
+      <ColorPicker
+        value={dashboard.stylesvar['secondary-color']}
+        onChange={changeSecondaryColor}
+        label="Secondary color"
+      />
+      <Input
+        label="Font family"
+        value={dashboard.stylesvar['font-family']}
+        onChange={changeFontFamily}
+      />
+      <div className="gridDisplay">
+        <Switch
+          label="Afficher la grille"
+          checked={displayGrid}
+          onChange={toggleDisplayGrid}
+        />
+      </div>
     </div>
   )
 }

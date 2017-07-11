@@ -13,6 +13,12 @@ export default {
       rows: 20,
       cols: 20,
       ratio: 16 / 9,
+      stylesvar: {
+        'primary-color': '#FFF',
+        'secondary-color': '#F00',
+        'background-color': '#000',
+        'font-family': 'Roboto',
+      },
       plugins: {
         'container-1#0': {
           name: `Container 1`,
@@ -46,6 +52,12 @@ export default {
       rows: 20,
       cols: 20,
       ratio: 16 / 9,
+      stylesvar: {
+        'primary-color': '#FFF',
+        'secondary-color': '#F00',
+        'background-color': '#000',
+        'font-family': 'Roboto',
+      },
       plugins: {
         'plugin-1#0': {
           name: `Plugin 1`,
@@ -86,6 +98,12 @@ export default {
       rows: 20,
       cols: 20,
       ratio: 16 / 9,
+      stylesvar: {
+        'primary-color': '#FFF',
+        'secondary-color': '#F00',
+        'background-color': '#000',
+        'font-family': 'Roboto',
+      },
       plugins: {
         'plugin-1#0': {
           name: `Plugin 1`,
@@ -126,6 +144,12 @@ export default {
       rows: 20,
       cols: 20,
       ratio: 16 / 9,
+      stylesvar: {
+        'primary-color': '#FFF',
+        'secondary-color': '#F00',
+        'background-color': '#000',
+        'font-family': 'Roboto',
+      },
       plugins: {
         'plugin-1#0': {
           name: `Plugin 1`,
@@ -166,6 +190,12 @@ export default {
       rows: 20,
       cols: 20,
       ratio: 16 / 9,
+      stylesvar: {
+        'primary-color': '#FFF',
+        'secondary-color': '#F00',
+        'background-color': '#000',
+        'font-family': 'Roboto',
+      },
       plugins: {
         'plugin-1#0': {
           name: `Plugin 1`,
@@ -202,6 +232,12 @@ export default {
     dashboard6: {
       id: 'dashboard6',
       name: 'Dashboard 6',
+      stylesvar: {
+        'primary-color': '#FFF',
+        'secondary-color': '#F00',
+        'background-color': '#000',
+        'font-family': 'Roboto',
+      },
       description: `
         Some description dlkfsldk flsdflksjk fljsdklflksdjfl ksdjfl
         ksdjlkfsdlkfjklsdflsfsdf sdf sd f sdf sdf sdf sdfsdfdsf dsfdsf
@@ -257,6 +293,12 @@ export default {
       rows: 20,
       cols: 20,
       ratio: 16 / 9,
+      stylesvar: {
+        'primary-color': '#FFF',
+        'secondary-color': '#F00',
+        'background-color': '#000',
+        'font-family': 'Roboto',
+      },
       plugins: {
         'plugin-1#0': {
           name: `Plugin 1`,
