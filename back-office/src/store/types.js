@@ -2,9 +2,18 @@
 import type { State as PluginsState } from '../plugins'
 import type { FiltersState, FiltersAction } from './filters'
 import type { DashboardState, DashboardAction } from '../dashboard'
-import type { AuthState } from '../auth'
+import type { AuthState, AuthAction } from '../auth'
+import type { LoadersState, LoadersAction } from './loaders'
 
-export type Action = FiltersAction | DashboardAction
+export type Config = {
+  backendURI: string,
+}
+
+export type Action =
+  | FiltersAction
+  | DashboardAction
+  | LoadersAction
+  | AuthAction
 
 export type Dispatch = Action => mixed
 
@@ -13,4 +22,5 @@ export type State = {
   filters: FiltersState,
   dashboard: DashboardState,
   auth: AuthState,
+  loaders: LoadersState,
 }

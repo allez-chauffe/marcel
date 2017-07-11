@@ -56,7 +56,7 @@ frontend/*.iml
 node_modules
 bower_components
 
-config.js
+frontend/config.js
 google_api_key_file.json
 medias.config.json
 .DS_Store

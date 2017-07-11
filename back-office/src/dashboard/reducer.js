@@ -1,6 +1,7 @@
 //@flow
 import type { Reducer } from 'redux'
 import { actions } from './actions'
+import { actions as loadActions } from '../store/loaders'
 import { mapValues, keyBy } from 'lodash'
 import { set, update, unset, chain } from 'immutadot'
 import uuid from 'uuid/v4'
@@ -25,8 +26,8 @@ const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
     if (!layout[plugin.instanceId])
       throw new Error('Plugin instance not found in layout')
 
-    const { x, y, w: columns, h: rows } = layout[plugin.instanceId]
-    return { ...plugin, x, y, columns, rows }
+    const { x, y, w: cols, h: rows } = layout[plugin.instanceId]
+    return { ...plugin, x, y, cols, rows }
   })
 }
 
@@ -130,15 +131,8 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     case actions.TOGGLE_DISPLAY_GRID: {
       return { ...state, displayGrid: !state.displayGrid }
     }
-    case actions.DASHBOARD_LIST_REQUEST_STARTED: {
-      return { ...state, loading: true }
-    }
-    case actions.DASHBOARD_LIST_REQUEST_SUCCESSED: {
-      const dashboards = keyBy(action.payload.dashboards, 'id')
-      return { ...state, loading: false, dashboards }
-    }
-    case actions.DASHBOARD_LIST_REQUEST_FAILED: {
-      return { ...state, loading: false }
+    case loadActions.LOAD_DASHBOARDS_SUCCESSED: {
+      return { ...state, dashboards: keyBy(action.payload.dashboards, 'id') }
     }
     default:
       return state

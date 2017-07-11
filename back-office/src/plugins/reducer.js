@@ -2,10 +2,17 @@
 import type { Reducer } from 'redux'
 import type { State } from './type'
 import type { Action } from '../store/types'
+import { actions as loadActions } from '../store/loaders'
 
-import mockedData from '../mocked-data/plugins'
-const intialState = mockedData
+const intialState = []
 
-const reducer: Reducer<State, Action> = (state = intialState, action) => state
+const reducer: Reducer<State, Action> = (state = intialState, action) => {
+  switch (action.type) {
+    case loadActions.LOAD_PLUGINS_SUCCESSED:
+      return action.payload.plugins
+    default:
+      return state
+  }
+}
 
 export default reducer

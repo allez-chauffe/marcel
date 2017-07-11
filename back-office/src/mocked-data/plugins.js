@@ -16,6 +16,19 @@ export default [
     },
   },
   {
+    name: 'marcel-plugin-hello',
+    eltName: 'marcel-plugin-hello',
+    icon: 'picture_in_picture_alt',
+    props: {
+      title: {
+        name: 'title',
+        description: 'The title to be displayed',
+        type: 'string',
+        value: 'World',
+      },
+    },
+  },
+  {
     name: 'DevFest Lille',
     eltName: 'devfest',
     icon: 'picture_in_picture_alt',
