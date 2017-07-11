@@ -1,10 +1,18 @@
 //@flow
 import { connect } from 'react-redux'
-import { selectedDashboardSelector } from '../../dashboard'
+import {
+  selectedDashboardSelector,
+  isLoadingSelector,
+  loadDashboardList,
+} from '../../dashboard'
 import DashboardScreen from './DashboardScreen'
 
 const mapStateToProps = state => ({
   isDashboardSelected: !!selectedDashboardSelector(state),
+  isLoading: isLoadingSelector(state),
 })
 
-export default connect(mapStateToProps)(DashboardScreen)
+const mapDispatchToProps = {
+  loadDashboardList,
+}
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardScreen)

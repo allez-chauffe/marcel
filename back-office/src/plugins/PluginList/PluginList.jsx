@@ -21,9 +21,9 @@ const PluginList = (props: {
         onChange={changeFilter}
       />
       <List selectable>
-        {plugins.map(plugin => (
-          <PluginListItem plugin={plugin} key={plugin.elementName} />
-        ))}
+        {plugins.map(plugin =>
+          <PluginListItem plugin={plugin} key={plugin.eltName} />,
+        )}
       </List>
     </div>
   )

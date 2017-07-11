@@ -11,13 +11,13 @@ class PluginListItem extends React.Component {
 
   render() {
     const { plugin } = this.props
-    const { name, elementName, icon } = plugin
+    const { name, eltName, icon } = plugin
     return (
       <ListItem
         caption={name}
         ripple={false}
-        key={elementName}
-        legend={elementName}
+        key={eltName}
+        legend={eltName}
         leftIcon={icon}
         rightIcon={<IconButton icon="add" primary onClick={this.onClick} />}
       />

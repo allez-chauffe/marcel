@@ -33,8 +33,8 @@ const Dashboard = (props: PropsType) => {
         ratio={ratio}
         rows={rows}
         cols={cols}
-        layout={values(plugins).map(({ x, y, columns, rows, ...instance }) => ({
-          layout: { x, y, h: rows, w: columns },
+        layout={values(plugins).map(({ x, y, cols, rows, ...instance }) => ({
+          layout: { x, y, h: rows, w: cols },
           plugin: instance,
         }))}
       />

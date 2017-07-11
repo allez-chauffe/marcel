@@ -1,9 +1,20 @@
 //@flow
-import { keyBy, values, range, forEach, findIndex, some } from 'lodash'
-import { pick } from 'lodash/fp'
+import {
+  mapValues,
+  keyBy,
+  values,
+  range,
+  forEach,
+  findIndex,
+  some,
+  omit,
+  find,
+} from 'lodash'
 import { toastr } from 'react-redux-toastr'
 
+import { backend } from '../api'
 import { selectedDashboardSelector } from './selectors'
+import { pluginsSelector } from '../plugins'
 import type { Plugin, Prop } from '../plugins'
 import type {
   SelectPluginAction,
@@ -18,12 +29,13 @@ import type {
   DashboardThunk,
   SelectDashboardAction,
   UnselectDashboardAction,
-  AddDashboardAction,
+  AddDashboardThunkAction,
   DeleteDashboardAction,
   RequireDashboardDeletionAction,
   ConfirmDashboardDeletionAction,
   CancelDashboardDeletionAction,
   ToggleDisplayGridAction,
+  LoadDashboardListThunkAction,
 } from './type'
 
 export const actions = {
@@ -44,6 +56,10 @@ export const actions = {
   UPLOAD_FAILED: 'DASHBOARD/UPLOAD_FAILED',
   UPDATE_CONFIG: 'DASHBOARD/UPDATE_CONFIG',
   TOGGLE_DISPLAY_GRID: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
+  DASHBOARD_LIST_REQUEST_STARTED: 'DASHBOARD/DASHBOARD_LIST_REQUEST_STARTED',
+  DASHBOARD_LIST_REQUEST_SUCCESSED:
+    'DASHBOARD/DASHBOARD_LIST_REQUEST_SUCCESSED',
+  DASHBOARD_LIST_REQUEST_FAILED: 'DASHBOARD/DASHBOARD_LIST_REQUEST_FAILED',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -84,9 +100,20 @@ export const deleteDashboard = (
   payload: { dashboardId: dashboard.id },
 })
 
-export const addDashboard = (): AddDashboardAction => ({
-  type: actions.ADD_DASHBOARD,
-})
+export const addDashboard = (): AddDashboardThunkAction => dispatch => {
+  backend
+    .createDashboard()
+    .then(dashboard =>
+      dispatch({
+        type: actions.ADD_DASHBOARD,
+        payload: { dashboard: { ...dashboard, ratio: 16 / 9 } },
+      }),
+    )
+    .catch(error => {
+      toastr.error('Erreur lors de la création du dashboard')
+      console.error(error)
+    })
+}
 
 export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (
   dispatch,
@@ -105,7 +132,7 @@ export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (
   const freeSpaceMatrix = range(cols).map(() => range(rows).map(() => true))
 
   forEach(plugins, plugin =>
-    range(plugin.x, plugin.x + plugin.columns).forEach(x =>
+    range(plugin.x, plugin.x + plugin.cols).forEach(x =>
       range(plugin.y, plugin.y + plugin.rows).forEach(y => {
         freeSpaceMatrix[x][y] = false
       }),
@@ -152,20 +179,17 @@ export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
 
   dispatch({ type: actions.UPLOAD_STARTED })
 
-  const { name, description, plugins } = dashboard
-  const requestBody = {
-    name,
-    description,
-    plugins: values(plugins).map(
-      pick(['elementName', 'instanceId', 'props', 'x', 'y', 'columns', 'rows']),
-    ),
-  }
-
-  // eslint-disable-next-line no-console
-  console.log('Upload to the server : ', JSON.stringify(requestBody, null, 2))
-
-  dispatch({ type: actions.UPLOAD_SUCCESSED })
-  toastr.success('Enregistré', 'Le dashboard à bien été enregistré')
+  backend
+    .saveDashboard(dashboard)
+    .then(() => {
+      dispatch({ type: actions.UPLOAD_SUCCESSED })
+      toastr.success('Enregistré', 'Le dashboard à bien été enregistré')
+    })
+    .catch(error => {
+      dispatch({ type: actions.UPLOAD_FAILED, payload: { error } })
+      toastr.error("Erreur lors de l'enregistrement")
+      console.error(error)
+    })
 }
 
 export const updateConfig = (property: string) => (
@@ -178,3 +202,53 @@ export const updateConfig = (property: string) => (
 export const toggleDisplayGrid = (): ToggleDisplayGridAction => ({
   type: actions.TOGGLE_DISPLAY_GRID,
 })
+
+export const dashboardListRequestSuccessed = (dashboards: Dashboard[]) => ({
+  type: actions.DASHBOARD_LIST_REQUEST_SUCCESSED,
+  payload: { dashboards },
+})
+export const dashboardListRequestFailed = (error: mixed) => ({
+  type: actions.DASHBOARD_LIST_REQUEST_FAILED,
+  payload: { error },
+})
+
+export const loadDashboardList = (): LoadDashboardListThunkAction => (
+  dispatch,
+  getState,
+) => {
+  dispatch({ type: actions.DASHBOARD_LIST_REQUEST_STARTED })
+  backend
+    .getAllDashboards()
+    .then(dashboards =>
+      dashboards.map(dashboard => {
+        const availablePlugins = pluginsSelector(getState())
+        const plugins = dashboard.plugins.map(plugin => {
+          const pluginInstance = omit(plugin.frontend, ['files'])
+          const { eltName } = pluginInstance
+          const { instanceId } = plugin
+          const pluginBase = find(availablePlugins, { eltName })
+
+          if (!pluginBase)
+            throw new Error(`Plugin not found : ${plugin.name} (${eltName})`)
+
+          return {
+            ...pluginBase,
+            ...pluginInstance,
+            instanceId,
+            props: mapValues(pluginBase.props, prop => ({
+              ...prop,
+              value: pluginInstance.props[prop.name],
+            })),
+          }
+        })
+        return {
+          ...dashboard,
+          ratio: 16 / 9,
+          plugins: keyBy(plugins, 'instanceId'),
+        }
+      }),
+    )
+    .then(dashboardListRequestSuccessed)
+    .catch(dashboardListRequestFailed)
+    .then(dispatch)
+}

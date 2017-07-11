@@ -17,7 +17,7 @@ export type PluginInstance = Plugin & {
   instanceId: string,
   x: number,
   y: number,
-  columns: number,
+  cols: number,
   rows: number,
 }
 
@@ -77,7 +77,10 @@ export type DeleteDashboardAction = {
 
 export type AddDashboardAction = {
   type: 'DASHBOARD/ADD_DASHBOARD',
+  payload: { dashboard: Dashboard },
 }
+
+export type AddDashboardThunkAction = (Dispatch<AddDashboardAction>) => void
 
 export type AddPluginAction = {
   type: 'DASHBOARD/ADD_PLUGIN',
@@ -137,6 +140,30 @@ export type ToggleDisplayGridAction = {
   type: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
 }
 
+export type DashboardListRequestStartedAction = {
+  type: 'DASHBOARD/DASHBOARD_LIST_REQUEST_STARTED',
+}
+
+export type DashboardListRequestSuccessedAction = {
+  type: 'DASHBOARD/DASHBOARD_LIST_REQUEST_SUCCESSED',
+  payload: { dashboards: Dashboard[] },
+}
+
+export type DashboardListRequestFailedAction = {
+  type: 'DASHBOARD/DASHBOARD_LIST_REQUEST_FAILED',
+  payload: { error: mixed },
+}
+
+export type DashboardListRequestAction =
+  | DashboardListRequestStartedAction
+  | DashboardListRequestSuccessedAction
+  | DashboardListRequestFailedAction
+
+export type LoadDashboardListThunkAction = (
+  Dispatch<DashboardListRequestAction>,
+  () => State,
+) => void
+
 // eslint-disable-next-line no-use-before-define
 export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 
@@ -163,5 +190,6 @@ export type DashboardState = {
   selectedDashboard: string | null,
   deletingDashboard: string | null,
   displayGrid: boolean,
+  loading: boolean,
   dashboards: DashboardMap,
 }
