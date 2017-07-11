@@ -29,6 +29,12 @@ export type Dashboard = {
   rows: number,
   cols: number,
   ratio: number,
+  stylesvar: {
+    'primary-color': string,
+    'secondary-color': string,
+    'background-color': string,
+    'font-family': string,
+  },
   plugins: PluginInstanceMap,
 }
 

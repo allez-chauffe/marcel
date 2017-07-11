@@ -6,6 +6,7 @@
     "immutadot": "^0.1.12",
     "lodash": "^4.17.4",
     "react": "^15.5.4",
+    "react-color": "^2.13.0",
     "react-dom": "^15.5.4",
     "react-grid-layout": "https://github.com/EmrysMyrddin/react-grid-layout.git#temp_with_build",
     "react-redux": "^5.0.4",

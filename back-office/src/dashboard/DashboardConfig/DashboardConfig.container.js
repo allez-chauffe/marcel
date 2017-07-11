@@ -19,6 +19,10 @@ const mapDispatchToProps = {
   changeCols: updateConfig('cols'),
   changeRows: updateConfig('rows'),
   changeRatio: updateConfig('ratio'),
+  changeBackgroundColor: updateConfig('stylesvar.background-color'),
+  changePrimaryColor: updateConfig('stylesvar.primary-color'),
+  changeSecondaryColor: updateConfig('stylesvar.secondary-color'),
+  changeFontFamily: updateConfig('stylesvar.font-family'),
   toggleDisplayGrid,
 }
 
