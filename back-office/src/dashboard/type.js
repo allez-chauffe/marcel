@@ -140,30 +140,6 @@ export type ToggleDisplayGridAction = {
   type: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
 }
 
-export type DashboardListRequestStartedAction = {
-  type: 'DASHBOARD/DASHBOARD_LIST_REQUEST_STARTED',
-}
-
-export type DashboardListRequestSuccessedAction = {
-  type: 'DASHBOARD/DASHBOARD_LIST_REQUEST_SUCCESSED',
-  payload: { dashboards: Dashboard[] },
-}
-
-export type DashboardListRequestFailedAction = {
-  type: 'DASHBOARD/DASHBOARD_LIST_REQUEST_FAILED',
-  payload: { error: mixed },
-}
-
-export type DashboardListRequestAction =
-  | DashboardListRequestStartedAction
-  | DashboardListRequestSuccessedAction
-  | DashboardListRequestFailedAction
-
-export type LoadDashboardListThunkAction = (
-  Dispatch<DashboardListRequestAction>,
-  () => State,
-) => void
-
 // eslint-disable-next-line no-use-before-define
 export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 

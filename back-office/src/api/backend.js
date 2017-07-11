@@ -1,5 +1,7 @@
 //@flow
+import { values, mapValues } from 'lodash'
 import type { Dashboard } from '../dashboard/type'
+import availablePlugins from '../mocked-data/plugins'
 
 const baseUrl = 'http://localhost:8090/api/v1/'
 
@@ -33,9 +35,25 @@ const backend = {
       return response.json()
     }),
 
-  saveDashboard: (dashboard: Dashboard) =>
-    post(`medias`, dashboard).then(response => {
+  saveDashboard: (dashboard: Dashboard) => {
+    const plugins = values(dashboard.plugins).map(plugin => {
+      const { x, y, cols, rows, props, eltName, name, instanceId } = plugin
+      const propsForBack = mapValues(props, 'value')
+      return {
+        name,
+        instanceId,
+        frontend: { x, y, cols, rows, eltName, props: propsForBack },
+      }
+    })
+    const data = { ...dashboard, plugins }
+    return post(`medias`, data).then(response => {
       if (response.status !== 200) throw response
+    })
+  },
+
+  getAvailablePlugins: () =>
+    new Promise(resolve => {
+      setTimeout(() => resolve(availablePlugins), 1000)
     }),
 }
 
