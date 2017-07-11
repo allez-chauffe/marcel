@@ -9,14 +9,14 @@ import './DashboardScreen.css'
 export type PropsType = {
   isDashboardSelected: boolean,
   isLoading: boolean,
-  loadDashboardList: () => void,
+  loadInitData: () => void,
 }
 
 class DashboardScreen extends React.Component {
   props: PropsType
 
   componentWillMount() {
-    this.props.loadDashboardList()
+    this.props.loadInitData()
   }
 
   render() {
