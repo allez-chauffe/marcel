@@ -1,10 +1,14 @@
 //@flow
 import { createSelector } from 'reselect'
+import { mapValues, keyBy } from 'lodash'
 import type { State } from '../store'
 import type { Dashboard, DashboardMap } from './type'
 
 export const dashboardsSelector = (state: State): DashboardMap =>
   state.dashboard.dashboards
+
+export const pluginInstancesSelector = (state: State) =>
+  state.dashboard.pluginInstances
 
 export const selectedDashboardNameSelector = (state: State) =>
   state.dashboard.selectedDashboard
@@ -19,16 +23,23 @@ export const displayGridSelector = (state: State) => state.dashboard.displayGrid
 
 export const selectedDashboardSelector = createSelector(
   dashboardsSelector,
+  pluginInstancesSelector,
   selectedDashboardNameSelector,
-  (dashboards, selectedName) =>
-    selectedName ? dashboards[selectedName] : null,
+  (dashboards, pluginInstances, selectedName) => {
+    if (!selectedName || !dashboards[selectedName]) return null
+    const dashboard = dashboards[selectedName]
+    return {
+      ...dashboard,
+      plugins: mapValues(
+        keyBy(dashboard.plugins),
+        instanceId => pluginInstances[instanceId],
+      ),
+    }
+  },
 )
 
-const findPlugin = (dashboard: ?Dashboard, instanceId: string | null) =>
-  dashboard ? (instanceId ? dashboard.plugins[instanceId] : null) : null
-
 export const selectedPluginSelector = createSelector(
-  selectedDashboardSelector,
+  pluginInstancesSelector,
   selectedPluginNameSelector,
-  findPlugin,
+  (pluginInstances, instanceId) => instanceId && pluginInstances[instanceId],
 )

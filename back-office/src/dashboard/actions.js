@@ -24,6 +24,7 @@ import type {
   ConfirmDashboardDeletionAction,
   CancelDashboardDeletionAction,
   ToggleDisplayGridAction,
+  AddSubPluginAction,
 } from './type'
 
 export const actions = {
@@ -36,6 +37,7 @@ export const actions = {
   DELETE_DASHBOARD: 'DASHBOARD/DELETE_DASHBOARD',
   ADD_DASHBOARD: 'DASHBOARD/ADD_DASHBOARD',
   ADD_PLUGIN: 'DASHBOARD/ADD_PLUGIN',
+  ADD_SUB_PLUGIN: 'DASHBOARD/ADD_SUB_PLUGIN',
   DELETE_PLUGIN: 'DASHBOARD/DELETE_PLUGIN',
   CHANGE_PROP: 'DASHBOARD/CHANGE_PROP',
   SAVE_LAYOUT: 'DASHBOARD/SAVE_LAYOUT',
@@ -98,6 +100,13 @@ export const addDashboard = (): AddDashboardThunkAction => dispatch => {
       console.error(error)
     })
 }
+
+export const addSubPlugin = (parent: PluginInstance): AddSubPluginAction => (
+  prop: string,
+) => (plugin: Plugin) => ({
+  type: actions.ADD_SUB_PLUGIN,
+  payload: { parent: parent.instanceId, prop, plugin },
+})
 
 export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (
   dispatch,

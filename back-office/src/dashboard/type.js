@@ -19,6 +19,7 @@ export type PluginInstance = Plugin & {
   y: number,
   cols: number,
   rows: number,
+  parent?: string,
 }
 
 export type PluginInstanceMap = { [instanceId: string]: PluginInstance }
@@ -35,7 +36,7 @@ export type Dashboard = {
     'background-color': string,
     'font-family': string,
   },
-  plugins: PluginInstanceMap,
+  plugins: string[],
 }
 
 // Redux
@@ -81,6 +82,15 @@ export type AddDashboardAction = {
 }
 
 export type AddDashboardThunkAction = (Dispatch<AddDashboardAction>) => void
+
+export type AddSubPluginAction = {
+  type: 'DASHBOARD/ADD_SUB_PLUGIN',
+  payload: {
+    parent: string,
+    prop: string,
+    plugin: Plugin,
+  },
+}
 
 export type AddPluginAction = {
   type: 'DASHBOARD/ADD_PLUGIN',
@@ -160,6 +170,7 @@ export type DashboardAction =
   | DeleteDashboardAction
   | AddDashboardAction
   | ToggleDisplayGridAction
+  | AddSubPluginAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
@@ -168,4 +179,5 @@ export type DashboardState = {
   displayGrid: boolean,
   loading: boolean,
   dashboards: DashboardMap,
+  pluginInstances: PluginInstanceMap,
 }

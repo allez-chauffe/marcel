@@ -2,9 +2,11 @@
 import type { Reducer } from 'redux'
 import { actions } from './actions'
 import { actions as loadActions } from '../store/loaders'
-import { mapValues, keyBy } from 'lodash'
+import { mapValues, keyBy, concat, map, keys, chain as _chain } from 'lodash'
+import { values } from 'lodash/fp'
 import { set, update, unset, chain } from 'immutadot'
 import uuid from 'uuid/v4'
+import { getPluginInstances } from '../common/utils'
 import type {
   DashboardAction,
   DashboardState,
@@ -19,6 +21,7 @@ const intialState = {
   displayGrid: true,
   loading: false,
   dashboards: {},
+  pluginInstances: {},
 }
 
 const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
@@ -73,41 +76,48 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         .set('selectedDashboard', dashboard.id)
         .value()
     }
+    case actions.ADD_SUB_PLUGIN: {
+      const { parent, prop, plugin } = action.payload
+      const instanceId = uuid()
+      return chain(state)
+        .set(`plugins.${instanceId}`, {
+          ...plugin,
+          x: 0,
+          y: 0,
+          cols: 1,
+          rows: 1,
+          instanceId,
+          parent,
+        })
+        .push(`dashboards.${parent}.props.${prop}.value`, instanceId)
+        .value()
+    }
     case actions.ADD_PLUGIN: {
       const instanceId = uuid()
       const { selectedDashboard } = state
       return selectedDashboard
-        ? set(state, `dashboards.${selectedDashboard}.plugins.${instanceId}`, {
-            ...action.payload.plugin,
-            x: action.payload.x,
-            y: action.payload.y,
-            cols: 1,
-            rows: 1,
-            instanceId,
-          })
+        ? chain(state)
+            .set(`plugins.${instanceId}`, {
+              ...action.payload.plugin,
+              x: action.payload.x,
+              y: action.payload.y,
+              cols: 1,
+              rows: 1,
+              instanceId,
+            })
+            .push(state, `dashboards.${selectedDashboard}.plugins`, instanceId)
         : state
     }
     case actions.DELETE_PLUGIN: {
       const { selectedPlugin, selectedDashboard } = state
-      return selectedPlugin
-        ? selectedDashboard
-          ? unset(
-              state,
-              `dashboards.${selectedDashboard}.plugins.${selectedPlugin}`,
-            )
-          : state
-        : state
+      if (!selectedPlugin || !selectedDashboard) return state
+      return chain(state)
+        .unset(`plugins.${selectedPlugin}`)
+        .pull(`dashboards.${selectedDashboard}.plugins`, selectedPlugin)
     }
     case actions.CHANGE_PROP: {
       const { instanceId, prop, value } = action.payload
-      const { selectedDashboard } = state
-      return selectedDashboard
-        ? set(
-            state,
-            `dashboards.${selectedDashboard}.plugins.${instanceId}.props.${prop.name}.value`,
-            value,
-          )
-        : state
+      return set(state, `plugins.${instanceId}.props.${prop.name}.value`, value)
     }
     case actions.SAVE_LAYOUT: {
       const { layout } = action.payload
@@ -132,7 +142,23 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       return { ...state, displayGrid: !state.displayGrid }
     }
     case loadActions.LOAD_DASHBOARDS_SUCCESSED: {
-      return { ...state, dashboards: keyBy(action.payload.dashboards, 'id') }
+      const { dashboards } = action.payload
+      const plugins = _chain(dashboards)
+        .map('plugins')
+        .map(values)
+        .flatten()
+        .value()
+      const pluginInstances = getPluginInstances(plugins)
+      const normalizedDashboards = dashboards.map(dashboard => ({
+        ...dashboard,
+        plugins: keys(dashboard.plugins),
+      }))
+
+      return {
+        ...state,
+        dashboards: keyBy(normalizedDashboards, 'id'),
+        pluginInstances: keyBy(pluginInstances, 'instanceId'),
+      }
     }
     default:
       return state
