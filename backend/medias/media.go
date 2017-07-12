@@ -9,18 +9,18 @@ import (
 // MediasConfig encapsulates all configuration data
 //
 // swagger:model
-type MediasConfiguration struct {
+type Configuration struct {
 	LastID int     `json:"lastid"`
 	Medias []Media `json:"medias"`
 }
 
-func NewMediasConfiguration() *MediasConfiguration {
-	var mediasConfiguration = new(MediasConfiguration)
+func NewConfiguration() *Configuration {
+	var configuration = new(Configuration)
 
-	mediasConfiguration.LastID = 0
-	mediasConfiguration.Medias = []Media{}
+	configuration.LastID = 0
+	configuration.Medias = []Media{}
 
-	return mediasConfiguration
+	return configuration
 }
 
 // Media represents a media configuration
@@ -56,7 +56,7 @@ func NewMedia() *Media {
 //
 // swagger:model
 type MediaPlugin struct {
-	InstanceId int              `json:"instanceId"`
+	InstanceId string              `json:"instanceId"`
 	Name       string              `json:"name"`
 	FrontEnd   MediaPluginFrontEnd `json:"frontend"`
 	BackEnd    MediaPluginBackEnd  `json:"backend"`

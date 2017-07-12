@@ -15,7 +15,7 @@
       },
       "plugins": [
         {
-          "instanceId": 1,
+          "instanceId": "1",
           "name": "DevFest Lille",
           "frontend": {
             "files": [
