@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"encoding/json"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/gorilla/mux"
+	"strconv"
 )
 
 const PLUGINS_CONFIG_PATH string = "data"
@@ -36,9 +38,9 @@ func (s *Service) GetManager() (*Manager) {
 //     - application/json
 //
 //     Schemes: http, https
-func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 
-	c := m.Manager.GetConfiguration()
+	c := s.Manager.GetConfiguration()
 	b, err := json.Marshal(c)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound)
@@ -66,4 +68,46 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte(b))
+}
+
+// swagger:route GET /plugins/{idMedia} GetHandler
+//
+// Gets information of a plugin
+//
+//     Produces:
+//     - application/json
+//
+//     Schemes: http, https
+// swagger:parameters idPlugin
+func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	attr := vars["idPlugin"]
+
+	idService, err := strconv.Atoi(attr)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusBadRequest)
+		return
+	}
+
+	plugin, err := s.Manager.Get(idService)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusNotFound)
+		return
+	}
+
+	b, err := json.Marshal(*plugin)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusNotFound)
+		return
+	}
+
+	w.Write([]byte(b))
+}
+
+func (s* Service) UploadHandler(w http.ResponseWriter, r *http.Request) {
+	// 1 : open zip file
+	// 2 : parse description file
+	// 3 : check there's no plugin already installed with same name or reject
+	// 4 : unzip into /plugins folder
+	// 5 : save into plugins.json file
 }
