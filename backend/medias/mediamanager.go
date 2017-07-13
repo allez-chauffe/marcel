@@ -41,7 +41,7 @@ func (m *Manager) Load() {
 	m.CreateSaveFileIfNotExist(m.configPath, m.configFileName)
 
 	//Medias configurations are loaded from a JSON file on the FS.
-	content, err := ioutil.ReadFile(m.mediasConfigFullpath)
+	content, err := ioutil.ReadFile(m.configFullpath)
 	commons.Check(err)
 
 	var obj interface{}
