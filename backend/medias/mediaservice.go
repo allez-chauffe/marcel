@@ -10,7 +10,7 @@ import (
 )
 
 const MEDIAS_CONFIG_PATH string = "data"
-const MEDIAS_CONFIG_FILENAME string = "medias.config.json"
+const MEDIAS_CONFIG_FILENAME string = "medias.json"
 
 type Service struct {
 	manager *Manager
