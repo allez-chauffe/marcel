@@ -1,0 +1,36 @@
+[
+  {
+    "id":1,
+    "name": "Plugin 1",
+    "description": "Some description",
+    "frontend": {
+      "eltName": "plugin-1",
+      "cols": 4,
+      "rows": 1,
+      "fixedsized": 1,
+      "props": [
+        {
+          "name": "prop1",
+          "type": "string",
+          "description": "Some description",
+          "value": "hello world!"
+        },
+        {
+          "name": "prop2",
+          "type": "string",
+          "description": "Some description",
+          "value": "hello world!"
+        }
+      ]
+    },
+    "backend" : {
+      "ports":[8080], //les ports dans le conteneur que le backend devra mapper
+      "props" : {
+        "apikey":"xxx"
+      }
+    }
+  },
+  {
+    ...
+  }
+]

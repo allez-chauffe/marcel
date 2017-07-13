@@ -7,7 +7,7 @@ import (
 )
 
 const PLUGINS_CONFIG_PATH string = "data"
-const PLUGINS_CONFIG_FILENAME string = "plugins.config.json"
+const PLUGINS_CONFIG_FILENAME string = "plugins.json"
 
 type Service struct {
 	Manager *Manager
