@@ -9,6 +9,7 @@ import (
 	"os"
 	//"github.com/Zenika/MARCEL/backend/plugins"
 	"github.com/Zenika/MARCEL/backend/apidoc"
+	"github.com/Zenika/MARCEL/backend/plugins"
 )
 
 //current version of the API
@@ -20,7 +21,8 @@ var logFile *os.File
 type App struct {
 	Router http.Handler
 
-	mediaService medias.MediaService
+	mediaService *medias.Service
+	pluginService *plugins.Service
 }
 
 func (a *App) Initialize() {
@@ -53,10 +55,11 @@ func (a *App) initializeRoutes() {
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
 	s.HandleFunc("/medias", a.mediaService.GetAllHandler).Methods("GET")
+	s.HandleFunc("/medias", a.mediaService.PostHandler).Methods("POST")
+	s.HandleFunc("/medias/{idMedia:[0-9]*}", a.mediaService.GetHandler).Methods("GET")
 	s.HandleFunc("/medias/config", a.mediaService.GetConfigHandler).Methods("GET")
 	s.HandleFunc("/medias/create", a.mediaService.CreateHandler).Methods("GET")
-	s.HandleFunc("/medias/{idMedia:[0-9]*}", a.mediaService.GetHandler).Methods("GET")
-	s.HandleFunc("/medias", a.mediaService.PostHandler).Methods("POST")
+	s.HandleFunc("/plugins", a.pluginService.GetAllHandler).Methods("GET")
 	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
 
 	a.Router = c.Handler(r)
@@ -77,9 +80,10 @@ func (a *App) initializeLog() {
 func (a *App) initializeData() {
 
 	//Load plugins list from DB
-	//plugins.LoadPluginsCatalog()
+	a.pluginService = plugins.NewService()
+	a.pluginService.GetManager().Load()
 
 	//Load Medias configuration from DB
-	a.mediaService = medias.NewMediaService()
-	a.mediaService.GetMediaManager().LoadMedias()
+	a.mediaService = medias.NewService()
+	a.mediaService.GetManager().Load()
 }
