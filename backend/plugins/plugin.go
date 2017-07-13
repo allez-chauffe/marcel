@@ -21,37 +21,55 @@ func NewConfiguration() *Configuration {
 //
 // swagger:model
 type Plugin struct {
-	ID          int    `json:"id"`
-	Name        string        `json:"title"`
-	Description string    `json:"description"`
-	Frontend    []Frontend `json:"frontend"`
-	Backend     []Backend `json:"backend"`
+	ID          int         `json:"id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Frontend    Frontend  `json:"frontend"`
+	Backend     Backend   `json:"backend"`
 }
 
 func NewPlugin() (*Plugin) {
 	var p = new(Plugin)
 
+	p.Frontend = *NewFrontend()
+	p.Backend = *NewBackend()
+
 	return p
 }
 
 type Frontend struct {
-	Key   string
-	Value string
+	EltName   string `json:"eltName"`
+	Cols      int `json:"cols"`
+	Rows      int `json:"rows"`
+	Fixedsize int `json:"fixedsize"`
+	Props     []Props `json:"props"`
 }
 
 func NewFrontend() *Frontend {
-	var p = new(Frontend)
+	var f = new(Frontend)
 
-	return p
+	f.Props = []Props{}
+
+	return f
+}
+
+type Props struct {
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
+	Value       string `json:"value"`
 }
 
 type Backend struct {
-	Key   string
-	Value string
+	Ports []int                  `json:"ports"`
+	Props map[string]interface{} `json:"props"`
 }
 
 func NewBackend() *Backend {
-	var p = new(Backend)
+	var b = new(Backend)
 
-	return p
+	b.Ports = []int{}
+	b.Props = make(map[string]interface{})
+
+	return b
 }
