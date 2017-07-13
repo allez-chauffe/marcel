@@ -9,20 +9,24 @@ import (
 	"io/ioutil"
 )
 
-type MediaService struct {
-	mediaManager *MediaManager
+const MEDIAS_CONFIG_PATH string = "data"
+const MEDIAS_CONFIG_FILENAME string = "medias.config.json"
+
+type Service struct {
+	manager *Manager
 }
 
-func NewMediaService() MediaService {
-	mediaService := MediaService{}
+func NewService() *Service {
+	service := new(Service)
 
-	mediaService.mediaManager = NewMediaManager()
+	c := NewConfiguration()
+	service.manager = NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME, c)
 
-	return mediaService
+	return service
 }
 
-func (m *MediaService) GetMediaManager() (*MediaManager) {
-	return m.mediaManager
+func (m *Service) GetManager() (*Manager) {
+	return m.manager
 }
 
 // swagger:route GET /medias/config GetConfigHandler
@@ -33,9 +37,9 @@ func (m *MediaService) GetMediaManager() (*MediaManager) {
 //     - application/json
 //
 //     Schemes: http, https
-func (m *MediaService) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
+func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 
-	c := m.mediaManager.GetMediasConfiguration()
+	c := m.manager.GetConfiguration()
 	b, err := json.Marshal(c)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound)
@@ -53,9 +57,9 @@ func (m *MediaService) GetConfigHandler(w http.ResponseWriter, r *http.Request) 
 //     - application/json
 //
 //     Schemes: http, https
-func (m *MediaService) GetAllHandler(w http.ResponseWriter, r *http.Request) {
+func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 
-	media := m.mediaManager.GetMedias()
+	media := m.manager.GetAll()
 	b, err := json.Marshal(media)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound)
@@ -74,7 +78,7 @@ func (m *MediaService) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 // swagger:parameters idMedia
-func (m *MediaService) GetHandler(w http.ResponseWriter, r *http.Request) {
+func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
 
@@ -84,7 +88,7 @@ func (m *MediaService) GetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	media, err := m.mediaManager.GetMedia(idMedia)
+	media, err := m.manager.Get(idMedia)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound)
 		return
@@ -107,7 +111,7 @@ func (m *MediaService) GetHandler(w http.ResponseWriter, r *http.Request) {
 //     - application/json
 //
 //     Schemes: http, https
-func (m *MediaService) PostHandler(w http.ResponseWriter, r *http.Request) {
+func (m *Service) PostHandler(w http.ResponseWriter, r *http.Request) {
 	//to be tested : decoder := json.NewDecoder(r.Body)
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -117,7 +121,7 @@ func (m *MediaService) PostHandler(w http.ResponseWriter, r *http.Request) {
 	var media *Media = NewMedia()
 	err = json.Unmarshal(body, &media)
 
-	m.mediaManager.SaveMedia(media)
+	m.manager.Save(media)
 }
 
 // swagger:route GET /medias CreateHandler
@@ -128,9 +132,9 @@ func (m *MediaService) PostHandler(w http.ResponseWriter, r *http.Request) {
 //     - application/json
 //
 //     Schemes: http, https
-func (m *MediaService) CreateHandler(w http.ResponseWriter, r *http.Request) {
+func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	//get a new media
-	newMedia := m.mediaManager.CreateMedia()
+	newMedia := m.manager.Create()
 
 	//return it to the client
 	b, err := json.Marshal(*newMedia)
@@ -141,4 +145,3 @@ func (m *MediaService) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte(b))
 }
-
