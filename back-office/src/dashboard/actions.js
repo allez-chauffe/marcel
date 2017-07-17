@@ -101,11 +101,12 @@ export const addDashboard = (): AddDashboardThunkAction => dispatch => {
     })
 }
 
-export const addSubPlugin = (parent: PluginInstance): AddSubPluginAction => (
-  prop: string,
-) => (plugin: Plugin) => ({
+export const addSubPlugin = (
+  propName: string,
+  plugin: Plugin,
+): AddSubPluginAction => ({
   type: actions.ADD_SUB_PLUGIN,
-  payload: { parent: parent.instanceId, prop, plugin },
+  payload: { propName, plugin },
 })
 
 export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (

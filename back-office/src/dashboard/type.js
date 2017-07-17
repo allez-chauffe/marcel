@@ -86,8 +86,7 @@ export type AddDashboardThunkAction = (Dispatch<AddDashboardAction>) => void
 export type AddSubPluginAction = {
   type: 'DASHBOARD/ADD_SUB_PLUGIN',
   payload: {
-    parent: string,
-    prop: string,
+    propName: string,
     plugin: Plugin,
   },
 }

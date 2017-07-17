@@ -36,10 +36,10 @@ class PluginListProp extends React.Component {
   }
 
   addPlugin = (plugin: Plugin) =>
-    this.props.onChange([...this.props.value, plugin])
+    this.props.addSubPlugin(this.props.name, plugin)
 
-  deletePlugin = (plugin: Plugin) =>
-    this.props.onChange(without(this.props.value, plugin))
+  deletePlugin = (plugin: PluginInstance) =>
+    this.props.deleteSubPlugin(this.props.name, plugin)
 
   render() {
     const { value } = this.props

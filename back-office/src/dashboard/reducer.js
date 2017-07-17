@@ -2,9 +2,9 @@
 import type { Reducer } from 'redux'
 import { actions } from './actions'
 import { actions as loadActions } from '../store/loaders'
-import { mapValues, keyBy, concat, map, keys, chain as _chain } from 'lodash'
+import { mapValues, keyBy, keys, chain as _chain } from 'lodash'
 import { values } from 'lodash/fp'
-import { set, update, unset, chain } from 'immutadot'
+import { set, unset, chain, update } from 'immutadot'
 import uuid from 'uuid/v4'
 import { getPluginInstances } from '../common/utils'
 import type {
@@ -25,11 +25,11 @@ const intialState = {
 }
 
 const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
-  return mapValues(plugins, plugin => {
-    if (!layout[plugin.instanceId])
-      throw new Error('Plugin instance not found in layout')
+  return mapValues(layout, (layoutItem, instanceId) => {
+    const plugin = plugins[instanceId]
+    if (!plugin) throw new Error('Plugin instance not found in layout')
 
-    const { x, y, w: cols, h: rows } = layout[plugin.instanceId]
+    const { x, y, w: cols, h: rows } = layoutItem
     return { ...plugin, x, y, cols, rows }
   })
 }
@@ -77,19 +77,23 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         .value()
     }
     case actions.ADD_SUB_PLUGIN: {
-      const { parent, prop, plugin } = action.payload
+      const { selectedPlugin } = state
+      const { propName, plugin } = action.payload
       const instanceId = uuid()
       return chain(state)
-        .set(`plugins.${instanceId}`, {
+        .set(`pluginInstances.${instanceId}`, {
           ...plugin,
           x: 0,
           y: 0,
           cols: 1,
           rows: 1,
           instanceId,
-          parent,
+          parent: { plugin: selectedPlugin, prop: propName },
         })
-        .push(`dashboards.${parent}.props.${prop}.value`, instanceId)
+        .push(
+          `pluginInstances.${selectedPlugin}.props.${propName}.value`,
+          instanceId,
+        )
         .value()
     }
     case actions.ADD_PLUGIN: {
@@ -97,7 +101,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       const { selectedDashboard } = state
       return selectedDashboard
         ? chain(state)
-            .set(`plugins.${instanceId}`, {
+            .set(`pluginInstances.${instanceId}`, {
               ...action.payload.plugin,
               x: action.payload.x,
               y: action.payload.y,
@@ -105,7 +109,8 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
               rows: 1,
               instanceId,
             })
-            .push(state, `dashboards.${selectedDashboard}.plugins`, instanceId)
+            .push(`dashboards.${selectedDashboard}.plugins`, instanceId)
+            .value()
         : state
     }
     case actions.DELETE_PLUGIN: {
@@ -123,11 +128,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       const { layout } = action.payload
       const { selectedDashboard } = state
       return selectedDashboard
-        ? update(
-            state,
-            `dashboards.${selectedDashboard}.plugins`,
-            updatePlugins(layout),
-          )
+        ? update(state, `pluginInstances`, updatePlugins(layout))
         : state
     }
     case actions.UPDATE_CONFIG: {
