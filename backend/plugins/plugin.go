@@ -4,14 +4,12 @@ package plugins
 //
 // swagger:model
 type Configuration struct {
-	LastID  int     `json:"lastid"`
 	Plugins []Plugin `json:"plugins"`
 }
 
 func NewConfiguration() *Configuration {
 	var configuration = new(Configuration)
 
-	configuration.LastID = 0
 	configuration.Plugins = []Plugin{}
 
 	return configuration
@@ -21,11 +19,11 @@ func NewConfiguration() *Configuration {
 //
 // swagger:model
 type Plugin struct {
-	ID          int         `json:"id"`
-	Name        string      `json:"name"`
-	Description string      `json:"description"`
-	Frontend    Frontend  `json:"frontend"`
-	Backend     Backend   `json:"backend"`
+	EltName     string     `json:"eltName"`
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	Frontend    Frontend   `json:"frontend"`
+	Backend     Backend    `json:"backend"`
 }
 
 func NewPlugin() (*Plugin) {
@@ -38,10 +36,8 @@ func NewPlugin() (*Plugin) {
 }
 
 type Frontend struct {
-	EltName   string `json:"eltName"`
 	Cols      int `json:"cols"`
 	Rows      int `json:"rows"`
-	Fixedsize int `json:"fixedsize"`
 	Props     []Props `json:"props"`
 }
 

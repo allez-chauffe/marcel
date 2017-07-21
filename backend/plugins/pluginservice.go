@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/mux"
-	"strconv"
 )
 
 const PLUGINS_CONFIG_PATH string = "data"
@@ -81,15 +80,9 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 // swagger:parameters idPlugin
 func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	attr := vars["idPlugin"]
+	eltName := vars["eltName"]
 
-	idService, err := strconv.Atoi(attr)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest)
-		return
-	}
-
-	plugin, err := s.Manager.Get(idService)
+	plugin, err := s.Manager.Get(eltName)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound)
 		return
@@ -110,4 +103,6 @@ func (s* Service) UploadHandler(w http.ResponseWriter, r *http.Request) {
 	// 3 : check there's no plugin already installed with same name or reject
 	// 4 : unzip into /plugins folder
 	// 5 : save into plugins.json file
+
+	w.Write([]byte("Upload en cours..."))
 }

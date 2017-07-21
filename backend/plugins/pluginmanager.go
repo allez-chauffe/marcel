@@ -63,12 +63,12 @@ func (m *Manager) GetAll() ([]Plugin) {
 	return m.Config.Plugins
 }
 
-// GetPlugin Return the plugin with this id
-func (m *Manager) Get(idPlugin int) (*Plugin, error) {
+// GetPlugin Return the plugin with its eltName
+func (m *Manager) Get(eltName string) (*Plugin, error) {
 
-	log.Println("Getting plugin with id: ", idPlugin)
+	log.Println("Getting plugin with eltName: ", eltName)
 	for _, plugin := range m.Config.Plugins {
-		if idPlugin == plugin.ID {
+		if eltName == plugin.EltName {
 			return &plugin, nil
 		}
 	}
@@ -76,21 +76,6 @@ func (m *Manager) Get(idPlugin int) (*Plugin, error) {
 	return nil, errors.New("NO_MEDIA_FOUND")
 }
 
-// CreatePlugin Create a new Plugin, save it into memory and commit
-func (m *Manager) Create() (*Plugin) {
-
-	log.Println("Creating plugin")
-
-	m.Config.LastID = m.Config.LastID + 1
-
-	newPlugin := NewPlugin()
-	newPlugin.ID = m.Config.LastID //commons.GetUID()
-
-	//save it into the Configuration
-	m.Save(newPlugin)
-
-	return newPlugin
-}
 
 // RemovePlugin Remove plugin from memory and commit
 func (m *Manager) Remove(plugin *Plugin) {
@@ -107,7 +92,7 @@ func (m *Manager) Remove(plugin *Plugin) {
 // GetPluginPosition Return position of a plugin in the list
 func (m *Manager) GetPosition(plugin *Plugin) int {
 	for p, m := range m.Config.Plugins {
-		if m.ID == plugin.ID {
+		if m.EltName == plugin.EltName {
 			return p
 		}
 	}
