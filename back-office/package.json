@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "immutadot": "^0.1.12",
+    "immutadot": "^0.2.0",
     "lodash": "^4.17.4",
     "react": "^15.5.4",
     "react-color": "^2.13.0",
