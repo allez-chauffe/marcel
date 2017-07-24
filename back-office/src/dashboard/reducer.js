@@ -1,10 +1,20 @@
 //@flow
 import type { Reducer } from 'redux'
+import {
+  mapValues,
+  keyBy,
+  keys,
+  chain as _chain,
+  pickBy,
+  omit,
+  map,
+  flatten,
+  reduce,
+} from 'lodash'
+import { set, unset, chain, update } from 'immutadot'
 import { actions } from './actions'
 import { actions as loadActions } from '../store/loaders'
-import { mapValues, keyBy, keys, chain as _chain } from 'lodash'
 import { values } from 'lodash/fp'
-import { set, unset, chain, update } from 'immutadot'
 import uuid from 'uuid/v4'
 import { getPluginInstances } from '../common/utils'
 import type {
@@ -117,11 +127,38 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         : state
     }
     case actions.DELETE_PLUGIN: {
-      const { selectedPlugin, selectedDashboard } = state
-      if (!selectedPlugin || !selectedDashboard) return state
+      const { plugin } = action.payload
+      const { selectedDashboard } = state
+      if (!selectedDashboard) return state
+
+      const { instanceId, parent } = plugin
+
+      const removeChilds = (pluginInstances, instanceId) => {
+        const plugin = pluginInstances[instanceId]
+        if (!plugin) return pluginInstances
+
+        const pluginListProps = pickBy(plugin.props, { type: 'pluginList' })
+        const pluginsToRemove = flatten(map(values(pluginListProps), 'value'))
+
+        if (!pluginsToRemove.lenght) return pluginInstances
+
+        const cleanedPluginInstances = omit(pluginInstances, pluginsToRemove)
+        return reduce(pluginsToRemove, removeChilds, cleanedPluginInstances)
+      }
+
       return chain(state)
-        .unset(`plugins.${selectedPlugin}`)
-        .pull(`dashboards.${selectedDashboard}.plugins`, selectedPlugin)
+        .update(`pluginInstances`, pluginInstances =>
+          removeChilds(pluginInstances, instanceId),
+        )
+        .unset(`pluginInstances.${plugin.instanceId}`)
+        .pull(
+          parent
+            ? `pluginInstances.${parent.plugin}.props.${parent.prop}.value`
+            : `dashboards.${selectedDashboard}.plugins`,
+          plugin.instanceId,
+        )
+        .set(`selectedPlugin`, parent && parent.plugin)
+        .value()
     }
     case actions.CHANGE_PROP: {
       const { instanceId, prop, value } = action.payload

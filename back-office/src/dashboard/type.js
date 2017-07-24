@@ -108,7 +108,7 @@ export type AddPluginThunkAction = (
 export type DeletePluginAction = {
   type: 'DASHBOARD/DELETE_PLUGIN',
   payload: {
-    plugin: Plugin,
+    plugin: PluginInstance,
   },
 }
 export type SaveLayoutAction = {

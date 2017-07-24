@@ -13,14 +13,21 @@ export type PropsType = {
 }
 
 const SubPluginProps = (props: PropsType) => {
-  const { plugin, goBack = () => console.log('GO BACK') } = props
+  const { plugin, goBack } = props
+  if (!plugin) return <div />
+
+  const { x, y, cols, rows, name, parent } = plugin
   return (
-    <div>
-      {plugin &&
-        <div>
-          {plugin.parent && <IconButton icon="arrow_back" onClick={goBack} />}
-          <PluginProps />
-        </div>}
+    <div className="SubPluginProps">
+      <div>
+        <h2>
+          {parent &&
+            <IconButton icon="arrow_back" onClick={goBack} className="back" />}
+          {name}
+        </h2>
+        <p>{`(x: ${x}, y: ${y}, columns: ${cols}, rows: ${rows})`}</p>
+      </div>
+      <PluginProps />
     </div>
   )
 }

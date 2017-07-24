@@ -11,41 +11,28 @@ const DragHandle = SortableHandle(() =>
   <FontIcon value="menu" className="grab" />,
 )
 
-class SortablePlugin extends React.Component {
-  props: {
-    plugin: PluginInstance,
-    onDelete: PluginInstance => void,
-    selectPlugin: PluginInstance => void,
-  }
+export type PropTypes = {
+  plugin: PluginInstance,
+  onDelete: () => void,
+  onSelect: () => void,
+}
 
-  onDelete = () => {
-    this.props.onDelete(this.props.plugin)
-  }
-
-  onSelect = () => {
-    this.props.selectPlugin(this.props.plugin)
-  }
-
-  render() {
-    const iconStyle = { cursor: 'pointer' }
-    return (
-      <ListItem
-        caption={this.props.plugin.name}
-        ripple={false}
-        leftIcon={<DragHandle />}
-        rightIcon={
-          <div>
-            <FontIcon value="edit" onClick={this.onSelect} style={iconStyle} />
-            <FontIcon
-              value="delete"
-              onClick={this.onDelete}
-              style={iconStyle}
-            />
-          </div>
-        }
-      />
-    )
-  }
+const SortablePlugin = (props: PropTypes) => {
+  const { onSelect, onDelete, plugin } = props
+  const iconStyle = { cursor: 'pointer' }
+  return (
+    <ListItem
+      caption={plugin.name}
+      ripple={false}
+      leftIcon={<DragHandle />}
+      rightIcon={
+        <div>
+          <FontIcon value="edit" onClick={onSelect} style={iconStyle} />
+          <FontIcon value="delete" onClick={onDelete} style={iconStyle} />
+        </div>
+      }
+    />
+  )
 }
 
 export default SortablePlugin
