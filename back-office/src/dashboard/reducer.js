@@ -150,12 +150,12 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         .update(`pluginInstances`, pluginInstances =>
           removeChilds(pluginInstances, instanceId),
         )
-        .unset(`pluginInstances.${plugin.instanceId}`)
+        .unset(`pluginInstances.${instanceId}`)
         .pull(
           parent
             ? `pluginInstances.${parent.plugin}.props.${parent.prop}.value`
             : `dashboards.${selectedDashboard}.plugins`,
-          plugin.instanceId,
+          instanceId,
         )
         .set(`selectedPlugin`, parent && parent.plugin)
         .value()

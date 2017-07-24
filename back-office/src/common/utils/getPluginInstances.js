@@ -1,5 +1,5 @@
 //@flow
-import { map, concat, chain, mapValues as _mapValues } from 'lodash'
+import { map, concat, chain } from 'lodash'
 import { mapValues } from 'immutadot'
 import { values } from 'lodash/fp'
 import type { PluginInstance } from '../../dashboard'
