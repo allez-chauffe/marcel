@@ -25,6 +25,7 @@ import type {
   CancelDashboardDeletionAction,
   ToggleDisplayGridAction,
   AddSubPluginAction,
+  SelectPluginParentAction
 } from './type'
 
 export const actions = {
@@ -46,6 +47,7 @@ export const actions = {
   UPLOAD_FAILED: 'DASHBOARD/UPLOAD_FAILED',
   UPDATE_CONFIG: 'DASHBOARD/UPDATE_CONFIG',
   TOGGLE_DISPLAY_GRID: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
+  SELECT_PLUGIN_PARENT: 'DASHBOARD/SELECT_PLUGIN_PARENT',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -195,4 +197,8 @@ export const updateConfig = (property: string) => (
 
 export const toggleDisplayGrid = (): ToggleDisplayGridAction => ({
   type: actions.TOGGLE_DISPLAY_GRID,
+})
+
+export const selectPluginParent = (): SelectPluginParentAction => ({
+  type: actions.SELECT_PLUGIN_PARENT,
 })

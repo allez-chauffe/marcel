@@ -149,6 +149,10 @@ export type ToggleDisplayGridAction = {
   type: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
 }
 
+export type SelectPluginParentAction = {
+  type: 'DASHBOARD/SELECT_PLUGIN_PARENT',
+}
+
 // eslint-disable-next-line no-use-before-define
 export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 

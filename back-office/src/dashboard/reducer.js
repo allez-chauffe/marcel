@@ -161,6 +161,13 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
         pluginInstances: keyBy(pluginInstances, 'instanceId'),
       }
     }
+    case actions.SELECT_PLUGIN_PARENT: {
+      return {
+        ...state,
+        selectedPlugin:
+          state.pluginInstances[state.selectedPlugin].parent.plugin,
+      }
+    }
     default:
       return state
   }

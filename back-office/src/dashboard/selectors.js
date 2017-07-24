@@ -4,6 +4,7 @@ import { mapValues, keyBy } from 'lodash'
 import { mapValues as i_mapValues } from 'immutadot'
 import type { State } from '../store'
 import type { Dashboard, DashboardMap } from './type'
+import { mapPluginInstancesToProps } from '../common/utils'
 
 export const dashboardsSelector = (state: State): DashboardMap =>
   state.dashboard.dashboards
@@ -43,24 +44,7 @@ export const selectedPluginSelector = createSelector(
   pluginInstancesSelector,
   selectedPluginNameSelector,
   (pluginInstances, instanceId) => {
-    if (!instanceId || pluginInstances[instanceId]) return null
-    const pluginInstance = pluginInstances[instanceId]
-    return {
-      ...pluginInstance,
-      props: concat(
-        reject(pluginInstance.prop, { type: 'pluginList' }),
-        filter(pluginInstance.prop, { type: 'pluginList' }).map(
-          set('value', pluginInstances),
-        ),
-      ),
-    }
-    return i_mapValues(
-      pluginInstance,
-      'props',
-      prop =>
-        prop.type === 'pluginList'
-          ? { ...prop, value: pluginInstances[prop.value] }
-          : prop,
-    )
+    if (!instanceId || !pluginInstances[instanceId]) return null
+    return mapPluginInstancesToProps(pluginInstances)(instanceId)
   },
 )

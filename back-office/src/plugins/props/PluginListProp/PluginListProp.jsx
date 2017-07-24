@@ -13,7 +13,7 @@ const SortablePluginList = SortableContainer(({ plugins, onDelete }) =>
   <List>
     {plugins.map((plugin, index) =>
       <SortablePlugin
-        key={plugin.elementName}
+        key={plugin.eltName}
         index={index}
         plugin={plugin}
         onDelete={onDelete}

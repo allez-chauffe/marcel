@@ -8,7 +8,7 @@ import PluginProps from '../PluginProps'
 import './SubPluginProps.css'
 
 export type PropsType = {
-  plugin?: PluginInstance,
+  plugin: ?PluginInstance,
   goBack: () => void,
 }
 

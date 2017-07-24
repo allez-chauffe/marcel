@@ -1,5 +1,5 @@
 //@flow
-import { pickBy, merge, omitBy } from 'lodash'
+import { pickBy, merge, omitBy, mapValues } from 'lodash'
 import type { PluginInstanceMap, PluginInstance } from '../../dashboard'
 
 const mapPluginInstancesToProps = (pluginInstances: PluginInstanceMap) => (
@@ -10,8 +10,8 @@ const mapPluginInstancesToProps = (pluginInstances: PluginInstanceMap) => (
   return {
     ...otherAttributes,
     props: merge(
-      pickBy(props, { type: 'pluginList' }),
-      omitBy(props, { type: 'pluginList' }).mapValues(prop => ({
+      omitBy(props, { type: 'pluginList' }),
+      mapValues(pickBy(props, { type: 'pluginList' }), prop => ({
         ...prop,
         value: prop.value.map(getPluginInstance),
       })),
