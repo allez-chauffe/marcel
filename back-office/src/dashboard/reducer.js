@@ -162,11 +162,14 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       }
     }
     case actions.SELECT_PLUGIN_PARENT: {
-      return {
-        ...state,
-        selectedPlugin:
-          state.pluginInstances[state.selectedPlugin].parent.plugin,
-      }
+      const { selectedPlugin, pluginInstances } = state
+      if (!selectedPlugin) return state
+
+      const plugin = pluginInstances[selectedPlugin]
+      if (!plugin) return state
+
+      const { parent } = plugin
+      return parent ? { ...state, selectedPlugin: parent.plugin } : state
     }
     default:
       return state

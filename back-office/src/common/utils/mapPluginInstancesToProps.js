@@ -6,7 +6,10 @@ const mapPluginInstancesToProps = (pluginInstances: PluginInstanceMap) => (
   instanceId: string,
 ): PluginInstance => {
   const getPluginInstance = mapPluginInstancesToProps(pluginInstances)
-  const { props, ...otherAttributes } = pluginInstances[instanceId]
+  const pluginInstance = pluginInstances[instanceId]
+  if (!pluginInstance) throw new Error('Plugin instance not found')
+
+  const { props, ...otherAttributes } = pluginInstance
   return {
     ...otherAttributes,
     props: merge(

@@ -19,10 +19,10 @@ export type PluginInstance = Plugin & {
   y: number,
   cols: number,
   rows: number,
-  parent?: string,
+  parent?: { plugin: string, prop: string },
 }
 
-export type PluginInstanceMap = { [instanceId: string]: PluginInstance }
+export type PluginInstanceMap = { [instanceId: string]: ?PluginInstance }
 export type Dashboard = {
   id: string,
   name: string,
