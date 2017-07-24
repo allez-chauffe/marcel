@@ -162,7 +162,11 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     }
     case actions.CHANGE_PROP: {
       const { instanceId, prop, value } = action.payload
-      return set(state, `plugins.${instanceId}.props.${prop.name}.value`, value)
+      return set(
+        state,
+        `pluginInstances.${instanceId}.props.${prop.name}.value`,
+        value,
+      )
     }
     case actions.SAVE_LAYOUT: {
       const { layout } = action.payload
