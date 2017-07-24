@@ -1,9 +1,8 @@
 //@flow
 import { createSelector } from 'reselect'
 import { mapValues, keyBy } from 'lodash'
-import { mapValues as i_mapValues } from 'immutadot'
 import type { State } from '../store'
-import type { Dashboard, DashboardMap } from './type'
+import type { DashboardMap } from './type'
 import { mapPluginInstancesToProps } from '../common/utils'
 
 export const dashboardsSelector = (state: State): DashboardMap =>

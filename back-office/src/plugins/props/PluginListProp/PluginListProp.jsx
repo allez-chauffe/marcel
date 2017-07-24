@@ -1,6 +1,5 @@
 //@flow
 import React from 'react'
-import { without } from 'lodash'
 import { SortableContainer, arrayMove } from 'react-sortable-hoc'
 import List from 'react-toolbox/lib/list/List'
 import type { Plugin } from '../../type'

@@ -26,7 +26,7 @@ class PluginProps extends React.Component {
 
     if (!plugin) return <div className="PluginsProps" />
 
-    const { name, props: pluginProps, x, y, cols, rows } = plugin
+    const { props: pluginProps } = plugin
 
     return (
       <div className="PluginProps">
