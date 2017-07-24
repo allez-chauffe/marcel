@@ -78,8 +78,11 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     }
     case actions.ADD_SUB_PLUGIN: {
       const { selectedPlugin } = state
+      if (!selectedPlugin) return state
+
       const { propName, plugin } = action.payload
       const instanceId = uuid()
+
       return chain(state)
         .set(`pluginInstances.${instanceId}`, {
           ...plugin,

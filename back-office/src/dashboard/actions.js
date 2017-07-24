@@ -25,7 +25,7 @@ import type {
   CancelDashboardDeletionAction,
   ToggleDisplayGridAction,
   AddSubPluginAction,
-  SelectPluginParentAction
+  SelectPluginParentAction,
 } from './type'
 
 export const actions = {
