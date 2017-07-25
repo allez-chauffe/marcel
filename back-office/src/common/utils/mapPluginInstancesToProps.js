@@ -1,5 +1,4 @@
 //@flow
-import { pickBy, merge, omitBy } from 'lodash'
 import { map, mapValues } from 'immutadot'
 import type { PluginInstanceMap, PluginInstance } from '../../dashboard'
 
