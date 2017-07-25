@@ -1,28 +1,13 @@
 //@flow
 import type { Reducer } from 'redux'
-import {
-  mapValues,
-  keyBy,
-  keys,
-  chain as _chain,
-  pickBy,
-  omit,
-  map,
-  flatten,
-  reduce,
-} from 'lodash'
+import { mapValues, keyBy, keys, chain as _chain, pickBy, omit, map, flatten, reduce } from 'lodash'
 import { set, unset, chain, update } from 'immutadot'
 import { actions } from './actions'
 import { actions as loadActions } from '../store/loaders'
 import { values } from 'lodash/fp'
 import uuid from 'uuid/v4'
 import { getPluginInstances } from '../common/utils'
-import type {
-  DashboardAction,
-  DashboardState,
-  LayoutMap,
-  PluginInstanceMap,
-} from './type'
+import type { DashboardAction, DashboardState, LayoutMap, PluginInstanceMap } from './type'
 
 const intialState = {
   selectedPlugin: null,
@@ -44,10 +29,7 @@ const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
   })
 }
 
-const dashboard: Reducer<DashboardState, DashboardAction> = (
-  state = intialState,
-  action,
-) => {
+const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState, action) => {
   switch (action.type) {
     case actions.SELECT_PLUGIN: {
       return { ...state, selectedPlugin: action.payload.instanceId }
@@ -103,11 +85,12 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
           instanceId,
           parent: { plugin: selectedPlugin, prop: propName },
         })
-        .push(
-          `pluginInstances.${selectedPlugin}.props.${propName}.value`,
-          instanceId,
-        )
+        .push(`pluginInstances.${selectedPlugin}.props.${propName}.value`, instanceId)
         .value()
+    }
+    case actions.REORDER_SUB_PLUGINS: {
+      const { instanceIds, parent: { plugin, prop } } = action.payload
+      return set(state, `pluginInstances.${plugin}.props.${prop}.value`, instanceIds)
     }
     case actions.ADD_PLUGIN: {
       const instanceId = uuid()
@@ -147,9 +130,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
       }
 
       return chain(state)
-        .update(`pluginInstances`, pluginInstances =>
-          removeChilds(pluginInstances, instanceId),
-        )
+        .update(`pluginInstances`, pluginInstances => removeChilds(pluginInstances, instanceId))
         .unset(`pluginInstances.${instanceId}`)
         .pull(
           parent
@@ -162,18 +143,12 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     }
     case actions.CHANGE_PROP: {
       const { instanceId, prop, value } = action.payload
-      return set(
-        state,
-        `pluginInstances.${instanceId}.props.${prop.name}.value`,
-        value,
-      )
+      return set(state, `pluginInstances.${instanceId}.props.${prop.name}.value`, value)
     }
     case actions.SAVE_LAYOUT: {
       const { layout } = action.payload
       const { selectedDashboard } = state
-      return selectedDashboard
-        ? update(state, `pluginInstances`, updatePlugins(layout))
-        : state
+      return selectedDashboard ? update(state, `pluginInstances`, updatePlugins(layout)) : state
     }
     case actions.UPDATE_CONFIG: {
       const { selectedDashboard } = state
@@ -188,11 +163,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (
     }
     case loadActions.LOAD_DASHBOARDS_SUCCESSED: {
       const { dashboards } = action.payload
-      const plugins = _chain(dashboards)
-        .map('plugins')
-        .map(values)
-        .flatten()
-        .value()
+      const plugins = _chain(dashboards).map('plugins').map(values).flatten().value()
       const pluginInstances = getPluginInstances(plugins)
       const normalizedDashboards = dashboards.map(dashboard => ({
         ...dashboard,

@@ -153,6 +153,17 @@ export type SelectPluginParentAction = {
   type: 'DASHBOARD/SELECT_PLUGIN_PARENT',
 }
 
+export type ReorderSubPluginAction = {
+  type: 'DASHBOARD/REORDER_SUB_PLUGINS',
+  payload: {
+    instanceIds: string[],
+    parent: {
+      plugin: string,
+      prop: string,
+    },
+  },
+}
+
 // eslint-disable-next-line no-use-before-define
 export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 

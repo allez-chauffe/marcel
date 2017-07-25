@@ -1,7 +1,11 @@
 //@flow
 import { connect } from 'react-redux'
 import { pluginsSelector } from '../../selectors'
-import { addSubPlugin } from '../../../dashboard'
+import {
+  addSubPlugin,
+  deletePlugin,
+  reorderSubPlugins,
+} from '../../../dashboard'
 import PluginListProp from './PluginListProp'
 
 const mapStateToProps = (state: State) => ({
@@ -10,6 +14,8 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = {
   addSubPlugin,
+  deletePlugin,
+  reorderSubPlugins,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PluginListProp)
