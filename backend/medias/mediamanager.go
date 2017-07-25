@@ -123,6 +123,10 @@ func (m *Manager) Save(media *Media) {
 	m.Remove(media)
 	m.Config.Medias = append(m.Config.Medias, *media)
 
+	//todo : stop all plugins backends
+	//todo : load all docker images (docker load --input myPlugin.tar)
+	//todo : run all docker containers (par instance) and set attributes via environement variables
+
 	m.Commit()
 }
 

@@ -122,6 +122,8 @@ func (m *Service) PostHandler(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &media)
 
 	m.manager.Save(media)
+	//run docker image for the plugin
+	// docker run -it -e "...=..."
 }
 
 // swagger:route GET /medias CreateHandler
