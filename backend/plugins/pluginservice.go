@@ -17,8 +17,7 @@ type Service struct {
 func NewService() *Service {
 	var p = new(Service)
 
-	c := NewConfiguration()
-	p.Manager = NewManager(PLUGINS_CONFIG_PATH, PLUGINS_CONFIG_FILENAME, c)
+	p.Manager = NewManager(PLUGINS_CONFIG_PATH, PLUGINS_CONFIG_FILENAME)
 
 	return p
 }
