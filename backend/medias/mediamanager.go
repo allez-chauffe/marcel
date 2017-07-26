@@ -18,10 +18,9 @@ type Manager struct {
 	Config         *Configuration
 }
 
-func NewManager(configPath, configFilename string, configuration *Configuration) *Manager {
+func NewManager(configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
-	manager.Config = configuration
 	manager.configPath = configPath
 	manager.configFileName = configFilename
 

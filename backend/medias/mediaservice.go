@@ -19,8 +19,7 @@ type Service struct {
 func NewService() *Service {
 	service := new(Service)
 
-	c := NewConfiguration()
-	service.manager = NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME, c)
+	service.manager = NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	return service
 }
