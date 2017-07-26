@@ -7,7 +7,6 @@ import (
 	"github.com/rs/cors"
 	"log"
 	"os"
-	//"github.com/Zenika/MARCEL/backend/plugins"
 	"github.com/Zenika/MARCEL/backend/apidoc"
 	"github.com/Zenika/MARCEL/backend/plugins"
 )
@@ -21,13 +20,16 @@ var logFile *os.File
 type App struct {
 	Router http.Handler
 
-	mediaService *medias.Service
+	mediaService  *medias.Service
 	pluginService *plugins.Service
 }
 
 func (a *App) Initialize() {
 
-	a.initializeLog()
+	err := a.InitializeLog(logFileName, logFile)
+	if err != nil {
+		print(err)
+	}
 
 	a.initializeData()
 
@@ -68,16 +70,18 @@ func (a *App) initializeRoutes() {
 	a.Router = c.Handler(r)
 }
 
-func (a *App) initializeLog() {
-	if len(logFileName) == 0 {
-		logFileName = "marcel.log"
+func (a *App) InitializeLog(filename string, logFile *os.File) error {
+	if len(filename) == 0 {
+		filename = "marcel.log"
 	}
-	var err error = nil
-	logFile, err = os.OpenFile(logFileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	logFile, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
 	log.SetOutput(logFile)
+
+	return nil
 }
 
 func (a *App) initializeData() {
