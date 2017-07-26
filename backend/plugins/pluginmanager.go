@@ -12,20 +12,19 @@ import (
 )
 
 type Manager struct {
-	configPath     string
-	configFileName string
-	configFullpath string
+	ConfigPath     string
+	ConfigFileName string
+	ConfigFullpath string
 	Config         *Configuration
 }
 
-func NewManager(configPath, configFilename string, configuration *Configuration) *Manager {
+func NewManager(configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
-	manager.Config = configuration
-	manager.configPath = configPath
-	manager.configFileName = configFilename
+	manager.ConfigPath = configPath
+	manager.ConfigFileName = configFilename
 
-	manager.configFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
+	manager.ConfigFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
 	manager.Config = NewConfiguration()
 
 	return manager
@@ -35,10 +34,10 @@ func NewManager(configPath, configFilename string, configuration *Configuration)
 func (m *Manager) Load() {
 	log.Printf("Start Loading Plugins from DB.")
 
-	m.CreateSaveFileIfNotExist(m.configPath, m.configFileName)
+	m.CreateSaveFileIfNotExist(m.ConfigPath, m.ConfigFileName)
 
 	//Plugins configurations are loaded from a JSON file on the FS.
-	content, err := ioutil.ReadFile(m.configFullpath)
+	content, err := ioutil.ReadFile(m.ConfigFullpath)
 	commons.Check(err)
 
 	var obj interface{}
@@ -113,7 +112,7 @@ func (m *Manager) Save(plugin *Plugin) {
 func (m *Manager) Commit() {
 	content, _ := json.Marshal(m.Config)
 
-	err := ioutil.WriteFile(m.configFullpath, content, 0644)
+	err := ioutil.WriteFile(m.ConfigFullpath, content, 0644)
 
 	if err != nil {
 		log.Println("Cannot save plugins configuration:")
