@@ -47,11 +47,11 @@ func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 	c := s.Manager.GetConfiguration()
 	b, err := json.Marshal(c)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, "Impossible to get configuration of the plugins")
 		return
 	}
 
-	w.Write([]byte(b))
+	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
 // swagger:route GET /plugins GetAllHandler
@@ -67,11 +67,11 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.Manager.GetAll()
 	b, err := json.Marshal(media)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, "Impossible to get all plugins")
 		return
 	}
 
-	w.Write([]byte(b))
+	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
 // swagger:route GET /plugins/{idMedia} GetHandler
@@ -89,30 +89,30 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 	plugin, err := s.Manager.Get(eltName)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
 	}
 
 	b, err := json.Marshal(*plugin)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
 	}
 
-	w.Write([]byte(b))
+	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
 func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// 0 : Get files content and copy it into a temporary folder
 	filename, err := UploadFile(r)
 	if err != nil {
-		fmt.Fprintln(w, err)
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 	}
 
 	// 1 : Check extension
 	ext, err := CheckExtension(filename)
 	if err != nil {
-		println(err, w)
+		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 	}
 	fmt.Println(ext)
 
@@ -123,7 +123,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// 6 : save into plugins.json file
 	// 7 : delete temporary file
 
-	w.Write([]byte("Upload done."))
+	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added in the catalog")
 }
 
 func UploadFile(r *http.Request) (string, error) {

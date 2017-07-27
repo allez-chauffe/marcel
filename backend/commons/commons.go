@@ -52,8 +52,9 @@ func IsInArray(val interface{}, array interface{}) (exists bool, index int) {
 	return
 }
 
-func WriteResponse(w http.ResponseWriter, statusCode int) {
+func WriteResponse(w http.ResponseWriter, statusCode int, message string) {
 	w.WriteHeader(statusCode)
+	w.Write([]byte(message))
 }
 
 func Check(e error) {
