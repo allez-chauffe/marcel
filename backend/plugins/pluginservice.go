@@ -107,12 +107,15 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	filename, err := UploadFile(r)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+		return
 	}
 
 	// 1 : Check extension
 	ext, err := CheckExtension(filename)
 	if err != nil {
+		os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + filename)
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
+		return
 	}
 	fmt.Println(ext)
 
@@ -123,7 +126,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// 6 : save into plugins.json file
 	// 7 : delete temporary file
 
-	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added in the catalog")
+	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added to the catalog")
 }
 
 func UploadFile(r *http.Request) (string, error) {
@@ -163,7 +166,7 @@ func CheckExtension(filename string) (string, error) {
 	ext := path.Ext(filename)
 
 	if accepted, _ := commons.IsInArray(ext, acceptedExtensions); accepted == false {
-		v := strings.Join(acceptedExtensions, ",")
+		v := strings.Join(acceptedExtensions, ", ")
 		return "", errors.New("File extension (" + ext + ") is not supported. Accepted extensions are: " + v)
 	}
 
