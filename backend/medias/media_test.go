@@ -3,7 +3,6 @@ package medias
 import "testing"
 
 func TestNewConfiguration(t *testing.T) {
-	t.Log("NewConfiguration test")
 	c := NewConfiguration()
 
 	if len(c.Medias) != 0 {
@@ -16,7 +15,6 @@ func TestNewConfiguration(t *testing.T) {
 }
 
 func TestNewMedia(t *testing.T) {
-	t.Log("NewMedia test")
 	m := NewMedia()
 
 	if len(m.Plugins) != 0 {

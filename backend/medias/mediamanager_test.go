@@ -8,7 +8,6 @@ import (
 )
 
 func TestNewManager(t *testing.T) {
-	t.Log("NewManager test")
 	m := NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	if m.Config == nil {

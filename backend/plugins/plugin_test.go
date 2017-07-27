@@ -3,7 +3,6 @@ package plugins
 import "testing"
 
 func TestNewBackend(t *testing.T) {
-	t.Log("NewBackend test")
 	b := NewBackend()
 
 	if len(b.Ports) != 0 {
@@ -12,7 +11,6 @@ func TestNewBackend(t *testing.T) {
 }
 
 func TestNewFrontend(t *testing.T) {
-	t.Log("NewFrontend test")
 	f := NewFrontend()
 
 	if f.Cols != 0 || f.Rows != 0 {
@@ -21,7 +19,6 @@ func TestNewFrontend(t *testing.T) {
 }
 
 func TestNewPlugin(t *testing.T) {
-	t.Log("NewPlugin test")
 	p := NewPlugin()
 
 	if p.EltName != "" {
@@ -38,7 +35,6 @@ func TestNewPlugin(t *testing.T) {
 }
 
 func TestNewConfiguration(t *testing.T) {
-	t.Log("NewConfiguration test")
 	c := NewConfiguration()
 
 	if len(c.Plugins) != 0 {

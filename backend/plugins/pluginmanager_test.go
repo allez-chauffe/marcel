@@ -7,7 +7,6 @@ import (
 )
 
 func TestNewManager(t *testing.T) {
-	t.Log("NewManager test")
 	m := NewManager(PLUGINS_CONFIG_PATH, PLUGINS_CONFIG_FILENAME)
 
 	if m.Config == nil {
