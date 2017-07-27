@@ -63,7 +63,7 @@ func (a *App) initializeRoutes() {
 	s.HandleFunc("/medias/create", a.mediaService.CreateHandler).Methods("GET")
 	s.HandleFunc("/plugins", a.pluginService.GetAllHandler).Methods("GET")
 	s.HandleFunc("/plugins/config", a.pluginService.GetConfigHandler).Methods("GET")
-	s.HandleFunc("/plugins/upload", a.pluginService.UploadHandler).Methods("PUT")
+	s.HandleFunc("/plugins/add", a.pluginService.AddHandler).Methods("POST")
 	s.HandleFunc("/plugins/{eltName}", a.pluginService.GetHandler).Methods("GET")
 	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
 

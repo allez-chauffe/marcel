@@ -5,10 +5,18 @@ import (
 	"encoding/json"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/mux"
+	"fmt"
+	"io"
+	"os"
+	"log"
+	"path"
+	"errors"
+	"strings"
 )
 
 const PLUGINS_CONFIG_PATH string = "data"
 const PLUGINS_CONFIG_FILENAME string = "plugins.json"
+const PLUGINS_TEMPORARY_FOLDER string = "uploadedfiles"
 
 type Service struct {
 	Manager *Manager
@@ -22,11 +30,9 @@ func NewService() *Service {
 	return p
 }
 
-
 func (s *Service) GetManager() (*Manager) {
 	return s.Manager
 }
-
 
 // swagger:route GET /plugins/config GetConfigHandler
 //
@@ -96,12 +102,70 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(b))
 }
 
-func (s* Service) UploadHandler(w http.ResponseWriter, r *http.Request) {
-	// 1 : open zip file
-	// 2 : parse description file
-	// 3 : check there's no plugin already installed with same name or reject
-	// 4 : unzip into /plugins folder
-	// 5 : save into plugins.json file
+func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
+	// 0 : Get files content and copy it into a temporary folder
+	filename, err := UploadFile(r)
+	if err != nil {
+		fmt.Fprintln(w, err)
+	}
 
-	w.Write([]byte("Upload en cours..."))
+	// 1 : Check extension
+	ext, err := CheckExtension(filename)
+	if err != nil {
+		println(err, w)
+	}
+	fmt.Println(ext)
+
+	// 2 : open zip file
+	// 3 : parse description file
+	// 4 : check there's no plugin already installed with same name or reject
+	// 5 : unzip into /plugins folder
+	// 6 : save into plugins.json file
+	// 7 : delete temporary file
+
+	w.Write([]byte("Upload done."))
+}
+
+func UploadFile(r *http.Request) (string, error) {
+	file, header, err := r.FormFile("uploadfile")
+
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	defer file.Close()
+
+	out, err := os.Create(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + header.Filename)
+	if err != nil {
+		log.Println("Unable to create the file for writing. Check your write access privilege")
+		return "", err
+	}
+
+	defer out.Close()
+
+	// write the content from POST to the file
+	_, err = io.Copy(out, file)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	log.Println("File uploaded successfully : ")
+
+	return header.Filename, nil
+}
+
+// Return extension of the file or an error if the extension is not supported by this program
+func CheckExtension(filename string) (string, error) {
+	acceptedExtensions := []string{".zip", ".gzip", ".tar"}
+
+	ext := path.Ext(filename)
+
+	if accepted, _ := commons.IsInArray(ext, acceptedExtensions); accepted == false {
+		v := strings.Join(acceptedExtensions, ",")
+		return "", errors.New("File extension (" + ext + ") is not supported. Accepted extensions are: " + v)
+	}
+
+	return ext, nil
 }
