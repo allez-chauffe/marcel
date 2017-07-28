@@ -34,3 +34,13 @@ func TestIsInArray(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBasename(t *testing.T) {
+	if r := Basename("marcel.zip"); r != "marcel" {
+		t.Errorf("Should get 'marcel', got %v", r)
+	}
+
+	if r := Basename("beliveau.tmp.zip"); r != "beliveau.tmp" {
+		t.Errorf("Should get 'beliveau.tmp', got %v", r)
+	}
+}

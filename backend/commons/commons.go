@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"log"
 	"reflect"
+	"strings"
 )
 
 func init() {
@@ -50,6 +51,14 @@ func IsInArray(val interface{}, array interface{}) (exists bool, index int) {
 	}
 
 	return
+}
+
+func Basename(s string) string {
+	n := strings.LastIndexByte(s, '.')
+	if n >= 0 {
+		return s[:n]
+	}
+	return s
 }
 
 func WriteResponse(w http.ResponseWriter, statusCode int, message string) {
