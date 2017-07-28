@@ -162,6 +162,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	s.Manager.Add(plugin)
 
 	// 6 : delete temporary file
+	os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + filename)
 
 	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added to the catalog")
 }
