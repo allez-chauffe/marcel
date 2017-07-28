@@ -5,18 +5,20 @@ import (
 	"encoding/json"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/mux"
-	"fmt"
 	"io"
 	"os"
 	"log"
 	"path"
 	"errors"
 	"strings"
+	"archive/zip"
+	"path/filepath"
 )
 
 const PLUGINS_CONFIG_PATH string = "data"
 const PLUGINS_CONFIG_FILENAME string = "plugins.json"
 const PLUGINS_TEMPORARY_FOLDER string = "uploadedfiles"
+const PLUGINS_FOLDER string = "plugins"
 
 type Service struct {
 	Manager *Manager
@@ -111,20 +113,25 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 1 : Check extension
-	ext, err := CheckExtension(filename)
+	_, err = CheckExtension(filename)
 	if err != nil {
 		os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + filename)
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
 	}
-	fmt.Println(ext)
-
-	// 2 : open zip file
+	// 2 : unzip into /plugins folder
+	//todo : créer un dossieravec un nom temporaire pour déposer le plugin et le renomer plus tard avec le nom du plugin
+	err = UncompressFile(
+		PLUGINS_TEMPORARY_FOLDER+string(os.PathSeparator)+filename,
+		PLUGINS_FOLDER+string(os.PathSeparator)+commons.Basename(filename)+string(os.PathSeparator))
+	if err != nil {
+		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
+		return
+	}
 	// 3 : parse description file
 	// 4 : check there's no plugin already installed with same name or reject
-	// 5 : unzip into /plugins folder
-	// 6 : save into plugins.json file
-	// 7 : delete temporary file
+	// 5 : save into plugins.json file
+	// 6 : delete temporary file
 
 	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added to the catalog")
 }
@@ -161,7 +168,7 @@ func UploadFile(r *http.Request) (string, error) {
 
 // Return extension of the file or an error if the extension is not supported by this program
 func CheckExtension(filename string) (string, error) {
-	acceptedExtensions := []string{".zip", ".gzip", ".tar"}
+	acceptedExtensions := []string{".zip"}
 
 	ext := path.Ext(filename)
 
@@ -171,4 +178,62 @@ func CheckExtension(filename string) (string, error) {
 	}
 
 	return ext, nil
+}
+
+func UncompressFile(src, dest string) error {
+	r, err := zip.OpenReader(src)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := r.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	os.MkdirAll(dest, 0755)
+
+	extractAndWriteFile := func(f *zip.File) error {
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+		defer func() {
+			if err := rc.Close(); err != nil {
+				panic(err)
+			}
+		}()
+
+		path := filepath.Join(dest, f.Name)
+
+		if f.FileInfo().IsDir() {
+			os.MkdirAll(path, f.Mode())
+		} else {
+			os.MkdirAll(filepath.Dir(path), f.Mode())
+			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				return err
+			}
+			defer func() {
+				if err := f.Close(); err != nil {
+					panic(err)
+				}
+			}()
+
+			_, err = io.Copy(f, rc)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	for _, f := range r.File {
+		err := extractAndWriteFile(f)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
