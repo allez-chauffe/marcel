@@ -13,6 +13,8 @@ import (
 	"strings"
 	"archive/zip"
 	"path/filepath"
+	"io/ioutil"
+	"github.com/mitchellh/mapstructure"
 )
 
 const PLUGINS_CONFIG_PATH string = "data"
@@ -119,18 +121,46 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
 	}
+
 	// 2 : unzip into /plugins folder
-	//todo : créer un dossieravec un nom temporaire pour déposer le plugin et le renomer plus tard avec le nom du plugin
-	err = UncompressFile(
-		PLUGINS_TEMPORARY_FOLDER+string(os.PathSeparator)+filename,
-		PLUGINS_FOLDER+string(os.PathSeparator)+commons.Basename(filename)+string(os.PathSeparator))
+	var pluginFolder string = PLUGINS_FOLDER + string(os.PathSeparator) + commons.FileBasename(filename) + string(os.PathSeparator)
+
+	err = UncompressFile(PLUGINS_TEMPORARY_FOLDER+string(os.PathSeparator)+filename, pluginFolder)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
 	}
-	// 3 : parse description file
-	// 4 : check there's no plugin already installed with same name or reject
-	// 5 : save into plugins.json file
+
+	// 3 : check structure of the plugin
+	if exists, _ := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "description.json"); exists == false {
+		commons.WriteResponse(w, http.StatusNotAcceptable, "'description.json' file not found at the root of the plugin folder")
+		return
+	}
+
+	if exists, _ := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "front"); exists == false {
+		commons.WriteResponse(w, http.StatusNotAcceptable, "'front' folder not found at the root of the plugin folder")
+		return
+	}
+
+	// 4 : Parse description file and add
+	content, err := ioutil.ReadFile(pluginFolder + string(os.PathSeparator) + "description.json")
+	if err != nil {
+		commons.WriteResponse(w, http.StatusNotAcceptable, "Impossible to read 'description.json' file")
+		return
+	}
+
+	var plugin *Plugin = NewPlugin()
+	var obj interface{}
+	json.Unmarshal([]byte(content), &obj)
+	err = mapstructure.Decode(obj.(map[string]interface{}), plugin)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusNotAcceptable, "Impossible to parse 'description.json' file : "+err.Error())
+		return
+	}
+
+	// 5 : check there's no plugin already installed with same name or remove&replace
+	s.Manager.Add(plugin)
+
 	// 6 : delete temporary file
 
 	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added to the catalog")

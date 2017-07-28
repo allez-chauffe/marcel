@@ -75,7 +75,6 @@ func (m *Manager) Get(eltName string) (*Plugin, error) {
 	return nil, errors.New("NO_MEDIA_FOUND")
 }
 
-
 // RemovePlugin Remove plugin from memory and commit
 func (m *Manager) Remove(plugin *Plugin) {
 	log.Println("Removing plugin")
@@ -88,18 +87,8 @@ func (m *Manager) Remove(plugin *Plugin) {
 	m.Commit()
 }
 
-// GetPluginPosition Return position of a plugin in the list
-func (m *Manager) GetPosition(plugin *Plugin) int {
-	for p, m := range m.Config.Plugins {
-		if m.EltName == plugin.EltName {
-			return p
-		}
-	}
-	return -1
-}
-
-// SavePlugin Save plugin information in memory.
-func (m *Manager) Save(plugin *Plugin) {
+// Save plugin information.
+func (m *Manager) Add(plugin *Plugin) {
 	log.Println("Saving plugin")
 	m.Remove(plugin)
 	m.Config.Plugins = append(m.Config.Plugins, *plugin)
@@ -109,15 +98,26 @@ func (m *Manager) Save(plugin *Plugin) {
 
 // Commit Save all plugins in DB.
 // Here DB is a JSON file
-func (m *Manager) Commit() {
+func (m *Manager) Commit() error {
 	content, _ := json.Marshal(m.Config)
 
 	err := ioutil.WriteFile(m.ConfigFullpath, content, 0644)
 
 	if err != nil {
-		log.Println("Cannot save plugins configuration:")
-		log.Panic(err)
+		return errors.New("Cannot save plugins configuration:" + err.Error())
 	}
+
+	return nil
+}
+
+// GetPluginPosition Return position of a plugin in the list
+func (m *Manager) GetPosition(plugin *Plugin) int {
+	for p, m := range m.Config.Plugins {
+		if m.EltName == plugin.EltName {
+			return p
+		}
+	}
+	return -1
 }
 
 // CreateSaveFileIfNotExist check if the save file for plugins exists and create it if not.
@@ -133,9 +133,6 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 
 		f, err := os.Create(fullPath)
 		commons.Check(err)
-
-		//content := "[\n]"
-		//f.WriteString(content)
 
 		log.Println("Plugins configuration file created at %v", fullPath)
 
