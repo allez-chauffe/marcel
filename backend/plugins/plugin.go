@@ -36,14 +36,16 @@ func NewPlugin() (*Plugin) {
 }
 
 type Frontend struct {
-	Cols      int `json:"cols"`
-	Rows      int `json:"rows"`
-	Props     []Props `json:"props"`
+	Cols  int `json:"cols"`
+	Rows  int `json:"rows"`
+	Props []Props `json:"props"`
 }
 
 func NewFrontend() *Frontend {
 	var f = new(Frontend)
 
+	f.Cols = 0
+	f.Rows = 0
 	f.Props = []Props{}
 
 	return f

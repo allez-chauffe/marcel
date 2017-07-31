@@ -4,7 +4,20 @@ import (
 	/*"testing"
 	"os"
 	"fmt"*/
+	"testing"
 )
+
+func TestNewManager(t *testing.T) {
+	m := NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+
+	if m.Config == nil {
+		t.Error("Configuration should not be nil")
+	}
+
+	if m.Config.LastID != 0 {
+		t.Error("LastID for a new Media Manager configuration should be 0")
+	}
+}
 
 /*func TestCreateSaveFileIfNotExist(t *testing.T) {
 	dir := "data_test"

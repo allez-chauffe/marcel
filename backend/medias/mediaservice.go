@@ -19,8 +19,7 @@ type Service struct {
 func NewService() *Service {
 	service := new(Service)
 
-	c := NewConfiguration()
-	service.manager = NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME, c)
+	service.manager = NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	return service
 }
@@ -42,11 +41,11 @@ func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 	c := m.manager.GetConfiguration()
 	b, err := json.Marshal(c)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
 	}
 
-	w.Write([]byte(b))
+	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
 // swagger:route GET /medias GetAllHandler
@@ -62,11 +61,11 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.manager.GetAll()
 	b, err := json.Marshal(media)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
 	}
 
-	w.Write([]byte(b))
+	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
 // swagger:route GET /medias/{idMedia} GetHandler
@@ -84,23 +83,23 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 	idMedia, err := strconv.Atoi(attr)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest)
+		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	media, err := m.manager.Get(idMedia)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
 	}
 
 	b, err := json.Marshal(*media)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
 	}
 
-	w.Write([]byte(b))
+	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
 // swagger:route POST /medias PostHandler
@@ -115,13 +114,16 @@ func (m *Service) PostHandler(w http.ResponseWriter, r *http.Request) {
 	//to be tested : decoder := json.NewDecoder(r.Body)
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest)
+		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	var media *Media = NewMedia()
 	err = json.Unmarshal(body, &media)
 
 	m.manager.Save(media)
+	//run docker image for the plugin
+	// docker run -it -e "...=..."
 }
 
 // swagger:route GET /medias CreateHandler
@@ -139,9 +141,9 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	//return it to the client
 	b, err := json.Marshal(*newMedia)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound)
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
 	}
 
-	w.Write([]byte(b))
+	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }

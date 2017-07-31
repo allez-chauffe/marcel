@@ -3,7 +3,7 @@ GOCLEAN = $(GOCMD) clean
 GOFMT = $(GOCMD) fmt
 GOTEST = $(GOCMD) test
 GOSWAGGER = $(GOCMD) generate
-GOBUILD = $(GOCMD) build
+GOBUILD = $(GOCMD) build -o dist/backend
 
 all: test
 	$(GOCLEAN)

@@ -18,10 +18,9 @@ type Manager struct {
 	Config         *Configuration
 }
 
-func NewManager(configPath, configFilename string, configuration *Configuration) *Manager {
+func NewManager(configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
-	manager.Config = configuration
 	manager.configPath = configPath
 	manager.configFileName = configFilename
 
@@ -122,6 +121,10 @@ func (m *Manager) Save(media *Media) {
 	log.Println("Saving media")
 	m.Remove(media)
 	m.Config.Medias = append(m.Config.Medias, *media)
+
+	//todo : stop all plugins backends
+	//todo : load all docker images (docker load --input myPlugin.tar)
+	//todo : run all docker containers (par instance) and set attributes via environement variables
 
 	m.Commit()
 }

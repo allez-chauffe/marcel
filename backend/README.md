@@ -1,8 +1,8 @@
 # Backend
 
-The main purpose of this part is to serve the plugin list, configured by the back-office.
+The main purpose of this part is to serve information and plugins list, configured by the back-office.
 
-## Setup
+## How to build the project
 
 ```go
 go get github.com/rs/cors
@@ -22,6 +22,7 @@ Build cross architecture :
 ``` shell
 env GOOS=linux GOARCH=arm go build -o ./bin/MARCEL
 ```
+List of all GOOS and GOARCH values : https://golang.org/doc/install/source#environment
 
 Once every is done, you can launch the server with :
 
@@ -41,9 +42,27 @@ Generate the API doc :
 swagger generate spec -o ./swagger.json
 ```
 
-Run Swagger UI :
+Run Swagger UI on port 3000
 
+### How to develop a plugin
+All plugins have 2 main folders and 1 description file :
+```
+ plugin_name
+  |__front\
+  |   |__ index.html
+  |   |__ ...
+  |
+  |__back\
+  |   |__ docker_image.tar
+  |
+  |__description.json
+```
 
+ * Each attribute for the backend will be passed to the docker image as a environment variable. 
+ * For each instance of a launched plugin, a Docker Volume is created at ```/tmp``` on the container
+ 
+ To get a full example, please have a look at the "Google Agenda" plugin here: 
+ https://github.com/Zenika/marcel-plugin-calendar
 
 ## Credits
 
