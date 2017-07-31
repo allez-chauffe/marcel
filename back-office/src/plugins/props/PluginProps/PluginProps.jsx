@@ -26,15 +26,10 @@ class PluginProps extends React.Component {
 
     if (!plugin) return <div className="PluginsProps" />
 
-    const { name, props: pluginProps, x, y, cols, rows } = plugin
+    const { props: pluginProps } = plugin
 
     return (
       <div className="PluginProps">
-        <h2>
-          {name}
-        </h2>
-        <p>{`(x: ${x}, y: ${y}, columns: ${cols}, rows: ${rows})`}</p>
-
         <SearchField
           label="Search Prop"
           value={filter}

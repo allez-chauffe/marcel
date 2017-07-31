@@ -19,9 +19,10 @@ export type PluginInstance = Plugin & {
   y: number,
   cols: number,
   rows: number,
+  parent?: { plugin: string, prop: string },
 }
 
-export type PluginInstanceMap = { [instanceId: string]: PluginInstance }
+export type PluginInstanceMap = { [instanceId: string]: ?PluginInstance }
 export type Dashboard = {
   id: string,
   name: string,
@@ -35,7 +36,7 @@ export type Dashboard = {
     'background-color': string,
     'font-family': string,
   },
-  plugins: PluginInstanceMap,
+  plugins: string[],
 }
 
 // Redux
@@ -82,6 +83,14 @@ export type AddDashboardAction = {
 
 export type AddDashboardThunkAction = (Dispatch<AddDashboardAction>) => void
 
+export type AddSubPluginAction = {
+  type: 'DASHBOARD/ADD_SUB_PLUGIN',
+  payload: {
+    propName: string,
+    plugin: Plugin,
+  },
+}
+
 export type AddPluginAction = {
   type: 'DASHBOARD/ADD_PLUGIN',
   payload: {
@@ -99,7 +108,7 @@ export type AddPluginThunkAction = (
 export type DeletePluginAction = {
   type: 'DASHBOARD/DELETE_PLUGIN',
   payload: {
-    plugin: Plugin,
+    plugin: PluginInstance,
   },
 }
 export type SaveLayoutAction = {
@@ -140,6 +149,21 @@ export type ToggleDisplayGridAction = {
   type: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
 }
 
+export type SelectPluginParentAction = {
+  type: 'DASHBOARD/SELECT_PLUGIN_PARENT',
+}
+
+export type ReorderSubPluginAction = {
+  type: 'DASHBOARD/REORDER_SUB_PLUGINS',
+  payload: {
+    instanceIds: string[],
+    parent: {
+      plugin: string,
+      prop: string,
+    },
+  },
+}
+
 // eslint-disable-next-line no-use-before-define
 export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
 
@@ -160,6 +184,7 @@ export type DashboardAction =
   | DeleteDashboardAction
   | AddDashboardAction
   | ToggleDisplayGridAction
+  | AddSubPluginAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
@@ -168,4 +193,5 @@ export type DashboardState = {
   displayGrid: boolean,
   loading: boolean,
   dashboards: DashboardMap,
+  pluginInstances: PluginInstanceMap,
 }
