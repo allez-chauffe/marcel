@@ -108,7 +108,7 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// 0 : Get files content and copy it into a temporary folder
-	filename, err := UploadFile(r)
+	foldername, filename, err := UploadFile(r)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
@@ -117,15 +117,15 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// 1 : Check extension
 	_, err = CheckExtension(filename)
 	if err != nil {
-		os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + filename)
+		os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + foldername)
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
 	}
 
 	// 2 : unzip into /plugins folder
-	var pluginFolder string = PLUGINS_FOLDER + string(os.PathSeparator) + commons.FileBasename(filename) + string(os.PathSeparator)
+	var pluginFolder string = PLUGINS_FOLDER + string(os.PathSeparator) + commons.FileBasename(foldername) + string(os.PathSeparator)
 
-	err = UncompressFile(PLUGINS_TEMPORARY_FOLDER+string(os.PathSeparator)+filename, pluginFolder)
+	err = UncompressFile(PLUGINS_TEMPORARY_FOLDER+string(os.PathSeparator)+foldername, pluginFolder)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
@@ -158,29 +158,33 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5 : check there's no plugin already installed with same name or remove&replace
+	// 5 : rename plugin folder with it's EltName (should be unique)
+	os.Rename(pluginFolder,  PLUGINS_FOLDER + string(os.PathSeparator) + plugin.EltName + string(os.PathSeparator))
+
+	// 6 : check there's no plugin already installed with same name or remove&replace
 	s.Manager.Add(plugin)
 
-	// 6 : delete temporary file
-	os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + filename)
+	// 7 : delete temporary file
+	os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + foldername)
 
 	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added to the catalog")
 }
 
-func UploadFile(r *http.Request) (string, error) {
+func UploadFile(r *http.Request) (string, string, error) {
 	file, header, err := r.FormFile("uploadfile")
 
 	if err != nil {
 		log.Println(err)
-		return "", err
+		return "", "", err
 	}
 
 	defer file.Close()
 
-	out, err := os.Create(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + header.Filename)
+	foldername := commons.GetUID()
+	out, err := os.Create(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + foldername)
 	if err != nil {
 		log.Println("Unable to create the file for writing. Check your write access privilege")
-		return "", err
+		return "", "", err
 	}
 
 	defer out.Close()
@@ -189,12 +193,12 @@ func UploadFile(r *http.Request) (string, error) {
 	_, err = io.Copy(out, file)
 	if err != nil {
 		log.Println(err)
-		return "", err
+		return "", "", err
 	}
 
 	log.Println("File uploaded successfully : ")
 
-	return header.Filename, nil
+	return foldername, header.Filename, nil
 }
 
 // Return extension of the file or an error if the extension is not supported by this program
