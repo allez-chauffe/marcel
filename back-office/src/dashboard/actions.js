@@ -1,5 +1,5 @@
 //@flow
-import { keyBy, values, range, forEach, findIndex, some } from 'lodash'
+import { keyBy, values, range, forEach, findIndex, some, map, chain } from 'lodash'
 import { toastr } from 'react-redux-toastr'
 
 import { backend } from '../api'
@@ -24,6 +24,9 @@ import type {
   ConfirmDashboardDeletionAction,
   CancelDashboardDeletionAction,
   ToggleDisplayGridAction,
+  AddSubPluginAction,
+  SelectPluginParentAction,
+  ReorderSubPluginAction,
 } from './type'
 
 export const actions = {
@@ -36,6 +39,7 @@ export const actions = {
   DELETE_DASHBOARD: 'DASHBOARD/DELETE_DASHBOARD',
   ADD_DASHBOARD: 'DASHBOARD/ADD_DASHBOARD',
   ADD_PLUGIN: 'DASHBOARD/ADD_PLUGIN',
+  ADD_SUB_PLUGIN: 'DASHBOARD/ADD_SUB_PLUGIN',
   DELETE_PLUGIN: 'DASHBOARD/DELETE_PLUGIN',
   CHANGE_PROP: 'DASHBOARD/CHANGE_PROP',
   SAVE_LAYOUT: 'DASHBOARD/SAVE_LAYOUT',
@@ -44,6 +48,8 @@ export const actions = {
   UPLOAD_FAILED: 'DASHBOARD/UPLOAD_FAILED',
   UPDATE_CONFIG: 'DASHBOARD/UPDATE_CONFIG',
   TOGGLE_DISPLAY_GRID: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
+  SELECT_PLUGIN_PARENT: 'DASHBOARD/SELECT_PLUGIN_PARENT',
+  REORDER_SUB_PLUGINS: 'DASHBOARD/REORDER_SUB_PLUGINS',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -51,9 +57,7 @@ export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
   payload: { instanceId: plugin.instanceId },
 })
 
-export const selectDashboard = (
-  dashboard: Dashboard,
-): SelectDashboardAction => ({
+export const selectDashboard = (dashboard: Dashboard): SelectDashboardAction => ({
   type: actions.SELECT_DASHBOARD,
   payload: { dashboardId: dashboard.id },
 })
@@ -62,9 +66,7 @@ export const unselectDashboard = (): UnselectDashboardAction => ({
   type: actions.UNSELECT_DASHBOARD,
 })
 
-export const requireDashboardDeletion = (
-  dashboard: Dashboard,
-): RequireDashboardDeletionAction => ({
+export const requireDashboardDeletion = (dashboard: Dashboard): RequireDashboardDeletionAction => ({
   type: actions.REQUIRE_DASHBOARD_DELETION,
   payload: { dashboardId: dashboard.id },
 })
@@ -77,9 +79,7 @@ export const cancelDashboardDeletion = (): CancelDashboardDeletionAction => ({
   type: actions.CANCEL_DASHBOARD_DELETION,
 })
 
-export const deleteDashboard = (
-  dashboard: Dashboard,
-): DeleteDashboardAction => ({
+export const deleteDashboard = (dashboard: Dashboard): DeleteDashboardAction => ({
   type: actions.DELETE_DASHBOARD,
   payload: { dashboardId: dashboard.id },
 })
@@ -99,10 +99,12 @@ export const addDashboard = (): AddDashboardThunkAction => dispatch => {
     })
 }
 
-export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (
-  dispatch,
-  getState,
-) => {
+export const addSubPlugin = (propName: string, plugin: Plugin): AddSubPluginAction => ({
+  type: actions.ADD_SUB_PLUGIN,
+  payload: { propName, plugin },
+})
+
+export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (dispatch, getState) => {
   const dashboard: ?Dashboard = selectedDashboardSelector(getState())
   if (!dashboard)
     return toastr.error(
@@ -124,8 +126,7 @@ export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (
   )
 
   const freeSpaceX = findIndex(freeSpaceMatrix, some)
-  if (freeSpaceX === -1)
-    return toastr.error('Erreur !', "Il n'y a plus de place pour ce plugin")
+  if (freeSpaceX === -1) return toastr.error('Erreur !', "Il n'y a plus de place pour ce plugin")
   const freeSpaceY = findIndex(freeSpaceMatrix[freeSpaceX])
 
   dispatch({
@@ -139,11 +140,15 @@ export const deletePlugin = (plugin: Plugin): DeletePluginAction => ({
   payload: { plugin },
 })
 
-export const changeProp = (
-  plugin: PluginInstance,
-  prop: Prop,
-  value: mixed,
-): ChangePropAction => ({
+export const reorderSubPlugins = (plugins: PluginInstance[]): ReorderSubPluginAction => ({
+  type: actions.REORDER_SUB_PLUGINS,
+  payload: {
+    instanceIds: map(plugins, 'instanceId'),
+    parent: chain(plugins).head().get('parent').value(),
+  },
+})
+
+export const changeProp = (plugin: PluginInstance, prop: Prop, value: mixed): ChangePropAction => ({
   type: actions.CHANGE_PROP,
   payload: {
     instanceId: plugin.instanceId,
@@ -176,13 +181,15 @@ export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
     })
 }
 
-export const updateConfig = (property: string) => (
-  value: string | number,
-): UpdateConfigAction => ({
+export const updateConfig = (property: string) => (value: string | number): UpdateConfigAction => ({
   type: actions.UPDATE_CONFIG,
   payload: { property, value },
 })
 
 export const toggleDisplayGrid = (): ToggleDisplayGridAction => ({
   type: actions.TOGGLE_DISPLAY_GRID,
+})
+
+export const selectPluginParent = (): SelectPluginParentAction => ({
+  type: actions.SELECT_PLUGIN_PARENT,
 })

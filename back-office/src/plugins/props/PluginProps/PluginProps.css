@@ -4,16 +4,7 @@
   padding-right: 10px;
 }
 
-.PluginProps h2 {
-  text-align: center;
-}
-
 .PluginProps button.delete {
   background-color: red !important;
   align-self: flex-end;
-}
-
-.PluginProps > p {
-  font-size: 1em;
-  text-align: center;
 }
