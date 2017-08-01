@@ -60,7 +60,7 @@ func (a *App) initializeRoutes() {
 	s.HandleFunc("/medias", a.mediaService.PostHandler).Methods("POST")
 	s.HandleFunc("/medias/config", a.mediaService.GetConfigHandler).Methods("GET")
 	s.HandleFunc("/medias/create", a.mediaService.CreateHandler).Methods("GET")
-	//s.HandleFunc("/medias/delete/{idMedia:[0-9]*}", a.mediaService.DeleteHandler).Methods("POST")
+	s.HandleFunc("/medias/{idMedia:[0-9]*}/delete", a.mediaService.DeleteHandler).Methods("POST")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/activate", a.mediaService.ActivateHandler).Methods("POST")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/deactivate", a.mediaService.DeactivateHandler).Methods("POST")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/restart", a.mediaService.RestartHandler).Methods("POST")

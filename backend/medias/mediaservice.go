@@ -188,7 +188,18 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 
 	m.manager.Commit()
 
-	commons.WriteResponse(w, http.StatusOK, "Media has correctly be restarted")
+	commons.WriteResponse(w, http.StatusOK, "Media has been correctly restarted")
+}
+
+func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
+	media := m.getMediaFromRequest(w, r)
+
+	m.manager.Deactivate(media)
+
+	m.manager.Remove(media)
+	m.manager.Commit()
+
+	commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
 }
 
 func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (media *Media) {
