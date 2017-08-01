@@ -157,3 +157,25 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
+
+func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	attr := vars["idMedia"]
+
+	idMedia, err := strconv.Atoi(attr)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	media, err := m.manager.Get(idMedia)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+		return
+	}
+
+	if !media.IsActive {
+		m.manager.Activate(media)
+		m.manager.Commit()
+	}
+}
