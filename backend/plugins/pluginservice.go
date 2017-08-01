@@ -158,6 +158,8 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// todo : if plugin already exists and at leat 1 instance of the backend is running, so stop them before replacing the files and relaunch them again after
+
 	// 5 : rename plugin folder with it's EltName (should be unique)
 	os.Rename(pluginFolder,  PLUGINS_FOLDER + string(os.PathSeparator) + plugin.EltName + string(os.PathSeparator))
 
