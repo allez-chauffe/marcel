@@ -171,6 +171,7 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 		m.manager.Deactivate(media)
 		m.manager.Commit()
 	}
+
 	commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
 }
 
@@ -200,7 +201,7 @@ func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (m
 		return
 	}
 
-	media, err := m.manager.Get(idMedia)
+	media, err = m.manager.Get(idMedia)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound, err.Error())
 		return
