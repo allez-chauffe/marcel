@@ -104,26 +104,36 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /medias PostHandler
 //
-// Posts information for a media
+// Posts information for a media to be saved.
+// If it's an update of an existing media, it will be first stopped (all plugins stopped)
+//  priori to be activated and saved.
+// By default, the media will be activated
 //
 //     Consumes:
 //     - application/json
 //
 //     Schemes: http, https
 func (m *Service) PostHandler(w http.ResponseWriter, r *http.Request) {
-	//to be tested : decoder := json.NewDecoder(r.Body)
+	// 1 : Get content and check structure
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	// 2 : if media != new => stop all plugins'backend containers
 	var media *Media = NewMedia()
 	err = json.Unmarshal(body, &media)
+	if tmpMedia, _ := m.manager.Get(media.ID); tmpMedia != nil {
+		m.manager.Deactivate(tmpMedia)
+	}
+
 
 	m.manager.Save(media)
-	//run docker image for the plugin
-	// docker run -it -e "...=..."
+	// 3 : start backend for every plugin instance
+	m.manager.Activate(media)
+
+	m.manager.Commit()
 }
 
 // swagger:route GET /medias CreateHandler
