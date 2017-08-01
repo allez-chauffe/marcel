@@ -160,4 +160,24 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 	}
 }
 
+func (m *Manager) Activate(media *Media) error {
 
+	//todo : start all backends instances
+
+	media.IsActive = true
+
+	m.Save(media)
+
+	return nil
+}
+
+func (m *Manager) Deactivate(media *Media) error {
+
+	//todo : stop all backends instances
+
+	media.IsActive = false
+
+	m.Save(media)
+
+	return nil
+}
