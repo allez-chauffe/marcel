@@ -78,20 +78,7 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idMedia
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	attr := vars["idMedia"]
-
-	idMedia, err := strconv.Atoi(attr)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	media, err := m.manager.Get(idMedia)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
-		return
-	}
+	media := m.getMediaFromRequest(w, r)
 
 	b, err := json.Marshal(*media)
 	if err != nil {
@@ -164,20 +151,7 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	attr := vars["idMedia"]
-
-	idMedia, err := strconv.Atoi(attr)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	media, err := m.manager.Get(idMedia)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
-		return
-	}
+	media := m.getMediaFromRequest(w, r)
 
 	if !media.IsActive {
 		m.manager.Activate(media)
@@ -191,20 +165,7 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 //
 // If the media was activated (IsActive==true), backends for its plugins are stopped
 func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	attr := vars["idMedia"]
-
-	idMedia, err := strconv.Atoi(attr)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	media, err := m.manager.Get(idMedia)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
-		return
-	}
+	media := m.getMediaFromRequest(w, r)
 
 	if media.IsActive {
 		m.manager.Deactivate(media)
@@ -217,6 +178,19 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 //
 // restart backends for the plugins of this media
 func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
+	media := m.getMediaFromRequest(w, r)
+
+	if media.IsActive {
+		m.manager.Deactivate(media)
+	}
+	m.manager.Activate(media)
+
+	m.manager.Commit()
+
+	commons.WriteResponse(w, http.StatusOK, "Media has correctly be restarted")
+}
+
+func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (media *Media) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
 
@@ -232,12 +206,5 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if media.IsActive {
-		m.manager.Deactivate(media)
-	}
-	m.manager.Activate(media)
-
-	m.manager.Commit()
-
-	commons.WriteResponse(w, http.StatusOK, "Media has correctly be restarted")
+	return media
 }
