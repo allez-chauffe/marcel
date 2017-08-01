@@ -30,9 +30,6 @@ func NewManager(configPath, configFilename string) *Manager {
 	return manager
 }
 
-//List of Loaded Medias
-//var Medias []Media
-
 // LoadMedias loads medias configuration from DB and stor it in memory
 func (m *Manager) Load() {
 	log.Printf("Start Loading Medias from DB.")
@@ -90,6 +87,7 @@ func (m *Manager) Create() (*Media) {
 
 	//save it into the MediasConfiguration
 	m.Save(newMedia)
+	m.Commit()
 
 	return newMedia
 }
@@ -121,12 +119,6 @@ func (m *Manager) Save(media *Media) {
 	log.Println("Saving media")
 	m.Remove(media)
 	m.Config.Medias = append(m.Config.Medias, *media)
-
-	//todo : stop all plugins backends
-	//todo : load all docker images (docker load --input myPlugin.tar)
-	//todo : run all docker containers (par instance) and set attributes via environement variables
-
-	m.Commit()
 }
 
 // Commit Save all medias in DB.
@@ -167,3 +159,5 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 		m.Commit()
 	}
 }
+
+
