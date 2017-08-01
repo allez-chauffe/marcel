@@ -28,6 +28,7 @@ type Media struct {
 	// min: 1
 	ID          int                    `json:"id"`
 	Name        string                 `json:"name"`
+	IsActive    bool                   `json:"isactive"`
 	Description string                 `json:"description"`
 	Rows        int                    `json:"rows"`
 	Cols        int                    `json:"cols"`
