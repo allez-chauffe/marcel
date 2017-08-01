@@ -95,23 +95,11 @@ func (m *Manager) Create() (*Media) {
 // RemoveMedia Remove media from memory and commit
 func (m *Manager) Remove(media *Media) {
 	log.Println("Removing media")
-	i := m.GetPosition(media)
+	i := m.getPosition(media)
 
 	if i >= 0 {
 		m.Config.Medias = append(m.Config.Medias[:i], m.Config.Medias[i+1:]...)
 	}
-
-	m.Commit()
-}
-
-// GetMediaPosition Return position of a media in the list
-func (m *Manager) GetPosition(media *Media) int {
-	for p, m := range m.Config.Medias {
-		if m.ID == media.ID {
-			return p
-		}
-	}
-	return -1
 }
 
 // SaveMedia Save media information in memory.
@@ -180,4 +168,14 @@ func (m *Manager) Deactivate(media *Media) error {
 	m.Save(media)
 
 	return nil
+}
+
+// GetMediaPosition Return position of a media in the list
+func (m *Manager) getPosition(media *Media) int {
+	for p, m := range m.Config.Medias {
+		if m.ID == media.ID {
+			return p
+		}
+	}
+	return -1
 }
