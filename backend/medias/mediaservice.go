@@ -201,3 +201,27 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 		m.manager.Commit()
 	}
 }
+
+func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	attr := vars["idMedia"]
+
+	idMedia, err := strconv.Atoi(attr)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	media, err := m.manager.Get(idMedia)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+		return
+	}
+
+	if media.IsActive {
+		m.manager.Deactivate(media)
+	}
+	m.manager.Activate(media)
+
+	m.manager.Commit()
+}
