@@ -158,6 +158,11 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
+// swagger:route GET /medias/{idMedia:[0-9]*}/activate ActivateHandler
+//
+// If the media was deactivated (IsActive==false), backends for its plugins are started
+//
+//     Schemes: http, https
 func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
@@ -178,8 +183,13 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 		m.manager.Activate(media)
 		m.manager.Commit()
 	}
+
+	commons.WriteResponse(w, http.StatusOK, "Media is active")
 }
 
+// swagger:route GET /medias/{idMedia:[0-9]*}/deactivate DeactivateHandler
+//
+// If the media was activated (IsActive==true), backends for its plugins are stopped
 func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
@@ -200,8 +210,12 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 		m.manager.Deactivate(media)
 		m.manager.Commit()
 	}
+	commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
 }
 
+// swagger:route GET /medias/{idMedia:[0-9]*}/restart RestartHandler
+//
+// restart backends for the plugins of this media
 func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
@@ -224,4 +238,6 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 	m.manager.Activate(media)
 
 	m.manager.Commit()
+
+	commons.WriteResponse(w, http.StatusOK, "Media has correctly be restarted")
 }
