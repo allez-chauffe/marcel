@@ -52,19 +52,18 @@ func NewMedia() *Media {
 // swagger:model
 type MediaPlugin struct {
 	InstanceId string              `json:"instanceId"`
-	Name       string              `json:"name"`
+	EltName    string              `json:"eltName"`
 	FrontEnd   MediaPluginFrontEnd `json:"frontend"`
 	BackEnd    MediaPluginBackEnd  `json:"backend"`
 }
 
 type MediaPluginFrontEnd struct {
-	Files   []string               `json:"files"`
-	EltName string                 `json:"eltName"`
-	X       int                    `json:"x"`
-	Y       int                    `json:"y"`
-	Rows    int                    `json:"rows"`
-	Cols    int                    `json:"cols"`
-	Props   map[string]interface{} `json:"props"`
+	Files []string               `json:"files"`
+	X     int                    `json:"x"`
+	Y     int                    `json:"y"`
+	Rows  int                    `json:"rows"`
+	Cols  int                    `json:"cols"`
+	Props map[string]interface{} `json:"props"`
 }
 
 type MediaPluginBackEnd struct {
