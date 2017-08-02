@@ -20,7 +20,6 @@ func NewConfiguration() *Configuration {
 // swagger:model
 type Plugin struct {
 	EltName     string     `json:"eltName"`
-	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	Frontend    Frontend   `json:"frontend"`
 	Backend     Backend    `json:"backend"`

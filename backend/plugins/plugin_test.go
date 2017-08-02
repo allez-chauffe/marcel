@@ -25,10 +25,6 @@ func TestNewPlugin(t *testing.T) {
 		t.Error("EltName should be equal to \"\"")
 	}
 
-	if p.Name != "" {
-		t.Error("Name should be equal to \"\"")
-	}
-
 	if p.Description != "" {
 		t.Error("Description should be equal to \"\"")
 	}
