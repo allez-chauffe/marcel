@@ -18,9 +18,9 @@ type Manager struct {
 	Config         *Configuration
 
 	//PortsPool is an array of ports that were used by backends, but now are free (because of a deactivation)
-	PortsPool    []int
+	PortsPool []int
 	//LastPortUsed is a counter and allow to generate a new free port number
-	LastPortUsed int
+	NextFreePortNumber int
 }
 
 func NewManager(configPath, configFilename string) *Manager {
@@ -29,7 +29,7 @@ func NewManager(configPath, configFilename string) *Manager {
 	manager.configPath = configPath
 	manager.configFileName = configFilename
 
-	manager.LastPortUsed = 8100
+	manager.NextFreePortNumber = 8100
 
 	manager.configFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
 	manager.Config = NewConfiguration()
@@ -192,6 +192,8 @@ func (m *Manager) Deactivate(media *Media) error {
 
 	//todo : stop all backends instances
 
+	//m.PortsPool = append(m.PortsPool, port)
+
 	media.IsActive = false
 
 	m.Save(media)
@@ -212,8 +214,16 @@ func (m *Manager) getPosition(media *Media) int {
 func (m *Manager) GetPortNumberForPlugin() int {
 
 	// 1 : try to pop a port number from the pool
-	// 2 : if pool is empty, just increment the counter
-	m.LastPortUsed += 1
+	if len(m.PortsPool) > 0 {
+		p := m.PortsPool[0]
+		//remove the first number
+		m.PortsPool = m.PortsPool[1:]
+		return p
+	}
 
-	return m.LastPortUsed
+	// 2 : if pool is empty, just increment the counter
+	p := m.NextFreePortNumber
+	m.NextFreePortNumber += 1
+
+	return p
 }

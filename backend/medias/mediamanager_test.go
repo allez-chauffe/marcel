@@ -19,29 +19,31 @@ func TestNewManager(t *testing.T) {
 	}
 }
 
-/*func TestCreateSaveFileIfNotExist(t *testing.T) {
-	dir := "data_test"
-	file := "media.config.test"
+func TestManager_GetPortNumberForPlugin(t *testing.T) {
+	m := NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
-	//if test folder already exists, delete it
-	if _, err := os.Stat(dir); err == nil {
-		err = os.Remove(dir)
+	freePort := m.NextFreePortNumber //8100
+
+	newPort := m.GetPortNumberForPlugin() //8100
+	if newPort != freePort {
+		t.Error("GetPortNumberForPlugin should first the NextFreePortNumber")
 	}
 
-
-	var fullPath string = fmt.Sprintf("%s%c%s", dir, os.PathSeparator, file)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		mediaManager := NewMediaManager()
-		mediaManager.CreateSaveFileIfNotExist(dir, file)
-
-		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-			t.Error(err)
-		}
-
-		os.Remove(dir)
+	if len(m.PortsPool) != 0 {
+		t.Error("GetPortNumberForPlugin should not append the port into the pool")
 	}
 
+	newPort2 := m.GetPortNumberForPlugin() //8101
+	if newPort2 == newPort {
+		t.Error("GetPortNumberForPlugin should generate a new port number")
+	}
 
-	t.Logf("ok")
+	m.PortsPool = append(m.PortsPool, 8100)
+	newPort =m.GetPortNumberForPlugin() //8100
+	if newPort != 8100 {
+		t.Error("GetPortNumberForPlugin should use number from the pool first")
+	}
+	if len(m.PortsPool) != 0 {
+		t.Error("GetPortNumberForPlugin should pop the port into the pool")
+	}
 }
-*/
