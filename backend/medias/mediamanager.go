@@ -16,6 +16,11 @@ type Manager struct {
 	configFileName string
 	configFullpath string
 	Config         *Configuration
+
+	//PortsPool is an array of ports that were used by backends, but now are free (because of a deactivation)
+	PortsPool    []int
+	//LastPortUsed is a counter and allow to generate a new free port number
+	LastPortUsed int
 }
 
 func NewManager(configPath, configFilename string) *Manager {
@@ -23,6 +28,8 @@ func NewManager(configPath, configFilename string) *Manager {
 
 	manager.configPath = configPath
 	manager.configFileName = configFilename
+
+	manager.LastPortUsed = 8100
 
 	manager.configFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
 	manager.Config = NewConfiguration()
@@ -152,6 +159,28 @@ func (m *Manager) Activate(media *Media) error {
 
 	//todo : start all backends instances
 
+	fmt.Printf("Media '%v' has plugin : ", media.Name)
+	for _, p := range media.Plugins {
+
+		fmt.Printf("    * %v (instanceId = %v)", p.EltName, p.InstanceId)
+
+		// 1 : get plugin from pluginManager
+		// plugin := app.
+
+		// 2.a : duplicate frontend into "/medias/{idMedia}/{plugins_EltName}/{idInstance}/front"
+		// 2.b : if p has backend
+		//           => pull backend image or load it (if it has been tar.gzed) into "/medias/{idMedia}/{plugins_EltName}/{idInstance}/back"
+		//           => create a dedicated volume
+		//           => get a new port to be mapped with the backend, from the pool of ports (getPortNumberForPlugin)
+		//           => run docker container
+		//           => save the name of the container into a map to be easily stopped later (with Deactivate)
+
+		//create a new instance for the plugin, i.e.:
+		//   - duplicate the folder into /medias/{idMedia}/{plugins_EltName}/{idInstance}
+		//   - if the plugin has a backend to launch: map the port and run docker container...
+
+	}
+
 	media.IsActive = true
 
 	m.Save(media)
@@ -178,4 +207,13 @@ func (m *Manager) getPosition(media *Media) int {
 		}
 	}
 	return -1
+}
+
+func (m *Manager) GetPortNumberForPlugin() int {
+
+	// 1 : try to pop a port number from the pool
+	// 2 : if pool is empty, just increment the counter
+	m.LastPortUsed += 1
+
+	return m.LastPortUsed
 }
