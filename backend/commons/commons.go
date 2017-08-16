@@ -93,11 +93,10 @@ func CopyFile(source string, dest string) (err error) {
 
 	_, err = io.Copy(destfile, sourcefile)
 	if err == nil {
-		sourceinfo, err := os.Stat(source)
-		if err != nil {
-			err = os.Chmod(dest, sourceinfo.Mode())
+		si, err := os.Stat(source)
+		if err == nil {
+			err = os.Chmod(dest, si.Mode())
 		}
-
 	}
 
 	return

@@ -48,6 +48,10 @@ func (m *Manager) Load() {
 
 	var obj interface{}
 	json.Unmarshal([]byte(content), &obj)
+
+	if obj == nil {
+		obj = make(map[string]interface{})
+	}
 	err = mapstructure.Decode(obj.(map[string]interface{}), m.Config)
 	if err != nil {
 		panic(err)
@@ -101,13 +105,6 @@ func (m *Manager) Remove(media *Media) {
 	log.Println("Removing media")
 	i := m.getPosition(media)
 
-	//remove plugins files
-	if err := os.RemoveAll("medias/" + strconv.Itoa(media.ID)); err != nil {
-		log.Print(err.Error())
-	}
-
-	//todo : free ports numbers used by plugins of this media
-
 	if i >= 0 {
 		m.Config.Medias = append(m.Config.Medias[:i], m.Config.Medias[i+1:]...)
 	}
@@ -147,9 +144,6 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 		f, err := os.Create(fullPath)
 		commons.Check(err)
 
-		//content := "[\n]"
-		//f.WriteString(content)
-
 		log.Println("Medias configuration file created at %v", fullPath)
 
 		f.Close()
@@ -163,17 +157,17 @@ func (m *Manager) Activate(media *Media) error {
 
 	//todo : start all backends instances
 
-	sep := strconv.Itoa(os.PathSeparator)
+	sep := string(os.PathSeparator)
 
 	fmt.Printf("Media '%v' has plugin : ", media.Name)
-	for _, p := range media.Plugins {
+	for _, mp := range media.Plugins {
 
-		fmt.Printf("    * %v (instanceId = %v)", p.EltName, p.InstanceId)
+		fmt.Printf("    * %v (instanceId = %v)\n", mp.EltName, mp.InstanceId)
 
-		// 2.a : duplicate frontend into "medias/{idMedia}/{plugins_EltName}/{idInstance}/front"
+		// 2.a : duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
 		err := commons.CopyDir(
-			"plugins"+sep+p.EltName,
-			"medias"+sep+strconv.Itoa(media.ID)+sep+p.EltName)
+			"/home/gwennael.buchet/PROJETS/MARCEL/backend/dist/plugins"+sep+mp.EltName,
+			"/home/gwennael.buchet/PROJETS/MARCEL/backend/dist/medias"+sep+strconv.Itoa(media.ID)+sep+mp.EltName+sep+mp.InstanceId)
 
 		if err != nil {
 			return err
@@ -201,9 +195,25 @@ func (m *Manager) Activate(media *Media) error {
 
 func (m *Manager) Deactivate(media *Media) error {
 
-	//todo : stop all backends instances
+	//stop all backends instances and free ports number
+	for _, mp := range media.Plugins {
+		if mp.BackEnd != nil {
 
-	//m.PortsPool = append(m.PortsPool, port)
+			//todo : call docker manager to stop container for this plugin
+			//containerManager.stopImage(mp.BackEnd.ContainerID)
+
+			if mp.BackEnd.Ports != nil {
+				ports := mp.BackEnd.Ports
+				for _, port := range ports {
+					m.FreePortNumberForPlugin(port)
+				}
+			}
+		}
+	}
+
+	//remove plugins files
+	sep := string(os.PathSeparator)
+	os.RemoveAll("medias" + sep + strconv.Itoa(media.ID))
 
 	media.IsActive = false
 
@@ -237,6 +247,14 @@ func (m *Manager) GetPortNumberForPlugin() int {
 	m.Config.NextFreePortNumber += 1
 
 	return p
+}
+
+func (m *Manager) FreePortNumberForPlugin(portNumber int) {
+	for i, v := range m.Config.PortsPool {
+		if portNumber == v {
+			m.Config.PortsPool = append(m.Config.PortsPool[:i], m.Config.PortsPool[i+1:]...)
+		}
+	}
 }
 
 func (m *Manager) GetNextID() int {

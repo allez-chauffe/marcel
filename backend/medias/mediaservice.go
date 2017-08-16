@@ -112,8 +112,12 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	// 2 : if media != new => stop all plugins'backend containers
 	var media *Media = NewMedia()
 	err = json.Unmarshal(body, &media)
+	//if it's a new media (id==0) : create one
 	if tmpMedia, _ := m.manager.Get(media.ID); tmpMedia != nil {
 		m.manager.Deactivate(tmpMedia)
+	} else {
+		//it's a new media, let give it an ID
+		media.ID = m.manager.GetNextID()
 	}
 
 	m.manager.Save(media)
@@ -121,6 +125,8 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	m.manager.Activate(media)
 
 	m.manager.Commit()
+
+	commons.WriteResponse(w, http.StatusOK, "Media correctly saved with ID " + strconv.Itoa(media.ID))
 }
 
 // swagger:route GET /medias CreateHandler
@@ -133,7 +139,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	//get a new media
-	newMedia := m.manager.Create()
+	newMedia := m.manager.CreateEmpty()
 
 	//return it to the client
 	b, err := json.Marshal(*newMedia)

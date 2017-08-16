@@ -36,8 +36,8 @@ func NewMedia() *Media {
 type MediaPlugin struct {
 	InstanceId string              `json:"instanceId"`
 	EltName    string              `json:"eltName"`
-	FrontEnd   MediaPluginFrontEnd `json:"frontend"`
-	BackEnd    MediaPluginBackEnd  `json:"backend"`
+	FrontEnd   *MediaPluginFrontEnd `json:"frontend"`
+	BackEnd    *MediaPluginBackEnd  `json:"backend"`
 }
 
 type MediaPluginFrontEnd struct {
@@ -52,4 +52,12 @@ type MediaPluginFrontEnd struct {
 type MediaPluginBackEnd struct {
 	Ports []int                  `json:"ports"`
 	Props map[string]interface{} `json:"props"`
+}
+
+func NewMediaPluginBackend() (*MediaPluginBackEnd) {
+	mediaPluginBackend := new(MediaPluginBackEnd)
+
+	mediaPluginBackend.Ports = []int{}
+
+	return mediaPluginBackend
 }
