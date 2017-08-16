@@ -48,8 +48,7 @@ func (a *App) Run(addr string) {
 func (a *App) initializeRoutes() {
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		// AllowedOrigins:   []string{"http://localhost:*"},
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTION", "PUT"},
 		AllowCredentials: true,
 	})
@@ -57,7 +56,7 @@ func (a *App) initializeRoutes() {
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
 	s.HandleFunc("/medias", a.mediaService.GetAllHandler).Methods("GET")
-	s.HandleFunc("/medias", a.mediaService.PostHandler).Methods("POST")
+	s.HandleFunc("/medias", a.mediaService.SaveHandler).Methods("POST")
 	s.HandleFunc("/medias/config", a.mediaService.GetConfigHandler).Methods("GET")
 	s.HandleFunc("/medias/create", a.mediaService.CreateHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/delete", a.mediaService.DeleteHandler).Methods("POST")
@@ -95,6 +94,6 @@ func (a *App) initializeData() {
 	a.pluginService.GetManager().Load()
 
 	//Load Medias configuration from DB
-	a.mediaService = medias.NewService()
+	a.mediaService = medias.NewService(a.pluginService.GetManager())
 	a.mediaService.GetManager().Load()
 }

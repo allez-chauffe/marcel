@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/plugins"
 	"io/ioutil"
 )
 
@@ -16,10 +17,10 @@ type Service struct {
 	manager *Manager
 }
 
-func NewService() *Service {
+func NewService(pluginManager *plugins.Manager) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	service.manager = NewManager(pluginManager, MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	return service
 }
@@ -89,18 +90,18 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
-// swagger:route POST /medias PostHandler
+// swagger:route POST /medias SaveHandler
 //
-// Posts information for a media to be saved.
-// If it's an update of an existing media, it will be first stopped (all plugins stopped)
-//  priori to be activated and saved.
+// Save a media.
+// If it's an update of an existing media, it will be first deactivated (all plugins stopped)
+//  prior to be activated and saved.
 // By default, the media will be activated
 //
 //     Consumes:
 //     - application/json
 //
 //     Schemes: http, https
-func (m *Service) PostHandler(w http.ResponseWriter, r *http.Request) {
+func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	// 1 : Get content and check structure
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -114,7 +115,6 @@ func (m *Service) PostHandler(w http.ResponseWriter, r *http.Request) {
 	if tmpMedia, _ := m.manager.Get(media.ID); tmpMedia != nil {
 		m.manager.Deactivate(tmpMedia)
 	}
-
 
 	m.manager.Save(media)
 	// 3 : start backend for every plugin instance
