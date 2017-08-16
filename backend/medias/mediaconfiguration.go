@@ -20,6 +20,7 @@ func NewConfiguration() *Configuration {
 	configuration.Medias = []Media{}
 
 	configuration.NextFreePortNumber = 8100
+	configuration.PortsPool = []int{}
 
 	return configuration
 }
