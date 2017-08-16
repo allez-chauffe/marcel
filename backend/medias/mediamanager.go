@@ -9,6 +9,8 @@ import (
 	"os"
 	"fmt"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/plugins"
+	"strconv"
 )
 
 type Manager struct {
@@ -17,19 +19,16 @@ type Manager struct {
 	configFullpath string
 	Config         *Configuration
 
-	//PortsPool is an array of ports that were used by backends, but now are free (because of a deactivation)
-	PortsPool []int
-	//LastPortUsed is a counter and allow to generate a new free port number
-	NextFreePortNumber int
+	pluginManager *plugins.Manager
 }
 
-func NewManager(configPath, configFilename string) *Manager {
+func NewManager(pluginManager *plugins.Manager, configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
 	manager.configPath = configPath
 	manager.configFileName = configFilename
 
-	manager.NextFreePortNumber = 8100
+	manager.pluginManager = pluginManager
 
 	manager.configFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
 	manager.Config = NewConfiguration()
@@ -99,10 +98,17 @@ func (m *Manager) Create() (*Media) {
 	return newMedia
 }
 
-// RemoveMedia Remove media from memory and commit
+// RemoveMedia Remove media from memory
 func (m *Manager) Remove(media *Media) {
 	log.Println("Removing media")
 	i := m.getPosition(media)
+
+	//remove plugins files
+	if err := os.RemoveAll("medias/" + strconv.Itoa(media.ID)); err != nil {
+		log.Print(err.Error())
+	}
+
+	//todo : free ports numbers used by plugins of this media
 
 	if i >= 0 {
 		m.Config.Medias = append(m.Config.Medias[:i], m.Config.Medias[i+1:]...)
@@ -165,9 +171,13 @@ func (m *Manager) Activate(media *Media) error {
 		fmt.Printf("    * %v (instanceId = %v)", p.EltName, p.InstanceId)
 
 		// 1 : get plugin from pluginManager
-		// plugin := app.
+		plugin, err := m.pluginManager.Get(p.EltName)
+		if err != nil {
+			return errors.New("No plugin was found with the name " + p.EltName)
+		}
 
-		// 2.a : duplicate frontend into "/medias/{idMedia}/{plugins_EltName}/{idInstance}/front"
+		// 2.a : duplicate frontend into "medias/{idMedia}/{plugins_EltName}/{idInstance}/front"
+
 		// 2.b : if p has backend
 		//           => pull backend image or load it (if it has been tar.gzed) into "/medias/{idMedia}/{plugins_EltName}/{idInstance}/back"
 		//           => create a dedicated volume
@@ -214,16 +224,16 @@ func (m *Manager) getPosition(media *Media) int {
 func (m *Manager) GetPortNumberForPlugin() int {
 
 	// 1 : try to pop a port number from the pool
-	if len(m.PortsPool) > 0 {
-		p := m.PortsPool[0]
+	if len(m.Config.PortsPool) > 0 {
+		p := m.Config.PortsPool[0]
 		//remove the first number
-		m.PortsPool = m.PortsPool[1:]
+		m.Config.PortsPool = m.Config.PortsPool[1:]
 		return p
 	}
 
 	// 2 : if pool is empty, just increment the counter
-	p := m.NextFreePortNumber
-	m.NextFreePortNumber += 1
+	p := m.Config.NextFreePortNumber
+	m.Config.NextFreePortNumber += 1
 
 	return p
 }

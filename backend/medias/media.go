@@ -1,22 +1,5 @@
 package medias
 
-// MediasConfig encapsulates all configuration data
-//
-// swagger:model
-type Configuration struct {
-	LastID int     `json:"lastid"`
-	Medias []Media `json:"medias"`
-}
-
-func NewConfiguration() *Configuration {
-	var configuration = new(Configuration)
-
-	configuration.LastID = 0
-	configuration.Medias = []Media{}
-
-	return configuration
-}
-
 // Media represents a media configuration
 //
 // swagger:model
