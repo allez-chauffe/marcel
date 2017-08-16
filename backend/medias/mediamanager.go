@@ -82,14 +82,12 @@ func (m *Manager) Get(idMedia int) (*Media, error) {
 }
 
 // CreateMedia Create a new Media, save it into memory and commit
-func (m *Manager) Create() (*Media) {
+func (m *Manager) CreateEmpty() (*Media) {
 
 	log.Println("Creating media")
 
-	m.Config.LastID = m.Config.LastID + 1
-
 	newMedia := NewMedia()
-	newMedia.ID = m.Config.LastID //commons.GetUID()
+	newMedia.ID = m.GetNextID()
 
 	//save it into the MediasConfiguration
 	m.Save(newMedia)
@@ -165,18 +163,21 @@ func (m *Manager) Activate(media *Media) error {
 
 	//todo : start all backends instances
 
+	sep := strconv.Itoa(os.PathSeparator)
+
 	fmt.Printf("Media '%v' has plugin : ", media.Name)
 	for _, p := range media.Plugins {
 
 		fmt.Printf("    * %v (instanceId = %v)", p.EltName, p.InstanceId)
 
-		// 1 : get plugin from pluginManager
-		plugin, err := m.pluginManager.Get(p.EltName)
-		if err != nil {
-			return errors.New("No plugin was found with the name " + p.EltName)
-		}
-
 		// 2.a : duplicate frontend into "medias/{idMedia}/{plugins_EltName}/{idInstance}/front"
+		err := commons.CopyDir(
+			"plugins"+sep+p.EltName,
+			"medias"+sep+strconv.Itoa(media.ID)+sep+p.EltName)
+
+		if err != nil {
+			return err
+		}
 
 		// 2.b : if p has backend
 		//           => pull backend image or load it (if it has been tar.gzed) into "/medias/{idMedia}/{plugins_EltName}/{idInstance}/back"
@@ -236,4 +237,9 @@ func (m *Manager) GetPortNumberForPlugin() int {
 	m.Config.NextFreePortNumber += 1
 
 	return p
+}
+
+func (m *Manager) GetNextID() int {
+	m.Config.LastID = m.Config.LastID + 1
+	return m.Config.LastID
 }
