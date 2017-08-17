@@ -26,6 +26,7 @@
         ]
       },
       "backend": {
+        "dockerimage": "marcel_agenda_1.0.tar",
         "ports": [
           8080
         ],
