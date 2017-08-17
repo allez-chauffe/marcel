@@ -155,19 +155,15 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 
 func (m *Manager) Activate(media *Media) error {
 
-	//todo : start all backends instances
-
 	sep := string(os.PathSeparator)
 
 	fmt.Printf("Media '%v' has plugin : ", media.Name)
 	for _, mp := range media.Plugins {
 
-		fmt.Printf("    * %v (instanceId = %v)\n", mp.EltName, mp.InstanceId)
-
-		// 2.a : duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
+		// 1 : duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
 		err := commons.CopyDir(
-			"/home/gwennael.buchet/PROJETS/MARCEL/backend/dist/plugins"+sep+mp.EltName,
-			"/home/gwennael.buchet/PROJETS/MARCEL/backend/dist/medias"+sep+strconv.Itoa(media.ID)+sep+mp.EltName+sep+mp.InstanceId)
+			"plugins"+sep+mp.EltName,
+			"medias"+sep+strconv.Itoa(media.ID)+sep+mp.EltName+sep+mp.InstanceId)
 
 		if err != nil {
 			return err
