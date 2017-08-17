@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/Zenika/MARCEL/backend/containers"
 	"strconv"
 )
 
@@ -160,13 +161,26 @@ func (m *Manager) Activate(media *Media) error {
 	fmt.Printf("Media '%v' has plugin : ", media.Name)
 	for _, mp := range media.Plugins {
 
+		plugin, err := m.pluginManager.Get(mp.EltName)
+		if err != nil {
+			//plugin does not exist (anymore ?) in the catalog. Obviously, it should never append.
+			log.Println(err.Error())
+			//Don't return an error now, we need to activate the other plugins
+		}
+
 		// 1 : duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
-		err := commons.CopyDir(
-			"plugins"+sep+mp.EltName,
-			"medias"+sep+strconv.Itoa(media.ID)+sep+mp.EltName+sep+mp.InstanceId)
+		mpPath := "medias" + sep + strconv.Itoa(media.ID) + sep + mp.EltName + sep + mp.InstanceId
+		err = commons.CopyDir("plugins"+sep+mp.EltName, mpPath)
 
 		if err != nil {
 			return err
+		}
+
+		if mp.BackEnd != nil {
+			containers.InstallImage(mpPath + sep + "back" + sep + plugin.Backend.Dockerimage)
+
+			//containers.StartContainer(plugin.Backend.)
+
 		}
 
 		// 2.b : if p has backend
