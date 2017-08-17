@@ -41,7 +41,7 @@ type MediaPlugin struct {
 }
 
 type MediaPluginFrontEnd struct {
-	Files []string               `json:"files"`
+	//Files []string               `json:"files"`
 	X     int                    `json:"x"`
 	Y     int                    `json:"y"`
 	Rows  int                    `json:"rows"`
@@ -52,12 +52,4 @@ type MediaPluginFrontEnd struct {
 type MediaPluginBackEnd struct {
 	Ports []int                  `json:"ports"`
 	Props map[string]interface{} `json:"props"`
-}
-
-func NewMediaPluginBackend() (*MediaPluginBackEnd) {
-	mediaPluginBackend := new(MediaPluginBackEnd)
-
-	mediaPluginBackend.Ports = []int{}
-
-	return mediaPluginBackend
 }
