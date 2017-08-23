@@ -59,14 +59,14 @@ type Props struct {
 
 type Backend struct {
 	Dockerimage string                 `json:"dockerimage"`
-	Ports       []int                  `json:"ports"`
+	Port        int                  `json:"port"`
 	Props       map[string]interface{} `json:"props"`
 }
 
 func NewBackend() *Backend {
 	var b = new(Backend)
 
-	b.Ports = []int{}
+	b.Port = 0
 	b.Props = make(map[string]interface{})
 
 	return b

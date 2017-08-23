@@ -50,6 +50,8 @@ type MediaPluginFrontEnd struct {
 }
 
 type MediaPluginBackEnd struct {
-	Ports []int                  `json:"ports"`
-	Props map[string]interface{} `json:"props"`
+	Port                int                  `json:"port"`
+	Props               map[string]interface{} `json:"props"`
+	DockerImageName     string
+	DockerContainerId   string
 }
