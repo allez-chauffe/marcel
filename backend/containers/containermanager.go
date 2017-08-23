@@ -2,14 +2,62 @@ package containers
 
 import (
 	"os/exec"
-	"os"
 	"bytes"
-	"fmt"
 	"log"
+	"strconv"
 )
 
-func InstallImage(path string) error {
+func InstallImage(path string) (string, error) {
 	cmd := exec.Command("docker", "load", "--input", path)
+	cmdOutput := &bytes.Buffer{}
+	cmd.Stdout = cmdOutput
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	log.Println(string(cmdOutput.Bytes()))
+
+	return string(cmdOutput.Bytes()), nil
+}
+
+func StartContainer(imageName string, internalport int, externalport int, props map[string]interface{}) (containerId string, err error) {
+
+	params := []string{}
+	for k, v := range props {
+		if value, ok := v.(string); ok {
+			params = append(params, "-e", string(k)+"="+string(value))
+		}
+	}
+
+	hostVolume := "/tmp"
+	containerVolume := "./data"
+
+	req := []string{}
+	req = append(req, "run",
+		"-d",
+		"-p", strconv.Itoa(externalport)+":"+strconv.Itoa(internalport),
+		"-v", hostVolume+":"+containerVolume,
+		imageName,
+	)
+	//req = append(req, params...)
+	//req = append(req, imageName)
+
+	cmd := exec.Command("docker", req...)
+
+	cmdOutput := &bytes.Buffer{}
+	cmd.Stdout = cmdOutput
+	err = cmd.Run()
+	if err != nil {
+		log.Println(err.Error())
+		return "", err
+	}
+
+	return string(cmdOutput.Bytes()), nil
+}
+
+func StopContainer(containerId string) error {
+	cmd := exec.Command("docker", "stop", containerId)
+	cmd = exec.Command("docker", "rm", "-f", containerId)
 	cmdOutput := &bytes.Buffer{}
 	cmd.Stdout = cmdOutput
 	err := cmd.Run()
@@ -17,33 +65,6 @@ func InstallImage(path string) error {
 		return err
 	}
 	log.Println(string(cmdOutput.Bytes()))
-	fmt.Println(string(cmdOutput.Bytes()))
-
-	return nil
-}
-
-func StartContainer(pluginId string, imageName string, internalport int, externalport int, variables ...string) (containerId int, err error) {
-
-	params := ""
-	for _, variable := range variables {
-		params += variable
-	}
-
-	containerName := "marcel_" + pluginId
-
-	cmd := exec.Command("docker", "run", imageName, "-d", "-p", externalport+":"+internalport, "--name", containerName)
-	cmdOutput := &bytes.Buffer{}
-	cmd.Stdout = cmdOutput
-	err = cmd.Run()
-	if err != nil {
-		os.Stderr.WriteString(err.Error())
-	}
-	fmt.Print(string(cmdOutput.Bytes()))
-
-	return 1, nil
-}
-
-func StopContainer(containerId int) error {
 
 	return nil
 }
