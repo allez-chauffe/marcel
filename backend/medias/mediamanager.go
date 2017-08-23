@@ -12,6 +12,7 @@ import (
 	"github.com/Zenika/MARCEL/backend/plugins"
 	"github.com/Zenika/MARCEL/backend/containers"
 	"strconv"
+	"strings"
 )
 
 type Manager struct {
@@ -158,7 +159,6 @@ func (m *Manager) Activate(media *Media) error {
 
 	sep := string(os.PathSeparator)
 
-	fmt.Printf("Media '%v' has plugin : ", media.Name)
 	for _, mp := range media.Plugins {
 
 		plugin, err := m.pluginManager.Get(mp.EltName)
@@ -177,23 +177,25 @@ func (m *Manager) Activate(media *Media) error {
 		}
 
 		if mp.BackEnd != nil {
-			containers.InstallImage(mpPath + sep + "back" + sep + plugin.Backend.Dockerimage)
+			retour, err := containers.InstallImage(mpPath + sep + "back" + sep + plugin.Backend.Dockerimage)
 
-			//containers.StartContainer(plugin.Backend.)
+			if err != nil {
+				//Don't return an error now, we need to activate the other plugins
+				log.Println(err.Error())
+			}
+			imageName := strings.TrimSpace(strings.TrimPrefix(retour, "Loaded image: "))
+			externalPort := m.GetPortNumberForPlugin()
 
+			dockerContainerId, err := containers.StartContainer(imageName, plugin.Backend.Port, externalPort, mp.BackEnd.Props)
+			if err != nil {
+				//Don't return an error now, we need to activate the other plugins
+				log.Println(err.Error())
+			} else {
+				mp.BackEnd.Port = externalPort
+				mp.BackEnd.DockerImageName = imageName
+				mp.BackEnd.DockerContainerId = dockerContainerId
+			}
 		}
-
-		// 2.b : if p has backend
-		//           => pull backend image or load it (if it has been tar.gzed) into "/medias/{idMedia}/{plugins_EltName}/{idInstance}/back"
-		//           => create a dedicated volume
-		//           => get a new port to be mapped with the backend, from the pool of ports (getPortNumberForPlugin)
-		//           => run docker container
-		//           => save the name of the container into a map to be easily stopped later (with Deactivate)
-
-		//create a new instance for the plugin, i.e.:
-		//   - duplicate the folder into /medias/{idMedia}/{plugins_EltName}/{idInstance}
-		//   - if the plugin has a backend to launch: map the port and run docker container...
-
 	}
 
 	media.IsActive = true
@@ -209,15 +211,9 @@ func (m *Manager) Deactivate(media *Media) error {
 	for _, mp := range media.Plugins {
 		if mp.BackEnd != nil {
 
-			//todo : call docker manager to stop container for this plugin
-			//containerManager.stopImage(mp.BackEnd.ContainerID)
+			containers.StopContainer(mp.BackEnd.DockerContainerId)
 
-			if mp.BackEnd.Ports != nil {
-				ports := mp.BackEnd.Ports
-				for _, port := range ports {
-					m.FreePortNumberForPlugin(port)
-				}
-			}
+			m.FreePortNumberForPlugin(mp.BackEnd.Port)
 		}
 	}
 
