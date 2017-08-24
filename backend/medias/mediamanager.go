@@ -217,27 +217,44 @@ func (m *Manager) Activate(media *Media) error {
 
 func (m *Manager) Deactivate(media *Media) error {
 
+	errorMessages := ""
 	//stop all backends instances and free ports number
 	for _, mp := range media.Plugins {
 		if mp.BackEnd != nil {
 
-			containers.StopContainer(mp.BackEnd.DockerContainerId)
-
-			m.FreePortNumberForPlugin(mp.BackEnd.Port)
+			err := containers.StopContainer(mp.BackEnd.DockerContainerId)
+			if err != nil {
+				errorMessages += err.Error() + "\n"
+			} else {
+				m.FreePortNumberForPlugin(mp.BackEnd.Port)
+			}
 		}
-	}
-
-	//remove plugins files
-	sep := string(os.PathSeparator)
-	err := os.RemoveAll("medias" + sep + strconv.Itoa(media.ID))
-
-	if err != nil {
-		return err
 	}
 
 	media.IsActive = false
 
 	m.Save(media)
+
+	if errorMessages != "" {
+		return errors.New(errorMessages)
+	}
+
+	return nil
+}
+
+func (m *Manager) Delete(media *Media) error {
+
+	m.Deactivate(media)
+
+	m.Remove(media)
+	m.Commit()
+
+	//remove plugins files
+	sep := string(os.PathSeparator)
+	err := os.RemoveAll("medias" + sep + strconv.Itoa(media.ID))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

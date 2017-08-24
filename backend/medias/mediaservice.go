@@ -210,10 +210,7 @@ func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 
 	if media != nil {
-		m.manager.Deactivate(media)
-
-		m.manager.Remove(media)
-		m.manager.Commit()
+		m.manager.Delete(media)
 
 		commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
 	}
