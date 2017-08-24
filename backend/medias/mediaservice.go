@@ -81,7 +81,6 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 	if media == nil {
-		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
 	}
 
@@ -163,10 +162,12 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 
-	m.manager.Activate(media)
-	m.manager.Commit()
+	if media != nil {
+		m.manager.Activate(media)
+		m.manager.Commit()
 
-	commons.WriteResponse(w, http.StatusOK, "Media is active")
+		commons.WriteResponse(w, http.StatusOK, "Media is active")
+	}
 }
 
 // swagger:route GET /medias/{idMedia:[0-9]*}/deactivate DeactivateHandler
@@ -175,10 +176,12 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 
-	m.manager.Deactivate(media)
-	m.manager.Commit()
+	if media != nil {
+		m.manager.Deactivate(media)
+		m.manager.Commit()
 
-	commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
+		commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
+	}
 }
 
 // swagger:route GET /medias/{idMedia:[0-9]*}/restart RestartHandler
@@ -186,6 +189,9 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 // restart backends for the plugins of this media
 func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
+	if media == nil {
+		return
+	}
 
 	if media.IsActive {
 		m.manager.Deactivate(media)
