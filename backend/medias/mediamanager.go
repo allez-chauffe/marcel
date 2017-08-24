@@ -193,7 +193,7 @@ func (m *Manager) Activate(media *Media) error {
 			} else {
 				mp.BackEnd.Port = externalPort
 				mp.BackEnd.DockerImageName = imageName
-				mp.BackEnd.DockerContainerId = dockerContainerId
+				mp.BackEnd.DockerContainerId = strings.TrimSpace(dockerContainerId)
 			}
 		}
 	}

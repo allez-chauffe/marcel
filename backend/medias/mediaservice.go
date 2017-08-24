@@ -126,7 +126,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 
 	m.manager.Commit()
 
-	commons.WriteResponse(w, http.StatusOK, "Media correctly saved with ID " + strconv.Itoa(media.ID))
+	commons.WriteResponse(w, http.StatusOK, "Media correctly saved with ID "+strconv.Itoa(media.ID))
 }
 
 // swagger:route GET /medias CreateHandler
@@ -173,10 +173,8 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 
-	if media.IsActive {
-		m.manager.Deactivate(media)
-		m.manager.Commit()
-	}
+	m.manager.Deactivate(media)
+	m.manager.Commit()
 
 	commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
 }
