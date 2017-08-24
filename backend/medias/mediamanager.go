@@ -39,7 +39,7 @@ func NewManager(pluginManager *plugins.Manager, configPath, configFilename strin
 }
 
 // LoadMedias loads medias configuration from DB and stor it in memory
-func (m *Manager) Load() {
+func (m *Manager) LoadFromDB() {
 	log.Printf("Start Loading Medias from DB.")
 
 	m.CreateSaveFileIfNotExist(m.configPath, m.configFileName)
@@ -96,14 +96,14 @@ func (m *Manager) CreateEmpty() (*Media) {
 	newMedia.ID = m.GetNextID()
 
 	//save it into the MediasConfiguration
-	m.Save(newMedia)
+	m.SaveIntoDB(newMedia)
 	m.Commit()
 
 	return newMedia
 }
 
-// RemoveMedia Remove media from memory
-func (m *Manager) Remove(media *Media) {
+// RemoveMedia RemoveFromDB media from memory
+func (m *Manager) RemoveFromDB(media *Media) {
 	log.Println("Removing media")
 	i := m.getPosition(media)
 
@@ -112,14 +112,14 @@ func (m *Manager) Remove(media *Media) {
 	}
 }
 
-// SaveMedia Save media information in memory.
-func (m *Manager) Save(media *Media) {
+// SaveIntoDB saves media information in memory.
+func (m *Manager) SaveIntoDB(media *Media) {
 	log.Println("Saving media")
-	m.Remove(media)
+	m.RemoveFromDB(media)
 	m.Config.Medias = append(m.Config.Medias, *media)
 }
 
-// Commit Save all medias in DB.
+// Commit SaveIntoDB all medias in DB.
 // Here DB is a JSON file
 func (m *Manager) Commit() {
 	content, _ := json.Marshal(m.Config)
@@ -170,8 +170,7 @@ func (m *Manager) Activate(media *Media) error {
 			errorMessages += err.Error() + "\n"
 		}
 
-		// 1 : duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
-
+		// duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
 		mpPath := "medias" + sep + strconv.Itoa(media.ID) + sep + mp.EltName + sep + mp.InstanceId
 		err = m.copyNewInstanceOfPlugin(media, &mp, mpPath)
 		if err != nil {
@@ -206,7 +205,7 @@ func (m *Manager) Activate(media *Media) error {
 
 	media.IsActive = true
 
-	m.Save(media)
+	m.SaveIntoDB(media)
 
 	if errorMessages != "" {
 		return errors.New(errorMessages)
@@ -233,7 +232,7 @@ func (m *Manager) Deactivate(media *Media) error {
 
 	media.IsActive = false
 
-	m.Save(media)
+	m.SaveIntoDB(media)
 
 	if errorMessages != "" {
 		return errors.New(errorMessages)
@@ -246,7 +245,7 @@ func (m *Manager) Delete(media *Media) error {
 
 	m.Deactivate(media)
 
-	m.Remove(media)
+	m.RemoveFromDB(media)
 	m.Commit()
 
 	//remove plugins files

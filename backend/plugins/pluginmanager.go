@@ -31,7 +31,7 @@ func NewManager(configPath, configFilename string) *Manager {
 }
 
 // LoadPlugins loads plugins configuration from DB and store it in memory
-func (m *Manager) Load() {
+func (m *Manager) LoadFromDB() {
 	log.Printf("Start Loading Plugins from DB.")
 
 	m.CreateSaveFileIfNotExist(m.ConfigPath, m.ConfigFileName)
@@ -76,7 +76,7 @@ func (m *Manager) Get(eltName string) (*Plugin, error) {
 }
 
 // RemovePlugin Remove plugin from memory and commit
-func (m *Manager) Remove(plugin *Plugin) {
+func (m *Manager) RemoveFromDB(plugin *Plugin) {
 	log.Println("Removing plugin")
 	i := m.GetPosition(plugin)
 
@@ -90,7 +90,7 @@ func (m *Manager) Remove(plugin *Plugin) {
 // Save plugin information.
 func (m *Manager) Add(plugin *Plugin) {
 	log.Println("Saving plugin")
-	m.Remove(plugin)
+	m.RemoveFromDB(plugin)
 	m.Config.Plugins = append(m.Config.Plugins, *plugin)
 
 	m.Commit()

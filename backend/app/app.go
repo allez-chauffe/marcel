@@ -92,9 +92,9 @@ func (a *App) initializeData() {
 
 	//Load plugins list from DB
 	a.pluginService = plugins.NewService()
-	a.pluginService.GetManager().Load()
+	a.pluginService.GetManager().LoadFromDB()
 
 	//Load Medias configuration from DB
 	a.mediaService = medias.NewService(a.pluginService.GetManager())
-	a.mediaService.GetManager().Load()
+	a.mediaService.GetManager().LoadFromDB()
 }

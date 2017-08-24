@@ -95,7 +95,7 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /medias SaveHandler
 //
-// Save a media.
+// SaveIntoDB a media.
 // If it's an update of an existing media, it will be first deactivated (all plugins stopped)
 //  prior to be activated and saved.
 // By default, the media will be activated
@@ -123,7 +123,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 		media.ID = m.manager.GetNextID()
 	}
 
-	m.manager.Save(media)
+	m.manager.SaveIntoDB(media)
 	// 3 : start backend for every plugin instance
 	m.manager.Activate(media)
 
@@ -225,7 +225,7 @@ func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 		media := m.manager.Config.Medias[i]
 		m.manager.Deactivate(&media)
 
-		m.manager.Remove(&media)
+		m.manager.RemoveFromDB(&media)
 		m.manager.Commit()
 
 	}
