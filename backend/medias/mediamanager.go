@@ -219,7 +219,11 @@ func (m *Manager) Deactivate(media *Media) error {
 
 	//remove plugins files
 	sep := string(os.PathSeparator)
-	os.RemoveAll("medias" + sep + strconv.Itoa(media.ID))
+	err := os.RemoveAll("medias" + sep + strconv.Itoa(media.ID))
+
+	if err != nil {
+		return err
+	}
 
 	media.IsActive = false
 
