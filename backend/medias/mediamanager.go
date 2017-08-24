@@ -84,7 +84,7 @@ func (m *Manager) Get(idMedia int) (*Media, error) {
 		}
 	}
 
-	return nil, errors.New("NO_MEDIA_FOUND")
+	return nil, errors.New("No Media found with ID " + strconv.Itoa(idMedia))
 }
 
 // CreateMedia Create a new Media, save it into memory and commit
@@ -158,6 +158,7 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 func (m *Manager) Activate(media *Media) error {
 
 	sep := string(os.PathSeparator)
+	errorMessages := ""
 
 	for _, mp := range media.Plugins {
 
@@ -166,14 +167,17 @@ func (m *Manager) Activate(media *Media) error {
 			//plugin does not exist (anymore ?) in the catalog. Obviously, it should never append.
 			log.Println(err.Error())
 			//Don't return an error now, we need to activate the other plugins
+			errorMessages += err.Error() + "\n"
 		}
 
 		// 1 : duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
-		mpPath := "medias" + sep + strconv.Itoa(media.ID) + sep + mp.EltName + sep + mp.InstanceId
-		err = commons.CopyDir("plugins"+sep+mp.EltName, mpPath)
 
+		mpPath := "medias" + sep + strconv.Itoa(media.ID) + sep + mp.EltName + sep + mp.InstanceId
+		err = m.copyNewInstanceOfPlugin(media, &mp, mpPath)
 		if err != nil {
-			return err
+			log.Println(err.Error())
+			//Don't return an error now, we need to activate the other plugins
+			errorMessages += err.Error() + "\n"
 		}
 
 		if mp.BackEnd != nil {
@@ -182,6 +186,7 @@ func (m *Manager) Activate(media *Media) error {
 			if err != nil {
 				//Don't return an error now, we need to activate the other plugins
 				log.Println(err.Error())
+				errorMessages += err.Error() + "\n"
 			}
 			imageName := strings.TrimSpace(strings.TrimPrefix(retour, "Loaded image: "))
 			externalPort := m.GetPortNumberForPlugin()
@@ -190,6 +195,7 @@ func (m *Manager) Activate(media *Media) error {
 			if err != nil {
 				//Don't return an error now, we need to activate the other plugins
 				log.Println(err.Error())
+				errorMessages += err.Error() + "\n"
 			} else {
 				mp.BackEnd.Port = externalPort
 				mp.BackEnd.DockerImageName = imageName
@@ -201,6 +207,10 @@ func (m *Manager) Activate(media *Media) error {
 	media.IsActive = true
 
 	m.Save(media)
+
+	if errorMessages != "" {
+		return errors.New(errorMessages)
+	}
 
 	return nil
 }
@@ -270,4 +280,16 @@ func (m *Manager) FreePortNumberForPlugin(portNumber int) {
 func (m *Manager) GetNextID() int {
 	m.Config.LastID = m.Config.LastID + 1
 	return m.Config.LastID
+}
+
+func (m *Manager) copyNewInstanceOfPlugin(media *Media, mp *MediaPlugin, path string) error {
+	sep := string(os.PathSeparator)
+
+	err := commons.CopyDir("plugins"+sep+mp.EltName, path)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
