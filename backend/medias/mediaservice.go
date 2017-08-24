@@ -80,6 +80,10 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 // swagger:parameters idMedia
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
+	if media == nil {
+		commons.WriteResponse(w, http.StatusNotFound, "")
+		return
+	}
 
 	b, err := json.Marshal(*media)
 	if err != nil {
@@ -159,10 +163,8 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 
-	if !media.IsActive {
-		m.manager.Activate(media)
-		m.manager.Commit()
-	}
+	m.manager.Activate(media)
+	m.manager.Commit()
 
 	commons.WriteResponse(w, http.StatusOK, "Media is active")
 }
