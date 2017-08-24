@@ -190,7 +190,7 @@ func (m *Manager) Activate(media *Media) error {
 			imageName := strings.TrimSpace(strings.TrimPrefix(retour, "Loaded image: "))
 			externalPort := m.GetPortNumberForPlugin()
 
-			dockerContainerId, err := containers.StartContainer(imageName, plugin.Backend.Port, externalPort, mp.BackEnd.Props)
+			dockerContainerId, err := containers.StartContainer(imageName, plugin.Backend.Port, externalPort, mp.BackEnd.Props, mpPath)
 			if err != nil {
 				//Don't return an error now, we need to activate the other plugins
 				log.Println(err.Error())

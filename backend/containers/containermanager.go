@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"log"
 	"strconv"
+	"os"
 )
 
 func InstallImage(path string) (string, error) {
@@ -20,7 +21,7 @@ func InstallImage(path string) (string, error) {
 	return string(cmdOutput.Bytes()), nil
 }
 
-func StartContainer(imageName string, internalport int, externalport int, props map[string]interface{}) (containerId string, err error) {
+func StartContainer(imageName string, internalport int, externalport int, props map[string]interface{}, volumeRelativePath string) (containerId string, err error) {
 
 	params := []string{}
 	for k, v := range props {
@@ -29,8 +30,13 @@ func StartContainer(imageName string, internalport int, externalport int, props 
 		}
 	}
 
-	hostVolume := "/tmp"
-	containerVolume := "./data"
+	pwd, err := os.Getwd()
+	if err != nil {
+		return  "", err
+	}
+
+	containerVolume := "/data"
+	hostVolume := pwd + volumeRelativePath
 
 	req := []string{}
 	req = append(req, "run",
@@ -39,8 +45,6 @@ func StartContainer(imageName string, internalport int, externalport int, props 
 		"-v", hostVolume+":"+containerVolume,
 		imageName,
 	)
-	//req = append(req, params...)
-	//req = append(req, imageName)
 
 	cmd := exec.Command("docker", req...)
 
