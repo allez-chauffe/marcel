@@ -145,7 +145,7 @@ func CopyDir(source string, dest string) (err error) {
 
 func WriteResponse(w http.ResponseWriter, statusCode int, message string) {
 	w.WriteHeader(statusCode)
-	w.Write([]byte(message))
+	w.Write([]byte(" "+ message))
 }
 
 func Check(e error) {
