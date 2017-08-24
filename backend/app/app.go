@@ -57,6 +57,7 @@ func (a *App) initializeRoutes() {
 	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
 	s.HandleFunc("/medias", a.mediaService.GetAllHandler).Methods("GET")
 	s.HandleFunc("/medias", a.mediaService.SaveHandler).Methods("POST")
+	s.HandleFunc("/medias", a.mediaService.DeleteAllHandler).Methods("DELETE")
 	s.HandleFunc("/medias/config", a.mediaService.GetConfigHandler).Methods("GET")
 	s.HandleFunc("/medias/create", a.mediaService.CreateHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/activate", a.mediaService.ActivateHandler).Methods("POST")
