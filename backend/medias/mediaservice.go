@@ -198,12 +198,14 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 
-	m.manager.Deactivate(media)
+	if media != nil {
+		m.manager.Deactivate(media)
 
-	m.manager.Remove(media)
-	m.manager.Commit()
+		m.manager.Remove(media)
+		m.manager.Commit()
 
-	commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
+		commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
+	}
 }
 
 func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (media *Media) {
@@ -213,13 +215,13 @@ func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (m
 	idMedia, err := strconv.Atoi(attr)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
-		return
+		return nil
 	}
 
 	media, err = m.manager.Get(idMedia)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotFound, err.Error())
-		return
+		return nil
 	}
 
 	return media
