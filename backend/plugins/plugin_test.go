@@ -5,8 +5,8 @@ import "testing"
 func TestNewBackend(t *testing.T) {
 	b := NewBackend()
 
-	if len(b.Ports) != 0 {
-		t.Error("New backend should have an array of ports of length 0")
+	if b.Port != 0 {
+		t.Error("New backend should be 0")
 	}
 }
 
