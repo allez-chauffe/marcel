@@ -24,6 +24,8 @@ func NewMedia() *Media {
 
 	media.Stylesvar = make(map[string]interface{})
 	media.Plugins = []MediaPlugin{}
+	media.Rows = 10
+	media.Cols = 10
 
 	return media
 }

@@ -94,6 +94,7 @@ func (m *Manager) CreateEmpty() (*Media) {
 
 	newMedia := NewMedia()
 	newMedia.ID = m.GetNextID()
+	newMedia.Name = "Media " + strconv.Itoa(newMedia.ID)
 
 	//save it into the MediasConfiguration
 	m.SaveIntoDB(newMedia)
