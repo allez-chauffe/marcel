@@ -1,5 +1,5 @@
 //@flow
-import { values, mapValues } from 'lodash'
+import { values, mapValues, pick, keyBy } from 'lodash'
 import type { Dashboard } from '../dashboard/type'
 import availablePlugins from '../mocked-data/plugins'
 
@@ -44,12 +44,12 @@ const backend = {
 
   saveDashboard: (dashboard: Dashboard) => {
     const plugins = values(dashboard.plugins).map(plugin => {
-      const { x, y, cols, rows, props, eltName, name, instanceId } = plugin
+      const { x, y, cols, rows, props, eltName, instanceId } = plugin
       const propsForBack = mapValues(props, 'value')
       return {
-        name,
         instanceId,
-        frontend: { x, y, cols, rows, eltName, props: propsForBack },
+        eltName,
+        frontend: { x, y, cols, rows, props: propsForBack },
       }
     })
     const data = { ...dashboard, plugins }
@@ -59,9 +59,17 @@ const backend = {
   },
 
   getAvailablePlugins: () =>
-    new Promise(resolve => {
-      setTimeout(() => resolve(availablePlugins), 1000)
-    }),
+    get('plugins')
+      .then(response => {
+        if (response.status !== 200) throw response
+        return response.json()
+      })
+      .then(plugins =>
+        plugins.map(plugin => ({
+          ...pick(plugin, 'name', 'description', 'eltName'),
+          props: keyBy(plugin.frontend.props, 'name'),
+        })),
+      ),
 }
 
 export default backend
