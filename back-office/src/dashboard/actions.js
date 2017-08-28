@@ -3,7 +3,7 @@ import { keyBy, values, range, forEach, findIndex, some, map, chain } from 'loda
 import { toastr } from 'react-redux-toastr'
 
 import { backend } from '../api'
-import { selectedDashboardSelector } from './selectors'
+import { selectedDashboardSelector, pluginInstancesSelector } from './selectors'
 import type { Plugin, Prop } from '../plugins'
 import type {
   SelectPluginAction,
@@ -163,7 +163,8 @@ export const saveLayout = (layout: Layout): SaveLayoutAction => ({
 })
 
 export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
-  const dashboard = selectedDashboardSelector(getState())
+  const state = getState()
+  const dashboard = selectedDashboardSelector(state)
   if (!dashboard) throw new Error('A dashboard should be selected')
 
   dispatch({ type: actions.UPLOAD_STARTED })
