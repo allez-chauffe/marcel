@@ -61,10 +61,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
     case actions.ADD_DASHBOARD: {
       const { dashboard } = action.payload
       return chain(state)
-        .set(`dashboards.${dashboard.id}`, {
-          ...dashboard,
-          name: `Dashboard ${dashboard.id}`,
-        })
+        .set(`dashboards.${dashboard.id}`, dashboard)
         .set('selectedDashboard', dashboard.id)
         .value()
     }

@@ -16,6 +16,13 @@ const post = (url: string, body: ?mixed) =>
     body: body ? JSON.stringify(body) : null,
   })
 
+const put = (url: string, body: ?mixed) =>
+  request(url, {
+    method: 'PUT',
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : null,
+  })
+
 const backend = {
   getAllDashboards: () =>
     get('medias').then(response => {
@@ -30,7 +37,7 @@ const backend = {
     }),
 
   createDashboard: () =>
-    get('medias/create').then(response => {
+    post('medias').then(response => {
       if (response.status !== 200) throw response
       return response.json()
     }),
@@ -46,7 +53,7 @@ const backend = {
       }
     })
     const data = { ...dashboard, plugins }
-    return post(`medias`, data).then(response => {
+    return put(`medias`, data).then(response => {
       if (response.status !== 200) throw response
     })
   },

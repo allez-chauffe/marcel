@@ -90,7 +90,7 @@ export const addDashboard = (): AddDashboardThunkAction => dispatch => {
     .then(dashboard =>
       dispatch({
         type: actions.ADD_DASHBOARD,
-        payload: { dashboard: { ...dashboard, ratio: 16 / 9 } },
+        payload: { dashboard },
       }),
     )
     .catch(error => {
