@@ -1,14 +1,15 @@
 package app
 
 import (
-	"github.com/gorilla/mux"
-	"net/http"
-	"github.com/Zenika/MARCEL/backend/medias"
-	"github.com/rs/cors"
 	"log"
+	"net/http"
 	"os"
+
 	"github.com/Zenika/MARCEL/backend/apidoc"
+	"github.com/Zenika/MARCEL/backend/medias"
 	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 //current version of the API
@@ -56,10 +57,10 @@ func (a *App) initializeRoutes() {
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
 	s.HandleFunc("/medias", a.mediaService.GetAllHandler).Methods("GET")
-	s.HandleFunc("/medias", a.mediaService.SaveHandler).Methods("POST")
+	s.HandleFunc("/medias", a.mediaService.CreateHandler).Methods("POST")
+	s.HandleFunc("/medias", a.mediaService.SaveHandler).Methods("PUT")
 	s.HandleFunc("/medias", a.mediaService.DeleteAllHandler).Methods("DELETE")
 	s.HandleFunc("/medias/config", a.mediaService.GetConfigHandler).Methods("GET")
-	s.HandleFunc("/medias/create", a.mediaService.CreateHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/activate", a.mediaService.ActivateHandler).Methods("POST")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/deactivate", a.mediaService.DeactivateHandler).Methods("POST")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/restart", a.mediaService.RestartHandler).Methods("POST")
