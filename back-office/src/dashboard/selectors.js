@@ -1,24 +1,20 @@
 //@flow
 import { createSelector } from 'reselect'
-import { mapValues, keyBy } from 'lodash'
+import { keyBy } from 'lodash/fp'
+import { chain } from 'immutadot'
 import type { State } from '../store'
 import type { DashboardMap } from './type'
 import { mapPluginInstancesToProps } from '../common/utils'
 
-export const dashboardsSelector = (state: State): DashboardMap =>
-  state.dashboard.dashboards
+export const dashboardsSelector = (state: State): DashboardMap => state.dashboard.dashboards
 
-export const pluginInstancesSelector = (state: State) =>
-  state.dashboard.pluginInstances
+export const pluginInstancesSelector = (state: State) => state.dashboard.pluginInstances
 
-export const selectedDashboardNameSelector = (state: State) =>
-  state.dashboard.selectedDashboard
+export const selectedDashboardNameSelector = (state: State) => state.dashboard.selectedDashboard
 
-export const selectedPluginNameSelector = (state: State) =>
-  state.dashboard.selectedPlugin
+export const selectedPluginNameSelector = (state: State) => state.dashboard.selectedPlugin
 
-export const deletingDashboardSelector = (state: State) =>
-  state.dashboard.deletingDashboard
+export const deletingDashboardSelector = (state: State) => state.dashboard.deletingDashboard
 
 export const displayGridSelector = (state: State) => state.dashboard.displayGrid
 
@@ -28,14 +24,10 @@ export const selectedDashboardSelector = createSelector(
   selectedDashboardNameSelector,
   (dashboards, pluginInstances, selectedName) => {
     if (!selectedName || !dashboards[selectedName]) return null
-    const dashboard = dashboards[selectedName]
-    return {
-      ...dashboard,
-      plugins: mapValues(
-        keyBy(dashboard.plugins),
-        instanceId => pluginInstances[instanceId],
-      ),
-    }
+    return chain(dashboards[selectedName])
+      .map('plugins', mapPluginInstancesToProps(pluginInstances))
+      .update('plugins', keyBy('instanceId'))
+      .value()
   },
 )
 

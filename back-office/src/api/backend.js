@@ -1,7 +1,6 @@
 //@flow
-import { values, mapValues } from 'lodash'
+import { values, mapValues, pick, keyBy } from 'lodash'
 import type { Dashboard } from '../dashboard/type'
-import availablePlugins from '../mocked-data/plugins'
 
 const baseUrl = 'http://localhost:8090/api/v1/'
 
@@ -12,6 +11,13 @@ const get = (url: string) => request(url)
 const post = (url: string, body: ?mixed) =>
   request(url, {
     method: 'POST',
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : null,
+  })
+
+const put = (url: string, body: ?mixed) =>
+  request(url, {
+    method: 'PUT',
     headers: body ? { 'Content-Type': 'application/json' } : {},
     body: body ? JSON.stringify(body) : null,
   })
@@ -30,31 +36,39 @@ const backend = {
     }),
 
   createDashboard: () =>
-    get('medias/create').then(response => {
+    post('medias').then(response => {
       if (response.status !== 200) throw response
       return response.json()
     }),
 
   saveDashboard: (dashboard: Dashboard) => {
     const plugins = values(dashboard.plugins).map(plugin => {
-      const { x, y, cols, rows, props, eltName, name, instanceId } = plugin
+      const { x, y, cols, rows, props, eltName, instanceId } = plugin
       const propsForBack = mapValues(props, 'value')
       return {
-        name,
         instanceId,
-        frontend: { x, y, cols, rows, eltName, props: propsForBack },
+        eltName,
+        frontend: { x, y, cols, rows, props: propsForBack },
       }
     })
     const data = { ...dashboard, plugins }
-    return post(`medias`, data).then(response => {
+    return put(`medias`, data).then(response => {
       if (response.status !== 200) throw response
     })
   },
 
   getAvailablePlugins: () =>
-    new Promise(resolve => {
-      setTimeout(() => resolve(availablePlugins), 1000)
-    }),
+    get('plugins')
+      .then(response => {
+        if (response.status !== 200) throw response
+        return response.json()
+      })
+      .then(plugins =>
+        plugins.map(plugin => ({
+          ...pick(plugin, 'name', 'description', 'eltName'),
+          props: keyBy(plugin.frontend.props, 'name'),
+        })),
+      ),
 }
 
 export default backend

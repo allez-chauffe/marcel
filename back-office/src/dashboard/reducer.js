@@ -20,13 +20,15 @@ const intialState = {
 }
 
 const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
-  return mapValues(layout, (layoutItem, instanceId) => {
+  const updatedInstances =  mapValues(layout, (layoutItem, instanceId) => {
     const plugin = plugins[instanceId]
     if (!plugin) throw new Error('Plugin instance not found in layout')
 
     const { x, y, w: cols, h: rows } = layoutItem
     return { ...plugin, x, y, cols, rows }
   })
+
+  return {...plugins, ...updatedInstances}
 }
 
 const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState, action) => {
@@ -61,10 +63,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
     case actions.ADD_DASHBOARD: {
       const { dashboard } = action.payload
       return chain(state)
-        .set(`dashboards.${dashboard.id}`, {
-          ...dashboard,
-          name: `Dashboard ${dashboard.id}`,
-        })
+        .set(`dashboards.${dashboard.id}`, { ...dashboard, ratio: 16 / 9 })
         .set('selectedDashboard', dashboard.id)
         .value()
     }

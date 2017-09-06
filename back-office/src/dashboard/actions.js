@@ -90,7 +90,7 @@ export const addDashboard = (): AddDashboardThunkAction => dispatch => {
     .then(dashboard =>
       dispatch({
         type: actions.ADD_DASHBOARD,
-        payload: { dashboard: { ...dashboard, ratio: 16 / 9 } },
+        payload: { dashboard },
       }),
     )
     .catch(error => {
@@ -144,7 +144,10 @@ export const reorderSubPlugins = (plugins: PluginInstance[]): ReorderSubPluginAc
   type: actions.REORDER_SUB_PLUGINS,
   payload: {
     instanceIds: map(plugins, 'instanceId'),
-    parent: chain(plugins).head().get('parent').value(),
+    parent: chain(plugins)
+      .head()
+      .get('parent')
+      .value(),
   },
 })
 
@@ -163,7 +166,8 @@ export const saveLayout = (layout: Layout): SaveLayoutAction => ({
 })
 
 export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
-  const dashboard = selectedDashboardSelector(getState())
+  const state = getState()
+  const dashboard = selectedDashboardSelector(state)
   if (!dashboard) throw new Error('A dashboard should be selected')
 
   dispatch({ type: actions.UPLOAD_STARTED })
