@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
+	"os"
 	"strconv"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/plugins"
@@ -230,6 +231,27 @@ func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 	commons.WriteResponse(w, http.StatusOK, "All medias have been correctly deleted")
+}
+
+// swagger:route GET /medias{idMedia:[0-9]*}/plugins/{eltName}/{instanceId}/*
+//
+// Serves static frontend files of the given plugin instance for the given media.
+func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) {
+	const sep = string(os.PathSeparator)
+	vars := mux.Vars(r)
+	eltName := vars["eltName"]
+	instanceID := vars["instanceId"]
+	filePath := vars["filePath"]
+
+	if filePath == "" {
+		filePath = "index.html"
+	}
+
+	if media := m.getMediaFromRequest(w, r); media != nil {
+		pluginDirectoryPath := m.manager.GetPluginDirectory(media, eltName, instanceID)
+		pluginFilePath := pluginDirectoryPath + sep + "frontend" + sep + filePath
+		http.ServeFile(w, r, pluginFilePath)
+	}
 }
 
 func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (media *Media) {
