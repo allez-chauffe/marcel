@@ -23,6 +23,7 @@ type Plugin struct {
 	Description string     `json:"description"`
 	Frontend    Frontend   `json:"frontend"`
 	Backend     Backend    `json:"backend"`
+	EltName     string   `json:"eltName"`
 }
 
 func NewPlugin() (*Plugin) {
