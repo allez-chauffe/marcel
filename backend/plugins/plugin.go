@@ -19,14 +19,14 @@ func NewConfiguration() *Configuration {
 //
 // swagger:model
 type Plugin struct {
-	EltName     string     `json:"eltName"`
-	Description string     `json:"description"`
-	Frontend    Frontend   `json:"frontend"`
-	Backend     Backend    `json:"backend"`
 	EltName     string   `json:"eltName"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Frontend    Frontend `json:"frontend"`
+	Backend     Backend  `json:"backend"`
 }
 
-func NewPlugin() (*Plugin) {
+func NewPlugin() *Plugin {
 	var p = new(Plugin)
 
 	p.Frontend = *NewFrontend()
@@ -36,8 +36,8 @@ func NewPlugin() (*Plugin) {
 }
 
 type Frontend struct {
-	Cols  int `json:"cols"`
-	Rows  int `json:"rows"`
+	Cols  int     `json:"cols"`
+	Rows  int     `json:"rows"`
 	Props []Props `json:"props"`
 }
 
@@ -60,7 +60,7 @@ type Props struct {
 
 type Backend struct {
 	Dockerimage string                 `json:"dockerimage"`
-	Port        int                  `json:"port"`
+	Port        int                    `json:"port"`
 	Props       map[string]interface{} `json:"props"`
 }
 
