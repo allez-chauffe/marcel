@@ -1,7 +1,6 @@
 //@flow
 import { values, mapValues, pick, keyBy } from 'lodash'
 import type { Dashboard } from '../dashboard/type'
-import availablePlugins from '../mocked-data/plugins'
 
 const baseUrl = 'http://localhost:8090/api/v1/'
 

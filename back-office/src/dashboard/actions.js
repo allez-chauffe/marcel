@@ -3,7 +3,7 @@ import { keyBy, values, range, forEach, findIndex, some, map, chain } from 'loda
 import { toastr } from 'react-redux-toastr'
 
 import { backend } from '../api'
-import { selectedDashboardSelector, pluginInstancesSelector } from './selectors'
+import { selectedDashboardSelector } from './selectors'
 import type { Plugin, Prop } from '../plugins'
 import type {
   SelectPluginAction,
@@ -144,7 +144,10 @@ export const reorderSubPlugins = (plugins: PluginInstance[]): ReorderSubPluginAc
   type: actions.REORDER_SUB_PLUGINS,
   payload: {
     instanceIds: map(plugins, 'instanceId'),
-    parent: chain(plugins).head().get('parent').value(),
+    parent: chain(plugins)
+      .head()
+      .get('parent')
+      .value(),
   },
 })
 
