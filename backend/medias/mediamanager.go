@@ -157,9 +157,8 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 }
 
 func (m *Manager) Activate(media *Media) error {
-
-	sep := string(os.PathSeparator)
 	errorMessages := ""
+	const sep = string(os.PathSeparator)
 
 	for _, mp := range media.Plugins {
 
@@ -172,7 +171,7 @@ func (m *Manager) Activate(media *Media) error {
 		}
 
 		// duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
-		mpPath := "medias" + sep + strconv.Itoa(media.ID) + sep + mp.EltName + sep + mp.InstanceId
+		mpPath := m.GetPluginDirectory(media, mp.EltName, mp.InstanceId)
 		err = m.copyNewInstanceOfPlugin(media, &mp, mpPath)
 		if err != nil {
 			log.Println(err.Error())
@@ -309,4 +308,9 @@ func (m *Manager) copyNewInstanceOfPlugin(media *Media, mp *MediaPlugin, path st
 	}
 
 	return nil
+}
+
+func (m *Manager) GetPluginDirectory(media *Media, eltName string, instanceId string) string {
+	const sep = string(os.PathSeparator)
+	return "medias" + sep + strconv.Itoa(media.ID) + sep + eltName + sep + instanceId
 }
