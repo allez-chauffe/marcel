@@ -23,4 +23,5 @@ export type State = {
   dashboard: DashboardState,
   auth: AuthState,
   loaders: LoadersState,
+  config: Config,
 }

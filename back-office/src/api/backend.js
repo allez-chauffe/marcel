@@ -1,10 +1,11 @@
 //@flow
+import store from '../store'
 import { values, mapValues, pick, keyBy } from 'lodash'
 import type { Dashboard } from '../dashboard/type'
 
-const baseUrl = 'http://localhost:8090/api/v1/'
+const baseUrl = () => store.getState().config.backendURI
 
-const request = (url: string, options?) => fetch(baseUrl + url, options)
+const request = (url: string, options?) => fetch(baseUrl() + url, options)
 
 const get = (url: string) => request(url)
 
