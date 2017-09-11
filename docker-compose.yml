@@ -1,8 +1,7 @@
 version: '3'
 services:
   backend:
-    build: ./backend
-    image: marcel-backend
+    image: marcel-back-end
     ports:
      - 8090:8090
     volumes:
@@ -12,7 +11,6 @@ services:
      - ./test_env/logs:/backend/logs
 
   back-office:
-    build: ./back-office
     image: marcel-back-office
     ports:
      - 81:80
@@ -20,8 +18,7 @@ services:
      - ./test_env/back-office:/usr/share/nginx/html/conf
 
   front-end:
-    build: ./frontend
-    image: marcel-frontend
+    image: marcel-front-end
     ports:
      - "80:80"
     volumes:

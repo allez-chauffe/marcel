@@ -51,18 +51,38 @@ deployment:
   dev:
     branch: dev
     commands:
-      - go install:
-          pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
+      # Packaging plugins
       - tar -czf plugins.tar.gz plugins
+
+      # Packaging back-office
       - docker build -t marcel-back-office .:
           pwd: back-office
       - docker save -o marcel-back-office.tar marcel-back-office
-      - docker build -t marcel-frontend .:
+
+      # Packaging front-end
+      - docker build -t marcel-front-end .:
           pwd: frontend
-      - docker save -o marcel-frontend.tar marcel-frontend
+      - docker save -o marcel-front-end.tar marcel-front-end
+
+      # Packaging back-end
+      - docker build -t marcel-back-end .:
+          pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
+      - docker save -o marcel-back-end.tar marcel-back-end
+
+      # Exporting serveur key
       - echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
       - chmod 400 integration_key.pem
-      - scp -i integration_key.pem marcel-back-office.tar marcel-frontend.tar plugins.tar.gz ~/.go_workspace/bin/backend ubuntu@35.158.222.144:~/
+
+      # Uploading packages
+      - scp -i integration_key.pem plugins.tar.gz ubuntu@35.158.222.144:~/
+      - scp -i integration_key.pem marcel-back-office.tar ubuntu@35.158.222.144:~/
+      - scp -i integration_key.pem marcel-front-end.tar ubuntu@35.158.222.144:~/
+      - scp -i integration_key.pem marcel-back-end.tar ubuntu@35.158.222.144:~/
+      - scp -i integration_key.pem docker-compose.yml ubuntu@35.158.222.144:~/
+
+      # Running deployement script
       - ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
+
+      # Cleaning up and publishing artificats
       - rm -f integration_key.pem
       - mv *.tar ~/.go_workspace/bin/backend $CIRCLE_ARTIFACTS
