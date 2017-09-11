@@ -7,13 +7,10 @@ import type { LoadersState, LoadersAction } from './loaders'
 
 export type Config = {
   backendURI: string,
+  frontendURI: string,
 }
 
-export type Action =
-  | FiltersAction
-  | DashboardAction
-  | LoadersAction
-  | AuthAction
+export type Action = FiltersAction | DashboardAction | LoadersAction | AuthAction
 
 export type Dispatch = Action => mixed
 

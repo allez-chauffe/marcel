@@ -11,10 +11,7 @@ import { reducer as auth } from '../auth'
 import { reducer as loaders, actions as loadersActions } from './loaders'
 import type { State, Action, Config } from './types'
 
-const config: Reducer<Config, Action> = (
-  state = { backendURI: '' },
-  action,
-) => {
+const config: Reducer<Config, Action> = (state = { backendURI: 'http://localhost:8090/api/v1/', frontendURI: 'http://localhost:5000/' }, action) => {
   switch (action.type) {
     case loadersActions.LOAD_CONFIG_SUCCESSED: {
       return action.payload.config

@@ -1,6 +1,5 @@
 //@flow
 import React from 'react'
-import { toastr } from 'react-redux-toastr'
 import CardMedia from 'react-toolbox/lib/card/CardMedia'
 import CardTitle from 'react-toolbox/lib/card/CardTitle'
 import CardText from 'react-toolbox/lib/card/CardText'
@@ -14,6 +13,7 @@ import './DashboardListItem.css'
 class DashboardListItem extends React.Component {
   props: {
     dashboard: Dashboard,
+    frontendURI: string,
     selectDashboard: () => void,
     deleteDashboard: () => void,
   }
@@ -25,23 +25,20 @@ class DashboardListItem extends React.Component {
 
   selectDashboard = this.onClickWithoutPropagation(this.props.selectDashboard)
   deleteDashboard = this.onClickWithoutPropagation(this.props.deleteDashboard)
-  openDashboard = this.onClickWithoutPropagation(() =>
-    toastr.warning('Not yet implemented !'),
-  )
+  openDashboard = this.onClickWithoutPropagation(() => {
+    const { frontendURI, dashboard } = this.props
+    window.open(frontendURI + dashboard.id)
+    window.focus()
+  })
 
   render() {
     const { dashboard } = this.props
     const { selectDashboard, deleteDashboard, openDashboard } = this
     return (
       <DashboardCard onClick={selectDashboard}>
-        <CardMedia
-          aspectRatio="wide"
-          image="https://placeimg.com/800/450/nature"
-        />
+        <CardMedia aspectRatio="wide" image="https://placeimg.com/800/450/nature" />
         <CardTitle title={dashboard.name} />
-        <CardText>
-          {dashboard.description}
-        </CardText>
+        <CardText>{dashboard.description}</CardText>
         <CardActions className="buttons">
           <Button icon="mode_edit" label="modifier" onClick={selectDashboard} />
           <Button icon="exit_to_app" label="ouvrir" onClick={openDashboard} />
