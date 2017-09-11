@@ -70,3 +70,12 @@
 [submodule "plugins/marcel-plugin-gitlab"]
 	path = plugins/marcel-plugin-gitlab
 	url = https://github.com/Zenika/marcel-plugin-gitlab
+[submodule "plugins/marcel-plugin-gdrive-gallery"]
+	path = plugins/marcel-plugin-gdrive-gallery
+	url = https://github.com/EmrysMyrddin/marcel-plugin-gdrive-gallery.git
+[submodule "plugins/marcel-plugin-image"]
+	path = plugins/marcel-plugin-image
+	url = https://github.com/EmrysMyrddin/marcel-plugin-image.git
+[submodule "plugins/marcel-plugin-gdrive-news-feed"]
+	path = plugins/marcel-plugin-gdrive-news-feed
+	url = https://github.com/EmrysMyrddin/marcel-plugin-gdrive-news-feed.git
