@@ -38,7 +38,7 @@
       if (loaded) return
       loaded = true
 
-      fetch('config.json')
+      fetch('conf/config.json')
         .then(res => res.json())
         .then(res => [res.backendURL || 'localhost', res.pluginURL || 'localhost'])
         .catch(() => ['localhost', 'localhost'])
