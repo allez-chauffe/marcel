@@ -35,7 +35,7 @@ compile:
   override:
     - yarn build:
         pwd: back-office
-    - GOOS=linux GOARCH=amd64 go build:
+    - CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .:
         pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 test:
