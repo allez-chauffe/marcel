@@ -65,3 +65,5 @@ medias.config.json
 /backend/swagger.json
 /back-office/.vscode/chrome
 /backend/backend
+
+test_env
