@@ -85,4 +85,4 @@ deployment:
 
       # Cleaning up and publishing artificats
       - rm -f integration_key.pem
-      - mv *.tar ~/.go_workspace/bin/backend $CIRCLE_ARTIFACTS
+      - mv *.tar ~/.go_workspace/src/github.com/Zenika/MARCEL/backend/backend $CIRCLE_ARTIFACTS
