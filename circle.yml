@@ -35,9 +35,7 @@ compile:
   override:
     - yarn build:
         pwd: back-office
-    #- polymer build:
-    #    pwd: frontend
-    - go build:
+    - GOOS=linux GOARCH=amd64 go build:
         pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 test:
