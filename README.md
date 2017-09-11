@@ -20,14 +20,20 @@ or after you have cloned the repository :
 git submodule update
 ```
 
+To update plugins, you can run :
+
+```shel
+git submodule update --rebase --remote
+```
+
 ## Content
 
 Each directory has a specific usage.
 
-* back-office - Manage the plugins and their configuration
-* backend - Store the plugins and offer an API to request them
-* frontend - Web application that load the plugins
-* plugins - Links to repositories of available plugins
+* [back-office](./back-office) - Manage the plugins and their configuration
+* [backend](./back-end) - Store the plugins and offer an API to request them
+* [frontend](./frontend) - Web application that load the plugins
+* [plugins](./plugins) - Links to repositories of available plugins
 
 ## License
 
