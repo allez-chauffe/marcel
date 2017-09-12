@@ -1,49 +1,135 @@
-##Setup
-```go
-go get github.com/briandowns/openweathermap
-go get github.com/GwennaelBuchet/openweathermap
-go get github.com/dghubble/go-twitter/twitter
-go get github.com/dghubble/oauth1
+# Backend
+
+The main purpose of this part is to serve information and plugins list, configured by the back-office.
+
+## How to build the back-end
+
+### Dependencies
+
+Install dependencies by running the following script :
+
+```shell
+../scripts/install_go_deps.sh
+```
+
+or by installing each library by hand :
+
+```shell
 go get github.com/rs/cors
 go get -u github.com/gorilla/mux
-go get -u google.golang.org/api/calendar/v3
-go get -u golang.org/x/oauth2/...
 go get github.com/mitchellh/mapstructure
 ```
 
-```shell
-docker pull quay.io/goswagger/swagger
-alias swagger="docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
+### Build server
 
-export OWM_API_KEY="your_owm_api_key"
-export GOOGLE_API_KEY_FILE="your_google_api_key_file"
-export MARCEL_AGENDA_ID="id_of_your_google_agenda"
-export TWITTER_CONSUMER_KEY="your_twitter_consumer_key"
-export TWITTER_CONSUMER_SECRET="your_twitter_consummer_secret"
-export TWITTER_ACCESS_TOKEN="your_twitter_access_token"
-export TWITTER_ACCESS_SECRET="your_twitter_access_secret"
+You can build the server by running :
+
+```shell
+go build -o marcel-back-end
+```
+You should then be able to run the server :
+
+```shell
+./marcel-back-end
+```
+
+By default, the logs can be seen in the file `marcel.log` in the working directory. You can change this default :
+```shell
 export MARCEL_LOG_FILE="path_to_log_file" # defaults to $PWD/marcel.log
 ```
 
-Build cross architecture :
+### Build cross architecture :
+
 ``` shell
-env GOOS=linux GOARCH=arm go build -o ./bin/MARCEL
+env GOOS=linux GOARCH=arm go build -o marcel-back-end-arm
+```
+List of all GOOS and GOARCH values : https://golang.org/doc/install/source#environment
+
+### Generate swagger.json generation
+
+Install library :
+```
+go get -u github.com/go-swagger/go-swagger/cmd/swagger
 ```
 
-In order to use Realize to manage your local builds :
+or without docker :
+
+```shel
+docker pull quay.io/goswagger/swagger
+alias swagger="docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
+```
+
+Generate the API doc :
+```
+swagger generate spec -o ./swagger.json
+```
+
+You can now run Swagger UI on port 3000
+
+## How to run the back-end
+
+### With compiled exectubale
+
+Once built, you can run the exectuable as a background job :
+
 ```shell
-go get github.com/tockins/realize
+./marcel-back-end &
 ```
-(https://tockins.github.io/realize/)
 
-Then, from project(s) root, execute :
+The backend expect a specific file architecture for the working directory :
+
+```
+working_directory
+  |__ data/
+  |   |__ plugins.json
+  |   |__ medias.json
+  |
+  |__ medias/
+  |   |__ ...
+  |
+  |__ plugins/
+  |   |__ plugin1/
+  |   |   |__ frontend/
+  |   |       |__ index.html
+  |   |       |__ style.html
+  |   |
+  |   |__ plugin2/
+  |   |   |__ frontend/
+  |   |   |   |__ index.html
+  |   |   |__ backend/
+  |   |       |__ docker_image.tar
+  |   |
+  |   |__ ...
+  |
+  |__ marcel.log
+```
+
+ - `data/` folder is used to store persistente data. It should contains the plugin catalog in `plugins.json` (see [plugins README](../plugins)). The back-end will generate a `medias.json` if it doesn/t exist.
+ - `medias/` folder should not be modified. It stores internal copies and data for each medias and plugins.
+ - `plugins/` folder contains all the plugins files. Each plugin registered in the `plugins.json` catalog should have a folder with its `eltName` name.
+ - `marcel.log` is the default location for logs.
+
+### With Docker
+
+You can run the backend server with the provided docker image :
+
 ```shell
-realize add
+docker container run \
+  -d -p 8090:8090 \
+  -v $(pwd)/data:/backend/data \
+  -v $(pwd)/plugins:/backend/plugins \
+  -v $(pwd)/medias:/backend/medias \
+  -v $(pwd)/logs:/backend/logs \
+  marcel-back-end
 ```
 
-##Credits
- - OpenWeatherMap
- - OpenWeatherMap Go API by briandowns (http://briandowns.github.io/openweathermap/)
- - Twitter Go API by Dalton Hubble (https://github.com/dghubble/go-twitter)
- - MapStructure from Mitchellh (https://github.com/mitchellh/mapstructure)
- - Go-Swagger.io (https://goswagger.io)
+ - `/backend/data/` is a volume that contains persitent data.  It should contains the plugin catalog in `plugins.json` (see [plugins README](../plugins)). The back-end will generate a `medias.json` if it doesn/t exist.
+ - `/backend/plugins/` is a volume that contains all the plugins files. Each plugin registered in the `plugins.json` catalog should have a folder with its `eltName` name.
+ - `/bakcend/medias/` is a volume that should not be modified. It stores internal copies and data for each medias and plugins.
+ - `/backend/logs/` is the volume containing the backend logs file.
+
+## Credits
+
+* [Gorilla Mux](https://github.com/gorilla/mux)
+* [MapStructure](https://github.com/mitchellh/mapstructure) from Mitchellh
+* [Go-Swagger.io](https://goswagger.io)

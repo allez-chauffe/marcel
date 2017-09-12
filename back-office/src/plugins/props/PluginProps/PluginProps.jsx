@@ -11,7 +11,7 @@ import './PluginProps.css'
 
 class PluginProps extends React.Component {
   props: {
-    plugin?: PluginInstance,
+    plugin: ?PluginInstance,
     filter: string,
     changeFilter: string => void,
     deletePlugin: PluginInstance => void,
@@ -26,19 +26,19 @@ class PluginProps extends React.Component {
 
     if (!plugin) return <div className="PluginsProps" />
 
-    const { name, props: pluginProps } = plugin
+    const { props: pluginProps } = plugin
 
     return (
       <div className="PluginProps">
-        <h2>{name}</h2>
         <SearchField
           label="Search Prop"
           value={filter}
           onChange={changeFilter}
         />
-        {values(pluginProps).map(p => (
-          <PluginProp plugin={plugin} prop={p} key={p.name} />
-        ))}
+
+        {values(pluginProps).map(p =>
+          <PluginProp plugin={plugin} prop={p} key={p.name} />,
+        )}
 
         <Button
           icon="delete"

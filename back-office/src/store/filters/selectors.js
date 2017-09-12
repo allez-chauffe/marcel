@@ -4,6 +4,7 @@ import { filter, chain } from 'lodash'
 import { pickBy } from 'immutadot'
 import { pluginsSelector } from '../../plugins/selectors'
 import { selectedPluginSelector } from '../../dashboard'
+import type { PluginInstance } from '../../dashboard'
 import type { State } from '../types'
 
 export const pluginFilterSelector = (state: State) => state.filters.plugins
@@ -18,7 +19,7 @@ export const filterByName = (filterString: string) => {
 
   const regexp = RegExp(`.*${regexPatern}.*`, 'i')
 
-  return (item: { name: string }): boolean => regexp.test(item.name)
+  return <T: { name: string }>(item: T): boolean => regexp.test(item.name)
 }
 
 export const filteredPluginsSeletor = createSelector(
@@ -30,6 +31,6 @@ export const filteredPluginsSeletor = createSelector(
 export const selectedPluginPropsFilteredSelector = createSelector(
   selectedPluginSelector,
   propsFilterSelector,
-  (plugin, filterString) =>
+  (plugin, filterString): ?PluginInstance =>
     plugin && pickBy(plugin, 'props', filterByName(filterString)),
 )

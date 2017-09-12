@@ -1,70 +1,59 @@
 package medias
 
-import (
-	"errors"
-	"fmt"
-	"reflect"
-)
-/**
-The global attributes for a Media
- */
+// Media represents a media configuration
+//
+// swagger:model
 type Media struct {
-	ID      int    `json:"id"`
-	Name    string `json:"name"`
-	Styles []string `json:"styles"`
-	Components []MediaPlugin `json:"components"`
+	// the id for this media
+	//
+	// required: true
+	// unique: true
+	// min: 1
+	ID          int                    `json:"id"`
+	Name        string                 `json:"name"`
+	IsActive    bool                   `json:"isactive"`
+	Description string                 `json:"description"`
+	Rows        int                    `json:"rows"`
+	Cols        int                    `json:"cols"`
+	Stylesvar   map[string]interface{} `json:"stylesvar"`
+	Plugins     []MediaPlugin          `json:"plugins"`
 }
 
-type MediaConfig struct {
-	Styles []string `json:"styles"`
+func NewMedia() *Media {
+	var media = new(Media)
+
+	media.Stylesvar = make(map[string]interface{})
+	media.Plugins = []MediaPlugin{}
+	media.Rows = 10
+	media.Cols = 10
+
+	return media
 }
 
-/**
-Properties and configuration for a plugin used in the media
- */
+// MediaPlugin represents a plugin configuration for the media
+//
+// Properties and configuration for a plugin used in the media
+//
+// swagger:model
 type MediaPlugin struct {
-	ComponentName       string `json:"componentName"`
-	EltName    string `json:"eltName"`
-	Files      []string `json:"files"`
-	PropValues map[string]interface{} `json:"propValues"` //MediaPluginProps `json:"propValues"`
+	InstanceId string              `json:"instanceId"`
+	EltName    string              `json:"eltName"`
+	FrontEnd   *MediaPluginFrontEnd `json:"frontend"`
+	BackEnd    *MediaPluginBackEnd  `json:"backend"`
 }
 
-/**
-Because we don't know what will compounds the props for a plugin, we use a map[string] interface{}
- */
-type MediaPluginProps struct {
-	X map[string]interface{} `json:"-"` //map[string]string
+type MediaPluginFrontEnd struct {
+	//Files []string               `json:"files"`
+	X     int                    `json:"x"`
+	Y     int                    `json:"y"`
+	Rows  int                    `json:"rows"`
+	Cols  int                    `json:"cols"`
+	Props map[string]interface{} `json:"props"`
 }
 
-func SetField(obj interface{}, name string, value interface{}) error {
-	structValue := reflect.ValueOf(obj).Elem()
-	structFieldValue := structValue.FieldByName(name)
-
-	if !structFieldValue.IsValid() {
-		return fmt.Errorf("No such field: %s in obj", name)
-	}
-
-	if !structFieldValue.CanSet() {
-		return fmt.Errorf("Cannot set %s field value", name)
-	}
-
-	structFieldType := structFieldValue.Type()
-	val := reflect.ValueOf(value)
-	if structFieldType != val.Type() {
-		return errors.New("Provided value type didn't match obj field type")
-	}
-
-	structFieldValue.Set(val)
-	return nil
-}
-
-
-func (s *Media) FillStruct(m map[string]interface{}) error {
-	for k, v := range m {
-		err := SetField(s, k, v)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+type MediaPluginBackEnd struct {
+	Port                int                  `json:"port"`
+	Props               map[string]interface{} `json:"props"`
+	DockerImageName     string
+	DockerContainerId   string
 }

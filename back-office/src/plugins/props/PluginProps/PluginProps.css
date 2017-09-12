@@ -1,11 +1,7 @@
 .PluginProps {
   display: flex;
   flex-direction: column;
-  padding-right: 10px
-}
-
-.PluginProps h2 {
-  text-align: center;
+  padding-right: 10px;
 }
 
 .PluginProps button.delete {

@@ -56,6 +56,14 @@ frontend/*.iml
 node_modules
 bower_components
 
-config.js
+frontend/config.js
 google_api_key_file.json
+medias.config.json
 .DS_Store
+/backend/data/plugins.json
+/backend/data/medias.json
+/backend/swagger.json
+/back-office/.vscode/chrome
+/backend/backend
+
+test_env

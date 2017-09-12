@@ -1,0 +1,10 @@
+.Auth {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.Auth > .LoginForm {
+  margin-top: 15em;
+  align-self: flex-start;
+}

@@ -1,0 +1,19 @@
+.SubPluginProps h2 {
+  text-align: center;
+  position: relative;
+}
+
+.SubPluginProps > div > p {
+  font-size: 1em;
+  text-align: center;
+}
+
+.SubPluginProps .back {
+  position: absolute;
+  left: 1em;
+  top: -0.3em;
+}
+
+.SubPluginProps .back span {
+  font-size: 2em;
+}

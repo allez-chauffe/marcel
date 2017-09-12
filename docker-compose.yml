@@ -1,0 +1,26 @@
+version: '3'
+services:
+  backend:
+    image: marcel-back-end
+    ports:
+     - 8090:8090
+    volumes:
+     - ./data:/backend/data
+     - ./plugins:/backend/plugins
+     - ./medias:/backend/medias
+     - ./logs:/backend/logs
+
+  back-office:
+    image: marcel-back-office
+    ports:
+     - 81:80
+    volumes:
+     - ./back-office:/usr/share/nginx/html/conf
+
+  front-end:
+    image: marcel-front-end
+    ports:
+     - "80:80"
+    volumes:
+     - ./front-end:/usr/share/nginx/html/conf
+     - ./release:/usr/share/nginx/html/release

@@ -1,0 +1,27 @@
+//@flow
+import React from 'react'
+import type { Dashboard } from '../../../dashboard/type'
+import DashboardListItem from './DashboardListItem'
+import AddDashboardCard from './AddDashboardCard'
+import DeleteDashboardDialog from './DeleteDashboardDialog'
+
+import './DashboardList.css'
+
+export type PropsType = {
+  dashboards: Dashboard[],
+}
+
+const DashboardList = (props: PropsType) => {
+  const { dashboards } = props
+  return (
+    <div className="DashboardList">
+      <AddDashboardCard />
+      {dashboards.map(dashboard =>
+        <DashboardListItem key={dashboard.id} dashboard={dashboard} />,
+      )}
+      <DeleteDashboardDialog />
+    </div>
+  )
+}
+
+export default DashboardList

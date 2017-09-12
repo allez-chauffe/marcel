@@ -1,5 +1,6 @@
 //@flow
 import React from 'react'
+import { range } from 'lodash'
 import ReactGridLayout from 'react-grid-layout'
 
 import './Grid.css'
@@ -14,6 +15,7 @@ export type Props = {
   rows: number,
   cols: number,
   layout: Item[],
+  displayGrid: boolean,
   selectPlugin: PluginInstance => void,
   selectedPlugin: string,
   saveLayout: Layout => void,
@@ -35,7 +37,7 @@ const makePluginInstance = (selectPlugin, selectedPlugin) => item => {
 }
 
 const Grid = (props: Props) => {
-  const { size: { width, height }, ratio, rows, cols } = props
+  const { size: { width, height }, ratio, rows, cols, displayGrid } = props
   const { layout, saveLayout, selectPlugin, selectedPlugin } = props
   const marginHeight: number = ReactGridLayout.defaultProps.margin[1]
 
@@ -46,9 +48,23 @@ const Grid = (props: Props) => {
 
   return (
     <div className="Grid">
+      {displayGrid
+        ? <div
+            className="displayGrid"
+            style={{ width: gridWidth, height: gridHeight - 10 }}
+          >
+            {range(rows).map(i =>
+              <div className="row" key={i}>
+                {range(cols).map(j => <div className="cell" key={j} />)}
+              </div>,
+            )}
+          </div>
+        : null}
       <ReactGridLayout
-        cols={cols}
+        style={{ width: gridWidth }}
+        containerPadding={[5, 5]}
         width={gridWidth}
+        cols={cols}
         rowHeight={rowHeight}
         verticalCompact={false}
         maxRows={rows}

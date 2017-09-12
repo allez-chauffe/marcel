@@ -1,0 +1,17 @@
+.DashboardCard {
+  width: 400px;
+  margin: 1em;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.DashboardCard:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 20px 2px rgba(0, 0, 0, .14), 0 3px 1px 0px rgba(0, 0, 0, .2),
+    0 1px 15px 1px rgba(0, 0, 0, .12);
+}
+
+.DashboardCard p {
+  height: 100px;
+  overflow: hidden;
+}
