@@ -23,3 +23,4 @@ services:
      - "80:80"
     volumes:
      - ./front-end:/usr/share/nginx/html/conf
+     - ./release:/usr/share/nginx/html/release
