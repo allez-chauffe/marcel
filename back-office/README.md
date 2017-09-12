@@ -42,7 +42,7 @@ The back-office can be run with the provided docker image :
 ```shell
 docker container run \
   -d -p 81:80 \
-  -v $(pwd)/conf:/usr/share/nginx/html/conf
+  -v $(pwd)/conf:/usr/share/nginx/html/conf \
   marcel-back-office
 ```
 
