@@ -2,8 +2,6 @@
 
 The purpose of this part is to give an serve a graphical administration interface. It allows to create, modify and delete medias with a graphical editor.
 
-## How to build the back-office
-
 ## How to run the back-office
 
 ### Form sources
@@ -45,6 +43,7 @@ The back-office can be run with the provided docker image :
 docker container run \
   -d -p 81:80 \
   -v $(pwd)/conf:/usr/share/nginx/html/conf
+  marcel-back-office
 ```
 
 The conf volume should contains the `config.json` file :
@@ -57,3 +56,27 @@ The conf volume should contains the `config.json` file :
 ```
 
 Note that the trailling slash of each URI is required.
+
+## How to Contribute
+
+### Run the developpement build
+
+You can start the developpement server with live reloading :
+
+```shell
+yarn start
+```
+
+### Run the tests
+
+You can run tests :
+
+```shell
+yarn test
+```
+
+or run the typechecker :
+```shell
+yarn flow
+```
+
