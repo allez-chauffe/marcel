@@ -2,39 +2,61 @@
 
 The main purpose of this part is to serve information and plugins list, configured by the back-office.
 
-## How to build the project
+## How to build the back-end
 
-```go
+### Dependencies
+
+Install dependencies by running the following script :
+
+```shell
+../scripts/install_go_deps.sh
+```
+
+or by installing each library by hand :
+
+```shell
 go get github.com/rs/cors
 go get -u github.com/gorilla/mux
 go get github.com/mitchellh/mapstructure
 ```
 
-```shell
-docker pull quay.io/goswagger/swagger
-alias swagger="docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
+### Build server
 
+You can build the server by running :
+
+```shell
+go build -o marcel-back-end
+```
+You should then be able to run the server :
+
+```shell
+./marcel-back-end
+```
+
+By default, the logs can be seen in the file `marcel.log` in the working directory. You can change this default :
+```shell
 export MARCEL_LOG_FILE="path_to_log_file" # defaults to $PWD/marcel.log
 ```
 
-Build cross architecture :
+### Build cross architecture :
 
 ``` shell
-env GOOS=linux GOARCH=arm go build -o ./bin/MARCEL
+env GOOS=linux GOARCH=arm go build -o marcel-back-end-arm
 ```
 List of all GOOS and GOARCH values : https://golang.org/doc/install/source#environment
 
-Once every is done, you can launch the server with :
-
-```shell
-go run main.go
-```
-
-###Swagger.json generation
+### Generate swagger.json generation
 
 Install library :
 ```
 go get -u github.com/go-swagger/go-swagger/cmd/swagger
+```
+
+or without docker :
+
+```shel
+docker pull quay.io/goswagger/swagger
+alias swagger="docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
 ```
 
 Generate the API doc :
@@ -42,27 +64,69 @@ Generate the API doc :
 swagger generate spec -o ./swagger.json
 ```
 
-Run Swagger UI on port 3000
+You can now run Swagger UI on port 3000
 
-### How to develop a plugin
-All plugins have 2 main folders and 1 description file :
+## How to run the back-end
+
+### With compiled exectubale
+
+Once built, you can run the exectuable as a background job :
+
+```shell
+./marcel-back-end &
 ```
- plugin_name
-  |__front\
-  |   |__ index.html
+
+The backend expect a specific file architecture for the working directory :
+
+```
+working_directory
+  |__ data/
+  |   |__ plugins.json
+  |   |__ medias.json
+  |
+  |__ medias/
   |   |__ ...
   |
-  |__back\
-  |   |__ docker_image.tar
+  |__ plugins/
+  |   |__ plugin1/
+  |   |   |__ frontend/
+  |   |       |__ index.html
+  |   |       |__ style.html
+  |   |
+  |   |__ plugin2/
+  |   |   |__ frontend/
+  |   |   |   |__ index.html
+  |   |   |__ backend/
+  |   |       |__ docker_image.tar
+  |   |
+  |   |__ ...
   |
-  |__description.json
+  |__ marcel.log
 ```
 
- * Each attribute for the backend will be passed to the docker image as a environment variable. 
- * For each instance of a launched plugin, a Docker Volume is created at ```/tmp``` on the container
- 
- To get a full example, please have a look at the "Google Agenda" plugin here: 
- https://github.com/Zenika/marcel-plugin-calendar
+ - `data/` folder is used to store persistente data. It should contains the plugin catalog in `plugins.json` (see [plugins README](../plugins)). The back-end will generate a `medias.json` if it doesn/t exist.
+ - `medias/` folder should not be modified. It stores internal copies and data for each medias and plugins.
+ - `plugins/` folder contains all the plugins files. Each plugin registered in the `plugins.json` catalog should have a folder with its `eltName` name.
+ - `marcel.log` is the default location for logs.
+
+### With Docker
+
+You can run the backend server with the provided docker image :
+
+```shell
+docker container run \
+  -d -p 8090:8090 \
+  -v $(pwd)/data:/backend/data \
+  -v $(pwd)/plugins:/backend/plugins \
+  -v $(pwd)/medias:/backend/medias \
+  -v $(pwd)/logs:/backend/logs \
+  marcel-back-end
+```
+
+ - `/backend/data/` is a volume that contains persitent data.  It should contains the plugin catalog in `plugins.json` (see [plugins README](../plugins)). The back-end will generate a `medias.json` if it doesn/t exist.
+ - `/backend/plugins/` is a volume that contains all the plugins files. Each plugin registered in the `plugins.json` catalog should have a folder with its `eltName` name.
+ - `/bakcend/medias/` is a volume that should not be modified. It stores internal copies and data for each medias and plugins.
+ - `/backend/logs/` is the volume containing the backend logs file.
 
 ## Credits
 
