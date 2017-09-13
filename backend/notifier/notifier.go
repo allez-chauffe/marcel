@@ -1,6 +1,7 @@
 package notifier
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -81,4 +82,21 @@ func (s *Service) UnregisterMedia(mediaID int) {
 
 	media.Close()
 	delete(s.medias, mediaID)
+}
+
+//Notify sends the given message to all clients connected to the given Media.
+func (s *Service) Notify(mediaID int, msg string) error {
+	media, found := s.medias[mediaID]
+	if !found {
+		return errors.New("Media not found")
+	}
+
+	log.Printf("Send notification to all clients of media %d", mediaID)
+
+	select {
+	case media.notify <- []byte(msg):
+		return nil
+	default:
+		return errors.New("The media is blocked")
+	}
 }

@@ -135,6 +135,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	m.manager.Commit()
 
 	commons.WriteResponse(w, http.StatusOK, "Media correctly saved with ID "+strconv.Itoa(media.ID))
+	m.notifier.Notify(media.ID, "update")
 }
 
 // swagger:route GET /medias CreateHandler
@@ -210,6 +211,7 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 	m.manager.Commit()
 
 	commons.WriteResponse(w, http.StatusOK, "Media has been correctly restarted")
+	m.notifier.Notify(media.ID, "update")
 }
 
 // swagger:route DELETE /medias/{idMedia:[0-9]*} DeleteHandler
