@@ -16,9 +16,6 @@ const (
 
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
-
-	// Maximum message size allowed from peer.
-	maxMessageSize = 512
 )
 
 //Client represent a websocket connection to a client.
@@ -41,6 +38,8 @@ func newClient(media *Media, conn *websocket.Conn) *Client {
 }
 
 func (c *Client) run() {
+	pingTicker := time.NewTicker(pingPeriod)
+
 	for {
 		select {
 
@@ -52,10 +51,17 @@ func (c *Client) run() {
 				return
 			}
 
+		case <-pingTicker.C:
+			if err := c.writeEmptyMessage(websocket.PingMessage); err != nil {
+				log.Println("Ping failed. Closing client")
+				c.media.unregister <- c
+				return
+			}
+
 		case <-c.close:
 			close(c.send)
 			close(c.close)
-			c.writeMessage(websocket.CloseMessage, []byte{})
+			c.writeEmptyMessage(websocket.CloseMessage)
 			return
 		}
 	}
@@ -64,6 +70,10 @@ func (c *Client) run() {
 //Close gracefully close and cleanup the client
 func (c *Client) Close() {
 	c.close <- nil
+}
+
+func (c *Client) writeEmptyMessage(msgType int) error {
+	return c.writeMessage(msgType, []byte{})
 }
 
 func (c *Client) writeMessage(msgType int, msg []byte) error {

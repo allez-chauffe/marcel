@@ -29,7 +29,7 @@ type Service struct {
 
 //NewService create a fresh new Service
 func NewService() *Service {
-	return new(Service)
+	return &Service{make(map[int]*Media)}
 }
 
 //HandleMediaConnection Handles a connection request to a given media.
