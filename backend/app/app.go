@@ -102,6 +102,6 @@ func (a *App) initializeData() {
 	a.pluginService.GetManager().LoadFromDB()
 
 	//Load Medias configuration from DB
-	a.mediaService = medias.NewService(a.pluginService.GetManager())
+	a.mediaService = medias.NewService(a.pluginService.GetManager(), a.notifierService)
 	a.mediaService.GetManager().LoadFromDB()
 }

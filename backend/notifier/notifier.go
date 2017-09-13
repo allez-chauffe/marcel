@@ -22,7 +22,9 @@ var upgrader = websocket.Upgrader{
 /*Service is a websocket connection handler.
 It handles connection request and dispatch them to the correct Media goroutine
 */
-type Service struct{}
+type Service struct {
+	medias map[int]*Media
+}
 
 //NewService create a fresh new Service
 func NewService() *Service {
@@ -41,4 +43,24 @@ func (s *Service) HandleMediaConnection(w http.ResponseWriter, r *http.Request) 
 		commons.WriteResponse(w, http.StatusInternalServerError, "Failed to establish websocket connection")
 		return
 	}
+}
+
+//RegisterMedia open a new goroutine for the given Media
+func (s *Service) RegisterMedia(mediaID int) {
+	if _, found := s.medias[mediaID]; found {
+		return
+	}
+
+	s.medias[mediaID] = newMedia(mediaID)
+}
+
+//UnregisterMedia close the Media gotourine and all its clients.
+func (s *Service) UnregisterMedia(mediaID int) {
+	media, found := s.medias[mediaID]
+	if !found {
+		return
+	}
+
+	media.Close()
+	delete(s.medias, mediaID)
 }

@@ -2,31 +2,35 @@ package medias
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
+
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/notifier"
 	"github.com/Zenika/MARCEL/backend/plugins"
-	"io/ioutil"
+	"github.com/gorilla/mux"
 )
 
 const MEDIAS_CONFIG_PATH string = "data"
 const MEDIAS_CONFIG_FILENAME string = "medias.json"
 
 type Service struct {
-	manager *Manager
+	manager  *Manager
+	notifier *notifier.Service
 }
 
-func NewService(pluginManager *plugins.Manager) *Service {
+func NewService(pluginManager *plugins.Manager, notifier *notifier.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(pluginManager, MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	service.manager = NewManager(pluginManager, notifier, MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	service.notifier = notifier
 
 	return service
 }
 
-func (m *Service) GetManager() (*Manager) {
+func (m *Service) GetManager() *Manager {
 	return m.manager
 }
 
@@ -165,6 +169,8 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if media != nil {
 		m.manager.Activate(media)
+		m.notifier.RegisterMedia(media.ID)
+
 		m.manager.Commit()
 
 		commons.WriteResponse(w, http.StatusOK, "Media is active")
@@ -179,6 +185,8 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if media != nil {
 		m.manager.Deactivate(media)
+		m.notifier.UnregisterMedia(media.ID)
+
 		m.manager.Commit()
 
 		commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
