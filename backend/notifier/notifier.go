@@ -42,19 +42,24 @@ func (s *Service) HandleMediaConnection(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	_, mediaFound := s.medias[mediaID]
+	media, mediaFound := s.medias[mediaID]
 	if !mediaFound {
 		log.Printf("Tryed to open a websocket for unknown media %d", mediaID)
 		commons.WriteResponse(w, http.StatusNotFound, "The media is unknown or not currently activated")
 		return
 	}
 
-	_, err = upgrader.Upgrade(w, r, nil)
-
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("Websocket establishement failed for media %d : %s", mediaID, err.Error())
 		commons.WriteResponse(w, http.StatusInternalServerError, "Failed to establish websocket connection")
 		return
+	}
+
+	select {
+	case media.register <- newClient(media, conn):
+	default:
+		log.Printf("Media %d is down !", mediaID)
 	}
 }
 
