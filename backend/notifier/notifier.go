@@ -36,6 +36,19 @@ func (s *Service) HandleMediaConnection(w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	mediaID, err := strconv.Atoi(vars["idMedia"])
 
+	if err != nil {
+		log.Println("Mal formed URL for websocket request : missing idMedia")
+		commons.WriteResponse(w, http.StatusBadRequest, "Missing media id")
+		return
+	}
+
+	_, mediaFound := s.medias[mediaID]
+	if !mediaFound {
+		log.Printf("Tryed to open a websocket for unknown media %d", mediaID)
+		commons.WriteResponse(w, http.StatusNotFound, "The media is unknown or not currently activated")
+		return
+	}
+
 	_, err = upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
