@@ -7,6 +7,7 @@ import (
 
 	"github.com/Zenika/MARCEL/backend/apidoc"
 	"github.com/Zenika/MARCEL/backend/medias"
+	"github.com/Zenika/MARCEL/backend/notifier"
 	"github.com/Zenika/MARCEL/backend/plugins"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -21,8 +22,9 @@ var logFile *os.File
 type App struct {
 	Router http.Handler
 
-	mediaService  *medias.Service
-	pluginService *plugins.Service
+	mediaService    *medias.Service
+	pluginService   *plugins.Service
+	notifierService *notifier.Service
 }
 
 func (a *App) Initialize() {
@@ -31,6 +33,8 @@ func (a *App) Initialize() {
 	if err != nil {
 		print(err)
 	}
+
+	a.notifierService = notifier.NewService()
 
 	a.initializeData()
 
@@ -64,6 +68,7 @@ func (a *App) initializeRoutes() {
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/activate", a.mediaService.ActivateHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/deactivate", a.mediaService.DeactivateHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/restart", a.mediaService.RestartHandler).Methods("GET")
+	s.HandleFunc("/medias/{idMedia:[0-9]*}/notifier", a.notifierService.HandleMediaConnection)
 	s.HandleFunc("/medias/{idMedia:[0-9]*}", a.mediaService.DeleteHandler).Methods("DELETE")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}", a.mediaService.GetHandler).Methods("GET")
 	s.HandleFunc("/medias/{idMedia:[0-9]*}/plugins/{eltName}/{instanceId}/{filePath:.*}", a.mediaService.GetPluginFilesHandler).Methods("GET")
