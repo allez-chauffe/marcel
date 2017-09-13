@@ -35,7 +35,7 @@
     }
 
     function openNotificationConnection(config) {
-      const { backendURL, mediaId } = config
+      const { backendURL, mediaId, media } = config
       if (!media.isactive) {
         setTimeout(() => window.location.reload(), 30000)
         throw "This Media is not active.\n You can activate it in the back-office.\n\nThis media will be reloaded in 30 seconds."
