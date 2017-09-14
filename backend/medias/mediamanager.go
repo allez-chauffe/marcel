@@ -3,16 +3,18 @@ package medias
 import (
 	"encoding/json"
 	"errors"
-	"github.com/mitchellh/mapstructure"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
-	"fmt"
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/plugins"
-	"github.com/Zenika/MARCEL/backend/containers"
 	"strconv"
 	"strings"
+
+	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/containers"
+	"github.com/Zenika/MARCEL/backend/notifier"
+	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/mitchellh/mapstructure"
 )
 
 type Manager struct {
@@ -22,15 +24,17 @@ type Manager struct {
 	Config         *Configuration
 
 	pluginManager *plugins.Manager
+	notifier      *notifier.Service
 }
 
-func NewManager(pluginManager *plugins.Manager, configPath, configFilename string) *Manager {
+func NewManager(pluginManager *plugins.Manager, notifier *notifier.Service, configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
 	manager.configPath = configPath
 	manager.configFileName = configFilename
 
 	manager.pluginManager = pluginManager
+	manager.notifier = notifier
 
 	manager.configFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
 	manager.Config = NewConfiguration()
@@ -59,16 +63,23 @@ func (m *Manager) LoadFromDB() {
 		panic(err)
 	}
 
+	for _, media := range m.Config.Medias {
+		if media.IsActive {
+			m.Activate(&media)
+			m.notifier.RegisterMedia(media.ID)
+		}
+	}
+
 	log.Print("Medias configurations is loaded...")
 }
 
-func (m *Manager) GetConfiguration() (*Configuration) {
+func (m *Manager) GetConfiguration() *Configuration {
 	log.Println("Getting global medias config")
 
 	return m.Config
 }
 
-func (m *Manager) GetAll() ([]Media) {
+func (m *Manager) GetAll() []Media {
 	log.Println("Getting all medias")
 
 	return m.Config.Medias
@@ -88,7 +99,7 @@ func (m *Manager) Get(idMedia int) (*Media, error) {
 }
 
 // CreateMedia Create a new Media, save it into memory and commit
-func (m *Manager) CreateEmpty() (*Media) {
+func (m *Manager) CreateEmpty() *Media {
 
 	log.Println("Creating media")
 
