@@ -1,45 +1,61 @@
 @import '../fonts/font.css';
 
-html {
-  height: 100%;
-}
-
 body {
-    height: 85%;
-    background: black;
-    color: white;
-    font-family: Roboto;
-    font-weight: 300;
-    zoom: 90%;
-    overflow: hidden;
-    padding: 4% 4%;
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  font-family: Roboto;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
 }
 
 #components {
-    height: 100%;
-    margin: 0px;
-    padding: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+#error_container {
+  position: absolute;
+  top: 0;
+  z-index: 1000;
+  visibility: hidden;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+#error {
+  padding: 3em;
+  max-width: 20%;
+  text-align: center;
+  background: #ffecec;
+  color: red;
+  border: #e97b7b solid 1px;
+  border-radius: 5px;
 }
 
 * {
-  animation: fadein 2s;
+  animation: fadein 1s;
   font-family: Roboto;
 }
 
 @keyframes fadein {
-    from {
-        opacity:0;
-    }
-    to {
-        opacity:1;
-    }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeout {
-    from {
-        opacity:1;
-    }
-    to {
-        opacity:0;
-    }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

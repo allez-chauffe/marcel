@@ -9,17 +9,17 @@
   <link rel="import" href="css/shared-styles.html">
   <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="css/weather-icons.min.css">
-  <style>
-    body {
-      background-color: var(--background-color);
-      color: var(--primary-color);
-      overflow-y: hidden;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
 <body onload="loadComponents()">
+
+  <div id="error_container">
+    <div id="error">
+    </div>
+  </div>
   <section id="components"></section>
+
   <script src="bower_components/polymer-application-loader/loader.js"></script>
   <script>
     const loader = new PolymerApplicationLoader()
@@ -27,11 +27,46 @@
 
     function launchLoad(config) {
       const { mediaId, backendURL, pluginURL } = config
-      loader.load(
+      return loader.load(
         'components',
-        `${backendURL}/medias/${mediaId}`,
-        `${pluginURL}/medias/${mediaId}/plugins`,
-      )
+        `http://${backendURL}/medias/${mediaId}`,
+        `http://${pluginURL}/medias/${mediaId}/plugins`,
+      ).then(media => ({ ...config, media }))
+    }
+
+    function openNotificationConnection(config) {
+      const { backendURL, mediaId, media } = config
+      if (!media.isactive) {
+        setTimeout(() => window.location.reload(), 30000)
+        throw "This Media is not active.\n You can activate it in the back-office.\n\nThis media will be reloaded in 30 seconds."
+      }
+
+      const conn = new WebSocket(`ws://${backendURL}/medias/${mediaId}/notifier`)
+
+      conn.onmessage = ({ data }) => {
+        if (data === 'update') {
+          showError("This media has been updated.\n\n It will be reloaded in a few seconds...")
+          setTimeout(() => window.location.reload(), 5000)
+        }
+      }
+
+      conn.onopen = () => hideError()
+
+      conn.onclose = event => {
+        setTimeout(() => openNotificationConnection(config), 10000)
+        showError("Connection with backend has been lost.\nTrying to reconnect in a few seconds...")
+      }
+
+      window.onbeforeunload = () => conn.close()
+    }
+
+    function showError(error) {
+      document.querySelector("#error").innerText = error
+      document.querySelector("#error_container").style.visibility = "visible"
+    }
+
+    function hideError() {
+      document.querySelector("#error_container").style.visibility = "hidden"
     }
 
     function loadComponents() {
@@ -44,13 +79,15 @@
         .catch(() => ['localhost', 'localhost'])
         .then(ips => {
           const urlParts = window.location.href.split('/')
-          if (urlParts.length !== 4 || !urlParts[3]) throw "Bad URL"
+          if (urlParts.length !== 4 || !urlParts[3]) throw "No media id specified.\n\nPlease specify one at the end of the current URL."
 
           return { mediaId: urlParts[3], backendURL: ips[0], pluginURL: ips[1] }
         })
         .then(launchLoad)
+        .then(openNotificationConnection)
         .catch(error => {
-          document.getElementById("components").innerText = JSON.stringify(error)
+          document.querySelector("#components").style.visibility = "hidden"
+          showError(error)
         })
     }
   </script>
