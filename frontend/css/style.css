@@ -16,23 +16,26 @@ body {
 }
 
 #error_container {
-    visibility: hidden;
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    justify-content: center;
-    align-items: center;
-  }
+  position: absolute;
+  top: 0;
+  z-index: 1000;
+  visibility: hidden;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
 
-  #error {
-    padding: 3em;
-    max-width: 20%;
-    text-align: center;
-    background: #FFECEC;
-    color: red;
-    border: #E97B7B solid 1px;
-    border-radius: 5px;
-  }
+#error {
+  padding: 3em;
+  max-width: 20%;
+  text-align: center;
+  background: #ffecec;
+  color: red;
+  border: #e97b7b solid 1px;
+  border-radius: 5px;
+}
 
 * {
   animation: fadein 1s;
