@@ -27,6 +27,8 @@ import type {
   AddSubPluginAction,
   SelectPluginParentAction,
   ReorderSubPluginAction,
+  ActivateDashboardThunk,
+  DeactivateDashboardThunk,
 } from './type'
 
 export const actions = {
@@ -50,6 +52,8 @@ export const actions = {
   TOGGLE_DISPLAY_GRID: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
   SELECT_PLUGIN_PARENT: 'DASHBOARD/SELECT_PLUGIN_PARENT',
   REORDER_SUB_PLUGINS: 'DASHBOARD/REORDER_SUB_PLUGINS',
+  ACTIVATE_DASHBOARD: 'DASHBOARD/ACTIVATE_DASHBOARD',
+  DEACTIVATE_DASHBOARD: 'DASHBOARD/DEACTIVATE_DASHBOARD',
 }
 
 export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
@@ -197,3 +201,27 @@ export const toggleDisplayGrid = (): ToggleDisplayGridAction => ({
 export const selectPluginParent = (): SelectPluginParentAction => ({
   type: actions.SELECT_PLUGIN_PARENT,
 })
+
+export const activateDashboard = (dashboardId: string): ActivateDashboardThunk => dispatch => {
+  backend
+    .activateDashboard(dashboardId)
+    .then(() =>
+      dispatch({
+        type: actions.ACTIVATE_DASHBOARD,
+        payload: { dashboardId },
+      }),
+    )
+    .catch(() => toastr.error("Erreur lors de l'activation de ce media"))
+}
+
+export const deactivateDashboard = (dashboardId: string): DeactivateDashboardThunk => dispatch => {
+  backend
+    .deactivateDashboard(dashboardId)
+    .then(() =>
+      dispatch({
+        type: actions.DEACTIVATE_DASHBOARD,
+        payload: { dashboardId },
+      }),
+    )
+    .catch(() => toastr.error('Erreur lors de la désactivation de ce media'))
+}

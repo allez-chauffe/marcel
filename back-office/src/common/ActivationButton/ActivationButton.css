@@ -1,0 +1,21 @@
+.ActivationButton.active button {
+  color: green !important;
+}
+
+.ActivationButton.not-active button {
+  color: red !important;
+}
+
+.ActivationButton {
+  background: none;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.ActivationButton.not-active:hover {
+  background: rgba(255, 73, 73, 0.2);
+}
+
+.ActivationButton.active:hover {
+  background: rgba(85, 148, 85, 0.2);
+}

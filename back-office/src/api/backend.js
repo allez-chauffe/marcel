@@ -5,7 +5,11 @@ import type { Dashboard } from '../dashboard/type'
 
 const baseUrl = () => store.getState().config.backendURI
 
-const request = (url: string, options?) => fetch(baseUrl() + url, options)
+const request = (url: string, options?) =>
+  fetch(baseUrl() + url, options).then(response => {
+    if (response.status !== 200) throw response
+    return response
+  })
 
 const get = (url: string) => request(url)
 
@@ -24,23 +28,11 @@ const put = (url: string, body: ?mixed) =>
   })
 
 const backend = {
-  getAllDashboards: () =>
-    get('medias').then(response => {
-      if (response.status !== 200) throw response
-      return response.json()
-    }),
+  getAllDashboards: () => get('medias').then(res => res.json()),
 
-  getDashboard: (dashboardId: string) =>
-    get(`medias/${dashboardId}`).then(response => {
-      if (response.status !== 200) throw response
-      return response.json()
-    }),
+  getDashboard: (dashboardId: string) => get(`medias/${dashboardId}`).then(res => res.json()),
 
-  createDashboard: () =>
-    post('medias').then(response => {
-      if (response.status !== 200) throw response
-      return response.json()
-    }),
+  createDashboard: () => post('medias').then(res => res.json()),
 
   saveDashboard: (dashboard: Dashboard) => {
     const plugins = values(dashboard.plugins).map(plugin => {
@@ -53,23 +45,22 @@ const backend = {
       }
     })
     const data = { ...dashboard, plugins }
-    return put(`medias`, data).then(response => {
-      if (response.status !== 200) throw response
-    })
+    return put(`medias`, data)
   },
 
   getAvailablePlugins: () =>
     get('plugins')
-      .then(response => {
-        if (response.status !== 200) throw response
-        return response.json()
-      })
+      .then(res => res.json())
       .then(plugins =>
         plugins.map(plugin => ({
           ...pick(plugin, 'name', 'description', 'eltName'),
           props: keyBy(plugin.frontend.props, 'name'),
         })),
       ),
+
+  activateDashboard: (dashboardId: string) => get(`medias/${dashboardId}/activate`),
+
+  deactivateDashboard: (dashboardId: string) => get(`medias/${dashboardId}/deactivate`),
 }
 
 export default backend

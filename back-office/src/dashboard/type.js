@@ -30,6 +30,7 @@ export type Dashboard = {
   rows: number,
   cols: number,
   ratio: number,
+  isactive: boolean,
   stylesvar: {
     'primary-color': string,
     'secondary-color': string,
@@ -164,8 +165,26 @@ export type ReorderSubPluginAction = {
   },
 }
 
+export type ActivateDashboardAction = {
+  type: 'DASHBOARD/ACTIVATE_DASHBOARD',
+  payload: {
+    dashboardId: string,
+  },
+}
+
+export type ActivateDashboardThunk = (Dispatch<ActivateDashboardAction>) => void
+
+export type DeactivateDashboardAction = {
+  type: 'DASHBOARD/DEACTIVATE_DASHBOARD',
+  payload: {
+    dashboardId: string,
+  },
+}
+
+export type DeactivateDashboardThunk = (Dispatch<DeactivateDashboardAction>) => void
+
 // eslint-disable-next-line no-use-before-define
-export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
+export type DashboardThunk = (Dispatch<DashboardAction>, () => State) => void
 
 export type DashboardAction =
   | SelectPluginAction

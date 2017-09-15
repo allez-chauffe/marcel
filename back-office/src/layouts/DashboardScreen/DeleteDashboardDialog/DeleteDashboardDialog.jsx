@@ -13,7 +13,7 @@ const DeleteDahboardDialog = (props: PropsType) => {
 
   return (
     <Dialog
-      title="Etes-vous sûre de vouloir supprimer ce dahsboard ?"
+      title="Etes-vous sûre de vouloir supprimer ce Media ?"
       type="small"
       active={isDeletingDashboard}
       onEscKeyDown={cancelDeletion}

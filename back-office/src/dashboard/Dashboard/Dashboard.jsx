@@ -3,7 +3,10 @@ import React from 'react'
 import Button from 'react-toolbox/lib/button/Button'
 import Grid from '../Grid'
 import { values } from 'lodash'
+
+import { ActivationButton, OpenButton, DeleteDashboardButton } from '../../common'
 import type { Dashboard as DashboardT } from '../type'
+
 import './Dashboard.css'
 
 export type PropsType = {
@@ -21,13 +24,12 @@ const Dashboard = (props: PropsType) => {
           {name} <br />
           <small>{description}</small>
         </h2>
-        <Button
-          label="Enregistrer"
-          icon="save"
-          raised
-          primary
-          onClick={uploadLayout}
-        />
+        <div className="actions">
+          <Button label="Sauvegarder" icon="save" primary onClick={uploadLayout} />
+          <OpenButton dashboard={dashboard} />
+          <DeleteDashboardButton dashboard={dashboard} />
+          <ActivationButton dashboard={dashboard} />
+        </div>
       </div>
       <Grid
         ratio={ratio}
