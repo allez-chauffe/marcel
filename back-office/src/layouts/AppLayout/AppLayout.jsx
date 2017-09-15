@@ -27,9 +27,6 @@ const AppLayout = (props: PropsType) => {
           <DashboardScreen />
         </Auth>
       </main>
-      <footer>
-        <AppBar />
-      </footer>
     </div>
   )
 }

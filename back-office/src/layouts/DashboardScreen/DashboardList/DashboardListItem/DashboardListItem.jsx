@@ -5,6 +5,7 @@ import CardTitle from 'react-toolbox/lib/card/CardTitle'
 import CardText from 'react-toolbox/lib/card/CardText'
 import CardActions from 'react-toolbox/lib/card/CardActions'
 import Button from 'react-toolbox/lib/button/Button'
+import { ActivationButton, OpenButton, DeleteDashboardButton } from '../../../../common'
 import DashboardCard from '../DashboardCard'
 import type { Dashboard } from '../../../../dashboard/type'
 
@@ -33,7 +34,7 @@ class DashboardListItem extends React.Component {
 
   render() {
     const { dashboard } = this.props
-    const { selectDashboard, deleteDashboard, openDashboard } = this
+    const { selectDashboard } = this
     return (
       <DashboardCard onClick={selectDashboard}>
         <CardMedia aspectRatio="wide" image="https://placeimg.com/800/450/nature" />
@@ -41,8 +42,9 @@ class DashboardListItem extends React.Component {
         <CardText>{dashboard.description}</CardText>
         <CardActions className="buttons">
           <Button icon="mode_edit" label="modifier" onClick={selectDashboard} />
-          <Button icon="exit_to_app" label="ouvrir" onClick={openDashboard} />
-          <Button icon="delete" label="supprimer" onClick={deleteDashboard} />
+          <OpenButton dashboard={dashboard} />
+          <DeleteDashboardButton dashboard={dashboard} />
+          <ActivationButton dashboard={dashboard} />
         </CardActions>
       </DashboardCard>
     )

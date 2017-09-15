@@ -14,7 +14,8 @@ const Auth = (props: PropsType) => {
   const { children, isLoggedIn } = props
   return (
     <div className="Auth">
-      {isLoggedIn ? children : <LoginForm />}
+      {/* {isLoggedIn ? children : <LoginForm />} */}
+      {children}
     </div>
   )
 }

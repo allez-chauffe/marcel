@@ -9,6 +9,11 @@
   justify-content: space-between;
 }
 
-.Dashboard .head button {
-  background-color: green !important;
+.Dashboard .actions {
+  display: flex;
+  flex-direction: row;
+}
+
+.Dashboard .actions > * {
+  margin: 0.5em;
 }

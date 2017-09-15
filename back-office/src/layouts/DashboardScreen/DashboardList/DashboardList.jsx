@@ -3,7 +3,6 @@ import React from 'react'
 import type { Dashboard } from '../../../dashboard/type'
 import DashboardListItem from './DashboardListItem'
 import AddDashboardCard from './AddDashboardCard'
-import DeleteDashboardDialog from './DeleteDashboardDialog'
 
 import './DashboardList.css'
 
@@ -16,10 +15,7 @@ const DashboardList = (props: PropsType) => {
   return (
     <div className="DashboardList">
       <AddDashboardCard />
-      {dashboards.map(dashboard =>
-        <DashboardListItem key={dashboard.id} dashboard={dashboard} />,
-      )}
-      <DeleteDashboardDialog />
+      {dashboards.map(dashboard => <DashboardListItem key={dashboard.id} dashboard={dashboard} />)}
     </div>
   )
 }
