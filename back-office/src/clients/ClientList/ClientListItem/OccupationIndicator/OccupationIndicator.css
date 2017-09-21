@@ -1,0 +1,10 @@
+.OccupationIndicator .indicator {
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: green;
+}
+
+.OccupationIndicator .indicator.occupied {
+  background: red;
+}

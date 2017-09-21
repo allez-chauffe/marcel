@@ -2,12 +2,13 @@
 import store from '../store'
 import { values, mapValues, pick, keyBy } from 'lodash'
 import type { Dashboard } from '../dashboard/type'
+import type { Client } from '../clients'
 
 const baseUrl = () => store.getState().config.backendURI
 
 const request = (url: string, options?) =>
   fetch(baseUrl() + url, options).then(response => {
-    if (response.status !== 200) throw response
+    if (~~(response.status / 100) !== 2) throw response
     return response
   })
 
@@ -28,11 +29,11 @@ const put = (url: string, body: ?mixed) =>
   })
 
 const backend = {
-  getAllDashboards: () => get('medias').then(res => res.json()),
+  getAllDashboards: () => get('medias/').then(res => res.json()),
 
-  getDashboard: (dashboardId: string) => get(`medias/${dashboardId}`).then(res => res.json()),
+  getDashboard: (dashboardId: string) => get(`medias/${dashboardId}/`).then(res => res.json()),
 
-  createDashboard: () => post('medias').then(res => res.json()),
+  createDashboard: () => post('medias/').then(res => res.json()),
 
   saveDashboard: (dashboard: Dashboard) => {
     const plugins = values(dashboard.plugins).map(plugin => {
@@ -45,11 +46,11 @@ const backend = {
       }
     })
     const data = { ...dashboard, plugins }
-    return put(`medias`, data)
+    return put(`medias/`, data)
   },
 
   getAvailablePlugins: () =>
-    get('plugins')
+    get('plugins/')
       .then(res => res.json())
       .then(plugins =>
         plugins.map(plugin => ({
@@ -57,6 +58,10 @@ const backend = {
           props: keyBy(plugin.frontend.props, 'name'),
         })),
       ),
+
+  getClients: () => get('clients/').then(res => res.json()),
+
+  updateClient: (client: Client) => put('clients/', client),
 
   activateDashboard: (dashboardId: string) => get(`medias/${dashboardId}/activate`),
 

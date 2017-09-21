@@ -7,13 +7,11 @@ const initialState = {
   config: false,
   plugins: false,
   dashboards: false,
+  clients: false,
   initial: false,
 }
 
-const loaders: Reducer<LoadersState, LoadersAction> = (
-  state = initialState,
-  action,
-) => {
+const loaders: Reducer<LoadersState, LoadersAction> = (state = initialState, action) => {
   switch (action.type) {
     case actions.LOAD_INITIAL_STARTED:
       return { ...state, initial: true }

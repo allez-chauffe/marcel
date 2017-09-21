@@ -1,0 +1,7 @@
+.ClientListItem li > span > span > span,
+.ClientListItem li > span > span > span > span,
+.ClientListItem li > span > span > span > span > div,
+.ClientListItem li > span > span > span > span > div > svg {
+  width: 1em !important;
+  height: 1em !important;
+}

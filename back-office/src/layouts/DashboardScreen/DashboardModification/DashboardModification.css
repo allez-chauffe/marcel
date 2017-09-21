@@ -7,13 +7,12 @@
 
 .DashboardModification .left-side-panel,
 .DashboardModification .right-side-panel {
-  width: 20%;
-  min-width: 15em;
+  width: 19.5em;
   overflow-y: auto;
 }
 
 .DashboardModification .main-panel {
-  width: 60%;
+  width: calc(100% - 2 * 18.5em - 6em);
   padding: 1em 3em 1em 3em;
   display: flex;
 }

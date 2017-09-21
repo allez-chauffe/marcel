@@ -12,83 +12,47 @@
   <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
-<body onload="loadComponents()">
+<body>
 
   <div id="error_container">
     <div id="error">
     </div>
   </div>
   <section id="components"></section>
+  <paper-toast text="Hello world!" opened></paper-toast>
 
   <script src="bower_components/polymer-application-loader/loader.js"></script>
+  <script src="/src/utils.js"></script>
+  <script src="/src/config.js"></script>
+  <script src="/src/load.js"></script>
+  <script src="/src/error.js"></script>
+  <script src="/src/websocket.js"></script>
   <script>
-    const loader = new PolymerApplicationLoader()
     let loaded = false
 
-    function launchLoad(config) {
-      const { mediaId, backendURL, pluginURL } = config
-      return loader.load(
-        'components',
-        `http://${backendURL}/medias/${mediaId}`,
-        `http://${pluginURL}/medias/${mediaId}/plugins`,
-      ).then(media => ({ ...config, media }))
-    }
-
-    function openNotificationConnection(config) {
-      const { backendURL, mediaId, media } = config
-      if (!media.isactive) {
-        setTimeout(() => window.location.reload(), 30000)
-        throw "This Media is not active.\n You can activate it in the back-office.\n\nThis media will be reloaded in 30 seconds."
-      }
-
-      const conn = new WebSocket(`ws://${backendURL}/medias/${mediaId}/notifier`)
-
-      conn.onmessage = ({ data }) => {
-        if (data === 'update') {
-          showError("This media has been updated.\n\n It will be reloaded in a few seconds...")
-          setTimeout(() => window.location.reload(), 5000)
-        }
-      }
-
-      conn.onopen = () => hideError()
-
-      conn.onclose = event => {
-        setTimeout(() => openNotificationConnection(config), 10000)
-        showError("Connection with backend has been lost.\nTrying to reconnect in a few seconds...")
-      }
-
-      window.onbeforeunload = () => conn.close()
-    }
-
-    function showError(error) {
-      document.querySelector("#error").innerText = error
-      document.querySelector("#error_container").style.visibility = "visible"
-    }
-
-    function hideError() {
-      document.querySelector("#error_container").style.visibility = "hidden"
-    }
-
-    function loadComponents() {
+    document.body.onload = () => {
       if (loaded) return
       loaded = true
 
-      fetch('conf/config.json')
-        .then(res => res.json())
-        .then(res => [res.backendURL || 'localhost', res.pluginURL || 'localhost'])
-        .catch(() => ['localhost', 'localhost'])
-        .then(ips => {
-          const urlParts = window.location.href.split('/')
-          if (urlParts.length !== 4 || !urlParts[3]) throw "No media id specified.\n\nPlease specify one at the end of the current URL."
+      location.queryString = {};
+      location.search.substr(1).split("&").forEach(function (pair) {
+        if (pair === "") return;
+        var parts = pair.split("=");
+        location.queryString[parts[0]] = parts[1] &&
+          decodeURIComponent(parts[1].replace(/\+/g, " "));
+      });
 
-          return { mediaId: urlParts[3], backendURL: ips[0], pluginURL: ips[1] }
-        })
-        .then(launchLoad)
-        .then(openNotificationConnection)
+      console.log("Begin loading process...")
+      loadLocalConfig()
+        .then(loadRemoteConfig)
+        .then(loadMedia)
+        .then(openWebsocketConnection)
         .catch(error => {
           document.querySelector("#components").style.visibility = "hidden"
           showError(error)
+          console.error(error)
         })
+        .then("Loading process finished")
     }
   </script>
 </body>

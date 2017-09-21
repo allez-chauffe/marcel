@@ -4,6 +4,7 @@ import Tabs from 'react-toolbox/lib/tabs/Tabs'
 import Tab from 'react-toolbox/lib/tabs/Tab'
 import { PluginList, SubPluginProps } from '../../../plugins'
 import { Dashboard, DashboardConfig } from '../../../dashboard'
+import { ClientList } from '../../../clients'
 
 import './DashboardModification.css'
 
@@ -23,6 +24,9 @@ class DashboardModification extends React.Component {
             </Tab>
             <Tab label="Plugins">
               <PluginList />
+            </Tab>
+            <Tab label="Clients">
+              <ClientList />
             </Tab>
           </Tabs>
         </div>

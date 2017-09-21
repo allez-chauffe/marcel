@@ -7,8 +7,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/notifier"
 	"github.com/Zenika/MARCEL/backend/plugins"
 	"github.com/gorilla/mux"
 )
@@ -17,15 +17,15 @@ const MEDIAS_CONFIG_PATH string = "data"
 const MEDIAS_CONFIG_FILENAME string = "medias.json"
 
 type Service struct {
-	manager  *Manager
-	notifier *notifier.Service
+	manager        *Manager
+	clientsService *clients.Service
 }
 
-func NewService(pluginManager *plugins.Manager, notifier *notifier.Service) *Service {
+func NewService(pluginManager *plugins.Manager, clientsService *clients.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(pluginManager, notifier, MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
-	service.notifier = notifier
+	service.manager = NewManager(pluginManager, clientsService, MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	service.clientsService = clientsService
 
 	return service
 }
@@ -135,7 +135,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	m.manager.Commit()
 
 	commons.WriteResponse(w, http.StatusOK, "Media correctly saved with ID "+strconv.Itoa(media.ID))
-	m.notifier.Notify(media.ID, "update")
+	m.clientsService.SendByMedia(media.ID, "update")
 }
 
 // swagger:route GET /medias CreateHandler
@@ -170,7 +170,6 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if media != nil {
 		m.manager.Activate(media)
-		m.notifier.RegisterMedia(media.ID)
 
 		m.manager.Commit()
 
@@ -186,7 +185,6 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if media != nil {
 		m.manager.Deactivate(media)
-		m.notifier.UnregisterMedia(media.ID)
 
 		m.manager.Commit()
 
@@ -211,7 +209,7 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 	m.manager.Commit()
 
 	commons.WriteResponse(w, http.StatusOK, "Media has been correctly restarted")
-	m.notifier.Notify(media.ID, "update")
+	m.clientsService.SendByMedia(media.ID, "update")
 }
 
 // swagger:route DELETE /medias/{idMedia:[0-9]*} DeleteHandler

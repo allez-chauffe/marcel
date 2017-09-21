@@ -2,11 +2,13 @@ package medias
 
 import (
 	"testing"
+
+	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/plugins"
 )
 
 func TestNewManager(t *testing.T) {
-	m := NewManager(plugins.NewService().GetManager(), MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	m := NewManager(plugins.NewService().GetManager(), clients.NewService(), MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	if m.Config == nil {
 		t.Error("Configuration should not be nil")
@@ -18,7 +20,7 @@ func TestNewManager(t *testing.T) {
 }
 
 func TestManager_GetPortNumberForPlugin(t *testing.T) {
-	m := NewManager(plugins.NewService().GetManager(), MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	m := NewManager(plugins.NewService().GetManager(), clients.NewService(), MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
 
 	freePort := m.Config.NextFreePortNumber //8100
 
@@ -37,7 +39,7 @@ func TestManager_GetPortNumberForPlugin(t *testing.T) {
 	}
 
 	m.Config.PortsPool = append(m.Config.PortsPool, 8100)
-	newPort =m.GetPortNumberForPlugin() //8100
+	newPort = m.GetPortNumberForPlugin() //8100
 	if newPort != 8100 {
 		t.Error("GetPortNumberForPlugin should use number from the pool first")
 	}

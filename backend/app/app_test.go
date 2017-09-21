@@ -1,13 +1,13 @@
 package app
 
 import (
-	"testing"
-	"os"
 	"log"
+	"os"
+	"testing"
 )
 
 var logFileTest *os.File
-var logPathTest string = "testMarcelLog"
+var logPathTest = "testMarcelLog"
 
 func TestApp_InitializeLog(t *testing.T) {
 	var a = new(App)

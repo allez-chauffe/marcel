@@ -1,13 +1,11 @@
 package plugins
 
 import (
-	"encoding/json"
 	"errors"
-	"github.com/mitchellh/mapstructure"
-	"io/ioutil"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
+
 	"github.com/Zenika/MARCEL/backend/commons"
 )
 
@@ -34,29 +32,22 @@ func NewManager(configPath, configFilename string) *Manager {
 func (m *Manager) LoadFromDB() {
 	log.Printf("Start Loading Plugins from DB.")
 
-	m.CreateSaveFileIfNotExist(m.ConfigPath, m.ConfigFileName)
-
-	//Plugins configurations are loaded from a JSON file on the FS.
-	content, err := ioutil.ReadFile(m.ConfigFullpath)
-	commons.Check(err)
-
-	var obj interface{}
-	json.Unmarshal([]byte(content), &obj)
-	err = mapstructure.Decode(obj.(map[string]interface{}), m.Config)
-	if err != nil {
-		panic(err)
-	}
+	commons.LoadFromDB(m)
 
 	log.Print("Plugins configurations is loaded...")
 }
 
-func (m *Manager) GetConfiguration() (*Configuration) {
+func (m *Manager) GetConfiguration() *Configuration {
 	log.Println("Getting global plugins config")
 
 	return m.Config
 }
 
-func (m *Manager) GetAll() ([]Plugin) {
+func (m *Manager) GetConfig() interface{} {
+	return m.Config
+}
+
+func (m *Manager) GetAll() []Plugin {
 	log.Println("Getting all plugins")
 
 	return m.Config.Plugins
@@ -99,15 +90,7 @@ func (m *Manager) Add(plugin *Plugin) {
 // Commit Save all plugins in DB.
 // Here DB is a JSON file
 func (m *Manager) Commit() error {
-	content, _ := json.Marshal(m.Config)
-
-	err := ioutil.WriteFile(m.ConfigFullpath, content, 0644)
-
-	if err != nil {
-		return errors.New("Cannot save plugins configuration:" + err.Error())
-	}
-
-	return nil
+	return commons.Commit(m)
 }
 
 // GetPluginPosition Return position of a plugin in the list
@@ -120,25 +103,6 @@ func (m *Manager) GetPosition(plugin *Plugin) int {
 	return -1
 }
 
-// CreateSaveFileIfNotExist check if the save file for plugins exists and create it if not.
-func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
-
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		log.Println("Data directory did not exist. Create it.")
-		os.Mkdir(filePath, 0755)
-	}
-
-	var fullPath string = fmt.Sprintf("%s%c%s", filePath, os.PathSeparator, fileName)
-	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-
-		f, err := os.Create(fullPath)
-		commons.Check(err)
-
-		log.Println("Plugins configuration file created at %v", fullPath)
-
-		f.Close()
-
-		//commit a first time to ensure the configuration has been saved
-		m.Commit()
-	}
+func (m *Manager) GetSaveFilePath() (string, string, string) {
+	return m.ConfigFullpath, m.ConfigPath, m.ConfigFileName
 }
