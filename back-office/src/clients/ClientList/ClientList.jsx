@@ -1,7 +1,6 @@
 //@flow
 import React from 'react'
 import List from 'react-toolbox/lib/list/List'
-import ListItem from 'react-toolbox/lib/list/ListItem'
 import ListSubHeader from 'react-toolbox/lib/list/ListSubHeader'
 import ClientListItem from './ClientListItem'
 import { SearchField } from '../../common'

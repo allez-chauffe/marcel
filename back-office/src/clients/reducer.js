@@ -1,7 +1,6 @@
 //@flow
 import type { Reducer } from 'redux'
 import { set, chain, unset } from 'immutadot'
-import { toastr } from 'react-redux-toastr'
 import type { ClientState, ClientAction } from './type'
 import { actions as loadersActions } from '../store/loaders'
 import { actions } from './actions'

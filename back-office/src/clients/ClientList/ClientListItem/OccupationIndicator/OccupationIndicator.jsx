@@ -1,6 +1,5 @@
 //@flow
 import React from 'react'
-import type { Client } from '../../../type'
 
 import './OccupationIndicator.css'
 
