@@ -9,3 +9,5 @@ export const clientsSelector = createSelector(clientsMapSelector, values)
 
 export const isClientLoadingSelector = (state: State, client: Client) =>
   !!state.clients.loading[client.id]
+
+export const associatingClientSelector = (state: State) => state.clients.associating

@@ -9,6 +9,7 @@ import { actions } from './actions'
 export const initialState = {
   clients: {},
   loading: {},
+  associating: null,
 }
 
 const clients: Reducer<ClientState, ClientAction> = (state = initialState, action) => {
@@ -29,6 +30,14 @@ const clients: Reducer<ClientState, ClientAction> = (state = initialState, actio
     case actions.CLIENT_ASSOCIATION_FAILED: {
       const { client } = action.payload
       return unset(state, `loading.${client.id}`)
+    }
+    case actions.REQUIRE_CLIENT_ASSOCIATION: {
+      const { client } = action.payload
+      return { ...state, associating: client }
+    }
+    case actions.CONFIRM_CLIENT_ASSOCIATION:
+    case actions.CANCEL_CLIENT_ASSOCIATION: {
+      return { ...state, associating: null }
     }
     default:
       return state

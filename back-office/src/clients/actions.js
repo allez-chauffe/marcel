@@ -2,12 +2,21 @@
 import { selectedDashboardSelector } from '../dashboard'
 import { toastr } from 'react-redux-toastr'
 import { backend } from '../api'
-import type { AssociateClientThunk, Client } from './type'
+import type {
+  AssociateClientThunk,
+  RequireClientAssociationAction,
+  ConfirmClientAssociationAction,
+  CancelClientAssociationAction,
+  Client,
+} from './type'
 
 export const actions = {
   CLIENT_ASSOCIATION_STARTED: 'CLIENTS/CLIENT_ASSOCIATION_STARTED',
   CLIENT_ASSOCIATION_SUCCESS: 'CLIENTS/CLIENT_ASSOCIATION_SUCCESS',
   CLIENT_ASSOCIATION_FAILED: 'CLIENTS/CLIENT_ASSOCIATION_FAILED',
+  REQUIRE_CLIENT_ASSOCIATION: 'CLIENTS/REQUIRE_CLIENT_ASSOCIATION',
+  CONFIRM_CLIENT_ASSOCIATION: 'CLIENTS/CONFIRM_CLIENT_ASSOCIATION',
+  CANCEL_CLIENT_ASSOCIATION: 'CLIENTS/CANCEL_CLIENT_ASSOCIATION',
 }
 
 export const associateClient = (client: Client): AssociateClientThunk => (dispatch, getState) => {
@@ -32,3 +41,18 @@ export const associateClient = (client: Client): AssociateClientThunk => (dispat
       dispatch({ type: actions.CLIENT_ASSOCIATION_FAILED, payload: { client: newClient } })
     })
 }
+
+export const requireClientAssociation = (client: Client): RequireClientAssociationAction => ({
+  type: actions.REQUIRE_CLIENT_ASSOCIATION,
+  payload: {
+    client: client,
+  },
+})
+
+export const confirmClientAssociation = (): ConfirmClientAssociationAction => ({
+  type: actions.CONFIRM_CLIENT_ASSOCIATION,
+})
+
+export const cancelClientAssociation = (): CancelClientAssociationAction => ({
+  type: actions.CANCEL_CLIENT_ASSOCIATION,
+})
