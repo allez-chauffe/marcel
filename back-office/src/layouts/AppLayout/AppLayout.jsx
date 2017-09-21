@@ -3,6 +3,7 @@ import React from 'react'
 import AppBar from 'react-toolbox/lib/app_bar/AppBar'
 import DashboardScreen from '../DashboardScreen'
 import { Auth } from '../../auth'
+import AssociationClientDialog from './AssociationClientDialog'
 
 import './AppLayout.css'
 
@@ -27,6 +28,7 @@ const AppLayout = (props: PropsType) => {
           <DashboardScreen />
         </Auth>
       </main>
+      <AssociationClientDialog />
     </div>
   )
 }

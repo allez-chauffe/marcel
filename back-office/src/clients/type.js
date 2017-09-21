@@ -41,9 +41,25 @@ export type ClientAssociationAction =
   | ClientAssociationSuccessAction
   | ClientAssociationFailedAction
 
+export type RequireClientAssociationAction = {
+  type: 'CLIENTS/REQUIRE_CLIENT_ASSOCIATION',
+  payload: {
+    client: Client,
+  },
+}
+
+export type ConfirmClientAssociationAction = {
+  type: 'CLIENTS/CONFIRM_CLIENT_ASSOCIATION',
+}
+
+export type CancelClientAssociationAction = {
+  type: 'CLIENTS/CANCEL_CLIENT_ASSOCIATION',
+}
+
 export type ClientState = {
   clients: ClientMap,
   loading: { [clientId: string]: boolean },
+  associating: ?Client,
 }
 
 export type ClientAction =
@@ -51,3 +67,6 @@ export type ClientAction =
   | LoadClientsSuccessedAction
   | LoadClientsFailedAction
   | AssociateClientThunk
+  | RequireClientAssociationAction
+  | ConfirmClientAssociationAction
+  | CancelClientAssociationAction

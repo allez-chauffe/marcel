@@ -174,6 +174,7 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 		m.manager.Commit()
 
 		commons.WriteResponse(w, http.StatusOK, "Media is active")
+		m.clientsService.SendByMedia(media.ID, "update")
 	}
 }
 
@@ -189,6 +190,7 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 		m.manager.Commit()
 
 		commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
+		m.clientsService.SendByMedia(media.ID, "update")
 	}
 }
 
