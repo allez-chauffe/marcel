@@ -15,7 +15,7 @@ class OpenButton extends React.Component {
   open = (event: Event) => {
     const { frontendURI, dashboard } = this.props
     event.stopPropagation()
-    window.open(frontendURI + dashboard.id)
+    window.open(`${frontendURI}?mediaID=${dashboard.id}`)
     window.focus()
   }
 

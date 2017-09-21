@@ -1,20 +1,17 @@
 package medias
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 
+	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/containers"
-	"github.com/Zenika/MARCEL/backend/notifier"
 	"github.com/Zenika/MARCEL/backend/plugins"
-	"github.com/mitchellh/mapstructure"
 )
 
 type Manager struct {
@@ -23,18 +20,18 @@ type Manager struct {
 	configFullpath string
 	Config         *Configuration
 
-	pluginManager *plugins.Manager
-	notifier      *notifier.Service
+	pluginManager  *plugins.Manager
+	clientsService *clients.Service
 }
 
-func NewManager(pluginManager *plugins.Manager, notifier *notifier.Service, configPath, configFilename string) *Manager {
+func NewManager(pluginManager *plugins.Manager, clientsService *clients.Service, configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
 	manager.configPath = configPath
 	manager.configFileName = configFilename
 
 	manager.pluginManager = pluginManager
-	manager.notifier = notifier
+	manager.clientsService = clientsService
 
 	manager.configFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
 	manager.Config = NewConfiguration()
@@ -46,27 +43,11 @@ func NewManager(pluginManager *plugins.Manager, notifier *notifier.Service, conf
 func (m *Manager) LoadFromDB() {
 	log.Printf("Start Loading Medias from DB.")
 
-	m.CreateSaveFileIfNotExist(m.configPath, m.configFileName)
-
-	//Medias configurations are loaded from a JSON file on the FS.
-	content, err := ioutil.ReadFile(m.configFullpath)
-	commons.Check(err)
-
-	var obj interface{}
-	json.Unmarshal([]byte(content), &obj)
-
-	if obj == nil {
-		obj = make(map[string]interface{})
-	}
-	err = mapstructure.Decode(obj.(map[string]interface{}), m.Config)
-	if err != nil {
-		panic(err)
-	}
+	commons.LoadFromDB(m)
 
 	for _, media := range m.Config.Medias {
 		if media.IsActive {
 			m.Activate(&media)
-			m.notifier.RegisterMedia(media.ID)
 		}
 	}
 
@@ -76,6 +57,10 @@ func (m *Manager) LoadFromDB() {
 func (m *Manager) GetConfiguration() *Configuration {
 	log.Println("Getting global medias config")
 
+	return m.Config
+}
+
+func (m *Manager) GetConfig() interface{} {
 	return m.Config
 }
 
@@ -133,15 +118,8 @@ func (m *Manager) SaveIntoDB(media *Media) {
 
 // Commit SaveIntoDB all medias in DB.
 // Here DB is a JSON file
-func (m *Manager) Commit() {
-	content, _ := json.Marshal(m.Config)
-
-	err := ioutil.WriteFile(m.configFullpath, content, 0644)
-
-	if err != nil {
-		log.Println("Cannot save medias configuration:")
-		log.Panic(err)
-	}
+func (m *Manager) Commit() error {
+	return commons.Commit(m)
 }
 
 // CreateSaveFileIfNotExist check if the save file for medias exists and create it if not.
@@ -324,4 +302,8 @@ func (m *Manager) copyNewInstanceOfPlugin(media *Media, mp *MediaPlugin, path st
 func (m *Manager) GetPluginDirectory(media *Media, eltName string, instanceId string) string {
 	const sep = string(os.PathSeparator)
 	return "medias" + sep + strconv.Itoa(media.ID) + sep + eltName + sep + instanceId
+}
+
+func (m *Manager) GetSaveFilePath() (string, string, string) {
+	return m.configFullpath, m.configPath, m.configFileName
 }
