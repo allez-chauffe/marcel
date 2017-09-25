@@ -31,7 +31,7 @@ git submodule update --rebase --remote
 Each directory has a specific usage.
 
 * [back-office](./back-office) - Manage the plugins and their configuration
-* [backend](./back-end) - Store the plugins and offer an API to request them
+* [backend](./backend) - Store the plugins and offer an API to request them
 * [frontend](./frontend) - Web application that load the plugins
 * [plugins](./plugins) - Links to repositories of available plugins
 
