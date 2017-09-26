@@ -71,7 +71,7 @@ deployment:
       - chmod 400 integration_key.pem
 
       # Pushing docker images
-      - docker push zenika/marcel-bakcoffice:dev
+      - docker push zenika/marcel-backoffice:dev
       - docker push zenika/marcel-backend:dev
       - docker push zenika/marcel-frontend:dev
 
