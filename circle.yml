@@ -44,15 +44,15 @@ compile:
     - tar -czf plugins.tar.gz plugins
 
     # Packaging back-office
-    - docker image build -t zenika/marcel-backoffice .:
+    - docker build -t zenika/marcel-backoffice .:
         pwd: back-office
 
     # Packaging front-end
-    - docker image build -t zenika/marcel-frontend .:
+    - docker build -t zenika/marcel-frontend .:
         pwd: frontend
 
     # Packaging back-end
-    - docker image build -t zenika/marcel-backend .:
+    - docker build -t zenika/marcel-backend .:
         pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 test:
@@ -71,9 +71,9 @@ deployment:
       - chmod 400 integration_key.pem
 
       # Pushing docker images
-      - docker image push zenika/marcel-bakcoffice:dev
-      - docker image push zenika/marcel-backend:dev
-      - docker image push zenika/marcel-frontend:dev
+      - docker push zenika/marcel-bakcoffice:dev
+      - docker push zenika/marcel-backend:dev
+      - docker push zenika/marcel-frontend:dev
 
       # Uploading packages
       - scp -i integration_key.pem plugins.tar.gz ubuntu@35.158.222.144:~/
@@ -89,6 +89,6 @@ deployment:
     branch: master
     tag: /release-.*/
     commands:
-      - docker image push zenika/marcel-backoffice:latest
-      - docker image push zenika/marcel-backend:latest
-      - docker image push zenika/marcel-frontend:latest
+      - docker push zenika/marcel-backoffice:latest
+      - docker push zenika/marcel-backend:latest
+      - docker push zenika/marcel-frontend:latest
