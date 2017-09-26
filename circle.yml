@@ -38,22 +38,8 @@ compile:
         pwd: back-office
     - CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .:
         pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
-
-    # Package app for deployement
     # Packaging plugins
     - tar -czf plugins.tar.gz plugins
-
-    # Packaging back-office
-    - docker build -t zenika/marcel-backoffice .:
-        pwd: back-office
-
-    # Packaging front-end
-    - docker build -t zenika/marcel-frontend .:
-        pwd: frontend
-
-    # Packaging back-end
-    - docker build -t zenika/marcel-backend .:
-        pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
 
 test:
   override:
@@ -69,6 +55,18 @@ deployment:
       # Exporting serveur key
       - echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
       - chmod 400 integration_key.pem
+
+      # Packaging back-office
+      - docker build -t zenika/marcel-backoffice:dev .:
+          pwd: back-office
+
+      # Packaging front-end
+      - docker build -t zenika/marcel-frontend:dev .:
+          pwd: frontend
+
+      # Packaging back-end
+      - docker build -t zenika/marcel-backend:dev .:
+          pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
 
       # Pushing docker images
       - docker push zenika/marcel-backoffice:dev
@@ -89,6 +87,24 @@ deployment:
     branch: master
     tag: /release-.*/
     commands:
-      - docker push zenika/marcel-backoffice:latest
-      - docker push zenika/marcel-backend:latest
-      - docker push zenika/marcel-frontend:latest
+      # Packaging back-office
+      - docker build -t zenika/marcel-backoffice .:
+          pwd: back-office
+
+      # Packaging front-end
+      - docker build -t zenika/marcel-frontend .:
+          pwd: frontend
+
+      # Packaging back-end
+      - docker build -t zenika/marcel-backend .:
+          pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
+
+      # Add tag for each image
+      - docker tag zenika/marcel-backoffice zenika/marcel-backoffice:$CIRCLE_TAG
+      - docker tag zenika/marcel-backend zenika/marcel-backend:$CIRCLE_TAG
+      - docker tag zenika/marcel-frontend zenika/marcel-frontend:$CIRCLE_TAG
+
+      # Pushing docker images to docker Hub
+      - docker push zenika/marcel-backoffice
+      - docker push zenika/marcel-backend
+      - docker push zenika/marcel-frontend
