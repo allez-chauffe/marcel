@@ -1,7 +1,7 @@
 version: '3'
 services:
   backend:
-    image: zenika/marcel-backend
+    image: zenika/marcel-backend:dev
     ports:
      - 8090:8090
     volumes:
@@ -11,14 +11,14 @@ services:
      - ./logs:/backend/logs
 
   back-office:
-    image: zenika/marcel-backoffice
+    image: zenika/marcel-backoffice:dev
     ports:
      - 81:80
     volumes:
      - ./back-office:/usr/share/nginx/html/conf
 
   front-end:
-    image: zenika/marcel-frontend
+    image: zenika/marcel-frontend:dev
     ports:
      - "80:80"
     volumes:
