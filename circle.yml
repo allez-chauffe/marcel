@@ -80,9 +80,8 @@ deployment:
       # Running deployement script
       - ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
 
-      # Cleaning up and publishing artificats
+      # Cleaning up
       - rm -f integration_key.pem
-      - mv *.tar ~/.go_workspace/src/github.com/Zenika/MARCEL/backend/backend $CIRCLE_ARTIFACTS
   production:
     branch: master
     tag: /release-.*/
