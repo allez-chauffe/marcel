@@ -4,6 +4,7 @@ machine:
   services:
     - docker
   post:
+    - docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
     - npm install -g yarn
     - npm install -g bower
     #- npm install -g polymer-cli
@@ -38,6 +39,22 @@ compile:
     - CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .:
         pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
 
+    # Package app for deployement
+    # Packaging plugins
+    - tar -czf plugins.tar.gz plugins
+
+    # Packaging back-office
+    - docker image build -t zenika/marcel-backoffice .:
+        pwd: back-office
+
+    # Packaging front-end
+    - docker image build -t zenika/marcel-frontend .:
+        pwd: frontend
+
+    # Packaging back-end
+    - docker image build -t zenika/marcel-backend .:
+        pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
+
 test:
   override:
     - yarn test:
@@ -49,33 +66,17 @@ deployment:
   dev:
     branch: dev
     commands:
-      # Packaging plugins
-      - tar -czf plugins.tar.gz plugins
-
-      # Packaging back-office
-      - docker build -t marcel-back-office .:
-          pwd: back-office
-      - docker save -o marcel-back-office.tar marcel-back-office
-
-      # Packaging front-end
-      - docker build -t marcel-front-end .:
-          pwd: frontend
-      - docker save -o marcel-front-end.tar marcel-front-end
-
-      # Packaging back-end
-      - docker build -t marcel-back-end .:
-          pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
-      - docker save -o marcel-back-end.tar marcel-back-end
-
       # Exporting serveur key
       - echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
       - chmod 400 integration_key.pem
 
+      # Pushing docker images
+      - docker image push zenika/marcel-bakcoffice:dev
+      - docker image push zenika/marcel-backend:dev
+      - docker image push zenika/marcel-frontend:dev
+
       # Uploading packages
       - scp -i integration_key.pem plugins.tar.gz ubuntu@35.158.222.144:~/
-      - scp -i integration_key.pem marcel-back-office.tar ubuntu@35.158.222.144:~/
-      - scp -i integration_key.pem marcel-front-end.tar ubuntu@35.158.222.144:~/
-      - scp -i integration_key.pem marcel-back-end.tar ubuntu@35.158.222.144:~/
       - scp -i integration_key.pem docker-compose.yml ubuntu@35.158.222.144:~/
 
       # Running deployement script
@@ -84,3 +85,10 @@ deployment:
       # Cleaning up and publishing artificats
       - rm -f integration_key.pem
       - mv *.tar ~/.go_workspace/src/github.com/Zenika/MARCEL/backend/backend $CIRCLE_ARTIFACTS
+  production:
+    branch: master
+    tag: /release-.*/
+    commands:
+      - docker image push zenika/marcel-backoffice:latest
+      - docker image push zenika/marcel-backend:latest
+      - docker image push zenika/marcel-frontend:latest
