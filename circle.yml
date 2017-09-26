@@ -4,7 +4,7 @@ machine:
   services:
     - docker
   post:
-    - docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+    - docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -e $DOCKER_EMAIL
     - npm install -g yarn
     - npm install -g bower
     #- npm install -g polymer-cli
