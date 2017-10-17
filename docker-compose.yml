@@ -2,6 +2,7 @@ version: '3'
 services:
   backend:
     image: zenika/marcel-backend:dev
+    build: ../backend
     ports:
      - 8090:8090
     volumes:
@@ -12,6 +13,7 @@ services:
 
   back-office:
     image: zenika/marcel-backoffice:dev
+    build: ../back-office
     ports:
      - 81:80
     volumes:
@@ -19,6 +21,7 @@ services:
 
   front-end:
     image: zenika/marcel-frontend:dev
+    build: ../frontend
     ports:
      - "80:80"
     volumes:
