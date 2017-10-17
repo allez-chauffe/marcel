@@ -290,7 +290,11 @@ func (m *Manager) GetNextID() int {
 func (m *Manager) copyNewInstanceOfPlugin(media *Media, mp *MediaPlugin, path string) error {
 	sep := string(os.PathSeparator)
 
-	err := commons.CopyDir("plugins"+sep+mp.EltName, path)
+	//Copy onlyd frontend and backend dirs since there the only relevant files
+	err := commons.CopyDir("plugins"+sep+mp.EltName+sep+"frontend", path+sep+"frontend")
+	if _, err := os.Stat("plugins" + sep + mp.EltName + sep + "backend"); !os.IsNotExist(err) {
+		err = commons.CopyDir("plugins"+sep+mp.EltName+sep+"backend", path+sep+"backend")
+	}
 
 	if err != nil {
 		return err
