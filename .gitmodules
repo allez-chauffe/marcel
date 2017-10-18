@@ -79,3 +79,6 @@
 [submodule "plugins/marcel-plugin-gdrive-news-feed"]
 	path = plugins/marcel-plugin-gdrive-news-feed
 	url = https://github.com/EmrysMyrddin/marcel-plugin-gdrive-news-feed.git
+[submodule "plugins/marcel-plugin-gdrive-carousel"]
+	path = plugins/marcel-plugin-gdrive-carousel
+	url = https://github.com/EmrysMyrddin/marcel-plugin-gdrive-carousel.git
