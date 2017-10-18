@@ -82,3 +82,6 @@
 [submodule "plugins/marcel-plugin-gdrive-carousel"]
 	path = plugins/marcel-plugin-gdrive-carousel
 	url = https://github.com/EmrysMyrddin/marcel-plugin-gdrive-carousel.git
+[submodule "plugins/marcel-plugin-youtube-playlist"]
+	path = plugins/marcel-plugin-youtube-playlist
+	url = https://github.com/EmrysMyrddin/marcel-plugin-youtube-playlist.git
