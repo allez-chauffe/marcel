@@ -85,3 +85,6 @@
 [submodule "plugins/marcel-plugin-youtube-playlist"]
 	path = plugins/marcel-plugin-youtube-playlist
 	url = https://github.com/EmrysMyrddin/marcel-plugin-youtube-playlist.git
+[submodule "plugins/marcel-plugin-code-heroe"]
+	path = plugins/marcel-plugin-code-heroe
+	url = https://github.com/EmrysMyrddin/marcel-plugin-code-heroe.git
