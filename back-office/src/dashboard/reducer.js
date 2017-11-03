@@ -45,7 +45,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
     case actions.REQUIRE_DASHBOARD_DELETION: {
       return { ...state, deletingDashboard: action.payload.dashboardId }
     }
-    case actions.CONFIRM_DASHBOARD_DELETION: {
+    case actions.DASHBOARD_DELETED: {
       const { deletingDashboard } = state
       return deletingDashboard
         ? chain(state)
