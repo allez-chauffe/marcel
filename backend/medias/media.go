@@ -9,17 +9,18 @@ type Media struct {
 	// required: true
 	// unique: true
 	// min: 1
-	ID          int                    `json:"id"`
-	Name        string                 `json:"name"`
-	IsActive    bool                   `json:"isactive"`
-	Description string                 `json:"description"`
-	Rows        int                    `json:"rows"`
-	Cols        int                    `json:"cols"`
-	Stylesvar   map[string]interface{} `json:"stylesvar"`
-	Plugins     []MediaPlugin          `json:"plugins"`
-	Owner       string                 `json:"owner"`
-	ScreenRatio float64                `json:"screenRatio"`
-	DisplayGrid bool                   `json:"displayGrid"`
+	ID             int                    `json:"id"`
+	Name           string                 `json:"name"`
+	IsActive       bool                   `json:"isactive"`
+	Description    string                 `json:"description"`
+	Rows           int                    `json:"rows"`
+	Cols           int                    `json:"cols"`
+	Stylesvar      map[string]interface{} `json:"stylesvar"`
+	Plugins        []MediaPlugin          `json:"plugins"`
+	Owner          string                 `json:"owner"`
+	ScreenRatio    float64                `json:"screenRatio"`
+	DisplayGrid    bool                   `json:"displayGrid"`
+	LastScreenshot string                 `json:"screenshot"`
 }
 
 func NewMedia() *Media {

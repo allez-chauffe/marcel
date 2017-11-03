@@ -10,6 +10,7 @@ import (
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/medias"
 	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/Zenika/MARCEL/backend/screenshotService"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -76,6 +77,7 @@ func (a *App) initializeRoutes() {
 	media.HandleFunc("/deactivate", a.mediaService.DeactivateHandler).Methods("GET")
 	media.HandleFunc("/restart", a.mediaService.RestartHandler).Methods("GET")
 	media.HandleFunc("/plugins/{eltName}/{instanceId}/{filePath:.*}", a.mediaService.GetPluginFilesHandler).Methods("GET")
+	media.HandleFunc("/screenshot/{screenshot}", screenshotService.GetScreenshotHandler).Methods("GET")
 
 	clients := s.PathPrefix("/clients").Subrouter()
 	clients.HandleFunc("/", a.clientsService.GetAllHandler).Methods("GET")

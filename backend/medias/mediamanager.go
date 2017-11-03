@@ -303,6 +303,10 @@ func (m *Manager) GetPluginDirectory(media *Media, eltName string, instanceId st
 	return filepath.Join("medias", strconv.Itoa(media.ID), eltName, instanceId)
 }
 
+func (media *Media) GetDirectory() string {
+	return filepath.Join("medias", strconv.Itoa(media.ID))
+}
+
 func (m *Manager) GetSaveFilePath() (string, string, string) {
 	return m.configFullpath, m.configPath, m.configFileName
 }

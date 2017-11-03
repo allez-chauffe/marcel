@@ -33,6 +33,7 @@ export type Dashboard = {
   screenRatio: number,
   displayGrid: boolean,
   isactive: boolean,
+  screenshot: string,
   stylesvar: {
     'primary-color': string,
     'secondary-color': string,

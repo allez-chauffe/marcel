@@ -37,7 +37,10 @@ class DashboardListItem extends React.Component {
     const { selectDashboard } = this
     return (
       <Card onClick={selectDashboard}>
-        <CardMedia aspectRatio="wide" image="https://placeimg.com/800/450/nature" />
+        <CardMedia
+          aspectRatio="wide"
+          image={`http://localhost:8090/api/v1/medias/${dashboard.id}/screenshot/${dashboard.screenshot}`}
+        />
         <CardTitle title={dashboard.name} />
         <CardText>{dashboard.description}</CardText>
         <CardActions className="buttons">

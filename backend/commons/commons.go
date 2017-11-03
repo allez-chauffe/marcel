@@ -171,3 +171,19 @@ func Check(e error) {
 		panic(e)
 	}
 }
+
+func RunWithTimeout(timeout time.Duration, task func()) bool {
+	done := make(chan string, 1)
+
+	go func() {
+		task()
+		done <- ""
+	}()
+
+	select {
+	case <-done:
+		return true
+	case <-time.After(10 * time.Second):
+		return false
+	}
+}

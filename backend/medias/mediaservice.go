@@ -3,6 +3,7 @@ package medias
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 
@@ -11,11 +12,14 @@ import (
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/Zenika/MARCEL/backend/screenshotService"
 	"github.com/gorilla/mux"
 )
 
-const MEDIAS_CONFIG_PATH string = "data"
-const MEDIAS_CONFIG_FILENAME string = "medias.json"
+const (
+	MEDIAS_CONFIG_PATH     string = "data"
+	MEDIAS_CONFIG_FILENAME string = "medias.json"
+)
 
 type Service struct {
 	manager        *Manager
@@ -118,6 +122,15 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
+
+	screenshotDir := filepath.Join(media.GetDirectory(), "screenshot")
+	os.Remove(filepath.Join(screenshotDir, media.LastScreenshot))
+	media.LastScreenshot = ""
+	go func() {
+		media.LastScreenshot = screenshotService.TakeScreenshot(media.ID, screenshotDir)
+		m.manager.SaveIntoDB(media)
+		m.manager.Commit()
+	}()
 
 	m.manager.Deactivate(tmpMedia)
 	m.manager.SaveIntoDB(media)
