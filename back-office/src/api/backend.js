@@ -12,21 +12,20 @@ const request = (url: string, options?) =>
     return response
   })
 
+const requestWithBody = (url: string, body: ?mixed, options = {}) =>
+  request(url, {
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : null,
+    ...options,
+  })
+
 const get = (url: string) => request(url)
 
-const post = (url: string, body: ?mixed) =>
-  request(url, {
-    method: 'POST',
-    headers: body ? { 'Content-Type': 'application/json' } : {},
-    body: body ? JSON.stringify(body) : null,
-  })
+const post = (url: string, body: ?mixed) => requestWithBody(url, body, { method: 'POST' })
 
-const put = (url: string, body: ?mixed) =>
-  request(url, {
-    method: 'PUT',
-    headers: body ? { 'Content-Type': 'application/json' } : {},
-    body: body ? JSON.stringify(body) : null,
-  })
+const put = (url: string, body: ?mixed) => requestWithBody(url, body, { method: 'PUT' })
+
+const del = (url: string) => request(url, { method: 'DELETE' })
 
 const backend = {
   getAllDashboards: () => get('medias/').then(res => res.json()),
@@ -66,6 +65,8 @@ const backend = {
   activateDashboard: (dashboardId: string) => get(`medias/${dashboardId}/activate`),
 
   deactivateDashboard: (dashboardId: string) => get(`medias/${dashboardId}/deactivate`),
+
+  deleteDashboard: (dashboardId: string) => del(`medias/${dashboardId}/`),
 }
 
 export default backend

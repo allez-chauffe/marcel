@@ -3,7 +3,7 @@ import { keyBy, values, range, forEach, findIndex, some, map, chain } from 'loda
 import { toastr } from 'react-redux-toastr'
 
 import { backend } from '../api'
-import { selectedDashboardSelector } from './selectors'
+import { selectedDashboardSelector, deletingDashboardSelector } from './selectors'
 import type { Plugin, Prop } from '../plugins'
 import type {
   SelectPluginAction,
@@ -21,7 +21,8 @@ import type {
   AddDashboardThunkAction,
   DeleteDashboardAction,
   RequireDashboardDeletionAction,
-  ConfirmDashboardDeletionAction,
+  DashboardDeletionThunk,
+  DashboardDeletedAction,
   CancelDashboardDeletionAction,
   ToggleDisplayGridAction,
   AddSubPluginAction,
@@ -36,7 +37,7 @@ export const actions = {
   SELECT_DASHBOARD: 'DASHBOARD/SELECT_DASHBOARD',
   UNSELECT_DASHBOARD: 'DASHBOARD/UNSELECT_DASHBOARD',
   REQUIRE_DASHBOARD_DELETION: 'DASHBOARD/REQUIRE_DASHBOARD_DELETION',
-  CONFIRM_DASHBOARD_DELETION: 'DASHBOARD/CONFIRM_DASHBOARD_DELETION',
+  DASHBOARD_DELETED: 'DASHBOARD/DASHBOARD_DELETED',
   CANCEL_DASHBOARD_DELETION: 'DASHBOARD/CANCEL_DASHBOARD_DELETION',
   DELETE_DASHBOARD: 'DASHBOARD/DELETE_DASHBOARD',
   ADD_DASHBOARD: 'DASHBOARD/ADD_DASHBOARD',
@@ -75,8 +76,24 @@ export const requireDashboardDeletion = (dashboard: Dashboard): RequireDashboard
   payload: { dashboardId: dashboard.id },
 })
 
-export const confirmDashboardDeletion = (): ConfirmDashboardDeletionAction => ({
-  type: actions.CONFIRM_DASHBOARD_DELETION,
+export const confirmDashboardDeletion: DashboardDeletionThunk = () => (dispatch, getState) => {
+  const deleting = deletingDashboardSelector(getState())
+  if (!deleting) throw new Error('There is no deleting media')
+
+  backend
+    .deleteDashboard(deleting)
+    .then(() => {
+      dispatch(dashboardDeleted())
+      toastr.success('Le média à été supprimé')
+    })
+    .catch(error => {
+      dispatch(cancelDashboardDeletion())
+      toastr.error('Erreur lors de la suppression du media', error)
+    })
+}
+
+export const dashboardDeleted = (): DashboardDeletedAction => ({
+  type: actions.DASHBOARD_DELETED,
 })
 
 export const cancelDashboardDeletion = (): CancelDashboardDeletionAction => ({

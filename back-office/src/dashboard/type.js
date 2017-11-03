@@ -1,4 +1,5 @@
 //@flow
+/* eslint-disable no-use-before-define */
 import type { Dispatch } from 'redux'
 import type { Plugin, Prop } from '../plugins'
 import type { State } from '../store'
@@ -64,8 +65,13 @@ export type RequireDashboardDeletionAction = {
   payload: { dashboardId: string },
 }
 
-export type ConfirmDashboardDeletionAction = {
-  type: 'DASHBOARD/CONFIRM_DASHBOARD_DELETION',
+export type DashboardDeletionThunk = () => (
+  dispatch: Dispatch<DashboardDeletedAction | CancelDashboardDeletionAction>,
+  getState: () => State,
+) => void
+
+export type DashboardDeletedAction = {
+  type: 'DASHBOARD/DASHBOARD_DELETED',
 }
 
 export type CancelDashboardDeletionAction = {
@@ -198,7 +204,8 @@ export type DashboardAction =
   | UploadSuccesedAction
   | UploadFailedAction
   | RequireDashboardDeletionAction
-  | ConfirmDashboardDeletionAction
+  | DashboardDeletionThunk
+  | DashboardDeletedAction
   | CancelDashboardDeletionAction
   | DeleteDashboardAction
   | AddDashboardAction
