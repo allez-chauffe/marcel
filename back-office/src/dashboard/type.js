@@ -1,4 +1,5 @@
 //@flow
+/* eslint-disable no-use-before-define */
 import type { Dispatch } from 'redux'
 import type { Plugin, Prop } from '../plugins'
 import type { State } from '../store'
@@ -30,6 +31,7 @@ export type Dashboard = {
   rows: number,
   cols: number,
   ratio: number,
+  isactive: boolean,
   stylesvar: {
     'primary-color': string,
     'secondary-color': string,
@@ -63,8 +65,13 @@ export type RequireDashboardDeletionAction = {
   payload: { dashboardId: string },
 }
 
-export type ConfirmDashboardDeletionAction = {
-  type: 'DASHBOARD/CONFIRM_DASHBOARD_DELETION',
+export type DashboardDeletionThunk = () => (
+  dispatch: Dispatch<DashboardDeletedAction | CancelDashboardDeletionAction>,
+  getState: () => State,
+) => void
+
+export type DashboardDeletedAction = {
+  type: 'DASHBOARD/DASHBOARD_DELETED',
 }
 
 export type CancelDashboardDeletionAction = {
@@ -164,8 +171,26 @@ export type ReorderSubPluginAction = {
   },
 }
 
+export type ActivateDashboardAction = {
+  type: 'DASHBOARD/ACTIVATE_DASHBOARD',
+  payload: {
+    dashboardId: string,
+  },
+}
+
+export type ActivateDashboardThunk = (Dispatch<ActivateDashboardAction>) => void
+
+export type DeactivateDashboardAction = {
+  type: 'DASHBOARD/DEACTIVATE_DASHBOARD',
+  payload: {
+    dashboardId: string,
+  },
+}
+
+export type DeactivateDashboardThunk = (Dispatch<DeactivateDashboardAction>) => void
+
 // eslint-disable-next-line no-use-before-define
-export type DashboardThunk = ((DashboardAction) => mixed, () => State) => void
+export type DashboardThunk = (Dispatch<DashboardAction>, () => State) => void
 
 export type DashboardAction =
   | SelectPluginAction
@@ -179,7 +204,8 @@ export type DashboardAction =
   | UploadSuccesedAction
   | UploadFailedAction
   | RequireDashboardDeletionAction
-  | ConfirmDashboardDeletionAction
+  | DashboardDeletionThunk
+  | DashboardDeletedAction
   | CancelDashboardDeletionAction
   | DeleteDashboardAction
   | AddDashboardAction

@@ -9,49 +9,50 @@
   <link rel="import" href="css/shared-styles.html">
   <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="css/weather-icons.min.css">
-  <style>
-    body {
-      background-color: var(--background-color);
-      color: var(--primary-color);
-      overflow-y: hidden;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
-<body onload="loadComponents()">
+<body>
+
+  <div id="error_container">
+    <div id="error">
+    </div>
+  </div>
   <section id="components"></section>
+  <paper-toast text="Hello world!" opened></paper-toast>
+
   <script src="bower_components/polymer-application-loader/loader.js"></script>
+  <script src="/src/utils.js"></script>
+  <script src="/src/config.js"></script>
+  <script src="/src/load.js"></script>
+  <script src="/src/error.js"></script>
+  <script src="/src/websocket.js"></script>
   <script>
-    const loader = new PolymerApplicationLoader()
     let loaded = false
 
-    function launchLoad(config) {
-      const { mediaId, backendURL, pluginURL } = config
-      loader.load(
-        'components',
-        `${backendURL}/medias/${mediaId}`,
-        `${pluginURL}/medias/${mediaId}/plugins`,
-      )
-    }
-
-    function loadComponents() {
+    document.body.onload = () => {
       if (loaded) return
       loaded = true
 
-      fetch('conf/config.json')
-        .then(res => res.json())
-        .then(res => [res.backendURL || 'localhost', res.pluginURL || 'localhost'])
-        .catch(() => ['localhost', 'localhost'])
-        .then(ips => {
-          const urlParts = window.location.href.split('/')
-          if (urlParts.length !== 4 || !urlParts[3]) throw "Bad URL"
+      location.queryString = {};
+      location.search.substr(1).split("&").forEach(function (pair) {
+        if (pair === "") return;
+        var parts = pair.split("=");
+        location.queryString[parts[0]] = parts[1] &&
+          decodeURIComponent(parts[1].replace(/\+/g, " "));
+      });
 
-          return { mediaId: urlParts[3], backendURL: ips[0], pluginURL: ips[1] }
-        })
-        .then(launchLoad)
+      console.log("Begin loading process...")
+      loadLocalConfig()
+        .then(loadRemoteConfig)
+        .then(loadMedia)
+        .then(openWebsocketConnection)
         .catch(error => {
-          document.getElementById("components").innerText = JSON.stringify(error)
+          document.querySelector("#components").style.visibility = "hidden"
+          showError(error)
+          console.error(error)
         })
+        .then("Loading process finished")
     }
   </script>
 </body>

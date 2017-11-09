@@ -1,16 +1,19 @@
 package commons
 
 import (
-	"math/rand"
-	"strconv"
-	"time"
-	"net/http"
-	"log"
-	"reflect"
-	"strings"
-	"os"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
+	"math/rand"
+	"net/http"
+	"os"
+	"reflect"
+	"strconv"
+	"strings"
+	"time"
 )
 
 func init() {
@@ -64,15 +67,15 @@ func FileBasename(s string) string {
 	return s
 }
 
-func FileOrFolderExists(path string) (bool, error) {
+func FileOrFolderExists(path string) bool {
 	_, err := os.Stat(path)
 	if err == nil {
-		return true, nil
+		return true
 	}
 	if os.IsNotExist(err) {
-		return false, nil
+		return false
 	}
-	return true, err
+	return true
 }
 
 // Thx to https://www.socketloop.com/tutorials/golang-copy-directory-including-sub-directories-files
@@ -145,7 +148,17 @@ func CopyDir(source string, dest string) (err error) {
 
 func WriteResponse(w http.ResponseWriter, statusCode int, message string) {
 	w.WriteHeader(statusCode)
-	w.Write([]byte(" "+ message))
+	w.Write([]byte(" " + message))
+}
+
+func WriteJsonResponse(w http.ResponseWriter, body interface{}) {
+	b, err := json.Marshal(body)
+	if err != nil {
+		WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	WriteResponse(w, http.StatusOK, string(b))
 }
 
 func Check(e error) {
@@ -153,4 +166,32 @@ func Check(e error) {
 		log.Fatal(e)
 		panic(e)
 	}
+}
+
+//ParseJSONBody parses the body as JSON object. The body needs to be wraped in a root object.
+func ParseJSONBody(w http.ResponseWriter, r *http.Request) (map[string]interface{}, error) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		WriteResponse(w, http.StatusBadRequest, err.Error())
+		log.Printf("Error while parsing json body : %s", err)
+		return nil, err
+	}
+
+	var res interface{}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		WriteResponse(w, http.StatusBadRequest, err.Error())
+		log.Printf("Error while parsing json body : %s", err)
+		return nil, err
+	}
+
+	jsonBody, ok := res.(map[string]interface{})
+
+	if !ok {
+		WriteResponse(w, http.StatusBadRequest, "The sent JSON needs a root object")
+		log.Printf("Error while parsing json body : The sent JSON needs a root object")
+		return nil, errors.New("The sent JSON lacks a root object")
+	}
+
+	return jsonBody, nil
 }

@@ -3,10 +3,11 @@
 }
 
 .AppLayout > main {
-  height: calc(100% - 64px * 2);
+  height: calc(100% - 64px);
   width: 100%;
 }
 
-.AppLayout > header, .AppLayout > footer {
+.AppLayout > header,
+.AppLayout > footer {
   z-index: 100;
 }

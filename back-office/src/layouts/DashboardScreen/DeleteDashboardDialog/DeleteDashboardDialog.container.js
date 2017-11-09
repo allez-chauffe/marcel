@@ -1,11 +1,11 @@
 //@flow
 import { connect } from 'react-redux'
-import type { State } from '../../../../store'
+import type { State } from '../../../store'
 import {
   deletingDashboardSelector,
   confirmDashboardDeletion,
   cancelDashboardDeletion,
-} from '../../../../dashboard'
+} from '../../../dashboard'
 import DeleteDashboardDialog from './DeleteDashboardDialog'
 
 const mapStateToProps = (state: State) => ({
@@ -17,6 +17,4 @@ const mapDispatchToProps = {
   cancelDeletion: cancelDashboardDeletion,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  DeleteDashboardDialog,
-)
+export default connect(mapStateToProps, mapDispatchToProps)(DeleteDashboardDialog)

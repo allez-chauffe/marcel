@@ -1,19 +1,20 @@
 package plugins
 
 import (
-	"net/http"
+	"archive/zip"
 	"encoding/json"
+	"errors"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
+
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/mux"
-	"io"
-	"os"
-	"log"
-	"path"
-	"errors"
-	"strings"
-	"archive/zip"
-	"path/filepath"
-	"io/ioutil"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -34,7 +35,7 @@ func NewService() *Service {
 	return p
 }
 
-func (s *Service) GetManager() (*Manager) {
+func (s *Service) GetManager() *Manager {
 	return s.Manager
 }
 
@@ -132,12 +133,12 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 3 : check structure of the plugin
-	if exists, _ := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "description.json"); exists == false {
+	if exists := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "description.json"); exists == false {
 		commons.WriteResponse(w, http.StatusNotAcceptable, "'description.json' file not found at the root of the plugin folder")
 		return
 	}
 
-	if exists, _ := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "front"); exists == false {
+	if exists := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "front"); exists == false {
 		commons.WriteResponse(w, http.StatusNotAcceptable, "'front' folder not found at the root of the plugin folder")
 		return
 	}
@@ -161,7 +162,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// todo : if plugin already exists and at least 1 instance of the backend is running, so stop them before replacing the files and relaunch them again after
 
 	// 5 : rename plugin folder with it's EltName (should be unique)
-	os.Rename(pluginFolder,  PLUGINS_FOLDER + string(os.PathSeparator) + plugin.EltName + string(os.PathSeparator))
+	os.Rename(pluginFolder, PLUGINS_FOLDER+string(os.PathSeparator)+plugin.EltName+string(os.PathSeparator))
 
 	// 6 : check there's no plugin already installed with same name or remove&replace
 	s.Manager.Add(plugin)

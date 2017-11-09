@@ -2,31 +2,35 @@ package medias
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/plugins"
-	"io/ioutil"
+	"github.com/gorilla/mux"
 )
 
 const MEDIAS_CONFIG_PATH string = "data"
 const MEDIAS_CONFIG_FILENAME string = "medias.json"
 
 type Service struct {
-	manager *Manager
+	manager        *Manager
+	clientsService *clients.Service
 }
 
-func NewService(pluginManager *plugins.Manager) *Service {
+func NewService(pluginManager *plugins.Manager, clientsService *clients.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(pluginManager, MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	service.manager = NewManager(pluginManager, clientsService, MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	service.clientsService = clientsService
 
 	return service
 }
 
-func (m *Service) GetManager() (*Manager) {
+func (m *Service) GetManager() *Manager {
 	return m.manager
 }
 
@@ -131,6 +135,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	m.manager.Commit()
 
 	commons.WriteResponse(w, http.StatusOK, "Media correctly saved with ID "+strconv.Itoa(media.ID))
+	m.clientsService.SendByMedia(media.ID, "update")
 }
 
 // swagger:route GET /medias CreateHandler
@@ -165,9 +170,11 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if media != nil {
 		m.manager.Activate(media)
+
 		m.manager.Commit()
 
 		commons.WriteResponse(w, http.StatusOK, "Media is active")
+		m.clientsService.SendByMedia(media.ID, "update")
 	}
 }
 
@@ -179,9 +186,11 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if media != nil {
 		m.manager.Deactivate(media)
+
 		m.manager.Commit()
 
 		commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
+		m.clientsService.SendByMedia(media.ID, "update")
 	}
 }
 
@@ -202,6 +211,7 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 	m.manager.Commit()
 
 	commons.WriteResponse(w, http.StatusOK, "Media has been correctly restarted")
+	m.clientsService.SendByMedia(media.ID, "update")
 }
 
 // swagger:route DELETE /medias/{idMedia:[0-9]*} DeleteHandler

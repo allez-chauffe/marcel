@@ -4,6 +4,7 @@ import type { Dispatch } from 'redux'
 import type { State, Config } from '../types'
 import type { Plugin } from '../../plugins'
 import type { Dashboard } from '../../dashboard/type'
+import type { ClientMap } from '../../clients'
 
 export type LoadingThunkAction = (Dispatch<*>, () => State) => void
 
@@ -17,6 +18,10 @@ export type LoadPluginsStartedAction = {
 
 export type LoadDashboardsStartedAction = {
   type: 'LOADERS/LOAD_DASHBOARDS_STARTED',
+}
+
+export type LoadClientsStartedAction = {
+  type: 'LOADERS/LOAD_CLIENTS_STARTED',
 }
 
 export type LoadConfigSuccessedAction = {
@@ -34,6 +39,11 @@ export type LoadDashboardsSuccessedAction = {
   payload: { dashboards: Dashboard[] },
 }
 
+export type LoadClientsSuccessedAction = {
+  type: 'LOADERS/LOAD_CLIENTS_SUCCESSED',
+  payload: { clients: ClientMap },
+}
+
 export type LoadConfigFailedAction = {
   type: 'LOADERS/LOAD_CONFIG_FAILED',
   payload: { error: mixed },
@@ -46,6 +56,11 @@ export type LoadPluginsFailedAction = {
 
 export type LoadDashboardsFailedAction = {
   type: 'LOADERS/LOAD_DASHBOARDS_FAILED',
+  payload: { error: mixed },
+}
+
+export type LoadClientsFailedAction = {
+  type: 'LOADERS/LOAD_CLIENTS_FAILED',
   payload: { error: mixed },
 }
 
@@ -64,5 +79,6 @@ export type LoadersState = {
   config: boolean,
   dashboards: boolean,
   plugins: boolean,
+  clients: boolean,
   initial: boolean,
 }
