@@ -1,7 +1,11 @@
 package main
 
-import "github.com/Zenika/MARCEL/auth-backend/app"
+import (
+	"github.com/Zenika/MARCEL/auth-backend/app"
+	"github.com/Zenika/MARCEL/auth-backend/conf"
+)
 
 func main() {
-	app.Run(":8091")
+	config := conf.LoadConfig()
+	app.Run(config)
 }

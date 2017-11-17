@@ -1,9 +1,11 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/Zenika/MARCEL/auth-backend/conf"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -17,6 +19,7 @@ const (
 var (
 	key    = []byte("ThisIsTheSecret")
 	router http.Handler
+	config *conf.Config
 )
 
 type Claims struct {
@@ -43,6 +46,16 @@ func init() {
 	router = c.Handler(r)
 }
 
-func Run(addr string) {
+func Run(c *conf.Config) {
+	config = c
+	addr := fmt.Sprintf(":%d", config.Port)
+
+	secureMode := ""
+	if config.SecuredCookies {
+		secureMode = "with secure mode enabled"
+	}
+
+	log.Printf("Starting auth-backend on %s %s", addr, secureMode)
+
 	log.Fatal(http.ListenAndServe(addr, router))
 }

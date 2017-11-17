@@ -51,8 +51,8 @@ func addTokenCookie(w http.ResponseWriter, claims jwt.Claims, name string, path 
 		Name:     name,
 		Value:    token,
 		Expires:  expiration,
-		Secure:   false,
-		HttpOnly: false,
+		Secure:   config.SecuredCookies,
+		HttpOnly: true,
 		Path:     path,
 	})
 }
