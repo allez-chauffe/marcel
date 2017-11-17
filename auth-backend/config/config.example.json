@@ -1,4 +1,6 @@
 {
   "port": 8091,
-  "securedCookies": true
+  "securedCookies": true,
+  "authExpiration": 28800,
+  "refreshExpiration": 1296000
 }

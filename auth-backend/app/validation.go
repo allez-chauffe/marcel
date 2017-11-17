@@ -17,14 +17,8 @@ func validateHandler(w http.ResponseWriter, r *http.Request) {
 
 	token, err := getVerifiedClaims(cookie.Value, &Claims{})
 
-	if err != nil {
-		w.WriteHeader(403)
-		w.Write([]byte("Missing Authentication cookie"))
-		return
-	}
-
 	claims, ok := token.(*Claims)
-	if !ok {
+	if !ok || err != nil {
 		w.WriteHeader(403)
 		w.Write([]byte("Invalid token"))
 		return

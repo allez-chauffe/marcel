@@ -8,8 +8,10 @@ import (
 )
 
 type Config struct {
-	Port           int  `json:"port"`
-	SecuredCookies bool `json:"securedCookies"`
+	Port              int   `json:"port"`
+	SecuredCookies    bool  `json:"securedCookies"`
+	AuthExpiration    int64 `json:"authExpiration"`
+	RefreshExpiration int64 `json:"refreshExpiration"`
 }
 
 const configPath = "config/config.json"
@@ -40,8 +42,10 @@ func checkError(err error, message string) *Config {
 	if err != nil {
 		log.Printf(message+" (%s)", err.Error())
 		return &Config{
-			Port:           8091,
-			SecuredCookies: true,
+			Port:              8091,
+			SecuredCookies:    true,
+			AuthExpiration:    3600 * 8,
+			RefreshExpiration: 3600 * 24 * 15,
 		}
 	}
 

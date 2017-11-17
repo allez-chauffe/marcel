@@ -17,12 +17,12 @@ func generateRefreshToken(w http.ResponseWriter) {
 			},
 		},
 		refreshCookie, "/login",
-		time.Now().Add(3600*time.Hour),
+		time.Now().Add(time.Duration(config.RefreshExpiration)*time.Second),
 	)
 }
 
 func generateAuthToken(w http.ResponseWriter) {
-	expiration := time.Now().Add(30 * time.Second)
+	expiration := time.Now().Add(time.Duration(config.AuthExpiration) * time.Second)
 
 	addTokenCookie(w,
 		&Claims{
