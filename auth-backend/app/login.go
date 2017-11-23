@@ -31,10 +31,10 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 		return
 	}
 
-	user := users.GetByLoginAndPassword(login, password)
+	user := users.GetByLogin(login)
 
-	if user == nil {
-		commons.WriteResponse(w, http.StatusForbidden, "Wrong login or password")
+	if user == nil || !checkHash(password, user.PasswordHash, user.PasswordSalt) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 

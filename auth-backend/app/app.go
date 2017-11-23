@@ -12,11 +12,6 @@ import (
 	"github.com/rs/cors"
 )
 
-const (
-	authCookie    = "Authentication"
-	refreshCookie = "RefreshAuthentication"
-)
-
 var (
 	secretKey = []byte("ThisIsTheSecret")
 	app       http.Handler
@@ -34,6 +29,7 @@ func init() {
 
 	r.HandleFunc("/login", loginHandler).Methods("POST")
 	r.HandleFunc("/validate", validateHandler).Methods("GET")
+	r.HandleFunc("/validate/admin", validateAdminHandler).Methods("GET")
 
 	userRoutes(r.PathPrefix("/users").Subrouter())
 
