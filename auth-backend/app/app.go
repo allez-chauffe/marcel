@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Zenika/MARCEL/auth-backend/auth"
+	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
 	"github.com/Zenika/MARCEL/auth-backend/conf"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -17,7 +19,7 @@ const (
 
 var (
 	secretKey = []byte("ThisIsTheSecret")
-	router    http.Handler
+	app       http.Handler
 	config    *conf.Config
 )
 
@@ -35,7 +37,7 @@ func init() {
 
 	userRoutes(r.PathPrefix("/users").Subrouter())
 
-	router = c.Handler(r)
+	app = middleware.AuthMiddlware(c.Handler(r))
 }
 
 func userRoutes(r *mux.Router) {
@@ -48,6 +50,7 @@ func userRoutes(r *mux.Router) {
 
 func Run(c *conf.Config) {
 	config = c
+	auth.SetConfig(c)
 	addr := fmt.Sprintf(":%d", config.Port)
 
 	secureMode := ""
@@ -57,5 +60,5 @@ func Run(c *conf.Config) {
 
 	log.Printf("Starting auth-backend on %s %s", addr, secureMode)
 
-	log.Fatal(http.ListenAndServe(addr, router))
+	log.Fatal(http.ListenAndServe(addr, app))
 }
