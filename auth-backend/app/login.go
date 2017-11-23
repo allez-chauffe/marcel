@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Zenika/MARCEL/auth-backend/auth"
 	"github.com/Zenika/MARCEL/auth-backend/users"
 	"github.com/Zenika/MARCEL/backend/commons"
 )
@@ -37,24 +38,16 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 		return
 	}
 
-	generateAuthToken(w, user)
-	generateRefreshToken(w, user)
+	auth.GenerateAuthToken(w, user)
+	auth.GenerateRefreshToken(w, user)
 }
 
 func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie(refreshCookie)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusForbidden, "No refresh token")
-		return
-	}
 
-	claims, err := getVerifiedClaims(cookie.Value, &RefreshClaims{})
+	refreshClaims, err := auth.GetRefreshToken(r)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusForbidden, err.Error())
-		return
 	}
-
-	refreshClaims := claims.(*RefreshClaims)
 
 	user := users.GetByID(refreshClaims.Subject)
 	if user == nil {
@@ -67,7 +60,7 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	generateAuthToken(w, user)
+	auth.GenerateAuthToken(w, user)
 }
 
 func getCredentials(w http.ResponseWriter, r *http.Request) *Credentials {
