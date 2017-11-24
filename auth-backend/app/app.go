@@ -17,9 +17,9 @@ const (
 )
 
 var (
-	key    = []byte("ThisIsTheSecret")
-	router http.Handler
-	config *conf.Config
+	secretKey = []byte("ThisIsTheSecret")
+	router    http.Handler
+	config    *conf.Config
 )
 
 type Claims struct {

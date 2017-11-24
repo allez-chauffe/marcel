@@ -8,17 +8,18 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	login := r.FormValue("login")
 	password := r.FormValue("password")
 
-	if login != "" {
-		if password == "" {
-			w.WriteHeader(400)
-			w.Write([]byte("Missing password"))
-			return
-		}
-
-		loginWithCredentials(w, login, password)
-	} else {
+	if login == "" {
 		loginWithRefreshToken(w, r)
+		return
 	}
+
+	if password == "" {
+		w.WriteHeader(400)
+		w.Write([]byte("Missing password"))
+		return
+	}
+
+	loginWithCredentials(w, login, password)
 }
 
 func loginWithCredentials(w http.ResponseWriter, login string, password string) {

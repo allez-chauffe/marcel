@@ -2,7 +2,6 @@ package conf
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 )
@@ -18,18 +17,18 @@ const configPath = "config/config.json"
 
 func LoadConfig() *Config {
 
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+	f, err := os.Open(configPath)
+
+	if os.IsNotExist(err) {
 		return checkError(err, "WARNING : No config file detected, loading default configuration")
 	}
 
-	data, err := ioutil.ReadFile(configPath)
-
-	if config := checkError(err, "ERROR: Unreadable config file"); config != nil {
-		return config
+	if defaultConfig := checkError(err, ""); defaultConfig != nil {
+		return defaultConfig
 	}
 
 	config := &Config{}
-	err = json.Unmarshal(data, config)
+	err = json.NewDecoder(f).Decode(config)
 
 	if defaultConfig := checkError(err, "ERROR: Malformed JSON in config file"); defaultConfig != nil {
 		return defaultConfig

@@ -39,7 +39,7 @@ func generateAuthToken(w http.ResponseWriter) {
 }
 
 func addTokenCookie(w http.ResponseWriter, claims jwt.Claims, name string, path string, expiration time.Time) {
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(key)
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(secretKey)
 
 	if err != nil {
 		w.WriteHeader(403)
@@ -61,10 +61,14 @@ func getVerifiedClaims(tokenString string, sampleClaims jwt.Claims) (jwt.Claims,
 	token, err := jwt.ParseWithClaims(
 		tokenString,
 		sampleClaims,
-		func(token *jwt.Token) (interface{}, error) { return key, nil },
+		func(token *jwt.Token) (interface{}, error) { return secretKey, nil },
 	)
 
-	if err != nil || !token.Valid {
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
 		return nil, errors.New("Invlaid token")
 	}
 
