@@ -2,5 +2,5 @@ FROM nginx
 
 WORKDIR /usr/share/nginx/html
 
-ADD build .
+ADD . build
 EXPOSE 80

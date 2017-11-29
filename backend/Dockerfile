@@ -1,6 +1,6 @@
 FROM alpine
 
-COPY backend /backend/
+COPY . /backend/
 
 ENV MARCEL_LOG_FILE=/backend/logs/backend.log
 WORKDIR /backend
