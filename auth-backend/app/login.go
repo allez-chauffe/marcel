@@ -40,6 +40,8 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 
 	auth.GenerateAuthToken(w, user)
 	auth.GenerateRefreshToken(w, user)
+
+	commons.WriteJsonResponse(w, adaptUser(user))
 }
 
 func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
@@ -47,6 +49,7 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 	refreshClaims, err := auth.GetRefreshToken(r)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusForbidden, err.Error())
+		return
 	}
 
 	user := users.GetByID(refreshClaims.Subject)
@@ -61,6 +64,8 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	auth.GenerateAuthToken(w, user)
+
+	commons.WriteJsonResponse(w, adaptUser(user))
 }
 
 func getCredentials(w http.ResponseWriter, r *http.Request) *Credentials {
