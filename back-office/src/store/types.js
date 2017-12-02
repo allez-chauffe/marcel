@@ -8,6 +8,7 @@ import type { ClientState, ClientAction } from '../clients'
 
 export type Config = {
   backendURI: string,
+  authURI: string,
   frontendURI: string,
 }
 
