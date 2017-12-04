@@ -103,7 +103,7 @@ func SaveUsersData() {
 	defer f.Close()
 
 	if err != nil {
-		log.Println("ERROR: Error while opening users database file %s (%s)", userFilePath, err.Error())
+		log.Printf("ERROR: Error while opening users database file %s (%s)", userFilePath, err.Error())
 		return
 	}
 
