@@ -5,14 +5,25 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Zenika/MARCEL/auth-backend/users"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-func generateRefreshToken(w http.ResponseWriter) {
+type Claims struct {
+	DisplayName string `json:"display"`
+	Role        string `json:"role"`
+	jwt.StandardClaims
+}
+
+type RefreshClaims struct {
+	jwt.StandardClaims
+}
+
+func generateRefreshToken(w http.ResponseWriter, user *users.User) {
 	addTokenCookie(w,
 		&RefreshClaims{
 			StandardClaims: jwt.StandardClaims{
-				Subject:  "Valentin",
+				Subject:  user.ID,
 				IssuedAt: time.Now().Unix(),
 			},
 		},
@@ -21,14 +32,15 @@ func generateRefreshToken(w http.ResponseWriter) {
 	)
 }
 
-func generateAuthToken(w http.ResponseWriter) {
+func generateAuthToken(w http.ResponseWriter, user *users.User) {
 	expiration := time.Now().Add(time.Duration(config.AuthExpiration) * time.Second)
 
 	addTokenCookie(w,
 		&Claims{
-			Role: "admin",
+			DisplayName: user.DisplayName,
+			Role:        user.Role,
 			StandardClaims: jwt.StandardClaims{
-				Subject:   "Valentin",
+				Subject:   user.ID,
 				ExpiresAt: expiration.Unix(),
 				IssuedAt:  time.Now().Unix(),
 			},

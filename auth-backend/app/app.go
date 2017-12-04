@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/Zenika/MARCEL/auth-backend/conf"
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -22,15 +21,6 @@ var (
 	config    *conf.Config
 )
 
-type Claims struct {
-	Role string `json:"role"`
-	jwt.StandardClaims
-}
-
-type RefreshClaims struct {
-	jwt.StandardClaims
-}
-
 func init() {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -40,10 +30,20 @@ func init() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/login", loginHandler).Methods("GET")
+	r.HandleFunc("/login", loginHandler).Methods("POST")
 	r.HandleFunc("/validate", validateHandler).Methods("GET")
 
+	userRoutes(r.PathPrefix("/users").Subrouter())
+
 	router = c.Handler(r)
+}
+
+func userRoutes(r *mux.Router) {
+	r.HandleFunc("/", createUserHandler).Methods("POST")
+	r.HandleFunc("/", getUsersHandler).Methods("GET")
+	r.HandleFunc("/{userID}", getUserHandler).Methods("GET")
+	r.HandleFunc("/{userID}", deleteUserHandler).Methods("DELETE")
+	r.HandleFunc("/{userID}", updateUserHandler).Methods("PUT")
 }
 
 func Run(c *conf.Config) {

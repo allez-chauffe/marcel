@@ -40,6 +40,15 @@ func randInt(min int, max int) int {
 }
 
 func IsInArray(val interface{}, array interface{}) (exists bool, index int) {
+	return FindIndexInArray(
+		func(curr interface{}) bool {
+			return reflect.DeepEqual(val, curr)
+		},
+		array,
+	)
+}
+
+func FindIndexInArray(predicate func(val interface{}) bool, array interface{}) (exists bool, index int) {
 	exists = false
 	index = -1
 
@@ -48,7 +57,7 @@ func IsInArray(val interface{}, array interface{}) (exists bool, index int) {
 		s := reflect.ValueOf(array)
 
 		for i := 0; i < s.Len(); i++ {
-			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
+			if predicate(s.Index(i).Interface()) {
 				index = i
 				exists = true
 				return
