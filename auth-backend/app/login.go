@@ -2,8 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/Zenika/MARCEL/auth-backend/users"
@@ -20,10 +18,10 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if cred != nil {
 		loginWithCredentials(w, cred.Login, cred.Password)
-	} else {
-		loginWithRefreshToken(w, r)
 		return
 	}
+
+	loginWithRefreshToken(w, r)
 }
 
 func loginWithCredentials(w http.ResponseWriter, login string, password string) {
@@ -32,11 +30,10 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 		return
 	}
 
-	user := users.GetByLogin(login, password)
+	user := users.GetByLoginAndPassword(login, password)
 
 	if user == nil {
-		w.WriteHeader(403)
-		w.Write([]byte("Wrong login or password"))
+		commons.WriteResponse(w, http.StatusForbidden, "Wrong login or password")
 		return
 	}
 
@@ -47,15 +44,13 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(refreshCookie)
 	if err != nil {
-		w.WriteHeader(403)
-		w.Write([]byte("No refresh token"))
+		commons.WriteResponse(w, http.StatusForbidden, "No refresh token")
 		return
 	}
 
 	claims, err := getVerifiedClaims(cookie.Value, &RefreshClaims{})
 	if err != nil {
-		w.WriteHeader(403)
-		w.Write([]byte(err.Error()))
+		commons.WriteResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -76,14 +71,9 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCredentials(w http.ResponseWriter, r *http.Request) *Credentials {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil || len(body) == 0 {
-		return nil
-	}
-
 	credentials := &Credentials{}
-	if err := json.Unmarshal(body, credentials); err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while parsing JSON (%s)", err.Error()))
+
+	if err := json.NewDecoder(r.Body).Decode(credentials); err != nil {
 		return nil
 	}
 

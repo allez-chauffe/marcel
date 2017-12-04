@@ -3,7 +3,6 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -55,7 +54,7 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID, _ := vars["userID"]
+	userID := vars["userID"]
 
 	user := users.GetByID(userID)
 
@@ -69,7 +68,7 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID, _ := vars["userID"]
+	userID := vars["userID"]
 
 	ok := users.Delete(userID)
 
@@ -83,14 +82,8 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUserFromRequest(w http.ResponseWriter, r *http.Request) *users.User {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while parsing request body (%s)", err.Error()))
-		return nil
-	}
-
 	user := &users.User{}
-	if err := json.Unmarshal(body, user); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while parsing JSON (%s)", err.Error()))
 		return nil
 	}

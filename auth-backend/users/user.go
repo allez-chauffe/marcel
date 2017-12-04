@@ -2,13 +2,11 @@ package users
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
 
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 type User struct {
@@ -47,7 +45,7 @@ func GetAll() []*User {
 	return usersData.Users
 }
 
-func GetByLogin(login, password string) *User {
+func GetByLoginAndPassword(login, password string) *User {
 	for _, user := range usersData.Users {
 		if user.Login == login && user.Password == password {
 			return user
@@ -66,47 +64,50 @@ func GetByID(id string) *User {
 }
 
 func Delete(id string) bool {
-	exists, i := commons.FindIndexInArray(
-		func(userI interface{}) bool {
-			user, ok := userI.(*User)
-			return ok && user.ID == id
-		},
-		usersData.Users,
-	)
+	index := -1
 
-	usersData.Users = append(usersData.Users[:i], usersData.Users[i+1:]...)
+	for i, user := range usersData.Users {
+		if user.ID == id {
+			index = i
+			break
+		}
+	}
 
-	return exists
+	if index == -1 {
+		return false
+	}
+
+	copy(usersData.Users[index:], usersData.Users[index+1:])
+	usersData.Users = usersData.Users[:len(usersData.Users)-1]
+
+	return true
 }
 
 func LoadUsersData() {
-	if _, err := os.Stat(userFilePath); os.IsNotExist(err) {
-		log.Println("WARNING: No users database file detected")
-		return
-	}
-
-	data, err := ioutil.ReadFile(userFilePath)
+	f, err := os.OpenFile(userFilePath, os.O_CREATE, 0755)
+	defer f.Close()
 
 	if err != nil {
-		log.Printf("ERROR: Error while reading users database file (%s)", err.Error())
+		log.Println("Error while loading users database", err.Error())
 		return
 	}
 
-	if err := json.Unmarshal(data, usersData); err != nil {
+	if err := json.NewDecoder(f).Decode(usersData); err != nil {
 		log.Printf("ERROR: Malformed JSON in users database file (%s)", err.Error())
 		return
 	}
 }
 
 func SaveUsersData() {
-	data, err := json.Marshal(usersData)
+	f, err := os.OpenFile(userFilePath, os.O_WRONLY|os.O_CREATE, 0644)
+	defer f.Close()
 
 	if err != nil {
-		log.Printf("ERROR: Error while marshalling users data (%s)", err.Error())
+		log.Println("ERROR: Error while opening users database file %s (%s)", userFilePath, err.Error())
 		return
 	}
 
-	if err := ioutil.WriteFile(userFilePath, data, 0644); err != nil {
+	if err := json.NewEncoder(f).Encode(usersData); err != nil {
 		log.Printf("ERROR: Error while saving users data in %s (%s)", userFilePath, err.Error())
 		return
 	}
