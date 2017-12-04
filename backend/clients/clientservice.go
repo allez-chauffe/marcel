@@ -167,7 +167,7 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.manager.updateClient(client)
 	s.SendByID(client.ID, "update")
-	<-s.WaitForClose(client.ID)
+	// <-s.WaitForClose(client.ID)
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 

@@ -1,0 +1,7 @@
+{
+  "ssl": false,
+  "urls": {
+    "backend": "marcel.com:8081/api/v1",
+    "plugins": "marcel.com:8081/api/v1"
+  }
+}
