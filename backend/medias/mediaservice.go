@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
+
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/plugins"
@@ -43,15 +45,12 @@ func (m *Service) GetManager() *Manager {
 //
 //     Schemes: http, https
 func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
-
-	c := m.manager.GetConfiguration()
-	b, err := json.Marshal(c)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	commons.WriteResponse(w, http.StatusOK, (string)(b))
+	commons.WriteJsonResponse(w, m.manager.GetConfiguration())
 }
 
 // swagger:route GET /medias GetAllHandler

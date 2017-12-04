@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/apidoc"
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/medias"
@@ -93,7 +94,7 @@ func (a *App) initializeRoutes() {
 	plugins.HandleFunc("/add", a.pluginService.AddHandler).Methods("POST")
 	plugins.HandleFunc("/{eltName}", a.pluginService.GetHandler).Methods("GET")
 
-	a.Router = c.Handler(r)
+	a.Router = middleware.AuthMiddlware(c.Handler(r))
 }
 
 func (a *App) InitializeLog(filename string, logFile *os.File) error {
