@@ -2,7 +2,6 @@ package medias
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -62,15 +61,7 @@ func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-
-	media := m.manager.GetAll()
-	b, err := json.Marshal(media)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
-		return
-	}
-
-	commons.WriteResponse(w, http.StatusOK, (string)(b))
+	commons.WriteJsonResponse(w, m.manager.GetAll())
 }
 
 // swagger:route GET /medias/{idMedia} GetHandler
@@ -83,18 +74,9 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idMedia
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	media := m.getMediaFromRequest(w, r)
-	if media == nil {
-		return
+	if media := m.getMediaFromRequest(w, r); media != nil {
+		commons.WriteJsonResponse(w, media)
 	}
-
-	b, err := json.Marshal(*media)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
-		return
-	}
-
-	commons.WriteResponse(w, http.StatusOK, (string)(b))
 }
 
 // swagger:route POST /medias SaveHandler
@@ -110,15 +92,13 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	// 1 : Get content and check structure
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
+	media := NewMedia()
+	if err := json.NewDecoder(r.Body).Decode(media); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// 2 : if media != new => stop all plugins'backend containers
-	var media *Media = NewMedia()
-	err = json.Unmarshal(body, &media)
 	//if it's a new media (id==0) : create one
 	if tmpMedia, _ := m.manager.Get(media.ID); tmpMedia != nil {
 		m.manager.Deactivate(tmpMedia)
@@ -148,15 +128,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	//get a new media
 	newMedia := m.manager.CreateEmpty()
-
-	//return it to the client
-	b, err := json.Marshal(*newMedia)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
-		return
-	}
-
-	commons.WriteResponse(w, http.StatusOK, (string)(b))
+	commons.WriteJsonResponse(w, newMedia)
 }
 
 // swagger:route GET /medias/{idMedia:[0-9]*}/activate ActivateHandler

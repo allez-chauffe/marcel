@@ -1,6 +1,7 @@
 package clients
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -90,9 +91,9 @@ func (s *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 
 //CreateHandler create a new client entry in the database.
 func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
-	body, err := commons.ParseJSONBody(w, r)
-
-	if err != nil {
+	body := map[string]interface{}{}
+	if err := json.NewDecoder(r.Body).Decode(body); err != nil {
+		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -104,7 +105,7 @@ func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	mediaIDI, ok := body["mediaID"]
 	mediaID, ok := mediaIDI.(int)
-	if !ok {
+	if !ok || mediaID < 0 {
 		mediaID = 0
 	}
 
