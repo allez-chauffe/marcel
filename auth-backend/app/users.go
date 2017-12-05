@@ -18,14 +18,14 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	params := getUserFromRequest(w, r)
+	body := getUserFromRequest(w, r)
 
-	if params.Login == "" || params.DisplayName == "" || params.Password == "" {
+	if body.Login == "" || body.DisplayName == "" || body.Password == "" {
 		commons.WriteResponse(w, http.StatusBadRequest, "Malformed request, missing required fields")
 		return
 	}
 
-	user := users.New(params.DisplayName, params.Login, params.Password)
+	user := users.New(body.DisplayName, body.Login, body.Password)
 	users.SaveUsersData()
 
 	commons.WriteJsonResponse(w, user)
@@ -40,23 +40,23 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := getUserFromRequest(w, r)
+	body := getUserFromRequest(w, r)
 	savedUser := users.GetByID(userID)
 
-	if savedUser == nil || savedUser.ID != user.ID {
+	if savedUser == nil || savedUser.ID != body.ID {
 		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
 	}
 
-	if savedUser.Password != user.Password {
+	if savedUser.Password != body.Password {
 		savedUser.LastDisconection = time.Now().Unix()
 	}
-	savedUser.DisplayName = user.DisplayName
-	savedUser.Login = user.Login
-	savedUser.Password = user.Password
+	savedUser.DisplayName = body.DisplayName
+	savedUser.Login = body.Login
+	savedUser.Password = body.Password
 
 	if auth.CheckPermissions(r, nil, "admin") {
-		savedUser.Role = user.Role
+		savedUser.Role = body.Role
 	}
 
 	users.SaveUsersData()
