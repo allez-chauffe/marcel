@@ -10,6 +10,8 @@ echo "    - github.com/mitchellh/mapstructure"
 go get github.com/mitchellh/mapstructure
 echo "    - github.com/satori/go.uuid"
 go get github.com/satori/go.uuid
+echo "    - github.com/dgrijalva/jwt-go"
+go get github.com/dgrijalva/jwt-go
 echo ""
 echo "    - github.com/Pallinder/go-randomdata"
 go get github.com/Pallinder/go-randomdata
