@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
+
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/mux"
 )
@@ -46,6 +48,11 @@ func (s *Service) GetManager() *Manager {
 //
 //     Schemes: http, https
 func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	commons.WriteJsonResponse(w, s.Manager.GetConfiguration())
 }
 
@@ -58,6 +65,11 @@ func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	commons.WriteJsonResponse(w, m.Manager.GetAll())
 }
 
@@ -71,6 +83,11 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idPlugin
 func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]
 
@@ -84,6 +101,11 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	// 0 : Get files content and copy it into a temporary folder
 	foldername, filename, err := UploadFile(r)
 	if err != nil {
