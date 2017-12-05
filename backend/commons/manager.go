@@ -13,17 +13,17 @@ type Manager interface {
 }
 
 func LoadFromDB(manager Manager) {
-	f, err := OpenSaveFile(manager)
+	f, err := OpenSaveFile(manager, os.O_RDONLY)
 	defer f.Close()
 	Check(err)
 	err = json.NewDecoder(f).Decode(manager.GetConfig())
+	log.Println(err)
 	Check(err)
 }
 
 func Commit(manager Manager) error {
 	configFullPath, _, configFileName := manager.GetSaveFilePath()
-
-	f, err := OpenSaveFile(manager)
+	f, err := OpenSaveFile(manager, os.O_WRONLY)
 	defer f.Close()
 
 	if err != nil {
@@ -38,8 +38,8 @@ func Commit(manager Manager) error {
 	return err
 }
 
-func OpenSaveFile(manager Manager) (*os.File, error) {
+func OpenSaveFile(manager Manager, osFlag int) (*os.File, error) {
 	configFullPath, _, _ := manager.GetSaveFilePath()
 
-	return os.OpenFile(configFullPath, os.O_WRONLY|os.O_CREATE, 0644)
+	return os.OpenFile(configFullPath, osFlag|os.O_CREATE, 0644)
 }
