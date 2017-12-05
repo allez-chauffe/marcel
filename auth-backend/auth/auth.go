@@ -32,21 +32,21 @@ func getVerifiedClaims(tokenString string, sampleClaims jwt.Claims) (jwt.Claims,
 	return token.Claims, nil
 }
 
-func addTokenCookie(w http.ResponseWriter, claims jwt.Claims, name string, path string, expiration time.Time) {
+func createTokenCookie(claims jwt.Claims, name string, path string, expiration time.Time) (*http.Cookie, error) {
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(key)
 
 	if err != nil {
-		w.WriteHeader(403)
-		w.Write([]byte(err.Error()))
-		return
+		return nil, err
 	}
 
-	http.SetCookie(w, &http.Cookie{
+	cookie := &http.Cookie{
 		Name:     name,
 		Value:    token,
 		Expires:  expiration,
 		Secure:   config.SecuredCookies,
 		HttpOnly: true,
 		Path:     path,
-	})
+	}
+
+	return cookie, nil
 }

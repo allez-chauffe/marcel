@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Zenika/MARCEL/backend/commons"
+
 	"github.com/Zenika/MARCEL/auth-backend/users"
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -37,7 +39,7 @@ func GetAuthToken(r *http.Request) (*Claims, error) {
 func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
 	expiration := time.Now().Add(time.Duration(config.AuthExpiration) * time.Second)
 
-	addTokenCookie(w,
+	cookie, err := createTokenCookie(
 		&Claims{
 			DisplayName: user.DisplayName,
 			Role:        user.Role,
@@ -50,4 +52,11 @@ func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
 		authCookie, "/",
 		expiration,
 	)
+
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, "Failed to create auth token")
+		return
+	}
+
+	http.SetCookie(w, cookie)
 }
