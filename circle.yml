@@ -19,9 +19,8 @@ checkout:
 dependencies:
   pre:
     - rm -rf ~/.go_workspace/src/github.com/Zenika
-    - mkdir -p ~/.go_workspace/src/github.com/Zenika/MARCEL
-    - ln -s `pwd` ~/.go_workspace/src/github.com/Zenika/MARCEL/backend:
-        pwd: backend
+    - mkdir -p ~/.go_workspace/src/github.com/Zenika
+    - ln -s `pwd` ~/.go_workspace/src/github.com/Zenika/MARCEL
   override:
     - yarn:
         pwd: back-office
