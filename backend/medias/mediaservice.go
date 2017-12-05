@@ -61,6 +61,11 @@ func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	commons.WriteJsonResponse(w, m.manager.GetAll())
 }
 
@@ -74,6 +79,7 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idMedia
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: Check permission access
 	if media := m.getMediaFromRequest(w, r); media != nil {
 		commons.WriteJsonResponse(w, media)
 	}
@@ -92,28 +98,29 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	// 1 : Get content and check structure
-	media := NewMedia()
+	media := &Media{}
 	if err := json.NewDecoder(r.Body).Decode(media); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	// 2 : if media != new => stop all plugins'backend containers
-	//if it's a new media (id==0) : create one
-	if tmpMedia, _ := m.manager.Get(media.ID); tmpMedia != nil {
-		m.manager.Deactivate(tmpMedia)
-	} else {
-		//it's a new media, let give it an ID
-		media.ID = m.manager.GetNextID()
+	tmpMedia, _ := m.manager.Get(media.ID)
+	if tmpMedia == nil {
+		commons.WriteResponse(w, http.StatusNotFound, "")
+		return
 	}
 
-	m.manager.SaveIntoDB(media)
-	// 3 : start backend for every plugin instance
-	m.manager.Activate(media)
+	if !middleware.CheckPermissions(r, []string{tmpMedia.Owner}, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
 
+	m.manager.Deactivate(tmpMedia)
+	m.manager.SaveIntoDB(media)
+	m.manager.Activate(media)
 	m.manager.Commit()
 
-	commons.WriteResponse(w, http.StatusOK, "Media correctly saved with ID "+strconv.Itoa(media.ID))
+	commons.WriteJsonResponse(w, media)
 	m.clientsService.SendByMedia(media.ID, "update")
 }
 
@@ -126,8 +133,15 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	//get a new media
 	newMedia := m.manager.CreateEmpty()
+	newMedia.Owner = middleware.GetAuth(r).Subject
+
 	commons.WriteJsonResponse(w, newMedia)
 }
 
@@ -138,15 +152,22 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
-
 	if media != nil {
-		m.manager.Activate(media)
-
-		m.manager.Commit()
-
-		commons.WriteResponse(w, http.StatusOK, "Media is active")
-		m.clientsService.SendByMedia(media.ID, "update")
+		return
 	}
+
+	if !middleware.CheckPermissions(r, []string{media.Owner}, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
+	m.manager.Activate(media)
+
+	m.manager.Commit()
+
+	commons.WriteResponse(w, http.StatusOK, "Media is active")
+	m.clientsService.SendByMedia(media.ID, "update")
+
 }
 
 // swagger:route GET /medias/{idMedia:[0-9]*}/deactivate DeactivateHandler
@@ -154,15 +175,21 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 // If the media was activated (IsActive==true), backends for its plugins are stopped
 func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
-
-	if media != nil {
-		m.manager.Deactivate(media)
-
-		m.manager.Commit()
-
-		commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
-		m.clientsService.SendByMedia(media.ID, "update")
+	if media == nil {
+		return
 	}
+
+	if !middleware.CheckPermissions(r, []string{media.Owner}, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
+	m.manager.Deactivate(media)
+
+	m.manager.Commit()
+
+	commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
+	m.clientsService.SendByMedia(media.ID, "update")
 }
 
 // swagger:route GET /medias/{idMedia:[0-9]*}/restart RestartHandler
@@ -171,6 +198,11 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 	if media == nil {
+		return
+	}
+
+	if !middleware.CheckPermissions(r, []string{media.Owner}, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
@@ -190,18 +222,27 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 // Delete this media
 func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
-
-	if media != nil {
-		m.manager.Delete(media)
-
-		commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
+	if media == nil {
+		return
 	}
+
+	if !middleware.CheckPermissions(r, []string{media.Owner}, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
+	m.manager.Delete(media)
+	commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
 }
 
 // swagger:route DELETE /medias DeleteAllHandler
 //
 // Delete all medias
 func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
 
 	for i := len(m.manager.Config.Medias) - 1; i >= 0; i-- {
 		media := m.manager.Config.Medias[i]
@@ -209,7 +250,6 @@ func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 
 		m.manager.RemoveFromDB(&media)
 		m.manager.Commit()
-
 	}
 	commons.WriteResponse(w, http.StatusOK, "All medias have been correctly deleted")
 }
@@ -218,6 +258,7 @@ func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 //
 // Serves static frontend files of the given plugin instance for the given media.
 func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: Check permissions for plugin files access
 	const sep = string(os.PathSeparator)
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]
