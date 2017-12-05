@@ -69,6 +69,19 @@ func (ws *WSClient) writeMessageWithType(msgType int, msg []byte, logMsg string,
 	return err == nil
 }
 
+func (s *Service) getClientJson(client *Client) *ClientJSON {
+	_, isConnected := s.wsclients[client.ID]
+	return &ClientJSON{client, isConnected}
+}
+
+func (s *Service) getClientsJson() map[string]*ClientJSON {
+	clients := map[string]*ClientJSON{}
+	for id, client := range s.manager.GetAll() {
+		clients[id] = s.getClientJson(client)
+	}
+	return clients
+}
+
 func (ws *WSClient) writeMessage(msg string, logMsg string, errorMsg string) bool {
 	return ws.writeMessageWithType(websocket.TextMessage, []byte(msg), logMsg, errorMsg)
 }
