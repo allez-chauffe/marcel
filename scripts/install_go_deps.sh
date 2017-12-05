@@ -11,4 +11,7 @@ go get github.com/mitchellh/mapstructure
 echo "    - github.com/satori/go.uuid"
 go get github.com/satori/go.uuid
 echo ""
+echo "    - github.com/Pallinder/go-randomdata"
+go get github.com/Pallinder/go-randomdata
+echo ""
 echo "Go dependencies installation finished"
