@@ -48,8 +48,8 @@ func CheckPermissions(r *http.Request, users []string, roles ...string) bool {
 		return true
 	}
 
-	hasGrantedRole, _ := commons.IsInArray(auth.Role, roles)
-	isGrantedUser, _ := commons.IsInArray(auth.Subject, users)
+	isAuthorizedRole, _ := commons.IsInArray(auth.Role, roles)
+	isAuthorizedUser, _ := commons.IsInArray(auth.Subject, users)
 
-	return isGrantedUser || hasGrantedRole
+	return isAuthorizedUser || isAuthorizedRole
 }
