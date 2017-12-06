@@ -10,7 +10,8 @@ const user: Reducer<?User, AuthAction> = (state = null, action) => {
       return action.payload.user
     }
     case actions.LOGIN_FAIL:
-    case actions.LOGOUT_SUCCESS: {
+    case actions.LOGOUT_SUCCESS:
+    case actions.DISCONNECTED: {
       return null
     }
     default: {

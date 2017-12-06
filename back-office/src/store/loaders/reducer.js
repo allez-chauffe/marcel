@@ -4,7 +4,7 @@ import type { LoadersState, LoadersAction } from './type'
 import { actions } from './actions'
 
 const initialState = {
-  config: false,
+  config: true,
   plugins: false,
   dashboards: false,
   clients: false,

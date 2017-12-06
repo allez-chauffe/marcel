@@ -22,6 +22,7 @@ export const actions = {
   CHANGE_LOGIN: 'AUTH/CHANGE_LOGIN',
   CHANGE_PASSWORD: 'AUTH/CHANGE_PASSWORD',
   RESET_FORM: 'AUTH/RESET_FORM',
+  DISCONNECTED: 'ATUH/DISCONNECTED',
 }
 
 const handleLogin = (dispatch, promise) =>
@@ -55,6 +56,10 @@ export const logout: LogoutAction = () => dispatch => {
   dispatch({ type: actions.LOGOUT_REQUEST })
   dispatch({ type: actions.LOGOUT_SUCCESS })
 }
+
+export const disconnected = () => ({
+  type: actions.DISCONNECTED,
+})
 
 export const changeLogin = (login: string): ChangeLoginAction => ({
   type: actions.CHANGE_LOGIN,

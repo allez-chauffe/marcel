@@ -1,5 +1,7 @@
 //@flow
+import store from '../store'
 import authBackend from './auth-backend'
+import { disconnected } from '../auth'
 
 const fetcher = (baseUrl: () => string) => {
   const request = (url: string, options?) => {
@@ -11,7 +13,13 @@ const fetcher = (baseUrl: () => string) => {
 
     return request().catch(response => {
       if (response.status !== 403) throw response
-      return authBackend.login().then(request)
+      return authBackend
+        .login()
+        .then(request)
+        .catch(response => {
+          if (response.status !== 403) throw response
+          store.dispatch(disconnected())
+        })
     })
   }
 
