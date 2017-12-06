@@ -55,30 +55,29 @@ export const loadInitData = (): LoadingThunkAction => (dispatch, getState) => {
   dispatch({ type: actions.LOAD_INITIAL_STARTED })
 
   const load = loadDispatcher(dispatch)
-  load('config', config.loadConfig())
-    .then(() => load('plugins', backend.getAvailablePlugins()))
+  load('plugins', backend.getAvailablePlugins())
     .then(() => load('dashboards', getDashboards(pluginsSelector(getState()))))
     .then(() => load('clients', backend.getClients()))
     .then(() => dispatch({ type: actions.LOAD_INITIAL_FINISHED }))
     .catch((error: Error) => toastr.error('Erreur lors du chargement', error.message))
 }
 
-export const loadDashboards: LoadingThunkAction = (dispatch, getState) => {
+export const loadDashboards = (): LoadingThunkAction => (dispatch, getState) => {
   const load = loadDispatcher(dispatch)
   load('dashboards', getDashboards(pluginsSelector(getState())))
 }
 
-export const loadPlugins: LoadingThunkAction = (dispatch, getState) => {
+export const loadPlugins = (): LoadingThunkAction => (dispatch, getState) => {
   const load = loadDispatcher(dispatch)
   load('plugins', backend.getAvailablePlugins())
 }
 
-export const loadConfig: LoadingThunkAction = (dispatch, getState) => {
+export const loadConfig = (): LoadingThunkAction => (dispatch, getState) => {
   const load = loadDispatcher(dispatch)
   load('config', config.loadConfig())
 }
 
-export const loadClients: LoadingThunkAction = (dispatch, getState) => {
+export const loadClients = (): LoadingThunkAction => (dispatch, getState) => {
   const load = loadDispatcher(dispatch)
   load('clients', backend.getClients())
 }

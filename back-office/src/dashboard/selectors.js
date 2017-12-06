@@ -10,7 +10,8 @@ export const dashboardsSelector = (state: State): DashboardMap => state.dashboar
 
 export const pluginInstancesSelector = (state: State) => state.dashboard.pluginInstances
 
-export const selectedDashboardNameSelector = (state: State) => state.dashboard.selectedDashboard
+export const selectedDashboardNameSelector = (state: State) =>
+  state.router.params && state.router.params.mediaID
 
 export const selectedPluginNameSelector = (state: State) => state.dashboard.selectedPlugin
 

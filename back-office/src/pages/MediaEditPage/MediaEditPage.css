@@ -1,0 +1,30 @@
+.MediaEditPage {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.MediaEditPage .left-side-panel,
+.MediaEditPage .right-side-panel {
+  width: 19.5em;
+  overflow-y: auto;
+}
+
+.MediaEditPage .main-panel {
+  width: calc(100% - 2 * 18.5em - 6em);
+  padding: 1em 3em 1em 3em;
+  display: flex;
+}
+
+.MediaEditPage .left-side-panel {
+  border-right: 1px #ccc solid;
+}
+
+.MediaEditPage .right-side-panel {
+  border-left: 1px #ccc solid;
+}
+
+.MediaEditPage section {
+  outline: none;
+}

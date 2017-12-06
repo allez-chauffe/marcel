@@ -24,4 +24,5 @@ export type State = {
   auth: AuthState,
   loaders: LoadersState,
   config: Config,
+  router: { params: { mediaID?: string }, result: { title: string } },
 }
