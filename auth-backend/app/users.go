@@ -6,20 +6,26 @@ import (
 	"net/http"
 	"time"
 
+	auth "github.com/Zenika/MARCEL/auth-backend/auth/middleware"
 	"github.com/Zenika/MARCEL/auth-backend/users"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/mux"
 )
 
 func createUserHandler(w http.ResponseWriter, r *http.Request) {
-	params := getUserFromRequest(w, r)
+	if auth.CheckPermissions(r, nil, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
 
-	if params.Login == "" || params.DisplayName == "" || params.Password == "" {
+	body := getUserFromRequest(w, r)
+
+	if body.Login == "" || body.DisplayName == "" || body.Password == "" {
 		commons.WriteResponse(w, http.StatusBadRequest, "Malformed request, missing required fields")
 		return
 	}
 
-	user := users.New(params.DisplayName, params.Login, params.Password)
+	user := users.New(body.DisplayName, body.Login, body.Password)
 	users.SaveUsersData()
 
 	commons.WriteJsonResponse(w, user)
@@ -29,20 +35,29 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["userID"]
 
-	user := getUserFromRequest(w, r)
-	savedUser := users.GetByID(userID)
-
-	if savedUser == nil || savedUser.ID != user.ID {
-		commons.WriteResponse(w, http.StatusNotFound, "Given user doesn't exists")
+	if !auth.CheckPermissions(r, []string{userID}, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	if savedUser.Password != user.Password {
+	body := getUserFromRequest(w, r)
+	savedUser := users.GetByID(userID)
+
+	if savedUser == nil || savedUser.ID != body.ID {
+		commons.WriteResponse(w, http.StatusNotFound, "")
+		return
+	}
+
+	if savedUser.Password != body.Password {
 		savedUser.LastDisconection = time.Now().Unix()
 	}
-	savedUser.DisplayName = user.DisplayName
-	savedUser.Login = user.Login
-	savedUser.Password = user.Password
+	savedUser.DisplayName = body.DisplayName
+	savedUser.Login = body.Login
+	savedUser.Password = body.Password
+
+	if auth.CheckPermissions(r, nil, "admin") {
+		savedUser.Role = body.Role
+	}
 
 	users.SaveUsersData()
 	commons.WriteJsonResponse(w, savedUser)
@@ -69,6 +84,11 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["userID"]
+
+	if !auth.CheckPermissions(r, []string{userID}, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
 
 	ok := users.Delete(userID)
 
