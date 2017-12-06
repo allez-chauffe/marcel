@@ -7,10 +7,12 @@ import (
 )
 
 type Config struct {
-	Port              int   `json:"port"`
-	SecuredCookies    bool  `json:"securedCookies"`
-	AuthExpiration    int64 `json:"authExpiration"`
-	RefreshExpiration int64 `json:"refreshExpiration"`
+	Port              int    `json:"port"`
+	SecuredCookies    bool   `json:"securedCookies"`
+	AuthExpiration    int64  `json:"authExpiration"`
+	RefreshExpiration int64  `json:"refreshExpiration"`
+	Domain            string `json:"domain"`
+	BaseURL           string `json:"baseURL`
 }
 
 const configPath = "config/config.json"

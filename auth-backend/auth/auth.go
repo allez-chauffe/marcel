@@ -43,6 +43,7 @@ func createTokenCookie(claims jwt.Claims, name string, path string, expiration t
 		Name:     name,
 		Value:    token,
 		Expires:  expiration,
+		Domain:   config.Domain,
 		Secure:   config.SecuredCookies,
 		HttpOnly: true,
 		Path:     path,

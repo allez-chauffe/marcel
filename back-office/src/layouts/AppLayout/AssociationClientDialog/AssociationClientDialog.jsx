@@ -25,9 +25,11 @@ class AssociationClientDialog extends React.Component {
 
     return (
       <Dialog
-        title={`Le client ${clientName} affiche déjà le média ${mediaName}. Êtes-vous sûre de vouloir changer ?`}
+        title={`Le client ${clientName} affiche déjà le média ${
+          mediaName
+        }. Êtes-vous sûre de vouloir changer ?`}
         type="small"
-        active={associating}
+        active={!!associating}
         onEscKeyDown={cancel}
         onOverlayClick={cancel}
         actions={[

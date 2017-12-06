@@ -13,7 +13,11 @@ import { reducer as loaders, actions as loadersActions } from './loaders'
 import type { State, Action, Config } from './types'
 
 const config: Reducer<Config, Action> = (
-  state = { backendURI: 'http://localhost:8090/api/v1/', frontendURI: 'http://localhost:5000/' },
+  state = {
+    backendURI: 'http://marcel.com:8081/api/v1/',
+    authURI: 'http://marcel.com:8081/auth/',
+    frontendURI: 'http://marcel.com:8081/front/',
+  },
   action,
 ) => {
   switch (action.type) {

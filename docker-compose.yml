@@ -1,26 +1,57 @@
-version: '3'
 services:
-  backend:
-    image: zenika/marcel-backend:dev
-    ports:
-     - 8090:8090
-    volumes:
-     - ./data:/backend/data
-     - ./plugins:/backend/plugins
-     - ./medias:/backend/medias
-     - ./logs:/backend/logs
-
-  back-office:
+  backoffice:
+    depends_on:
+      - proxy
     image: zenika/marcel-backoffice:dev
-    ports:
-     - 81:80
+    labels:
+      traefik.backend: backoffice
+      traefik.frontend.rule: "PathPrefix: /"
     volumes:
-     - ./back-office:/usr/share/nginx/html/conf
+      - ./backoffice:/usr/share/nginx/html/conf:ro
 
-  front-end:
+  frontend:
+    depends_on:
+      - proxy
     image: zenika/marcel-frontend:dev
-    ports:
-     - "80:80"
+    labels:
+      traefik.backend: frontend
+      traefik.frontend.rule: "PathPrefixStrip: /front/"
     volumes:
-     - ./front-end:/usr/share/nginx/html/conf
-     - ./release:/usr/share/nginx/html/release
+      - ./frontend:/usr/share/nginx/html/conf:ro
+
+  auth:
+    depends_on:
+      - proxy
+    image: zenika/marcel-auth:dev
+    labels:
+      traefik.backend: auth
+      traefik.frontend.rule: "PathPrefixStrip: /auth/"
+    ports:
+      - 8091:8091
+    volumes:
+      - ./backend/data:/auth-backend/data
+      - ./auth:/auth-backend/config:ro
+
+  backend:
+    depends_on:
+      - proxy
+    image: zenika/marcel-backend:dev
+    labels:
+      traefik.backend: backend
+      traefik.frontend.rule: "PathPrefix: /api/v1/"
+    volumes:
+      - ./backend/data:/backend/data
+      - ./backend/plugins:/backend/plugins
+      - ./backend/medias:/backend/medias
+      - ./logs:/backend/logs
+
+  proxy:
+    command: --web --docker --logLevel=DEBUG
+    image: traefik
+    ports:
+      - 80:80/tcp
+      - 8080:8080/tcp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+version: '3.0'
