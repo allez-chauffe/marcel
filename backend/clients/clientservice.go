@@ -1,8 +1,13 @@
 package clients
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/Pallinder/go-randomdata"
+
+	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
 
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/websocket"
@@ -28,6 +33,11 @@ type connRequest struct {
 	client Client
 }
 
+type newClientRequest struct {
+	name    string
+	mediaID int
+}
+
 //Create a new
 func NewService() *Service {
 	service := &Service{
@@ -44,6 +54,7 @@ func NewService() *Service {
 
 //WSConnectionHandler Handles a connection request from a given client.
 func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: Check permissions
 	client, found := s.getClientFromRequest(w, r)
 	if !found {
 		return
@@ -61,6 +72,7 @@ func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
 
 //GetHandler send the request client configuration.
 func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: Check Permissions
 	log.Println("Getting client configuration")
 
 	client, exists := s.getClientFromRequest(w, r)
@@ -75,46 +87,43 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 //GetAllHandler send the list of all registered clients.
 func (s *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Getting all clients configuration")
-
-	clients := s.manager.GetAll()
-
-	result := map[string]ClientJSON{}
-	for id, client := range clients {
-		_, isConnected := s.wsclients[client.ID]
-		result[id] = ClientJSON{client, isConnected}
+	if middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
 	}
 
-	commons.WriteJsonResponse(w, result)
+	commons.WriteJsonResponse(w, s.getClientsJson())
 }
 
 //CreateHandler create a new client entry in the database.
 func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
-	body, err := commons.ParseJSONBody(w, r)
-
-	if err != nil {
+	// TODO: Check Permissions
+	params := &newClientRequest{}
+	if err := json.NewDecoder(r.Body).Decode(params); err != nil {
+		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	nameI, ok := body["name"]
-	name, ok := nameI.(string)
-	if !ok || name == "" {
-		name = "New Client"
+	if params.name == "" {
+		params.name = randomdata.SillyName()
 	}
 
-	mediaIDI, ok := body["mediaID"]
-	mediaID, ok := mediaIDI.(int)
-	if !ok {
-		mediaID = 0
+	if params.mediaID < 0 {
+		params.mediaID = 0
 	}
 
-	client := s.manager.addNewClient(name, mediaID)
+	client := s.manager.addNewClient(params.name, params.mediaID)
 	log.Printf("Created a new client : %v", client)
 	commons.WriteJsonResponse(w, ClientJSON{client, false})
 }
 
 //DeleteHandler delete a client from the database
 func (s *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	client, exists := s.getClientFromRequest(w, r)
 
 	if !exists {
@@ -122,21 +131,29 @@ func (s *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.manager.deleteClient(client.ID)
+	s.unregister <- s.wsclients[client.ID]
 	log.Printf("Deleted client %s-%s (%s)", client.Name, client.ID, client.Type)
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
 func (s *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	s.manager.deleteAllClients()
 	for _, ws := range s.wsclients {
 		s.unregister <- ws
 	}
+
 	log.Println("All client deleted and disconnected")
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
 //UpdateHandler update a client configuration in the database
 func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: Check Permissions
 	client, ok := s.getClientFromRequestBody(w, r)
 	if !ok {
 		return

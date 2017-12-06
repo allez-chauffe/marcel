@@ -2,10 +2,8 @@ package commons
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -161,13 +159,10 @@ func WriteResponse(w http.ResponseWriter, statusCode int, message string) {
 }
 
 func WriteJsonResponse(w http.ResponseWriter, body interface{}) {
-	b, err := json.Marshal(body)
-	if err != nil {
-		WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(body); err != nil {
+		log.Printf("Error while send JSON data (%s)", err.Error())
 	}
-
-	WriteResponse(w, http.StatusOK, string(b))
 }
 
 func Check(e error) {
@@ -175,32 +170,4 @@ func Check(e error) {
 		log.Fatal(e)
 		panic(e)
 	}
-}
-
-//ParseJSONBody parses the body as JSON object. The body needs to be wraped in a root object.
-func ParseJSONBody(w http.ResponseWriter, r *http.Request) (map[string]interface{}, error) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		WriteResponse(w, http.StatusBadRequest, err.Error())
-		log.Printf("Error while parsing json body : %s", err)
-		return nil, err
-	}
-
-	var res interface{}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		WriteResponse(w, http.StatusBadRequest, err.Error())
-		log.Printf("Error while parsing json body : %s", err)
-		return nil, err
-	}
-
-	jsonBody, ok := res.(map[string]interface{})
-
-	if !ok {
-		WriteResponse(w, http.StatusBadRequest, "The sent JSON needs a root object")
-		log.Printf("Error while parsing json body : The sent JSON needs a root object")
-		return nil, errors.New("The sent JSON lacks a root object")
-	}
-
-	return jsonBody, nil
 }

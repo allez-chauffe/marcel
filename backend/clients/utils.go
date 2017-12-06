@@ -2,7 +2,6 @@ package clients
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -35,17 +34,8 @@ func (s *Service) getClientFromRequest(w http.ResponseWriter, r *http.Request) (
 
 //getClientFromRequest return the client configuration parsed from the request body
 func (s *Service) getClientFromRequestBody(w http.ResponseWriter, r *http.Request) (*Client, bool) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
-		return nil, false
-	}
-
-	// 2 : if media != new => stop all plugins'backend containers
 	client := &Client{}
-	err = json.Unmarshal(body, client)
-
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(client); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return nil, false
 	}
@@ -77,6 +67,19 @@ func (ws *WSClient) writeMessageWithType(msgType int, msg []byte, logMsg string,
 	}
 
 	return err == nil
+}
+
+func (s *Service) getClientJson(client *Client) *ClientJSON {
+	_, isConnected := s.wsclients[client.ID]
+	return &ClientJSON{client, isConnected}
+}
+
+func (s *Service) getClientsJson() map[string]*ClientJSON {
+	clients := map[string]*ClientJSON{}
+	for id, client := range s.manager.GetAll() {
+		clients[id] = s.getClientJson(client)
+	}
+	return clients
 }
 
 func (ws *WSClient) writeMessage(msg string, logMsg string, errorMsg string) bool {

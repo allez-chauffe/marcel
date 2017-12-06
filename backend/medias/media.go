@@ -17,6 +17,7 @@ type Media struct {
 	Cols        int                    `json:"cols"`
 	Stylesvar   map[string]interface{} `json:"stylesvar"`
 	Plugins     []MediaPlugin          `json:"plugins"`
+	Owner       string                 `json:"owner"`
 }
 
 func NewMedia() *Media {
@@ -36,8 +37,8 @@ func NewMedia() *Media {
 //
 // swagger:model
 type MediaPlugin struct {
-	InstanceId string              `json:"instanceId"`
-	EltName    string              `json:"eltName"`
+	InstanceId string               `json:"instanceId"`
+	EltName    string               `json:"eltName"`
 	FrontEnd   *MediaPluginFrontEnd `json:"frontend"`
 	BackEnd    *MediaPluginBackEnd  `json:"backend"`
 }
@@ -52,8 +53,8 @@ type MediaPluginFrontEnd struct {
 }
 
 type MediaPluginBackEnd struct {
-	Port                int                  `json:"port"`
-	Props               map[string]interface{} `json:"props"`
-	DockerImageName     string
-	DockerContainerId   string
+	Port              int                    `json:"port"`
+	Props             map[string]interface{} `json:"props"`
+	DockerImageName   string
+	DockerContainerId string
 }
