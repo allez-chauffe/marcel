@@ -1,7 +1,6 @@
 //@flow
 import React from 'react'
 import { MediaCard, AddMediaCard } from '../../components/media'
-import ProgressBar from 'react-toolbox/lib/progress_bar/ProgressBar'
 import type { Dashboard } from '../../dashboard/type'
 
 import './MediaListPage.css'
