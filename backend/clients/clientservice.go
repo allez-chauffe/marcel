@@ -87,7 +87,7 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 //GetAllHandler send the list of all registered clients.
 func (s *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	if middleware.CheckPermissions(r, nil) {
+	if !middleware.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
