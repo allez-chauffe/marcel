@@ -10,6 +10,7 @@ import { reducer as dashboard } from '../dashboard'
 import { reducer as auth } from '../auth'
 import { reducer as clients } from '../clients'
 import { reducer as loaders, actions as loadersActions } from './loaders'
+import { reducer as router } from './router'
 import type { State, Action, Config } from './types'
 
 const config: Reducer<Config, Action> = (
@@ -38,6 +39,7 @@ const rootReducer: Reducer<State, Action> = combineReducers({
   auth,
   loaders,
   config,
+  router,
 })
 
 export default rootReducer
