@@ -67,3 +67,4 @@ medias.config.json
 /backend/backend
 
 test_env
+scripts/build_all.sh
