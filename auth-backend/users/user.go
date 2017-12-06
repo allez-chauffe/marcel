@@ -13,10 +13,11 @@ type User struct {
 	ID               string `json:"id"`
 	DisplayName      string `json:"displayName"`
 	Login            string `json:"login"`
-	Password         string `json:"password"`
 	Role             string `json:"role"`
 	CreatedAt        int64  `json:"createdAt"`
 	LastDisconection int64  `json:"lastDisconnection"`
+	PasswordHash     string `json:"passwordHash"`
+	PasswordSalt     string `json:"passwordSalt"`
 }
 
 type UsersData struct {
@@ -27,14 +28,15 @@ const userFilePath = "data/users.json"
 
 var usersData = &UsersData{[]*User{}}
 
-func New(displayName, login, password string) *User {
+func New(displayName, login, hash, salt string) *User {
 	user := &User{
-		ID:          uuid.NewV4().String(),
-		DisplayName: displayName,
-		Login:       login,
-		Password:    password,
-		Role:        "user",
-		CreatedAt:   time.Now().Unix(),
+		ID:           uuid.NewV4().String(),
+		DisplayName:  displayName,
+		Login:        login,
+		PasswordHash: hash,
+		PasswordSalt: salt,
+		Role:         "user",
+		CreatedAt:    time.Now().Unix(),
 	}
 
 	usersData.Users = append(usersData.Users, user)
@@ -45,9 +47,9 @@ func GetAll() []*User {
 	return usersData.Users
 }
 
-func GetByLoginAndPassword(login, password string) *User {
+func GetByLogin(login string) *User {
 	for _, user := range usersData.Users {
-		if user.Login == login && user.Password == password {
+		if user.Login == login {
 			return user
 		}
 	}
