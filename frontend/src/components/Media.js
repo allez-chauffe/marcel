@@ -45,14 +45,18 @@ class Media extends Component {
     if (this.state.loading) return <Loader />
     if (!this.state.media.isactive) return null
 
+    const { mediaId, config: { ssl, urls } } = this.props
+
     const col = 100 / this.state.media.cols
     const row = 100 / this.state.media.rows
+    const pluginsURL = `http${ssl ? 's' : ''}://${urls.backend}/medias/${mediaId}/plugins`
 
     return (
       <div className="media fullSize">
         {this.state.media.plugins.map(plugin => (
           <Plugin
             plugin={plugin}
+            pluginsURL={pluginsURL}
             key={plugin.instanceId}
             style={{
               width: plugin.frontend.cols * col + '%',

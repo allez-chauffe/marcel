@@ -108,8 +108,13 @@ class Client extends Component {
 
   render() {
     const { loading, client, lastUpdate } = this.state
+    const { config } = this.props
+
     if (loading) return <Loader />
-    if (client && client.mediaID) return <Media mediaId={client.mediaID} lastUpdate={lastUpdate} />
+
+    if (client && client.mediaID)
+      return <Media config={config} mediaId={client.mediaID} lastUpdate={lastUpdate} />
+
     return null
   }
 }
