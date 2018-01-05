@@ -14,8 +14,15 @@ class Client extends Component {
       .get(`/clients/${this.state.client.id}/`)
       //Checking if a media ID has specified in query params. If any, overrides the server configuration
       .then(client => {
+        const name = window.location.queryParams.name
         const mediaID = parseInt(window.location.queryParams.mediaID, 10)
-        return mediaID && mediaID !== client.mediaID ? { ...client, mediaID } : client
+
+        let newClient = client
+
+        if (name && name !== client.name) newClient = { ...newClient, name }
+        if (mediaID && mediaID !== client.mediaID) newClient = { ...newClient, mediaID }
+
+        return newClient === client ? client : this.backend.put(`/clients/`, newClient)
       })
       .then(client => {
         console.log('Client loaded', client)
