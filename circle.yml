@@ -6,7 +6,7 @@ machine:
   post:
     - docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -e $DOCKER_EMAIL
     - npm install -g yarn
-    - npm install -g bower
+    # - npm install -g bower
     #- npm install -g polymer-cli
   environment:
     PATH: "$PATH:~/MARCEL/back-office/node_modules/.bin"
@@ -24,7 +24,7 @@ dependencies:
   override:
     - yarn:
         pwd: back-office
-    - bower install:
+    - yarn:
         pwd: frontend
     - ./install_go_deps.sh:
         pwd: scripts
@@ -35,6 +35,8 @@ compile:
   override:
     - yarn build:
         pwd: back-office
+    - yarn build:
+        pwd: frontend
     - CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .:
         pwd: ../.go_workspace/src/github.com/Zenika/MARCEL/backend
     - CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .:

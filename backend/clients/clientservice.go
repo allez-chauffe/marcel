@@ -165,10 +165,10 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.manager.updateClient(client)
+	savedClient := s.manager.updateClient(client)
 	s.SendByID(client.ID, "update")
-	<-s.WaitForClose(client.ID)
-	commons.WriteResponse(w, http.StatusNoContent, "")
+	// <-s.WaitForClose(client.ID)
+	commons.WriteJsonResponse(w, savedClient)
 }
 
 //Run is a goroutine managing connected client list (s.clients)

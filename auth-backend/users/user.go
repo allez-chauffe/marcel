@@ -30,7 +30,7 @@ var usersData = &UsersData{[]*User{}}
 
 func New(displayName, login, hash, salt string) *User {
 	user := &User{
-		ID:           uuid.NewV4().String(),
+		ID:           uuid.Must(uuid.NewV4()).String(),
 		DisplayName:  displayName,
 		Login:        login,
 		PasswordHash: hash,
