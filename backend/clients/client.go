@@ -20,7 +20,7 @@ type ClientJSON struct {
 
 func newClient() *Client {
 	return &Client{
-		ID:      uuid.NewV4().String(),
+		ID:      uuid.Must(uuid.NewV4()).String(),
 		Name:    "",
 		Type:    "Unkown",
 		MediaID: 0,
