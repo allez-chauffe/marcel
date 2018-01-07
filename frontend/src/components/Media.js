@@ -42,20 +42,29 @@ class Media extends Component {
   }
 
   render() {
-    if (this.state.loading) return <Loader />
-    if (!this.state.media.isactive) return null
+    const { media, loading } = this.state
+
+    if (loading) return <Loader />
+    if (!media.isactive) return null
 
     const { mediaId, config: { ssl, urls } } = this.props
 
-    const col = 100 / this.state.media.cols
-    const row = 100 / this.state.media.rows
+    const col = 100 / media.cols
+    const row = 100 / media.rows
     const pluginsURL = `http${ssl ? 's' : ''}://${urls.backend}/medias/${mediaId}/plugins`
 
+    const styles = {
+      backgroundColor: media.stylesvar['background-color'],
+      color: media.stylesvar['primary-color'],
+      fontFamily: media.stylesvar['font-family'],
+    }
+
     return (
-      <div className="media fullSize">
-        {this.state.media.plugins.map(plugin => (
+      <div className="media fullSize" style={styles}>
+        {media.plugins.map(plugin => (
           <Plugin
             plugin={plugin}
+            stylesvar={media.stylesvar}
             pluginsURL={pluginsURL}
             key={plugin.instanceId}
             style={{

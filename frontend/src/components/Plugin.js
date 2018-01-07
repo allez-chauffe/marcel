@@ -20,7 +20,7 @@ class Plugin extends Component {
   emitChangeProps = (newProps, prevProps) =>
     this.iframe.postMessage({ type: 'propsChange', payload: { newProps, prevProps } })
 
-  pluginProps = props => (props || this.props).plugin.frontend.props
+  pluginProps = () => ({ ...this.props.plugin.frontend.props, stylesvar: this.props.stylesvar })
 
   setIframe = iframe => {
     this.iframe = decorate(iframe)
