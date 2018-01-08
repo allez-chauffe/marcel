@@ -44,10 +44,6 @@ jobs:
       - run:
           command: go test .
           working_directory: auth-backend
-      - run:
-          command: docker build -t zenika/marcel-auth:dev .
-          working_directory: auth-backend
-      - run: docker push zenika/marcel-auth:dev
       - save_cache:
           paths:
             - auth-backend/auth-backend
@@ -72,13 +68,6 @@ jobs:
       - run:
           command: yarn build
           working_directory: back-office
-      - run:
-          command: yarn test
-          working_directory: back-office
-      - run:
-          command: docker build -t zenika/marcel-backoffice:dev .
-          working_directory: back-office
-      - run: docker push zenika/marcel-backoffice:dev
       - save_cache:
           paths:
             - back-office/build
@@ -103,13 +92,6 @@ jobs:
       - run:
           command: yarn build
           working_directory: frontend
-      - run:
-          command: yarn test
-          working_directory: frontend
-      - run:
-          command: docker build -t zenika/marcel-frontend:dev .
-          working_directory: frontend
-      - run: docker push zenika/marcel-frontend:dev
       - save_cache:
           paths:
             - frontend/build
