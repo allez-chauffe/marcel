@@ -220,7 +220,7 @@ workflows:
        - backend_docker_build:
           requires:
             - package_plugins
-       - auth-backend_docker_build:
+       - auth_backend_docker_build:
           requires:
             - package_plugins
        - backoffice_docker_build:
