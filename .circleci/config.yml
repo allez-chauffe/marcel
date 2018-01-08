@@ -153,7 +153,7 @@ jobs:
             - backoffice-build-{{ .Revision }}
       - run:
           command: docker build -t zenika/marcel-backoffice:dev .
-          working_directory: backoffice
+          working_directory: back-office
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-backoffice:dev
 
