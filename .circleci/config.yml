@@ -1,0 +1,113 @@
+version: 2
+jobs:
+  debug_node:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - run: node --version
+      - run: yarn --version
+
+  debug_go:
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - run: go version
+
+  build_backend:
+    working_directory: /go/src/github.com/Zenika/MARCEL
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - checkout
+      - run: ./script/install_go_deps.sh
+      - run: cd backend
+      - run: go test .
+      - run: CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .
+      - run: docker build -t zenika/marcel-backend:dev .
+      - run: docker push zenika/marcel-backend:dev
+
+  build_auth_backend:
+    working_directory: /go/src/github.com/Zenika/MARCEL
+    docker:
+      - image: circleci/golang:1.8
+    steps:
+      - checkout
+      - run: ./script/install_go_deps.sh
+      - run: cd auth-backend
+      - run: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
+      - run: go test .
+      - run: docker build -t zenika/marcel-auth:dev .
+      - run: docker push zenika/marcel-auth:dev
+
+  build_backoffice:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: cd back-office
+      - restore_cache:
+          keys:
+          - dependencies-{{ checksum "package.json" }}-{{ checksum "lerna.json" }}
+      - run: yarn
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-{{ checksum "package.json" }}-{{ checksum "lerna.json" }}
+      - run: yarn build
+      - run: yarn test
+      - run: docker build -t zenika/marcel-backoffice:dev .
+      - run: docker push zenika/marcel-backoffice:dev
+
+  build_frontend:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: cd frontend
+      - restore_cache:
+          keys:
+          - dependencies-{{ checksum "package.json" }}-{{ checksum "lerna.json" }}
+      - run: yarn
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-{{ checksum "package.json" }}-{{ checksum "lerna.json" }}
+      - run: yarn build
+      - run: yarn test
+      - run: docker build -t zenika/marcel-frontend:dev .
+      - run: docker push zenika/marcel-frontend:dev
+
+  deploy_integration:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
+      - run: echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
+      - run: chmod 400 integration_key.pem
+      - run: tar -czf plugins.tar.gz plugins
+      - run: scp -i integration_key.pem plugins.tar.gz docker-compose.yml ubuntu@35.158.222.144:~/
+      - run: ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
+      - run: rm -f integration_key.pem
+
+workflows:
+  version: 2
+  common:
+    jobs:
+       - debug_node
+       - debug_go
+       - build_backend
+       - build_auth_backend
+       - build_backoffice
+       - build_frontend
+       - deploy_integration:
+          requires:
+            - build_backend
+            - build_auth_backend
+            - build_backoffice
+            - build_frontend
+          filters:
+            branches:
+              only:
+                - dev
