@@ -63,7 +63,7 @@ jobs:
           working_directory: back-office
       - save_cache:
           paths:
-            - node_modules
+            - back-office/node_modules
           key: backoffice-dependencies-{{ checksum "back-office/package.json" }}
       - run:
           command: yarn build
@@ -87,7 +87,7 @@ jobs:
           working_directory: frontend
       - save_cache:
           paths:
-            - node_modules
+            - frontend/node_modules
           key: frontend-dependencies-{{ checksum "frontend/package.json" }}
       - run:
           command: yarn build
