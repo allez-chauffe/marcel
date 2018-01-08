@@ -143,7 +143,7 @@ jobs:
           working_directory: backend
       - run: docker push zenika/marcel-backend:dev
 
-  auth-backend_docker_build:
+  auth_backend_docker_build:
     working_directory: /go/src/github.com/Zenika/MARCEL
     docker:
       image: circleci/node:latest
