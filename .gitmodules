@@ -94,3 +94,6 @@
 [submodule "plugins/marcel-plugin-text"]
 	path = plugins/marcel-plugin-text
 	url = https://github.com/EmrysMyrddin/marcel-plugin-text.git
+[submodule "plugins/marcel-plugin-meteofrance"]
+	path = plugins/marcel-plugin-meteofrance
+	url = https://github.com/EmrysMyrddin/marcel-plugin-meteofrance.git
