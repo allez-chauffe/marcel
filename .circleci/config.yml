@@ -56,15 +56,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - dependencies-{{ checksum "back-office/package.json" }}
-          - dependencies-
+          - backoffice-dependencies-{{ checksum "back-office/package.json" }}
+          - backoffice-dependencies-
       - run:
           command: yarn
           working_directory: back-office
       - save_cache:
           paths:
             - node_modules
-          key: dependencies-{{ checksum "back-office/package.json" }}
+          key: backoffice-dependencies-{{ checksum "back-office/package.json" }}
       - run:
           command: yarn build
           working_directory: back-office
@@ -80,15 +80,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - dependencies-{{ checksum "frontend/package.json" }}
-          - dependencies-
+          - frontend-dependencies-{{ checksum "frontend/package.json" }}
+          - frontend-dependencies-
       - run:
           command: yarn
           working_directory: frontend
       - save_cache:
           paths:
             - node_modules
-          key: dependencies-{{ checksum "frontend/package.json" }}
+          key: frontend-dependencies-{{ checksum "frontend/package.json" }}
       - run:
           command: yarn build
           working_directory: frontend
@@ -185,7 +185,7 @@ jobs:
 
 workflows:
   version: 2
-  common:
+  build:
     jobs:
        - debug_node
        - debug_go
