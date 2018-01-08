@@ -22,13 +22,13 @@ jobs:
       - run: ./scripts/install_go_deps.sh
       - run:
           command: go test .
-          working_dir: backend
+          working_directory: backend
       - run:
           command: CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .
-          working_dir: backend
+          working_directory: backend
       - run:
           command: docker build -t zenika/marcel-backend:dev .
-          working_dir: backend
+          working_directory: backend
       - run: docker push zenika/marcel-backend:dev
 
   build_auth_backend:
@@ -40,13 +40,13 @@ jobs:
       - run: ./scripts/install_go_deps.sh
       - run:
           command: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
-          working_dir: auth-backend
+          working_directory: auth-backend
       - run:
           command: go test .
-          working_dir: auth-backend
+          working_directory: auth-backend
       - run:
           command: docker build -t zenika/marcel-auth:dev .
-          working_dir: auth-backend
+          working_directory: auth-backend
       - run: docker push zenika/marcel-auth:dev
 
   build_backoffice:
@@ -60,20 +60,20 @@ jobs:
           - dependencies-
       - run:
           command: yarn
-          working_dir: back-office
+          working_directory: back-office
       - save_cache:
           paths:
             - node_modules
           key: dependencies-{{ checksum "back-office/package.json" }}
       - run:
           command: yarn build
-          working_dir: back-office
+          working_directory: back-office
       - run:
           command: yarn test
-          working_dir: back-office
+          working_directory: back-office
       - run:
           command: docker build -t zenika/marcel-backoffice:dev .
-          working_dir: back-office
+          working_directory: back-office
       - run: docker push zenika/marcel-backoffice:dev
 
   build_frontend:
@@ -87,20 +87,20 @@ jobs:
           - dependencies-
       - run:
           command: yarn
-          working_dir: frontend
+          working_directory: frontend
       - save_cache:
           paths:
             - node_modules
           key: dependencies-{{ checksum "frontend/package.json" }}
       - run:
           command: yarn build
-          working_dir: frontend
+          working_directory: frontend
       - run:
           command: yarn test
-          working_dir: frontend
+          working_directory: frontend
       - run:
           command: docker build -t zenika/marcel-frontend:dev .
-          working_dir: frontend
+          working_directory: frontend
       - run: docker push zenika/marcel-frontend:dev
 
   deploy_integration:
