@@ -123,7 +123,7 @@ jobs:
       - run:
           command: docker build -t zenika/marcel-backend:dev .
           working_directory: backend
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -e $DOCKER_EMAIL
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -u $DOCKER_EMAIL
       - run: docker push zenika/marcel-backend:dev
 
   auth_backend_docker_build:
@@ -139,7 +139,7 @@ jobs:
       - run:
           command: docker build -t zenika/marcel-auth:dev .
           working_directory: auth-backend
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -e $DOCKER_EMAIL
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -u $DOCKER_EMAIL
       - run: docker push zenika/marcel-auth:dev
 
   backoffice_docker_build:
@@ -154,7 +154,7 @@ jobs:
       - run:
           command: docker build -t zenika/marcel-backoffice:dev .
           working_directory: backoffice
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -e $DOCKER_EMAIL
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -u $DOCKER_EMAIL
       - run: docker push zenika/marcel-backoffice:dev
 
   frontend_docker_build:
@@ -169,7 +169,7 @@ jobs:
       - run:
           command: docker build -t zenika/marcel-frontend:dev .
           working_directory: frontend
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -e $DOCKER_EMAIL
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD -u $DOCKER_EMAIL
       - run: docker push zenika/marcel-frontend:dev
 
 
