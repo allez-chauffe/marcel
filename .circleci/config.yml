@@ -19,7 +19,7 @@ jobs:
       - image: circleci/golang:latest
     steps:
       - checkout
-      - run: ./script/install_go_deps.sh
+      - run: ./scripts/install_go_deps.sh
       - run: cd backend
       - run: go test .
       - run: CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .
@@ -32,7 +32,7 @@ jobs:
       - image: circleci/golang:1.8
     steps:
       - checkout
-      - run: ./script/install_go_deps.sh
+      - run: ./scripts/install_go_deps.sh
       - run: cd auth-backend
       - run: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
       - run: go test .
