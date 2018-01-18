@@ -1,0 +1,227 @@
+version: 2
+jobs:
+  debug_node:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - run: node --version
+      - run: yarn --version
+
+  debug_go:
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - run: go version
+
+  build_backend:
+    working_directory: /go/src/github.com/Zenika/MARCEL
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - checkout
+      - run: ./scripts/install_go_deps.sh
+      - run:
+          command: go test .
+          working_directory: backend
+      - run:
+          command: CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .
+          working_directory: backend
+      - save_cache:
+          paths:
+            - backend/backend
+          key: backend-build-{{ .Revision }}
+
+  build_auth_backend:
+    working_directory: /go/src/github.com/Zenika/MARCEL
+    docker:
+      - image: circleci/golang:1.8
+    steps:
+      - checkout
+      - run: ./scripts/install_go_deps.sh
+      - run:
+          command: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
+          working_directory: auth-backend
+      - run:
+          command: go test .
+          working_directory: auth-backend
+      - save_cache:
+          paths:
+            - auth-backend/auth-backend
+          key: auth-backend-build-{{ .Revision }}
+
+  build_backoffice:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - backoffice-dependencies-{{ checksum "back-office/package.json" }}
+          - backoffice-dependencies-
+      - run:
+          command: yarn
+          working_directory: back-office
+      - save_cache:
+          paths:
+            - back-office/node_modules
+          key: backoffice-dependencies-{{ checksum "back-office/package.json" }}
+      - run:
+          command: yarn build
+          working_directory: back-office
+      - save_cache:
+          paths:
+            - back-office/build
+          key: backoffice-build-{{ .Revision }}
+
+  build_frontend:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - frontend-dependencies-{{ checksum "frontend/package.json" }}
+          - frontend-dependencies-
+      - run:
+          command: yarn
+          working_directory: frontend
+      - save_cache:
+          paths:
+            - frontend/node_modules
+          key: frontend-dependencies-{{ checksum "frontend/package.json" }}
+      - run:
+          command: yarn build
+          working_directory: frontend
+      - save_cache:
+          paths:
+            - frontend/build
+          key: frontend-build-{{ .Revision }}
+
+  package_plugins:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
+      - run: tar -czf plugins.tar.gz plugins
+      - save_cache:
+          paths:
+            - plugins.tar.gz
+          key: plugin-package-{{ .Revision }}
+
+  backend_docker_build:
+    working_directory: /go/src/github.com/Zenika/MARCEL
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - backend-build-{{ .Revision }}
+      - run:
+          command: docker build -t zenika/marcel-backend:dev .
+          working_directory: backend
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+      - run: docker push zenika/marcel-backend:dev
+
+  auth_backend_docker_build:
+    working_directory: /go/src/github.com/Zenika/MARCEL
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - auth-backend-build-{{ .Revision }}
+      - run:
+          command: docker build -t zenika/marcel-auth:dev .
+          working_directory: auth-backend
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+      - run: docker push zenika/marcel-auth:dev
+
+  backoffice_docker_build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - backoffice-build-{{ .Revision }}
+      - run:
+          command: docker build -t zenika/marcel-backoffice:dev .
+          working_directory: back-office
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+      - run: docker push zenika/marcel-backoffice:dev
+
+  frontend_docker_build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - frontend-build-{{ .Revision }}
+      - run:
+          command: docker build -t zenika/marcel-frontend:dev .
+          working_directory: frontend
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+      - run: docker push zenika/marcel-frontend:dev
+
+
+  deploy_integration:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - package-plugins-{{ .Revision }}
+      - run: chmod 400 integration_key.pem
+      - run: tar -czf plugins.tar.gz plugins
+      - run: scp -i integration_key.pem plugins.tar.gz docker-compose.yml ubuntu@35.158.222.144:~/
+      - run: ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
+      - run: rm -f integration_key.pem
+
+workflows:
+  version: 2
+  build:
+    jobs:
+       - debug_node
+       - debug_go
+       - build_backend
+       - build_auth_backend
+       - build_backoffice
+       - build_frontend
+       - package_plugins:
+          requires:
+            - build_backend
+            - build_auth_backend
+            - build_backoffice
+            - build_frontend
+       - backend_docker_build:
+          requires:
+            - package_plugins
+       - auth_backend_docker_build:
+          requires:
+            - package_plugins
+       - backoffice_docker_build:
+          requires:
+            - package_plugins
+       - frontend_docker_build:
+          requires:
+            - package_plugins
+       - deploy_integration:
+          requires:
+            - backend_docker_build
+            - auth_backend_docker_build
+            - backoffice_docker_build
+            - frontend_docker_build
+          filters:
+            branches:
+              only:
+                - dev

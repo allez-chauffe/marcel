@@ -26,12 +26,13 @@ func init() {
 	})
 
 	r := mux.NewRouter()
+	base := r.PathPrefix("/auth").Subrouter()
 
-	r.HandleFunc("/login", loginHandler).Methods("POST")
-	r.HandleFunc("/validate", validateHandler).Methods("GET")
-	r.HandleFunc("/validate/admin", validateAdminHandler).Methods("GET")
+	base.HandleFunc("/login", loginHandler).Methods("POST")
+	base.HandleFunc("/validate", validateHandler).Methods("GET")
+	base.HandleFunc("/validate/admin", validateAdminHandler).Methods("GET")
 
-	userRoutes(r.PathPrefix("/users").Subrouter())
+	userRoutes(base.PathPrefix("/users").Subrouter())
 
 	app = middleware.AuthMiddlware(c.Handler(r))
 }
