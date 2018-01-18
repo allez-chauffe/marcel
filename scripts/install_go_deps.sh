@@ -14,5 +14,7 @@ echo "    - github.com/dgrijalva/jwt-go"
 go get -u github.com/dgrijalva/jwt-go
 echo "    - github.com/Pallinder/go-randomdata"
 go get -u github.com/Pallinder/go-randomdata
+echo "    - github.com/gorilla/handlers"
+go get -u github.com/gorilla/handlers
 echo ""
 echo "Go dependencies installation finished"
