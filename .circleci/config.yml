@@ -184,9 +184,8 @@ jobs:
       - run: echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
       - run: chmod 400 integration_key.pem
       - run: tar -czf plugins.tar.gz plugins
-      - run: ssh -o StrictHostKeyChecking=no -l $user $host
-      - run: scp -i integration_key.pem plugins.tar.gz docker-compose.yml ubuntu@35.158.222.144:~/
-      - run: ssh -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
+      - run: scp -o StrictHostKeyChecking=no -i integration_key.pem plugins.tar.gz docker-compose.yml ubuntu@35.158.222.144:~/
+      - run: ssh -o StrictHostKeyChecking=no -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
       - run: rm -f integration_key.pem
 
 workflows:
