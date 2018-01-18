@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/gorilla/handlers"
 
 	"github.com/Zenika/MARCEL/auth-backend/auth"
 	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
@@ -26,7 +29,7 @@ func init() {
 	})
 
 	r := mux.NewRouter()
-	base := r.PathPrefix("/auth").Subrouter()
+	base := r.PathPrefix("").Subrouter()
 
 	base.HandleFunc("/login", loginHandler).Methods("POST")
 	base.HandleFunc("/validate", validateHandler).Methods("GET")
@@ -34,7 +37,7 @@ func init() {
 
 	userRoutes(base.PathPrefix("/users").Subrouter())
 
-	app = middleware.AuthMiddlware(c.Handler(r))
+	app = handlers.LoggingHandler(os.Stdout, middleware.AuthMiddlware(c.Handler(r)))
 }
 
 func userRoutes(r *mux.Router) {
