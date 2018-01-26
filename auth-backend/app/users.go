@@ -29,7 +29,7 @@ type User struct {
 }
 
 func createUserHandler(w http.ResponseWriter, r *http.Request) {
-	if auth.CheckPermissions(r, nil, "admin") {
+	if !auth.CheckPermissions(r, nil, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -92,6 +92,11 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
+	if !auth.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	vars := mux.Vars(r)
 	userID := vars["userID"]
 
