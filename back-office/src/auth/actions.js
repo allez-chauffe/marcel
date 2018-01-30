@@ -7,22 +7,27 @@ import type {
   ChangePasswordAction,
   ResetFormAction,
   RefreshLoginAction,
+  UpdateConnectedUserPropertyAction, 
+  UpdateConnectedUserAction,
 } from './type'
 import { authBackend } from '../api'
 import { loginSelector, passwordSelector } from './selectors'
 import type { User } from './type'
 
+import { userBackend } from '../api'
+
 export const actions = {
   LOGIN_REQUEST: 'AUTH/LOGIN_REQUEST',
   LOGIN_SUCCESS: 'AUTH/LOGIN_SUCCESS',
   LOGIN_FAIL: 'AUTH/LOGIN_FAIL',
-  LOGOUT_REQUEST: 'AUTH/LOGOUT_REQUEST',
   LOGOUT_SUCCESS: 'AUTH/LOGOUT_SUCCESS',
   LOGOUT_FAIL: 'AUTH/LOGOUT_FAIL',
   CHANGE_LOGIN: 'AUTH/CHANGE_LOGIN',
   CHANGE_PASSWORD: 'AUTH/CHANGE_PASSWORD',
   RESET_FORM: 'AUTH/RESET_FORM',
   DISCONNECTED: 'AUTH/DISCONNECTED',
+  UPDATE_CONNECTED_USER_SUCCESS: 'AUTH/UPDATE_CONNECTED_USER_SUCCESS',
+  UPDATE_CONNECTED_USER_PROPERTY: 'AUTH/UPDATE_CONNECTED_USER_PROPERTY',
 }
 
 const handleLogin = (dispatch, promise) =>
@@ -53,8 +58,9 @@ export const refreshLogin: RefreshLoginAction = () => (dispatch, getState) => {
 }
 
 export const logout: LogoutAction = () => dispatch => {
-  dispatch({ type: actions.LOGOUT_REQUEST })
-  dispatch({ type: actions.LOGOUT_SUCCESS })
+  authBackend.logout().then(() => {
+    dispatch({ type: actions.LOGOUT_SUCCESS })
+  })
 }
 
 export const disconnected = () => ({
@@ -74,3 +80,23 @@ export const changePassword = (password: string): ChangePasswordAction => ({
 export const resetForm = (): ResetFormAction => ({
   type: actions.RESET_FORM,
 })
+
+export const updateConnectedUserProperty = (property: string, value: string): UpdateConnectedUserPropertyAction => ({
+  type: actions.UPDATE_CONNECTED_USER_PROPERTY,
+  payload: { property, value },
+})
+
+export const updateConnectedUserSuccess = (user: User): UpdateConnectedUserAction => ({
+  type: actions.UPDATE_CONNECTED_USER_SUCCESS,
+  payload: {
+    user: user
+  }
+})
+
+export const updateConnectedUser = (user: User) => (dispatch) => {
+  userBackend.updateUser(user)
+    .then(() => dispatch(updateConnectedUserSuccess(user)))
+    .catch(error => {
+      console.error(error)
+    })
+}

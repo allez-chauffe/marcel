@@ -12,6 +12,7 @@ import { reducer as clients } from '../clients'
 import { reducer as loaders, actions as loadersActions } from './loaders'
 import { reducer as router } from './router'
 import type { State, Action, Config } from './types'
+import { reducer as users } from '../user'
 
 const config: Reducer<Config, Action> = (
   state = {
@@ -40,6 +41,7 @@ const rootReducer: Reducer<State, Action> = combineReducers({
   loaders,
   config,
   router,
+  users,
 })
 
 export default rootReducer

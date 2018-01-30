@@ -8,5 +8,12 @@ export default {
       title: 'MEDIAS',
       '/:mediaID': { title: 'MEDIA_DETAILS' },
     },
+    '/users': {
+      title: 'USERS'
+    },
+    '/profil': {
+      title: 'PROFIL'
+    }
+    
   },
 }

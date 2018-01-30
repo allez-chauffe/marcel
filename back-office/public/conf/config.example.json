@@ -1,4 +1,5 @@
 {
-  "backendURI": "http://localhost:8090/api/v1/",
-  "frontendURI": "http://localhost/"
+  "backendURI": "https://preprod.marcel.zenika.com/api/v1/",
+  "frontendURI": "https://preprod.marcel.zenika.com/front/",
+  "authURI": "https://preprod.marcel.zenika.com/auth/"
 }

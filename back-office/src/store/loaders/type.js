@@ -64,6 +64,16 @@ export type LoadClientsFailedAction = {
   payload: { error: mixed },
 }
 
+export type LoadUsersSuccessedAction = {
+  type: 'LOADERS/LOAD_USERS_SUCCESSED',
+  payload: { users: User[] },
+}
+
+export type LoadUsersFailedAction = {
+  type: 'LOADERS/LOAD_USERS_FAILED',
+  payload: { error: mixed },
+}
+
 export type LoadersAction =
   | LoadConfigStartedAction
   | LoadConfigSuccessedAction
@@ -74,6 +84,8 @@ export type LoadersAction =
   | LoadDashboardsStartedAction
   | LoadDashboardsSuccessedAction
   | LoadDashboardsFailedAction
+  | LoadUsersSuccessedAction
+  | LoadUsersFailedAction
 
 export type LoadersState = {
   config: boolean,
@@ -81,4 +93,5 @@ export type LoadersState = {
   plugins: boolean,
   clients: boolean,
   initial: boolean,
+  users: boolean,
 }

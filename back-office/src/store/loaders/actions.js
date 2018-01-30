@@ -2,7 +2,7 @@
 import { toastr } from 'react-redux-toastr'
 import { set, map } from 'lodash/fp'
 import { mapPluginsToDashboard } from '../../common/utils'
-import { config, backend } from '../../api'
+import { config, backend, userBackend } from '../../api'
 import type { LoadingThunkAction } from './type'
 import { pluginsSelector } from '../../plugins'
 
@@ -21,6 +21,9 @@ export const actions = {
   LOAD_CLIENTS_STARTED: 'LOADERS/LOAD_CLIENTS_STARTED',
   LOAD_CLIENTS_SUCCESSED: 'LOADERS/LOAD_CLIENTS_SUCCESSED',
   LOAD_CLIENTS_FAILED: 'LOADERS/LOAD_CLIENTS_FAILED',
+  LOAD_USERS_STARTED: 'LOADERS/LOAD_USERS_STARTED',
+  LOAD_USERS_SUCCESSED: 'LOADERS/LOAD_USERS_SUCCESSED',
+  LOAD_USERS_FAILED: 'LOADERS/LOAD_USERS_FAILED',
 }
 
 const loadDispatcher = dispatch => (ressource, loadPromise) => {
@@ -80,4 +83,9 @@ export const loadConfig = (): LoadingThunkAction => (dispatch, getState) => {
 export const loadClients = (): LoadingThunkAction => (dispatch, getState) => {
   const load = loadDispatcher(dispatch)
   load('clients', backend.getClients())
+}
+
+export const loadUsers = (): LoadingThunkAction => (dispatch, getState) => {
+  const load = loadDispatcher(dispatch)
+  load('users', userBackend.getAllUsers())
 }

@@ -1,0 +1,29 @@
+.UserScreen {
+  width: 80%;  
+  height: 100%;
+}
+
+.UserScreen table {
+  width: 100%;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.UserScreen .UsersList, .UserForm {
+  margin-top: 20px;
+}
+
+.UserScreen table, td, th {    
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.UserScreen td {
+  padding: 8px;
+}
+
+.UserScreen thead {
+  background-color: #3E404D;
+  color: white;
+  font-weight: 500;
+}

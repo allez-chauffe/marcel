@@ -23,7 +23,10 @@ const put = url => request(url, { method: 'PUT' })
 const authBackend = {
   login: (login: ?string, password: ?string) =>
     post('login', login && password ? { login, password } : null),
-  logout: () => put('logout'),
+  logout: () => {
+    //return put('logout')
+    return Promise.resolve()
+  },
 }
 
 export default authBackend

@@ -9,6 +9,7 @@ const initialState = {
   dashboards: false,
   clients: false,
   initial: false,
+  users: false
 }
 
 const loaders: Reducer<LoadersState, LoadersAction> = (state = initialState, action) => {
@@ -32,6 +33,11 @@ const loaders: Reducer<LoadersState, LoadersAction> = (state = initialState, act
     case actions.LOAD_PLUGINS_SUCCESSED:
     case actions.LOAD_PLUGINS_FAILED:
       return { ...state, plugins: false }
+      case actions.LOAD_USERS_STARTED:
+      return { ...state, users: true }
+    case actions.LOAD_USERS_SUCCESSED:
+    case actions.LOAD_USERS_FAILED:
+      return { ...state, users: false }      
     default:
       return state
   }
