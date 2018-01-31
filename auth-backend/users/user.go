@@ -101,7 +101,7 @@ func LoadUsersData() {
 }
 
 func SaveUsersData() {
-	f, err := os.OpenFile(userFilePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(userFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	defer f.Close()
 
 	if err != nil {
