@@ -30,7 +30,7 @@ export type Dashboard = {
   description: string,
   rows: number,
   cols: number,
-  ratio: number,
+  screenRatio: number,
   isactive: boolean,
   stylesvar: {
     'primary-color': string,

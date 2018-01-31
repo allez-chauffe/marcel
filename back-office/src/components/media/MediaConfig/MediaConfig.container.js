@@ -22,7 +22,7 @@ const mapDispatchToProps = {
   changeDescription: updateConfig('description'),
   changeCols: updateConfig('cols'),
   changeRows: updateConfig('rows'),
-  changeRatio: updateConfig('ratio'),
+  changeRatio: updateConfig('screenRatio'),
   changeBackgroundColor: updateConfig('stylesvar.background-color'),
   changePrimaryColor: updateConfig('stylesvar.primary-color'),
   changeSecondaryColor: updateConfig('stylesvar.secondary-color'),

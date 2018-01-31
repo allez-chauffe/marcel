@@ -11,7 +11,7 @@ import type { PluginInstance, LayoutItem, Layout } from '../type'
 export type Item = { layout: LayoutItem, plugin: PluginInstance }
 export type Props = {
   size: { height: number, width: number },
-  ratio: number,
+  screenRatio: number,
   rows: number,
   cols: number,
   layout: Item[],
@@ -37,13 +37,13 @@ const makePluginInstance = (selectPlugin, selectedPlugin) => item => {
 }
 
 const Grid = (props: Props) => {
-  const { size: { width, height }, ratio, rows, cols, displayGrid } = props
+  const { size: { width, height }, screenRatio, rows, cols, displayGrid } = props
   const { layout, saveLayout, selectPlugin, selectedPlugin } = props
   const marginHeight: number = ReactGridLayout.defaultProps.margin[1]
 
   const containerRatio = width / height
-  const gridWidth = containerRatio >= ratio ? ratio * height : width
-  const gridHeight = containerRatio >= ratio ? height : width / ratio
+  const gridWidth = containerRatio >= screenRatio ? screenRatio * height : width
+  const gridHeight = containerRatio >= screenRatio ? height : width / screenRatio
   const rowHeight = (gridHeight - (rows + 1) * marginHeight) / rows
 
   return (

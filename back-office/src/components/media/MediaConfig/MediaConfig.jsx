@@ -38,7 +38,7 @@ const MediaConfig = (props: PropsType) => {
     changeSecondaryColor,
     changeFontFamily,
   } = props
-  const { name, description, cols, rows, ratio } = dashboard
+  const { name, description, cols, rows, screenRatio } = dashboard
 
   return (
     <div className="MediaConfig">
@@ -53,7 +53,7 @@ const MediaConfig = (props: PropsType) => {
           { label: '4/3', value: 4 / 3 },
           { label: '4/3 (protrait)', value: 3 / 4 },
         ]}
-        value={ratio}
+        value={screenRatio}
         onChange={changeRatio}
       />
       <ColorPicker

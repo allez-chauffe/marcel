@@ -18,6 +18,7 @@ type Media struct {
 	Stylesvar   map[string]interface{} `json:"stylesvar"`
 	Plugins     []MediaPlugin          `json:"plugins"`
 	Owner       string                 `json:"owner"`
+	ScreenRatio float64                `json:"screenRatio"`
 }
 
 func NewMedia() *Media {
@@ -27,6 +28,7 @@ func NewMedia() *Media {
 	media.Plugins = []MediaPlugin{}
 	media.Rows = 10
 	media.Cols = 10
+	media.ScreenRatio = 16.0 / 9.0
 
 	return media
 }
