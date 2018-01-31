@@ -100,3 +100,6 @@
 [submodule "plugins/marcel-plugin-conf-call"]
 	path = plugins/marcel-plugin-conf-call
 	url = https://github.com/Zenika/marcel-plugin-conf-call.git
+[submodule "plugins/marcel-plugin-iframe"]
+	path = plugins/marcel-plugin-iframe
+	url = https://github.com/Zenika/marcel-plugin-iframe.git
