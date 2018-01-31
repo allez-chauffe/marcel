@@ -18,12 +18,14 @@ const post = (url, body) =>
     body: body ? JSON.stringify(body) : null,
   })
 
-const put = url => request(url, { method: 'PUT' })
+// Remove comment when api logout exists
+//const put = url => request(url, { method: 'PUT' })
 
 const authBackend = {
   login: (login: ?string, password: ?string) =>
     post('login', login && password ? { login, password } : null),
   logout: () => {
+    // Remove comment and Promise.resolve line when api logout exists
     //return put('logout')
     return Promise.resolve()
   },

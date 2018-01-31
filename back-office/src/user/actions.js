@@ -7,6 +7,7 @@ import type {
 } from './type'
 
 import { userBackend } from '../api'
+import { toastr } from 'react-redux-toastr'
 
 export const actions = {
   ADD_USER_SUCCESS: "USER/ADD_USER_SUCCESS",
@@ -29,7 +30,8 @@ export const addUser = (user: User) => (dispatch) => {
     .then((userAdded) => dispatch(addUserSuccess(userAdded)))
     .then(() => dispatch(resetCurrentUser()))
     .catch(error => {
-      console.error(error)
+      toastr.error('Création d\'un utilisateur', 'Erreur durant la création de l\'utilisateur')
+      throw error
     })
 }
 
@@ -50,7 +52,8 @@ export const updateUser = (user: User) => (dispatch) => {
     .then(() => dispatch(updateUserSuccess(user)))
     .then(() => dispatch(resetCurrentUser()))
     .catch(error => {
-      console.error(error)
+      toastr.error('Mise à jour d\'un utilisateur', 'Erreur durant la mise à jour de l\'utilisateur')
+      throw error
     })
 }
 
@@ -76,6 +79,7 @@ export const deleteUser = (id: string) => (dispatch) => {
   userBackend.deleteUser(id)
     .then(() => dispatch(deleteUserSuccess(id)))
     .catch(error => {
-      console.error(error)
+      toastr.error('Suppression d\'un utilisateur', 'Erreur durant la suppression de l\'utilisateur')
+      throw error
     })
 }

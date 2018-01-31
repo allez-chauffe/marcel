@@ -9,26 +9,18 @@ class UserLine extends React.Component {
   
   props: {
     user: User,
-    editUser: any,
-    deleteUser: any,
-  }
-
-  handleEdit = () => {
-    this.props.editUser(this.props.user)
-  }
-
-  handleDelete = () => {
-    this.props.deleteUser(this.props.user.id)
+    handleEdit: any,
+    handleDelete: any,
   }
 
   render() {
-    const { user } = this.props
+    const { user, handleEdit, handleDelete } = this.props
     return (
       <tr>
         <td>{user.displayName}</td>
         <td>{user.login}</td>
         <td>{user.role}</td>
-        <td className="ActionsCol"><IconButton icon='mode_edit' onClick={this.handleEdit}/><IconButton icon='delete' onClick={this.handleDelete} /></td>
+        <td className="ActionsCol"><IconButton icon='mode_edit' onClick={handleEdit}/><IconButton icon='delete' onClick={handleDelete} /></td>
       </tr>
     )
   }

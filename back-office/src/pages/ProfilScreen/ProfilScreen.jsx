@@ -9,26 +9,18 @@ class ProfilScreen extends React.Component {
   
   props: {
     user: User,
-    updateUser: () => void,
-    updateUserProperty: () => void,
-  }
-
-  handleSave = (user) => {
-    this.props.updateUser(user)
-  }
-
-  handleChange = (name, value) => {
-    this.props.updateUserProperty(name, value)
+    handleSave: () => void,
+    handleChange: () => void,
   }
 
   render() {
-    const { user } = this.props
+    const { user, handleSave, handleChange } = this.props
     return (
       <div className="ProfilScreen">
         <NewUserLine 
           user={user} 
-          handleSave={this.handleSave} 
-          handleChange={this.handleChange} 
+          handleSave={handleSave} 
+          handleChange={handleChange} 
           disableInputRole={true} />     
       </div>
     )

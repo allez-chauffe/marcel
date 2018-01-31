@@ -40,8 +40,8 @@ const users: Reducer<UserState, UserAction> = (state = initialState, action) => 
     }
     case userActions.EDIT_USER: {
       const { user } = action.payload
-      user.confirmPassword = ''
-      return set(state, 'currentUser', user)
+      const currentUser = { ...user, confirmPassword: '' }
+      return set(state, 'currentUser', currentUser)
     }
     case userActions.UPDATE_CURRENT_USER_PROPERTY: {
       const { property, value } = action.payload

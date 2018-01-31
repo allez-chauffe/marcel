@@ -4,12 +4,6 @@ import type { Dispatch } from 'redux'
 import type { State } from '../store'
 import { User } from '../user'
 
-// export type User = {
-//   id: string,
-//   displayName: string,
-//   role: 'user' | 'admin',
-// }
-
 export type AuthState = {
   user: ?User,
   isLoading: boolean,
@@ -92,3 +86,4 @@ export type AuthAction =
       value: string,
     },
   }
+  

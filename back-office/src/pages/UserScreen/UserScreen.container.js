@@ -15,13 +15,20 @@ const mapStateToProps = state => ({
   loaded: !isUsersLoading(state),
 })
 
-const mapDispatchToProps = {
-  load: loadUsers,
-  addUser: addUser,
-  updateUser: updateUser,
-  updateCurrentUserProperty: updateCurrentUserProperty,
-  resetCurrentUser: resetCurrentUser,
-}
+const mapDispatchToProps = (dispatch) => ({
+  load: dispatch(loadUsers()),
+  editUserHandleChange: (name, value) => dispatch(updateCurrentUserProperty(name, value)),
+  editUserHandleSave: (userEdited) => {
+    if (userEdited.id) {
+      dispatch(updateUser(userEdited))
+    } else {
+      dispatch(addUser(userEdited))
+    } 
+  },
+  editUserHandleReset: () => dispatch(resetCurrentUser())
+})
+
+
 export default compose(
   router('USERS', { absolute: true }),  
   connect(mapStateToProps, mapDispatchToProps),

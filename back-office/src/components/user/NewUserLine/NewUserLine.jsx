@@ -2,10 +2,11 @@
 import React from 'react'
 import Input from 'react-toolbox/lib/input/Input'
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
-import { User } from '../../../user/index'
+import Button from 'react-toolbox/lib/button/Button'
+
+import { User } from '../../../user'
 
 import './NewUserLine.css'
-import Button from 'react-toolbox/lib/button/Button'
 
 class NewUserLine extends React.Component {
 

@@ -10,33 +10,13 @@ class UserScreen extends React.Component {
   props: {
     users: User[],
     userEdited: User,
-    addUser: any,
-    updateUser: any,
-    updateCurrentUserProperty: any,
-    resetCurrentUser: any,
-  }
-
-  componentWillMount() {
-  }
-
-  editUserHandleChange = (name, value) => {
-    this.props.updateCurrentUserProperty(name, value)
-  }
-
-  editUserHandleSave = (user) => {
-    if (user.id) {
-      this.props.updateUser(user)
-    } else {
-      this.props.addUser(user)
-    } 
-  }
-
-  editUserHandleReset = () => {
-    this.props.resetCurrentUser()
+    editUserHandleChange: () => void,
+    editUserHandleSave: () => void,
+    editUserHandleReset: () => void,
   }
 
   render() {
-    const { users, userEdited } = this.props
+    const { users, userEdited, editUserHandleChange, editUserHandleSave, editUserHandleReset } = this.props
     return (
       <div className="UserScreen">
 
@@ -54,7 +34,7 @@ class UserScreen extends React.Component {
           </tbody>
         </table>
 
-        <NewUserLine className="UserForm" user={userEdited} handleSave={this.editUserHandleSave} handleChange={this.editUserHandleChange} handleReset={this.editUserHandleReset} />
+        <NewUserLine className="UserForm" user={userEdited} handleSave={editUserHandleSave} handleChange={editUserHandleChange} handleReset={editUserHandleReset} />
       </div>
     )
   }

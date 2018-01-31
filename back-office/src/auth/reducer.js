@@ -3,7 +3,7 @@ import { combineReducers } from 'redux'
 import type { Reducer } from 'redux'
 import type { AuthState, AuthAction, User } from './type'
 import { actions } from './actions'
-import { unset, assign, set } from 'immutadot'
+import { set } from 'immutadot'
 
 const user: Reducer<?User, AuthAction> = (state = null, action) => {
   switch (action.type) {
@@ -47,11 +47,11 @@ const form: Reducer<$PropertyType<AuthState, 'form'>, AuthAction> = (
     }
     case actions.UPDATE_CONNECTED_USER_SUCCESS: {
       const { user } = action.payload
-      return assign(user, state)
+      return user
     }
     case actions.UPDATE_CONNECTED_USER_PROPERTY: {
       const { property, value } = action.payload
-      return set(state, `${property}`, value)
+      return set(state, property, value)
     }
     default:
       return state

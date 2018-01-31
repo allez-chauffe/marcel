@@ -10,10 +10,12 @@ const mapStateToProps = state => ({
   user: state.auth.user
 })
 
-const mapDispatchToProps = {
-  updateUser: updateConnectedUser,
-  updateUserProperty: updateConnectedUserProperty,
-}
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleSave: () => dispatch(updateConnectedUser(ownProps.user)),
+  handleChange: (name, value) => dispatch(updateConnectedUserProperty(name, value))
+})
+
+
 export default compose(
   router('PROFIL', { absolute: true }),  
   connect(mapStateToProps, mapDispatchToProps),
