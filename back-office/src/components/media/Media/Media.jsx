@@ -16,13 +16,12 @@ export type PropsType = {
 
 const Media = (props: PropsType) => {
   const { dashboard, uploadLayout } = props
-  const { name, description, rows, cols, ratio, plugins } = dashboard
+  const { name, rows, cols, ratio, plugins } = dashboard
   return (
     <div className="Media">
       <div className="head">
         <h2>
           {name} <br />
-          <small>{description}</small>
         </h2>
         <div className="actions">
           <Button label="Sauvegarder" icon="save" primary onClick={uploadLayout} />

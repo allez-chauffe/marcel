@@ -96,6 +96,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
       const { selectedDashboard } = state
       return selectedDashboard
         ? chain(state)
+            .set('selectedPlugin', instanceId)
             .set(`pluginInstances.${instanceId}`, {
               ...action.payload.plugin,
               x: action.payload.x,
