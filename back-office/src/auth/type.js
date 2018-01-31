@@ -2,12 +2,7 @@
 /* eslint-disable no-use-before-define */
 import type { Dispatch } from 'redux'
 import type { State } from '../store'
-
-export type User = {
-  id: string,
-  displayName: string,
-  role: 'user' | 'admin',
-}
+import { User } from '../user'
 
 export type AuthState = {
   user: ?User,
@@ -48,10 +43,6 @@ export type RefreshLoginAction = () => (
   getState: () => State,
 ) => mixed
 
-export type LogoutRequest = {
-  type: 'AUTH/LOGOUT_REQUEST',
-}
-
 export type LogoutSuccessAction = {
   type: 'AUTH/LOGOUT_SUCCESS',
 }
@@ -81,3 +72,18 @@ export type AuthAction =
   | ChangeLoginAction
   | ChangePasswordAction
   | ResetFormAction
+
+
+  export type UpdateConnectedUserAction = {
+    type: 'AUTH/UPDATE_CONNECTED_USER_SUCCESS',
+    payload: { user: User },
+  }
+  
+  export type UpdateConnectedUserPropertyAction = {
+    type: 'AUTH/UPDATE_CONNECTED_USER_PROPERTY',
+    payload: { 
+      property: string,
+      value: string,
+    },
+  }
+  

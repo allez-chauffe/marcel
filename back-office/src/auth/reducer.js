@@ -3,14 +3,15 @@ import { combineReducers } from 'redux'
 import type { Reducer } from 'redux'
 import type { AuthState, AuthAction, User } from './type'
 import { actions } from './actions'
+import { set } from 'immutadot'
 
 const user: Reducer<?User, AuthAction> = (state = null, action) => {
   switch (action.type) {
     case actions.LOGIN_SUCCESS: {
       return action.payload.user
     }
-    case actions.LOGIN_FAIL:
     case actions.LOGOUT_SUCCESS:
+    case actions.LOGIN_FAIL:
     case actions.DISCONNECTED: {
       return null
     }
@@ -43,6 +44,14 @@ const form: Reducer<$PropertyType<AuthState, 'form'>, AuthAction> = (
     }
     case actions.RESET_FORM: {
       return initialForm
+    }
+    case actions.UPDATE_CONNECTED_USER_SUCCESS: {
+      const { user } = action.payload
+      return user
+    }
+    case actions.UPDATE_CONNECTED_USER_PROPERTY: {
+      const { property, value } = action.payload
+      return set(state, property, value)
     }
     default:
       return state

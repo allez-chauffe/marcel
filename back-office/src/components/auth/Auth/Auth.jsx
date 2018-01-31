@@ -10,8 +10,13 @@ export type PropsType = {
   isLoggedIn: boolean,
 }
 
-const Auth = (props: PropsType) => (
-  <div className="Auth">{props.isLoggedIn ? props.children : <LoginForm />}</div>
-)
+const Auth = (props: PropsType) => {
+  const { children, isLoggedIn } = props
+  return (
+    <div className="Auth">
+      {isLoggedIn ? children : <LoginForm />}
+    </div>
+  )
+}
 
 export default Auth

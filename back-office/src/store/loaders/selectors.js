@@ -12,3 +12,6 @@ export const isDashboardsLoading = isLoading('dashboards')
 export const isLoadingInitData = isLoading('initial')
 
 export const isClientsLoading = isLoading('clients')
+
+export const isUsersLoading = isLoading('users')
+

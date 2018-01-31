@@ -11,3 +11,12 @@
 .AppLayout > footer {
   z-index: 100;
 }
+
+.AppLayout .AppBarNavigation {
+  margin-right: 10px;
+}
+
+.AppLayout .AppBarLink {
+  color: white;
+  margin: 0 8px; 
+}

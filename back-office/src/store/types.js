@@ -5,6 +5,7 @@ import type { DashboardState, DashboardAction } from '../dashboard'
 import type { AuthState, AuthAction } from '../auth'
 import type { LoadersState, LoadersAction } from './loaders'
 import type { ClientState, ClientAction } from '../clients'
+import type { UserState } from "../user"
 
 export type Config = {
   backendURI: string,
@@ -25,4 +26,5 @@ export type State = {
   loaders: LoadersState,
   config: Config,
   router: { params: { mediaID?: string }, result: { title: string } },
+  users: UserState
 }

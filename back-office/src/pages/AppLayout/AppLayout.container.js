@@ -8,10 +8,12 @@ import { unselectDashboard, selectedDashboardSelector } from '../../dashboard'
 import { loadConfig, isConfigLoading } from '../../store/loaders'
 import { LoadingIndicator } from '../../components/commons'
 import AppLayout from './AppLayout'
+import { logout } from '../../auth'
 
 const mapStateToProps = state => ({
   menuIcon: selectedDashboardSelector(state) ? 'arrow_back' : null,
   loaded: !isConfigLoading(state),
+  user: state.auth.user,
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<*>) => ({
@@ -22,6 +24,9 @@ const mapDispatchToProps = (dispatch: Dispatch<*>) => ({
   },
   load() {
     dispatch(loadConfig())
+  },
+  logout() {
+    dispatch(logout())
   },
 })
 
