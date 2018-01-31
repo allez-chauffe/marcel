@@ -1,7 +1,7 @@
 //@flow
 import { keyBy, values, range, forEach, findIndex, some, map, chain } from 'lodash'
 import { toastr } from 'react-redux-toastr'
-
+import { push, replace } from 'redux-little-router'
 import { backend } from '../api'
 import { selectedDashboardSelector, deletingDashboardSelector } from './selectors'
 import type { Plugin, Prop } from '../plugins'
@@ -85,6 +85,7 @@ export const confirmDashboardDeletion: DashboardDeletionThunk = () => (dispatch,
     .then(() => {
       dispatch(dashboardDeleted())
       toastr.success('Le média à été supprimé')
+      dispatch(replace('/medias'))
     })
     .catch(error => {
       dispatch(cancelDashboardDeletion())
@@ -108,13 +109,22 @@ export const deleteDashboard = (dashboard: Dashboard): DeleteDashboardAction => 
 export const addDashboard = (): AddDashboardThunkAction => dispatch => {
   backend
     .createDashboard()
-    .then(dashboard =>
+    .then(dashboard => {
+      dashboard.stylesvar = {
+        'background-color': '#ffffff',
+        'primary-color': '#000000',
+        'secondary-color': '#000000'
+      }
+      return backend.saveDashboard(dashboard).then(() => dashboard)
+    })
+    .then(dashboard => {
+      console.log(dashboard)
       dispatch({
         type: actions.ADD_DASHBOARD,
         payload: { dashboard },
-      }),
-    )
-    .catch(error => {
+      })
+      dispatch(push(`/medias/${dashboard.id}`))
+    }).catch(error => {
       toastr.error('Erreur lors de la création du dashboard')
       console.error(error)
     })

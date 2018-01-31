@@ -13,8 +13,7 @@
 
 .MediaEditPage .main-panel {
   width: calc(100% - 2 * 18.5em - 6em);
-  padding: 1em 3em 1em 3em;
-  display: flex;
+  padding: 1em 1em 1em 1em;
 }
 
 .MediaEditPage .left-side-panel {
