@@ -3,8 +3,10 @@ package app
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/Zenika/MARCEL/auth-backend/auth"
+	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
 	"github.com/Zenika/MARCEL/auth-backend/users"
 	"github.com/Zenika/MARCEL/backend/commons"
 )
@@ -54,11 +56,13 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	user := users.GetByID(refreshClaims.Subject)
 	if user == nil {
+		auth.DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusNotFound, "User not found")
 		return
 	}
 
 	if user.LastDisconection > refreshClaims.IssuedAt {
+		auth.DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusForbidden, "Refresh token has been invalidated")
 		return
 	}
@@ -66,6 +70,25 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 	auth.GenerateAuthToken(w, user)
 
 	commons.WriteJsonResponse(w, adaptUser(user))
+}
+
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		return
+	}
+
+	userID := middleware.GetAuth(r).Subject
+	user := users.GetByID(userID)
+
+	if user == nil {
+		return
+	}
+
+	user.LastDisconection = time.Now().Unix()
+	users.SaveUsersData()
+
+	auth.DeleteAuthToken(w)
+	auth.DeleteRefreshToken(w)
 }
 
 func getCredentials(w http.ResponseWriter, r *http.Request) *Credentials {
