@@ -1,6 +1,6 @@
 //@flow
 import { toastr } from 'react-redux-toastr'
-import { set, map } from 'lodash/fp'
+import { map } from 'lodash/fp'
 import { mapPluginsToDashboard } from '../../common/utils'
 import { config, backend, userBackend } from '../../api'
 import type { LoadingThunkAction } from './type'

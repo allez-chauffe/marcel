@@ -10,21 +10,20 @@ import './MediaConfig.css'
 
 export type PropsType = {
   dashboard: Dashboard,
-  displayGrid: boolean,
   changeName: string => void,
   changeDescription: string => void,
   changeCols: number => void,
   changeRows: number => void,
   changeRatio: number => void,
+  changeDisplayGrid: boolean => void,
   changeBackgroundColor: string => void,
   changePrimaryColor: string => void,
   changeSecondaryColor: string => void,
   changeFontFamily: string => void,
-  toggleDisplayGrid: () => void,
 }
 
 const MediaConfig = (props: PropsType) => {
-  const { dashboard, displayGrid } = props
+  const { dashboard } = props
 
   const {
     changeName,
@@ -32,13 +31,13 @@ const MediaConfig = (props: PropsType) => {
     changeCols,
     changeRows,
     changeRatio,
-    toggleDisplayGrid,
+    changeDisplayGrid,
     changeBackgroundColor,
     changePrimaryColor,
     changeSecondaryColor,
     changeFontFamily,
   } = props
-  const { name, description, cols, rows, screenRatio } = dashboard
+  const { name, description, cols, rows, screenRatio, displayGrid } = dashboard
 
   return (
     <div className="MediaConfig">
@@ -77,7 +76,7 @@ const MediaConfig = (props: PropsType) => {
         onChange={changeFontFamily}
       />
       <div className="gridDisplay">
-        <Switch label="Afficher la grille" checked={displayGrid} onChange={toggleDisplayGrid} />
+        <Switch label="Afficher la grille" checked={displayGrid} onChange={changeDisplayGrid} />
       </div>
     </div>
   )

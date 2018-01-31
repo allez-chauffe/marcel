@@ -13,7 +13,6 @@ const intialState = {
   selectedPlugin: null,
   selectedDashboard: null,
   deletingDashboard: null,
-  displayGrid: true,
   loading: false,
   dashboards: {},
   pluginInstances: {},
@@ -153,13 +152,14 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
     case actions.UPDATE_CONFIG: {
       const { selectedDashboard } = state
       const { property, value } = action.payload
-      const parsedValue = !isNaN(value) ? parseFloat(value) : value
+      const parsedValue = parseFloat(value)
       return selectedDashboard
-        ? set(state, `dashboards.${selectedDashboard}.${property}`, parsedValue)
+        ? set(
+            state,
+            `dashboards.${selectedDashboard}.${property}`,
+            isNaN(parsedValue) ? value : parsedValue,
+          )
         : state
-    }
-    case actions.TOGGLE_DISPLAY_GRID: {
-      return { ...state, displayGrid: !state.displayGrid }
     }
     case loadActions.LOAD_DASHBOARDS_SUCCESSED: {
       const { dashboards } = action.payload

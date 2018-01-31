@@ -19,6 +19,7 @@ type Media struct {
 	Plugins     []MediaPlugin          `json:"plugins"`
 	Owner       string                 `json:"owner"`
 	ScreenRatio float64                `json:"screenRatio"`
+	DisplayGrid bool                   `json:"displayGrid"`
 }
 
 func NewMedia() *Media {
@@ -29,6 +30,7 @@ func NewMedia() *Media {
 	media.Rows = 10
 	media.Cols = 10
 	media.ScreenRatio = 16.0 / 9.0
+	media.DisplayGrid = true
 
 	return media
 }

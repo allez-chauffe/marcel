@@ -24,7 +24,6 @@ import type {
   DashboardDeletionThunk,
   DashboardDeletedAction,
   CancelDashboardDeletionAction,
-  ToggleDisplayGridAction,
   AddSubPluginAction,
   SelectPluginParentAction,
   ReorderSubPluginAction,
@@ -50,7 +49,6 @@ export const actions = {
   UPLOAD_SUCCESSED: 'DASHBOARD/UPLOAD_SUCCESSED',
   UPLOAD_FAILED: 'DASHBOARD/UPLOAD_FAILED',
   UPDATE_CONFIG: 'DASHBOARD/UPDATE_CONFIG',
-  TOGGLE_DISPLAY_GRID: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
   SELECT_PLUGIN_PARENT: 'DASHBOARD/SELECT_PLUGIN_PARENT',
   REORDER_SUB_PLUGINS: 'DASHBOARD/REORDER_SUB_PLUGINS',
   ACTIVATE_DASHBOARD: 'DASHBOARD/ACTIVATE_DASHBOARD',
@@ -113,18 +111,18 @@ export const addDashboard = (): AddDashboardThunkAction => dispatch => {
       dashboard.stylesvar = {
         'background-color': '#ffffff',
         'primary-color': '#000000',
-        'secondary-color': '#000000'
+        'secondary-color': '#000000',
       }
       return backend.saveDashboard(dashboard).then(() => dashboard)
     })
     .then(dashboard => {
-      console.log(dashboard)
       dispatch({
         type: actions.ADD_DASHBOARD,
         payload: { dashboard },
       })
       dispatch(push(`/medias/${dashboard.id}`))
-    }).catch(error => {
+    })
+    .catch(error => {
       toastr.error('Erreur lors de la création du dashboard')
       console.error(error)
     })
@@ -216,14 +214,12 @@ export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
     })
 }
 
-export const updateConfig = (property: string) => (value: string | number): UpdateConfigAction => ({
-  type: actions.UPDATE_CONFIG,
-  payload: { property, value },
-})
-
-export const toggleDisplayGrid = (): ToggleDisplayGridAction => ({
-  type: actions.TOGGLE_DISPLAY_GRID,
-})
+export const updateConfig = (property: string) => (value: string | number): UpdateConfigAction => {
+  return {
+    type: actions.UPDATE_CONFIG,
+    payload: { property, value },
+  }
+}
 
 export const selectPluginParent = (): SelectPluginParentAction => ({
   type: actions.SELECT_PLUGIN_PARENT,

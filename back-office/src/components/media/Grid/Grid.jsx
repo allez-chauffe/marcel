@@ -12,10 +12,10 @@ export type Item = { layout: LayoutItem, plugin: PluginInstance }
 export type Props = {
   size: { height: number, width: number },
   screenRatio: number,
+  displayGrid: boolean,
   rows: number,
   cols: number,
   layout: Item[],
-  displayGrid: boolean,
   selectPlugin: PluginInstance => void,
   selectedPlugin: string,
   saveLayout: Layout => void,
