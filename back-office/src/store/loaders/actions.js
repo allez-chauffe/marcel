@@ -1,6 +1,6 @@
 //@flow
 import { toastr } from 'react-redux-toastr'
-import { set, map } from 'lodash/fp'
+import { map } from 'lodash/fp'
 import { mapPluginsToDashboard } from '../../common/utils'
 import { config, backend, userBackend } from '../../api'
 import type { LoadingThunkAction } from './type'
@@ -49,10 +49,7 @@ const loadDispatcher = dispatch => (ressource, loadPromise) => {
 }
 
 const getDashboards = availablePlugins =>
-  backend
-    .getAllDashboards()
-    .then(map(mapPluginsToDashboard(availablePlugins)))
-    .then(map(set('ratio', 16 / 9)))
+  backend.getAllDashboards().then(map(mapPluginsToDashboard(availablePlugins)))
 
 export const loadInitData = (): LoadingThunkAction => (dispatch, getState) => {
   dispatch({ type: actions.LOAD_INITIAL_STARTED })

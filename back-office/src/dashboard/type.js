@@ -30,7 +30,8 @@ export type Dashboard = {
   description: string,
   rows: number,
   cols: number,
-  ratio: number,
+  screenRatio: number,
+  displayGrid: boolean,
   isactive: boolean,
   stylesvar: {
     'primary-color': string,
@@ -152,10 +153,6 @@ export type UpdateConfigAction = {
   payload: { property: string, value: string | number },
 }
 
-export type ToggleDisplayGridAction = {
-  type: 'DASHBOARD/TOGGLE_DISPLAY_GRID',
-}
-
 export type SelectPluginParentAction = {
   type: 'DASHBOARD/SELECT_PLUGIN_PARENT',
 }
@@ -209,14 +206,12 @@ export type DashboardAction =
   | CancelDashboardDeletionAction
   | DeleteDashboardAction
   | AddDashboardAction
-  | ToggleDisplayGridAction
   | AddSubPluginAction
 
 export type DashboardState = {
   selectedPlugin: string | null,
   selectedDashboard: string | null,
   deletingDashboard: string | null,
-  displayGrid: boolean,
   loading: boolean,
   dashboards: DashboardMap,
   pluginInstances: PluginInstanceMap,

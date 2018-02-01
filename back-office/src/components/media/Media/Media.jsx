@@ -16,7 +16,7 @@ export type PropsType = {
 
 const Media = (props: PropsType) => {
   const { dashboard, uploadLayout } = props
-  const { name, rows, cols, ratio, plugins } = dashboard
+  const { name, rows, cols, screenRatio, plugins, displayGrid } = dashboard
   return (
     <div className="Media">
       <div className="head">
@@ -31,7 +31,8 @@ const Media = (props: PropsType) => {
         </div>
       </div>
       <Grid
-        ratio={ratio}
+        screenRatio={screenRatio}
+        displayGrid={displayGrid}
         rows={rows}
         cols={cols}
         layout={values(plugins).map(({ x, y, cols, rows, ...instance }) => ({

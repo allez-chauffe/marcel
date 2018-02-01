@@ -17,8 +17,6 @@ export const selectedPluginNameSelector = (state: State) => state.dashboard.sele
 
 export const deletingDashboardSelector = (state: State) => state.dashboard.deletingDashboard
 
-export const displayGridSelector = (state: State) => state.dashboard.displayGrid
-
 export const selectedDashboardSelector = createSelector(
   dashboardsSelector,
   pluginInstancesSelector,
