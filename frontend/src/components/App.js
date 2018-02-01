@@ -3,6 +3,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import { localFetcher } from '../utils/fetcher'
 import Client from './Client'
 import Loader from './Loader'
+import Auth from './Auth'
 
 class App extends Component {
   state = {
@@ -28,7 +29,11 @@ class App extends Component {
     return (
       <div className="fullSize">
         {this.state.loading && <Loader />}
-        {this.state.loading || <Client config={this.state.config} />}
+        {this.state.loading || (
+          <Auth config={this.state.config}>
+            <Client />
+          </Auth>
+        )}
         <ToastContainer closeButton={false} hideProgressBar closeOnClick />
       </div>
     )

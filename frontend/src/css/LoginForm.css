@@ -1,0 +1,63 @@
+.LoginForm {
+  font-size: 1.5em;
+  font-family: Roboto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.LoginForm form {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  border-radius: 2px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+.LoginForm .actions {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-around;
+}
+
+.LoginForm .inputGroup {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+}
+
+.LoginForm .inputGroup label {
+  font-size: 0.7em;
+  letter-spacing: 0;
+  font-weight: 300;
+  color: rgb(90, 90, 90);
+}
+
+.LoginForm .inputGroup input {
+  border: none;
+  border-bottom: 1px solid lightgrey;
+  color: rgb(53, 53, 53);
+  font-weight: 300;
+  background: transparent;
+  margin-top: 0.5em;
+  font-size: 0.8em;
+  padding: 0.4em 0;
+}
+
+.LoginForm .actions button {
+  border: none;
+  border-radius: 2px;
+  font-size: 0.7em;
+  text-transform: uppercase;
+  font-weight: 100;
+  letter-spacing: 0.001em;
+  padding: 0.5em;
+  transition: background 0.2s ease;
+}
+
+.LoginForm .actions button:hover {
+  background: rgb(226, 226, 226);
+}
