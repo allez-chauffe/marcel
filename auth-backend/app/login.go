@@ -73,19 +73,15 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
-		return
+	if middleware.CheckPermissions(r, nil) {
+		// If the user is connected, update it in database
+		userID := middleware.GetAuth(r).Subject
+
+		if user := users.GetByID(userID); user != nil {
+			user.LastDisconection = time.Now().Unix()
+			users.SaveUsersData()
+		}
 	}
-
-	userID := middleware.GetAuth(r).Subject
-	user := users.GetByID(userID)
-
-	if user == nil {
-		return
-	}
-
-	user.LastDisconection = time.Now().Unix()
-	users.SaveUsersData()
 
 	auth.DeleteAuthToken(w)
 	auth.DeleteRefreshToken(w)
