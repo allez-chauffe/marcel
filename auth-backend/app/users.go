@@ -66,7 +66,7 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !checkHash(body.Password, savedUser.PasswordHash, savedUser.PasswordSalt) {
+	if body.Password != "" && !checkHash(body.Password, savedUser.PasswordHash, savedUser.PasswordSalt) {
 		savedUser.LastDisconection = time.Now().Unix()
 		hash, salt := generateHash(body.Password)
 		savedUser.PasswordHash = hash
