@@ -41,5 +41,5 @@ func Commit(manager Manager) error {
 func OpenSaveFile(manager Manager, osFlag int) (*os.File, error) {
 	configFullPath, _, _ := manager.GetSaveFilePath()
 
-	return os.OpenFile(configFullPath, osFlag|os.O_CREATE|os.O_TRUNC, 0644)
+	return os.OpenFile(configFullPath, osFlag|os.O_CREATE, 0644)
 }
