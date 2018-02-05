@@ -79,7 +79,11 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idMedia
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check permission access
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	if media := m.getMediaFromRequest(w, r); media != nil {
 		commons.WriteJsonResponse(w, media)
 	}
@@ -258,7 +262,11 @@ func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 //
 // Serves static frontend files of the given plugin instance for the given media.
 func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check permissions for plugin files access
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	const sep = string(os.PathSeparator)
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]

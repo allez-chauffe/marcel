@@ -54,7 +54,11 @@ func NewService() *Service {
 
 //WSConnectionHandler Handles a connection request from a given client.
 func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check permissions
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	client, found := s.getClientFromRequest(w, r)
 	if !found {
 		return
@@ -70,9 +74,13 @@ func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	newWSClient(s, client, conn)
 }
 
-//GetHandler send the request client configuration.
+//GetHandler send the requested client configuration.
 func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check Permissions
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	log.Println("Getting client configuration")
 
 	client, exists := s.getClientFromRequest(w, r)
@@ -97,7 +105,11 @@ func (s *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 
 //CreateHandler create a new client entry in the database.
 func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check Permissions
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	params := &newClientRequest{}
 	if err := json.NewDecoder(r.Body).Decode(params); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
@@ -153,7 +165,11 @@ func (s *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 
 //UpdateHandler update a client configuration in the database
 func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check Permissions
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	client, ok := s.getClientFromRequestBody(w, r)
 	if !ok {
 		return

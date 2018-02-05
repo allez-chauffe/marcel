@@ -92,6 +92,8 @@ class Client extends Component {
   }
 
   componentDidMount() {
+    if (!this.props.config.urls.plugins)
+      toast.error("L'URL des plugins n'est pas configurée", { autoClose: false })
     this.backend = backendFetcher(this.props.config)
     this.getClientId()
       .then(clientId => this.setState({ client: { id: clientId } }))
