@@ -1,24 +1,25 @@
 # Plugins
-A plugin is a widget that can be added to a MARCEL board. 
+A plugin is a widget that can be added to a MARCEL media. 
 It can be composed of:
-- A frontend, which will be an iframe added to the MARCEL board.
-- (optionally) A backend, if the plugin need to run it's own backend.
+- A frontend, which will be an iframe added to the MARCEL media.
+- (optional) A backend, if the plugin need to run it's own backend.
 
 ## Create your own plugin
 
 Creating a MARCEL plugin is simple:
 1. Create a new directory named "marcel-plugin-<your plugin name>"
-2. Create a directory `frontend` and, if needed, a directory `backend`
-3. In the directory `frontend`, create a file `index.html`
+2. Create a directory `frontend` with a file `index.html`.
+3. (Optional) Create a directory `backend` with a docker image tarball.
 
-Your frontend will be the `index.html` and will be the one displayed in MARCEL.
-The javascript can be in the `index.html` or in separates files, but must stay in the `frontend` directory.
+The frontend directory will be served in HTTP by MARCEL and it will act as it's own root.
+Due to this, you can put all the html, js and other static file that you need in this directory.
+By default, the `index.html` is served.
 
-You can also have several HTML file if needed, but be aware that since your plugin will be contained in a `<iframe>`, your user won't have access to the navigation history and arrows.
+The plugin will be an iframe that display the result of a GET request to `/` on this server.
 
 For an example of a simple plugin, you can look at [marcel-plugin-text](https://github.com/EmrysMyrddin/marcel-plugin-text).
 
-### Structure of the frontend / index.html
+### Structure of the frontend
 
 The first thing you will need is [marcel.js](https://github.com/EmrysMyrddin/marcel-plugin-text/raw/master/frontend/marcel.js), which is a small script that will help you handle the interaction with MARCEL.
 Include it in your HTML:
@@ -32,7 +33,7 @@ class MyPlugin extends Marcel.plugin {
     <...>
 }
 ```
-Your class should implement two function: 
+Your class can implement two function: 
 
 1. The render function:
 
@@ -68,7 +69,7 @@ const instance = new MyPlugin()
 
 Additionally, you can add the line:
 ```javascript
-Marcel.Debug.changeProps({props1: "new value"})
+Marcel.Debug.changeProps({ props1: "new value" })
 ```
 
 At the end of your file to force MARCEL to call `render()` and `propsDidChange(prevProps)` when you load the page which is really useful when you are still developing and debugging the plugin.
@@ -77,6 +78,12 @@ At the end of your file to force MARCEL to call `render()` and `propsDidChange(p
 
 Since your plugin is just a normal website, you should be able to test it by just opening the index.html in your browser.
 You can also use a development web server like `serve` to autoreload your page while you are working on it.
+
+You can also put:
+```javascript
+Marcel.Debug.changeProps({ props1: "new value" })
+```
+In the Javascript console to simulate an update from MARCEL.
 
 ### Advises and tips for your plugin
 Since your plugin will be contained in a iframe that will take only a part of the full webpage, it is highly recommended to remove the border, padding and, very important, the scrollbar.
@@ -93,4 +100,4 @@ body {
 
 The user of your project can also give your plugin whatever space they want. 
 Due to this, you may have a lot of space, or a very tiny space, have a ratio of 1:1, 4:1, 5:3, ...
-For this reason, you should try to make your plugin as responsive as you can.
+For this reason, you should try to make your plugin as responsive as possible.
