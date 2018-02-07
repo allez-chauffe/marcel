@@ -9,14 +9,14 @@ jobs:
 
   debug_go:
     docker:
-      - image: circleci/golang:latest
+      - image: circleci/golang:1.9
     steps:
       - run: go version
 
   build_backend:
     working_directory: /go/src/github.com/Zenika/MARCEL
     docker:
-      - image: circleci/golang:latest
+      - image: circleci/golang:1.9
     steps:
       - checkout
       - run: go get -u github.com/golang/dep/cmd/dep
@@ -125,7 +125,7 @@ jobs:
   backend_docker_build:
     working_directory: /go/src/github.com/Zenika/MARCEL
     docker:
-      - image: circleci/golang:latest
+      - image: circleci/buildpack-deps:xenial-scm
     steps:
       - checkout
       - setup_remote_docker
@@ -141,7 +141,7 @@ jobs:
   auth_backend_docker_build:
     working_directory: /go/src/github.com/Zenika/MARCEL
     docker:
-      - image: circleci/golang:latest
+      - image: circleci/buildpack-deps:xenial-scm
     steps:
       - checkout
       - setup_remote_docker
