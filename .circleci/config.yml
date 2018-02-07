@@ -43,7 +43,7 @@ jobs:
       - run: go get -u github.com/golang/dep/cmd/dep
       - run:
           command: dep ensure -vendor-only
-          working_directory: backend
+          working_directory: auth-backend
       - run:
           command: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
           working_directory: auth-backend
