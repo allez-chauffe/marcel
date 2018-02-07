@@ -25,9 +25,7 @@
 #   unused-packages = true
 
 
-[[constraint]]
-  name = "github.com/Zenika/MARCEL"
-  branch = "dev"
+ignored = ["github.com/Zenika/MARCEL/backend/*"]
 
 [[constraint]]
   name = "github.com/dgrijalva/jwt-go"

@@ -25,13 +25,11 @@
 #   unused-packages = true
 
 
+ignored = ["github.com/Zenika/MARCEL/auth-backend/*"]
+
 [[constraint]]
   branch = "master"
   name = "github.com/Pallinder/go-randomdata"
-
-[[constraint]]
-  branch = "dev"
-  name = "github.com/Zenika/MARCEL"
 
 [[constraint]]
   name = "github.com/gorilla/mux"

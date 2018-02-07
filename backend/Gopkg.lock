@@ -8,24 +8,6 @@
   revision = "442d37d9dbc782dbd737af9ec575d8858b79261b"
 
 [[projects]]
-  branch = "dev"
-  name = "github.com/Zenika/MARCEL"
-  packages = [
-    "auth-backend/auth",
-    "auth-backend/auth/middleware",
-    "auth-backend/conf",
-    "auth-backend/users",
-    "backend/commons"
-  ]
-  revision = "c624a74de9178103f8503ad906939155298df148"
-
-[[projects]]
-  name = "github.com/dgrijalva/jwt-go"
-  packages = ["."]
-  revision = "dbeaa9332f19a944acb5736b4456cfcc02140e29"
-  version = "v3.1.0"
-
-[[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
   revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
@@ -58,6 +40,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "38e39926c774e22e43868e3b71c28cbe06915d9f7427af7463580a28d21c8544"
+  inputs-digest = "885ae48439fee569970c90b2285c91a33cc8f9faffc73270e670d56a17bd8120"
   solver-name = "gps-cdcl"
   solver-version = 1
