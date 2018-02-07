@@ -1,3 +1,8 @@
+backend_ws: &backend_ws
+  working_directory: /tmp
+  docker:
+    - image: buildpack-deps:xenial
+
 version: 2
 jobs:
   debug_node:
@@ -14,6 +19,7 @@ jobs:
       - run: go version
 
   build_backend:
+    <<: *backend_ws
     working_directory: /go/src/github.com/Zenika/MARCEL
     docker:
       - image: circleci/golang:1.9
@@ -32,10 +38,11 @@ jobs:
       - run:
           command: CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .
           working_directory: backend
-      - save_cache:
+      - persist_to_workspace:
+          root: backend
           paths:
-            - backend/backend
-          key: backend-build-{{ .Revision }}
+            - Dockerfile
+            - backend
 
   build_auth_backend:
     working_directory: /go/src/github.com/Zenika/MARCEL
@@ -123,18 +130,16 @@ jobs:
           key: plugins-package-{{ .Revision }}
 
   backend_docker_build:
-    working_directory: /go/src/github.com/Zenika/MARCEL
+    <<: *backend_ws
+    working_directory: /tmp/backend
     docker:
       - image: circleci/buildpack-deps:xenial-scm
     steps:
-      - checkout
       - setup_remote_docker
-      - restore_cache:
-          keys:
-            - backend-build-{{ .Revision }}
+      - attach_workspace:
+          at: /tmp/backend
       - run:
           command: docker build -t zenika/marcel-backend:dev .
-          working_directory: backend
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-backend:dev
 
