@@ -26,12 +26,19 @@ jobs:
     steps:
       - checkout
       - run: go get -u github.com/golang/dep/cmd/dep
+      - restore_cache:
+          key: backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
       - run:
-          command: dep ensure -vendor-only
+          command: [ -d vendor ] || dep ensure -vendor-only
           working_directory: auth-backend
       - run:
-          command: dep ensure -vendor-only
+          command: [ -d vendor ] || dep ensure -vendor-only
           working_directory: backend
+      - save_cache:
+          key: backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
+          paths:
+            - backend/vendor
+            - auth-backend/vendor
       - run:
           command: go test .
           working_directory: backend
