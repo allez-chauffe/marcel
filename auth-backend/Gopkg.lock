@@ -2,10 +2,10 @@
 
 
 [[projects]]
+  branch = "dev"
   name = "github.com/Zenika/MARCEL"
   packages = ["backend/commons"]
-  revision = "cc30735d9124db28800d247d99d284c3cc94c77b"
-  version = "v2.0.0"
+  revision = "c624a74de9178103f8503ad906939155298df148"
 
 [[projects]]
   name = "github.com/dgrijalva/jwt-go"
@@ -46,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "05c173762e3c5f6489908a4bbad8852bc264429bf42a6eaa794ee7024f1fda93"
+  inputs-digest = "b92f0ba99fe607f522265e3cc71cad17bf9b0888e88d691bc7db05f90a5ddaad"
   solver-name = "gps-cdcl"
   solver-version = 1
