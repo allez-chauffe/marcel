@@ -19,7 +19,10 @@ jobs:
       - image: circleci/golang:latest
     steps:
       - checkout
-      - run: ./scripts/install_go_deps.sh
+      - run: go get -u github.com/golang/dep/cmd/dep
+      - run:
+          command: dep ensure -vendor-only
+          working_directory: backend
       - run:
           command: go test .
           working_directory: backend
@@ -37,7 +40,10 @@ jobs:
       - image: circleci/golang:1.8
     steps:
       - checkout
-      - run: ./scripts/install_go_deps.sh
+      - run: go get -u github.com/golang/dep/cmd/dep
+      - run:
+          command: dep ensure -vendor-only
+          working_directory: backend
       - run:
           command: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
           working_directory: auth-backend

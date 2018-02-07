@@ -69,20 +69,11 @@ working_directory
 
 ### Dependencies
 
-Install dependencies by running the following script :
+Install dependencies with [dep](https://github.com/golang/dep) :
 
 ```shell
-../scripts/install_go_deps.sh
-```
-
-or by installing each library by hand :
-
-```shell
-go get github.com/rs/cors
-go get -u github.com/gorilla/mux
-go get github.com/gorilla/websocket
-go get github.com/mitchellh/mapstructure
-go get github.com/satori/go.uuid
+go get -u github.com/golang/dep/cmd/dep
+dep ensure -vendor-only
 ```
 
 ### Build server
