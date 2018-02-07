@@ -1,9 +1,4 @@
-backend_ws: &backend_ws
-  working_directory: /tmp
-  docker:
-    - image: buildpack-deps:xenial
-
-auth_backend_ws: &auth_backend_ws
+defaults: &defaults
   working_directory: /tmp
   docker:
     - image: buildpack-deps:xenial
@@ -24,7 +19,7 @@ jobs:
       - run: go version
 
   build_backend:
-    <<: *backend_ws
+    <<: *defaults
     working_directory: /go/src/github.com/Zenika/MARCEL
     docker:
       - image: circleci/golang:1.9
@@ -44,13 +39,13 @@ jobs:
           command: CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .
           working_directory: backend
       - persist_to_workspace:
-          root: backend
+          root: .
           paths:
-            - Dockerfile
-            - backend
+            - backend/Dockerfile
+            - backend/backend
 
   build_auth_backend:
-    <<: *auth_backend_ws
+    <<: *defaults
     working_directory: /go/src/github.com/Zenika/MARCEL
     docker:
       - image: circleci/golang:1.8
@@ -70,10 +65,10 @@ jobs:
           command: go test .
           working_directory: auth-backend
       - persist_to_workspace:
-          root: auth-backend
+          root: .
           paths:
-            - Dockerfile
-            - auth-backend
+            - auth-backend/Dockerfile
+            - auth-backend/auth-backend
 
   build_backoffice:
     docker:
@@ -137,27 +132,27 @@ jobs:
           key: plugins-package-{{ .Revision }}
 
   backend_docker_build:
-    <<: *backend_ws
+    <<: *defaults
     working_directory: /tmp/backend
     docker:
       - image: circleci/buildpack-deps:xenial-scm
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: /tmp/backend
+          at: /tmp
       - run: docker build -t zenika/marcel-backend:dev .
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-backend:dev
 
   auth_backend_docker_build:
-    <<: *auth_backend_ws
+    <<: *defaults
     working_directory: /tmp/auth-backend
     docker:
       - image: circleci/buildpack-deps:xenial-scm
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: /tmp/auth-backend
+          at: /tmp
       - run: docker build -t zenika/marcel-auth:dev .
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-auth:dev
