@@ -4,3 +4,4 @@ data/plugins.json
 marcel.log
 start-dev.sh
 .vscode
+vendor/
