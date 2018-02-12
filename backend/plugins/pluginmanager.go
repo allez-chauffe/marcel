@@ -2,9 +2,8 @@ package plugins
 
 import (
 	"errors"
-	"fmt"
 	"log"
-	"os"
+	"path/filepath"
 
 	"github.com/Zenika/MARCEL/backend/commons"
 )
@@ -22,7 +21,7 @@ func NewManager(configPath, configFilename string) *Manager {
 	manager.ConfigPath = configPath
 	manager.ConfigFileName = configFilename
 
-	manager.ConfigFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
+	manager.ConfigFullpath = filepath.Join(configPath, configFilename)
 	manager.Config = NewConfiguration()
 
 	return manager

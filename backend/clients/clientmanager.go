@@ -1,9 +1,8 @@
 package clients
 
 import (
-	"fmt"
 	"log"
-	"os"
+	"path/filepath"
 
 	"github.com/Zenika/MARCEL/backend/commons"
 )
@@ -25,7 +24,7 @@ func newManager(configPath string, configFileName string) *Manager {
 		Config:         newEmptyConfig(),
 		configPath:     configPath,
 		configFileName: configFileName,
-		configFullPath: fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFileName),
+		configFullPath: filepath.Join(configPath, configFileName),
 	}
 }
 

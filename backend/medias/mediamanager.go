@@ -2,9 +2,9 @@ package medias
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -33,7 +33,7 @@ func NewManager(pluginManager *plugins.Manager, clientsService *clients.Service,
 	manager.pluginManager = pluginManager
 	manager.clientsService = clientsService
 
-	manager.configFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
+	manager.configFullpath = filepath.Join(configPath, configFilename)
 	manager.Config = NewConfiguration()
 
 	return manager
@@ -130,7 +130,7 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 		os.Mkdir(filePath, 0755)
 	}
 
-	var fullPath string = fmt.Sprintf("%s%c%s", filePath, os.PathSeparator, fileName)
+	var fullPath string = filepath.Join(filePath, fileName)
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 
 		f, err := os.Create(fullPath)
@@ -147,7 +147,6 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 
 func (m *Manager) Activate(media *Media) error {
 	errorMessages := ""
-	const sep = string(os.PathSeparator)
 
 	for _, mp := range media.Plugins {
 
@@ -169,7 +168,7 @@ func (m *Manager) Activate(media *Media) error {
 		}
 
 		if mp.BackEnd != nil {
-			retour, err := containers.InstallImage(mpPath + sep + "back" + sep + plugin.Backend.Dockerimage)
+			retour, err := containers.InstallImage(filepath.Join(mpPath, "back", plugin.Backend.Dockerimage))
 			if err != nil {
 				//Don't return an error now, we need to activate the other plugins
 				log.Println(err.Error())
@@ -238,8 +237,7 @@ func (m *Manager) Delete(media *Media) error {
 	m.Commit()
 
 	//remove plugins files
-	sep := string(os.PathSeparator)
-	err := os.RemoveAll("medias" + sep + strconv.Itoa(media.ID))
+	err := os.RemoveAll(filepath.Join("medias", strconv.Itoa(media.ID)))
 	if err != nil {
 		return err
 	}
@@ -288,12 +286,10 @@ func (m *Manager) GetNextID() int {
 }
 
 func (m *Manager) copyNewInstanceOfPlugin(media *Media, mp *MediaPlugin, path string) error {
-	sep := string(os.PathSeparator)
-
 	//Copy onlyd frontend and backend dirs since there the only relevant files
-	err := commons.CopyDir("plugins"+sep+mp.EltName+sep+"frontend", path+sep+"frontend")
-	if _, err := os.Stat("plugins" + sep + mp.EltName + sep + "backend"); !os.IsNotExist(err) {
-		err = commons.CopyDir("plugins"+sep+mp.EltName+sep+"backend", path+sep+"backend")
+	err := commons.CopyDir(filepath.Join("plugins", mp.EltName, "frontend"), filepath.Join(path, "frontend"))
+	if _, err := os.Stat(filepath.Join("plugins", mp.EltName, "backend")); !os.IsNotExist(err) {
+		err = commons.CopyDir(filepath.Join("plugins", mp.EltName, "backend"), filepath.Join(path, "backend"))
 	}
 
 	if err != nil {
@@ -304,8 +300,7 @@ func (m *Manager) copyNewInstanceOfPlugin(media *Media, mp *MediaPlugin, path st
 }
 
 func (m *Manager) GetPluginDirectory(media *Media, eltName string, instanceId string) string {
-	const sep = string(os.PathSeparator)
-	return "medias" + sep + strconv.Itoa(media.ID) + sep + eltName + sep + instanceId
+	return filepath.Join("medias", strconv.Itoa(media.ID), eltName, instanceId)
 }
 
 func (m *Manager) GetSaveFilePath() (string, string, string) {

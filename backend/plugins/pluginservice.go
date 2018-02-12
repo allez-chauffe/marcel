@@ -131,12 +131,12 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 3 : check structure of the plugin
-	if exists := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "description.json"); exists == false {
+	if exists := commons.FileOrFolderExists(filepath.Join(pluginFolder, "description.json")); exists == false {
 		commons.WriteResponse(w, http.StatusNotAcceptable, "'description.json' file not found at the root of the plugin folder")
 		return
 	}
 
-	if exists := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "front"); exists == false {
+	if exists := commons.FileOrFolderExists(filepath.Join(pluginFolder, "front")); exists == false {
 		commons.WriteResponse(w, http.StatusNotAcceptable, "'front' folder not found at the root of the plugin folder")
 		return
 	}
@@ -179,7 +179,7 @@ func UploadFile(r *http.Request) (string, string, error) {
 	defer file.Close()
 
 	foldername := commons.GetUID()
-	out, err := os.Create(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + foldername)
+	out, err := os.Create(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername))
 	if err != nil {
 		log.Println("Unable to create the file for writing. Check your write access privilege")
 		return "", "", err

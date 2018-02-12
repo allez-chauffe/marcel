@@ -3,7 +3,7 @@ package medias
 import (
 	"encoding/json"
 	"net/http"
-	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
@@ -267,7 +267,6 @@ func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	const sep = string(os.PathSeparator)
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]
 	instanceID := vars["instanceId"]
@@ -279,7 +278,7 @@ func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) 
 
 	if media := m.getMediaFromRequest(w, r); media != nil {
 		pluginDirectoryPath := m.manager.GetPluginDirectory(media, eltName, instanceID)
-		pluginFilePath := pluginDirectoryPath + sep + "frontend" + sep + filePath
+		pluginFilePath := filepath.Join(pluginDirectoryPath, "frontend", filePath)
 		http.ServeFile(w, r, pluginFilePath)
 	}
 }
