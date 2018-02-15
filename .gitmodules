@@ -79,3 +79,27 @@
 [submodule "plugins/marcel-plugin-gdrive-news-feed"]
 	path = plugins/marcel-plugin-gdrive-news-feed
 	url = https://github.com/EmrysMyrddin/marcel-plugin-gdrive-news-feed.git
+[submodule "plugins/marcel-plugin-gdrive-carousel"]
+	path = plugins/marcel-plugin-gdrive-carousel
+	url = https://github.com/EmrysMyrddin/marcel-plugin-gdrive-carousel.git
+[submodule "plugins/marcel-plugin-youtube-playlist"]
+	path = plugins/marcel-plugin-youtube-playlist
+	url = https://github.com/EmrysMyrddin/marcel-plugin-youtube-playlist.git
+[submodule "plugins/marcel-plugin-code-heroe"]
+	path = plugins/marcel-plugin-code-heroe
+	url = https://github.com/EmrysMyrddin/marcel-plugin-code-heroe.git
+[submodule "plugins/marcel-plugin-etherpad-board"]
+	path = plugins/marcel-plugin-etherpad-board
+	url = https://github.com/EmrysMyrddin/marcel-plugin-etherpad-board.git
+[submodule "plugins/marcel-plugin-text"]
+	path = plugins/marcel-plugin-text
+	url = https://github.com/EmrysMyrddin/marcel-plugin-text.git
+[submodule "plugins/marcel-plugin-meteofrance"]
+	path = plugins/marcel-plugin-meteofrance
+	url = https://github.com/EmrysMyrddin/marcel-plugin-meteofrance.git
+[submodule "plugins/marcel-plugin-conf-call"]
+	path = plugins/marcel-plugin-conf-call
+	url = https://github.com/Zenika/marcel-plugin-conf-call.git
+[submodule "plugins/marcel-plugin-iframe"]
+	path = plugins/marcel-plugin-iframe
+	url = https://github.com/Zenika/marcel-plugin-iframe.git

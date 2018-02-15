@@ -3,7 +3,7 @@ import type { Reducer } from 'redux'
 import type { FiltersState, FiltersAction } from './types'
 import { actions } from './actions'
 
-const intialState = { plugins: '', props: '' }
+const intialState = { plugins: '', props: '', clients: '' }
 
 const filters: Reducer<FiltersState, FiltersAction> = (
   state = intialState,

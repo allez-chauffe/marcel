@@ -1,32 +1,54 @@
 //@flow
+/* eslint-disable no-use-before-define */
 import type { Dispatch } from 'redux'
 import type { State } from '../store'
+import { User } from '../user'
 
 export type AuthState = {
-  token: ?string,
+  user: ?User,
+  isLoading: boolean,
   form: {
     login: string,
     password: string,
   },
 }
 
-export type LoginAction = (
-  dispatch: Dispatch<*>,
+export type LoginAction = () => (
+  dispatch: Dispatch<LoginRequest | LoginSuccessAction | LoginFailAction>,
   getState: () => State,
 ) => mixed
 
+export type LoginRequest = {
+  type: 'AUTH/LOGIN_REQUEST',
+}
+
 export type LoginSuccessAction = {
   type: 'AUTH/LOGIN_SUCCESS',
-  payload: { token: string },
+  payload: {
+    user: User,
+  },
 }
 
 export type LoginFailAction = {
   type: 'AUTH/LOGIN_FAIL',
-  payload: { error: string },
 }
 
-export type LogoutAction = {
-  type: 'AUTH/LOGOUT',
+export type LogoutAction = () => (
+  dispatch: Dispatch<LogoutRequest | LogoutSuccessAction | LogoutFailAction>,
+  getState: () => State,
+) => mixed
+
+export type RefreshLoginAction = () => (
+  dispatch: Dispatch<LoginSuccessAction | LoginFailAction | LoginRequest>,
+  getState: () => State,
+) => mixed
+
+export type LogoutSuccessAction = {
+  type: 'AUTH/LOGOUT_SUCCESS',
+}
+
+export type LogoutFailAction = {
+  type: 'AUTH/LOGOUT_FAIL',
 }
 
 export type ChangeLoginAction = {
@@ -50,3 +72,18 @@ export type AuthAction =
   | ChangeLoginAction
   | ChangePasswordAction
   | ResetFormAction
+
+
+  export type UpdateConnectedUserAction = {
+    type: 'AUTH/UPDATE_CONNECTED_USER_SUCCESS',
+    payload: { user: User },
+  }
+  
+  export type UpdateConnectedUserPropertyAction = {
+    type: 'AUTH/UPDATE_CONNECTED_USER_PROPERTY',
+    payload: { 
+      property: string,
+      value: string,
+    },
+  }
+  

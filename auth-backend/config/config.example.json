@@ -1,0 +1,7 @@
+{
+  "port": 8091,
+  "securedCookies": true,
+  "authExpiration": 30,
+  "refreshExpiration": 1296000,
+  "domain": "localhost"
+}

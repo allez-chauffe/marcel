@@ -13,14 +13,13 @@ const intialState = {
   selectedPlugin: null,
   selectedDashboard: null,
   deletingDashboard: null,
-  displayGrid: true,
   loading: false,
   dashboards: {},
   pluginInstances: {},
 }
 
 const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
-  const updatedInstances =  mapValues(layout, (layoutItem, instanceId) => {
+  const updatedInstances = mapValues(layout, (layoutItem, instanceId) => {
     const plugin = plugins[instanceId]
     if (!plugin) throw new Error('Plugin instance not found in layout')
 
@@ -28,7 +27,7 @@ const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
     return { ...plugin, x, y, cols, rows }
   })
 
-  return {...plugins, ...updatedInstances}
+  return { ...plugins, ...updatedInstances }
 }
 
 const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState, action) => {
@@ -45,7 +44,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
     case actions.REQUIRE_DASHBOARD_DELETION: {
       return { ...state, deletingDashboard: action.payload.dashboardId }
     }
-    case actions.CONFIRM_DASHBOARD_DELETION: {
+    case actions.DASHBOARD_DELETED: {
       const { deletingDashboard } = state
       return deletingDashboard
         ? chain(state)
@@ -63,7 +62,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
     case actions.ADD_DASHBOARD: {
       const { dashboard } = action.payload
       return chain(state)
-        .set(`dashboards.${dashboard.id}`, { ...dashboard, ratio: 16 / 9 })
+        .set(`dashboards.${dashboard.id}`, dashboard)
         .set('selectedDashboard', dashboard.id)
         .value()
     }
@@ -96,6 +95,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
       const { selectedDashboard } = state
       return selectedDashboard
         ? chain(state)
+            .set('selectedPlugin', instanceId)
             .set(`pluginInstances.${instanceId}`, {
               ...action.payload.plugin,
               x: action.payload.x,
@@ -152,17 +152,22 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
     case actions.UPDATE_CONFIG: {
       const { selectedDashboard } = state
       const { property, value } = action.payload
-      const parsedValue = !isNaN(value) ? parseFloat(value) : value
+      const parsedValue = parseFloat(value)
       return selectedDashboard
-        ? set(state, `dashboards.${selectedDashboard}.${property}`, parsedValue)
+        ? set(
+            state,
+            `dashboards.${selectedDashboard}.${property}`,
+            isNaN(parsedValue) ? value : parsedValue,
+          )
         : state
-    }
-    case actions.TOGGLE_DISPLAY_GRID: {
-      return { ...state, displayGrid: !state.displayGrid }
     }
     case loadActions.LOAD_DASHBOARDS_SUCCESSED: {
       const { dashboards } = action.payload
-      const plugins = _chain(dashboards).map('plugins').map(values).flatten().value()
+      const plugins = _chain(dashboards)
+        .map('plugins')
+        .map(values)
+        .flatten()
+        .value()
       const pluginInstances = getPluginInstances(plugins)
       const normalizedDashboards = dashboards.map(dashboard => ({
         ...dashboard,
@@ -184,6 +189,14 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
 
       const { parent } = plugin
       return parent ? { ...state, selectedPlugin: parent.plugin } : state
+    }
+    case actions.ACTIVATE_DASHBOARD: {
+      const { dashboardId } = action.payload
+      return set(state, `dashboards.${dashboardId}.isactive`, true)
+    }
+    case actions.DEACTIVATE_DASHBOARD: {
+      const { dashboardId } = action.payload
+      return set(state, `dashboards.${dashboardId}.isactive`, false)
     }
     default:
       return state

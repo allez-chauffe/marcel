@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": "e910cba3-d879-4469-bb32-f61d853cf161",
+      "displayName": "Admin",
+      "login": "admin",
+      "role": "user",
+      "createdAt": 1511532707,
+      "lastDisconnection": 0,
+      "passwordHash": "t0cJ1u4AJ6w2dO8o7BjUkExz+5p7qw0qaDNCkSUDCcc=",
+      "passwordSalt": "tjkISl2YWomYFvpUHVv/EtgBc8HBN1sEpRNJy9wjNBFzxyxnMUhA6g=="
+    }
+  ]
+}

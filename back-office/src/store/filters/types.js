@@ -10,4 +10,5 @@ export type FiltersAction = {
 export type FiltersState = {
   plugins: string,
   props: string,
+  clients: string,
 }

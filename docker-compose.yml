@@ -1,26 +1,57 @@
-version: '3'
 services:
+  backoffice:
+    depends_on:
+      - proxy
+    image: zenika/marcel-backoffice:dev
+    labels:
+      traefik.backend: backoffice
+      traefik.frontend.rule: "PathPrefix: /"
+    volumes:
+      - ./backoffice:/usr/share/nginx/html/conf:ro
+
+  frontend:
+    depends_on:
+      - proxy
+    image: zenika/marcel-frontend:dev
+    labels:
+      traefik.backend: frontend
+      traefik.frontend.rule: "PathPrefixStrip: /front/"
+    volumes:
+      - ./frontend:/usr/share/nginx/html/conf:ro
+
+  auth:
+    depends_on:
+      - proxy
+    image: zenika/marcel-auth:dev
+    labels:
+      traefik.backend: auth
+      traefik.frontend.rule: "PathPrefixStrip: /auth/"
+    ports:
+      - 8091:8091
+    volumes:
+      - ./backend/data:/auth-backend/data
+      - ./auth:/auth-backend/config:ro
+
   backend:
-    image: marcel-back-end
-    ports:
-     - 8090:8090
+    depends_on:
+      - proxy
+    image: zenika/marcel-backend:dev
+    labels:
+      traefik.backend: backend
+      traefik.frontend.rule: "PathPrefix: /api/v1/"
     volumes:
-     - ./data:/backend/data
-     - ./plugins:/backend/plugins
-     - ./medias:/backend/medias
-     - ./logs:/backend/logs
+      - ./backend/data:/backend/data
+      - ./backend/plugins:/backend/plugins
+      - ./backend/medias:/backend/medias
+      - ./logs:/backend/logs
 
-  back-office:
-    image: marcel-back-office
+  proxy:
+    command: --web --docker --logLevel=DEBUG
+    image: traefik
     ports:
-     - 81:80
+      - 80:80/tcp
+      - 8080:8080/tcp
     volumes:
-     - ./back-office:/usr/share/nginx/html/conf
-
-  front-end:
-    image: marcel-front-end
-    ports:
-     - "80:80"
-    volumes:
-     - ./front-end:/usr/share/nginx/html/conf
-     - ./release:/usr/share/nginx/html/release
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+version: '3.0'

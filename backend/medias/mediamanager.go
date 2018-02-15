@@ -1,18 +1,17 @@
 package medias
 
 import (
-	"encoding/json"
 	"errors"
-	"github.com/mitchellh/mapstructure"
-	"io/ioutil"
 	"log"
 	"os"
-	"fmt"
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/plugins"
-	"github.com/Zenika/MARCEL/backend/containers"
+	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/Zenika/MARCEL/backend/clients"
+	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/containers"
+	"github.com/Zenika/MARCEL/backend/plugins"
 )
 
 type Manager struct {
@@ -21,18 +20,20 @@ type Manager struct {
 	configFullpath string
 	Config         *Configuration
 
-	pluginManager *plugins.Manager
+	pluginManager  *plugins.Manager
+	clientsService *clients.Service
 }
 
-func NewManager(pluginManager *plugins.Manager, configPath, configFilename string) *Manager {
+func NewManager(pluginManager *plugins.Manager, clientsService *clients.Service, configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
 	manager.configPath = configPath
 	manager.configFileName = configFilename
 
 	manager.pluginManager = pluginManager
+	manager.clientsService = clientsService
 
-	manager.configFullpath = fmt.Sprintf("%s%c%s", configPath, os.PathSeparator, configFilename)
+	manager.configFullpath = filepath.Join(configPath, configFilename)
 	manager.Config = NewConfiguration()
 
 	return manager
@@ -42,33 +43,28 @@ func NewManager(pluginManager *plugins.Manager, configPath, configFilename strin
 func (m *Manager) LoadFromDB() {
 	log.Printf("Start Loading Medias from DB.")
 
-	m.CreateSaveFileIfNotExist(m.configPath, m.configFileName)
+	commons.LoadFromDB(m)
 
-	//Medias configurations are loaded from a JSON file on the FS.
-	content, err := ioutil.ReadFile(m.configFullpath)
-	commons.Check(err)
-
-	var obj interface{}
-	json.Unmarshal([]byte(content), &obj)
-
-	if obj == nil {
-		obj = make(map[string]interface{})
-	}
-	err = mapstructure.Decode(obj.(map[string]interface{}), m.Config)
-	if err != nil {
-		panic(err)
+	for _, media := range m.Config.Medias {
+		if media.IsActive {
+			m.Activate(&media)
+		}
 	}
 
 	log.Print("Medias configurations is loaded...")
 }
 
-func (m *Manager) GetConfiguration() (*Configuration) {
+func (m *Manager) GetConfiguration() *Configuration {
 	log.Println("Getting global medias config")
 
 	return m.Config
 }
 
-func (m *Manager) GetAll() ([]Media) {
+func (m *Manager) GetConfig() interface{} {
+	return m.Config
+}
+
+func (m *Manager) GetAll() []Media {
 	log.Println("Getting all medias")
 
 	return m.Config.Medias
@@ -88,7 +84,7 @@ func (m *Manager) Get(idMedia int) (*Media, error) {
 }
 
 // CreateMedia Create a new Media, save it into memory and commit
-func (m *Manager) CreateEmpty() (*Media) {
+func (m *Manager) CreateEmpty() *Media {
 
 	log.Println("Creating media")
 
@@ -122,15 +118,8 @@ func (m *Manager) SaveIntoDB(media *Media) {
 
 // Commit SaveIntoDB all medias in DB.
 // Here DB is a JSON file
-func (m *Manager) Commit() {
-	content, _ := json.Marshal(m.Config)
-
-	err := ioutil.WriteFile(m.configFullpath, content, 0644)
-
-	if err != nil {
-		log.Println("Cannot save medias configuration:")
-		log.Panic(err)
-	}
+func (m *Manager) Commit() error {
+	return commons.Commit(m)
 }
 
 // CreateSaveFileIfNotExist check if the save file for medias exists and create it if not.
@@ -141,7 +130,7 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 		os.Mkdir(filePath, 0755)
 	}
 
-	var fullPath string = fmt.Sprintf("%s%c%s", filePath, os.PathSeparator, fileName)
+	var fullPath string = filepath.Join(filePath, fileName)
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 
 		f, err := os.Create(fullPath)
@@ -158,7 +147,6 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 
 func (m *Manager) Activate(media *Media) error {
 	errorMessages := ""
-	const sep = string(os.PathSeparator)
 
 	for _, mp := range media.Plugins {
 
@@ -180,7 +168,7 @@ func (m *Manager) Activate(media *Media) error {
 		}
 
 		if mp.BackEnd != nil {
-			retour, err := containers.InstallImage(mpPath + sep + "back" + sep + plugin.Backend.Dockerimage)
+			retour, err := containers.InstallImage(filepath.Join(mpPath, "back", plugin.Backend.Dockerimage))
 			if err != nil {
 				//Don't return an error now, we need to activate the other plugins
 				log.Println(err.Error())
@@ -249,8 +237,7 @@ func (m *Manager) Delete(media *Media) error {
 	m.Commit()
 
 	//remove plugins files
-	sep := string(os.PathSeparator)
-	err := os.RemoveAll("medias" + sep + strconv.Itoa(media.ID))
+	err := os.RemoveAll(filepath.Join("medias", strconv.Itoa(media.ID)))
 	if err != nil {
 		return err
 	}
@@ -299,9 +286,11 @@ func (m *Manager) GetNextID() int {
 }
 
 func (m *Manager) copyNewInstanceOfPlugin(media *Media, mp *MediaPlugin, path string) error {
-	sep := string(os.PathSeparator)
-
-	err := commons.CopyDir("plugins"+sep+mp.EltName, path)
+	//Copy onlyd frontend and backend dirs since there the only relevant files
+	err := commons.CopyDir(filepath.Join("plugins", mp.EltName, "frontend"), filepath.Join(path, "frontend"))
+	if _, err := os.Stat(filepath.Join("plugins", mp.EltName, "backend")); !os.IsNotExist(err) {
+		err = commons.CopyDir(filepath.Join("plugins", mp.EltName, "backend"), filepath.Join(path, "backend"))
+	}
 
 	if err != nil {
 		return err
@@ -311,6 +300,9 @@ func (m *Manager) copyNewInstanceOfPlugin(media *Media, mp *MediaPlugin, path st
 }
 
 func (m *Manager) GetPluginDirectory(media *Media, eltName string, instanceId string) string {
-	const sep = string(os.PathSeparator)
-	return "medias" + sep + strconv.Itoa(media.ID) + sep + eltName + sep + instanceId
+	return filepath.Join("medias", strconv.Itoa(media.ID), eltName, instanceId)
+}
+
+func (m *Manager) GetSaveFilePath() (string, string, string) {
+	return m.configFullpath, m.configPath, m.configFileName
 }

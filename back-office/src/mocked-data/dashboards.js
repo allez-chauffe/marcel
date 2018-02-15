@@ -7,7 +7,7 @@ export default {
     description: 'Some description',
     rows: 20,
     cols: 20,
-    ratio: 16 / 9,
+    screenRatio: 16 / 9,
     stylesvar: {
       'primary-color': '#FFF',
       'secondary-color': '#F00',
@@ -41,12 +41,12 @@ export default {
     description: `
         Some description dlkfsldk flsdflksjk fljsdklflksdjfl ksdjfl
         ksdjlkfsdlkfjklsdflsfsdf sdf sd f sdf sdf sdf sdfsdfdsf dsfdsf
-        sfsd f sdfsdfdsfds sdf kjsdkfljsd lkfjlksdj fksdjf lks djfl 
+        sfsd f sdfsdfdsfds sdf kjsdkfljsd lkfjlksdj fksdjf lks djfl
         ksdjlkfj io jioh oih oihoij ijioi upoupo
       `,
     rows: 20,
     cols: 20,
-    ratio: 16 / 9,
+    screenRatio: 16 / 9,
     stylesvar: {
       'primary-color': '#FFF',
       'secondary-color': '#F00',
@@ -92,7 +92,7 @@ export default {
     description: 'Some description',
     rows: 20,
     cols: 20,
-    ratio: 16 / 9,
+    screenRatio: 16 / 9,
     stylesvar: {
       'primary-color': '#FFF',
       'secondary-color': '#F00',
@@ -138,7 +138,7 @@ export default {
     description: 'Some description',
     rows: 20,
     cols: 20,
-    ratio: 16 / 9,
+    screenRatio: 16 / 9,
     stylesvar: {
       'primary-color': '#FFF',
       'secondary-color': '#F00',
@@ -184,7 +184,7 @@ export default {
     description: 'Some description',
     rows: 20,
     cols: 20,
-    ratio: 16 / 9,
+    screenRatio: 16 / 9,
     stylesvar: {
       'primary-color': '#FFF',
       'secondary-color': '#F00',

@@ -1,0 +1,22 @@
+.AppLayout {
+  height: 100%;
+}
+
+.AppLayout > main {
+  height: calc(100% - 64px);
+  width: 100%;
+}
+
+.AppLayout > header,
+.AppLayout > footer {
+  z-index: 100;
+}
+
+.AppLayout .AppBarNavigation {
+  margin-right: 10px;
+}
+
+.AppLayout .AppBarLink {
+  color: white;
+  margin: 0 8px; 
+}

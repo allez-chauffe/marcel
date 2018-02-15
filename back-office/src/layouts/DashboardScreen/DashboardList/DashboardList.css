@@ -1,9 +1,0 @@
-.DashboardList {
-  padding: 1em;
-  height: calc(100% - 2em);
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  flex-wrap: wrap;
-  overflow-y: auto;
-}

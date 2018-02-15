@@ -1,0 +1,23 @@
+.Media {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.Media .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.Media .actions {
+  display: flex;
+  flex-direction: row;
+}
+
+.Media .actions > * {
+  margin: 0.5em;
+}

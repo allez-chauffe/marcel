@@ -1,9 +1,11 @@
 //@flow
 import type { State } from '../store'
 
-export const tokenSelector = (state: State) => state.auth.token
+export const userSelector = (state: State) => state.auth.user
 
-export const isLoggedInSelector = (state: State) => !!state.auth.token
+export const isLoggedInSelector = (state: State) => !!state.auth.user
+
+export const isLoading = (state: State) => state.auth.isLoading
 
 export const loginSelector = (state: State) => state.auth.form.login
 

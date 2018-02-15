@@ -1,16 +1,17 @@
 package commons
 
 import (
-	"math/rand"
-	"strconv"
-	"time"
-	"net/http"
-	"log"
-	"reflect"
-	"strings"
-	"os"
+	"encoding/json"
 	"fmt"
 	"io"
+	"log"
+	"math/rand"
+	"net/http"
+	"os"
+	"reflect"
+	"strconv"
+	"strings"
+	"time"
 )
 
 func init() {
@@ -37,6 +38,15 @@ func randInt(min int, max int) int {
 }
 
 func IsInArray(val interface{}, array interface{}) (exists bool, index int) {
+	return FindIndexInArray(
+		func(curr interface{}) bool {
+			return reflect.DeepEqual(val, curr)
+		},
+		array,
+	)
+}
+
+func FindIndexInArray(predicate func(val interface{}) bool, array interface{}) (exists bool, index int) {
 	exists = false
 	index = -1
 
@@ -45,7 +55,7 @@ func IsInArray(val interface{}, array interface{}) (exists bool, index int) {
 		s := reflect.ValueOf(array)
 
 		for i := 0; i < s.Len(); i++ {
-			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
+			if predicate(s.Index(i).Interface()) {
 				index = i
 				exists = true
 				return
@@ -64,15 +74,15 @@ func FileBasename(s string) string {
 	return s
 }
 
-func FileOrFolderExists(path string) (bool, error) {
+func FileOrFolderExists(path string) bool {
 	_, err := os.Stat(path)
 	if err == nil {
-		return true, nil
+		return true
 	}
 	if os.IsNotExist(err) {
-		return false, nil
+		return false
 	}
-	return true, err
+	return true
 }
 
 // Thx to https://www.socketloop.com/tutorials/golang-copy-directory-including-sub-directories-files
@@ -145,7 +155,14 @@ func CopyDir(source string, dest string) (err error) {
 
 func WriteResponse(w http.ResponseWriter, statusCode int, message string) {
 	w.WriteHeader(statusCode)
-	w.Write([]byte(" "+ message))
+	w.Write([]byte(" " + message))
+}
+
+func WriteJsonResponse(w http.ResponseWriter, body interface{}) {
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(body); err != nil {
+		log.Printf("Error while send JSON data (%s)", err.Error())
+	}
 }
 
 func Check(e error) {

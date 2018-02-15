@@ -1,20 +1,21 @@
 package plugins
 
 import (
-	"net/http"
+	"archive/zip"
 	"encoding/json"
+	"errors"
+	"io"
+	"log"
+	"net/http"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
+
+	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
+
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/mux"
-	"io"
-	"os"
-	"log"
-	"path"
-	"errors"
-	"strings"
-	"archive/zip"
-	"path/filepath"
-	"io/ioutil"
-	"github.com/mitchellh/mapstructure"
 )
 
 const PLUGINS_CONFIG_PATH string = "data"
@@ -34,7 +35,7 @@ func NewService() *Service {
 	return p
 }
 
-func (s *Service) GetManager() (*Manager) {
+func (s *Service) GetManager() *Manager {
 	return s.Manager
 }
 
@@ -47,15 +48,12 @@ func (s *Service) GetManager() (*Manager) {
 //
 //     Schemes: http, https
 func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
-
-	c := s.Manager.GetConfiguration()
-	b, err := json.Marshal(c)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, "Impossible to get configuration of the plugins")
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	commons.WriteResponse(w, http.StatusOK, (string)(b))
+	commons.WriteJsonResponse(w, s.Manager.GetConfiguration())
 }
 
 // swagger:route GET /plugins GetAllHandler
@@ -67,15 +65,12 @@ func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-
-	media := m.Manager.GetAll()
-	b, err := json.Marshal(media)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, "Impossible to get all plugins")
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	commons.WriteResponse(w, http.StatusOK, (string)(b))
+	commons.WriteJsonResponse(w, m.Manager.GetAll())
 }
 
 // swagger:route GET /plugins/{idMedia} GetHandler
@@ -88,6 +83,11 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idPlugin
 func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil) {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]
 
@@ -97,16 +97,15 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b, err := json.Marshal(*plugin)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
-		return
-	}
-
-	commons.WriteResponse(w, http.StatusOK, (string)(b))
+	commons.WriteJsonResponse(w, plugin)
 }
 
 func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
+	if !middleware.CheckPermissions(r, nil, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
 	// 0 : Get files content and copy it into a temporary folder
 	foldername, filename, err := UploadFile(r)
 	if err != nil {
@@ -117,43 +116,40 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// 1 : Check extension
 	_, err = CheckExtension(filename)
 	if err != nil {
-		os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + foldername)
+		os.Remove(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername))
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
 	}
 
 	// 2 : unzip into /plugins folder
-	var pluginFolder string = PLUGINS_FOLDER + string(os.PathSeparator) + commons.FileBasename(foldername) + string(os.PathSeparator)
+	pluginFolder := filepath.Join(PLUGINS_FOLDER, commons.FileBasename(foldername))
 
-	err = UncompressFile(PLUGINS_TEMPORARY_FOLDER+string(os.PathSeparator)+foldername, pluginFolder)
+	err = UncompressFile(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername), pluginFolder)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
 	}
 
 	// 3 : check structure of the plugin
-	if exists, _ := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "description.json"); exists == false {
+	if exists := commons.FileOrFolderExists(filepath.Join(pluginFolder, "description.json")); exists == false {
 		commons.WriteResponse(w, http.StatusNotAcceptable, "'description.json' file not found at the root of the plugin folder")
 		return
 	}
 
-	if exists, _ := commons.FileOrFolderExists(pluginFolder + string(os.PathSeparator) + "front"); exists == false {
+	if exists := commons.FileOrFolderExists(filepath.Join(pluginFolder, "front")); exists == false {
 		commons.WriteResponse(w, http.StatusNotAcceptable, "'front' folder not found at the root of the plugin folder")
 		return
 	}
 
-	// 4 : Parse description file and add
-	content, err := ioutil.ReadFile(pluginFolder + string(os.PathSeparator) + "description.json")
+	f, err := os.Open(filepath.Join(pluginFolder, "description.json"))
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotAcceptable, "Impossible to read 'description.json' file")
 		return
 	}
 
-	var plugin *Plugin = NewPlugin()
-	var obj interface{}
-	json.Unmarshal([]byte(content), &obj)
-	err = mapstructure.Decode(obj.(map[string]interface{}), plugin)
-	if err != nil {
+	// 4 : Parse description file and add
+	plugin := NewPlugin()
+	if err = json.NewDecoder(f).Decode(plugin); err != nil {
 		commons.WriteResponse(w, http.StatusNotAcceptable, "Impossible to parse 'description.json' file : "+err.Error())
 		return
 	}
@@ -161,13 +157,13 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// todo : if plugin already exists and at least 1 instance of the backend is running, so stop them before replacing the files and relaunch them again after
 
 	// 5 : rename plugin folder with it's EltName (should be unique)
-	os.Rename(pluginFolder,  PLUGINS_FOLDER + string(os.PathSeparator) + plugin.EltName + string(os.PathSeparator))
+	os.Rename(pluginFolder, filepath.Join(PLUGINS_FOLDER, plugin.EltName))
 
 	// 6 : check there's no plugin already installed with same name or remove&replace
 	s.Manager.Add(plugin)
 
 	// 7 : delete temporary file
-	os.Remove(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + foldername)
+	os.Remove(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername))
 
 	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added to the catalog")
 }
@@ -183,7 +179,7 @@ func UploadFile(r *http.Request) (string, string, error) {
 	defer file.Close()
 
 	foldername := commons.GetUID()
-	out, err := os.Create(PLUGINS_TEMPORARY_FOLDER + string(os.PathSeparator) + foldername)
+	out, err := os.Create(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername))
 	if err != nil {
 		log.Println("Unable to create the file for writing. Check your write access privilege")
 		return "", "", err
