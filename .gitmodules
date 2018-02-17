@@ -103,3 +103,6 @@
 [submodule "plugins/marcel-plugin-iframe"]
 	path = plugins/marcel-plugin-iframe
 	url = https://github.com/Zenika/marcel-plugin-iframe.git
+[submodule "plugins/marcel-plugin-zenika-formations"]
+	path = plugins/marcel-plugin-zenika-formations
+	url = https://github.com/Zenika/marcel-plugin-zenika-formations.git
