@@ -234,17 +234,3 @@ func (s *Service) SendByID(clientID string, msg string) {
 	default:
 	}
 }
-
-func (s *Service) WaitForClose(clientID string) <-chan bool {
-	ws, connected := s.wsclients[clientID]
-
-	if !connected {
-		wait := make(chan bool, 1)
-		wait <- true
-		return wait
-	}
-
-	wait := make(chan bool)
-	ws.waitClose <- wait
-	return wait
-}

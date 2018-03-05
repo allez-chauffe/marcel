@@ -10,17 +10,18 @@ import (
 
 //WSClient represent a websocket connection to a client.
 type WSClient struct {
-	service   *Service
-	client    *Client
-	conn      *websocket.Conn
-	send      chan string
-	waitClose chan chan bool
-	receive   chan string
-	close     chan error
+	service    *Service
+	client     *Client
+	conn       *websocket.Conn
+	pingTicker *time.Ticker
+	send       chan string
+	receive    chan string
+	close      chan chan struct{}
+	closeNotif chan struct{}
 }
 
 func (ws *WSClient) run() {
-	pingTicker := time.NewTicker(pingPeriod)
+	ws.pingTicker = time.NewTicker(pingPeriod)
 	var closeNotif chan bool
 
 	for {
@@ -33,9 +34,7 @@ func (ws *WSClient) run() {
 				fmt.Sprintf("Write failed %s : ", ws),
 			)
 
-		case closeNotif = <-ws.waitClose:
-
-		case <-pingTicker.C:
+		case <-ws.pingTicker.C:
 			ws.writeEmptyMessage(
 				websocket.PingMessage,
 				"", fmt.Sprintf("Ping failed %s : ", ws),
@@ -44,17 +43,10 @@ func (ws *WSClient) run() {
 		case msg := <-ws.receive:
 			log.Printf("Message received from %s : %s", ws, msg)
 
-		case <-ws.close:
-			close(ws.send)
-			close(ws.close)
-			pingTicker.Stop()
-			ws.writeEmptyMessage(
-				websocket.CloseMessage,
-				fmt.Sprintf("Closing client %s", ws), "",
-			)
-			select {
-			case closeNotif <- true:
-			default:
+		case closeNoif := <-ws.close:
+			ws.cleanUp()
+			if closeNotif != nil {
+				closeNoif <- struct{}{}
 			}
 			return
 		}
@@ -73,28 +65,24 @@ func (ws *WSClient) listen() {
 	for {
 		msgType, message, err := ws.conn.ReadMessage()
 		if err != nil {
-			ws.Unregister()
+			ws.Close()
 			return
 		}
+
 		if msgType == websocket.TextMessage {
-			msg := string(message)
-			switch msg {
-			default:
-				ws.receive <- string(msg)
-			}
+			ws.receive <- string(message)
 		}
 	}
 }
 
 func newWSClient(service *Service, client *Client, conn *websocket.Conn) *WSClient {
 	ws := &WSClient{
-		service,
-		client,
-		conn,
-		make(chan string),
-		make(chan chan bool),
-		make(chan string),
-		make(chan error, 1),
+		service: service,
+		client:  client,
+		conn:    conn,
+		send:    make(chan string),
+		receive: make(chan string),
+		close:   make(chan chan struct{}, 1),
 	}
 
 	go ws.run()
@@ -105,17 +93,24 @@ func newWSClient(service *Service, client *Client, conn *websocket.Conn) *WSClie
 	return ws
 }
 
-//Unregister wsclient from its service (the call the Close will be made by the service)
-func (ws *WSClient) Unregister() {
+func (ws *WSClient) cleanUp() {
+	ws.conn.Close()
+	close(ws.send)
+	close(ws.close)
 	ws.service.unregister <- ws
 }
 
 //Close gracefully close and cleanup the client
 func (ws *WSClient) Close() {
-	select {
-	case ws.close <- nil:
-	default:
-	}
+	ws.close <- nil
+}
+
+//CloseAndWait close and cleanup the client.
+//An empty struct will be sent throught the returned chan after clean up.
+func (ws *WSClient) CloseAndWait() <-chan struct{} {
+	closeNotif := make(chan struct{})
+	ws.close <- closeNotif
+	return closeNotif
 }
 
 func (ws *WSClient) String() string {

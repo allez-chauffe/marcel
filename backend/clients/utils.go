@@ -63,7 +63,7 @@ func (ws *WSClient) writeMessageWithType(msgType int, msg []byte, logMsg string,
 		if errorMsg != "" {
 			log.Println(errorMsg, err)
 		}
-		ws.Unregister()
+		ws.Close()
 	}
 
 	return err == nil
