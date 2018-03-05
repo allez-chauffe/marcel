@@ -5,6 +5,7 @@ import { mapPluginsToDashboard } from '../../common/utils'
 import { config, backend, userBackend } from '../../api'
 import type { LoadingThunkAction } from './type'
 import { pluginsSelector } from '../../plugins'
+import { userSelector } from '../../auth'
 
 export const actions = {
   LOAD_INITIAL_STARTED: 'LOADERS/LOAD_INITIAL_STARTED',
@@ -26,14 +27,14 @@ export const actions = {
   LOAD_USERS_FAILED: 'LOADERS/LOAD_USERS_FAILED',
 }
 
-const loadDispatcher = dispatch => (ressource, loadPromise) => {
+const loadDispatcher = (dispatch, getState) => (ressource, loadPromise) => {
   const RESSOURCE = ressource.toUpperCase()
   dispatch({ type: actions[`LOAD_${RESSOURCE}_STARTED`] })
 
   const onSuccess = result =>
     dispatch({
       type: actions[`LOAD_${RESSOURCE}_SUCCESSED`],
-      payload: { [ressource]: result },
+      payload: { [ressource]: result, user: userSelector(getState()) },
     })
 
   const onFail = error => {
@@ -54,7 +55,7 @@ const getDashboards = availablePlugins =>
 export const loadInitData = (): LoadingThunkAction => (dispatch, getState) => {
   dispatch({ type: actions.LOAD_INITIAL_STARTED })
 
-  const load = loadDispatcher(dispatch)
+  const load = loadDispatcher(dispatch, getState)
   load('plugins', backend.getAvailablePlugins())
     .then(() => load('dashboards', getDashboards(pluginsSelector(getState()))))
     .then(() => load('clients', backend.getClients()))
@@ -63,26 +64,26 @@ export const loadInitData = (): LoadingThunkAction => (dispatch, getState) => {
 }
 
 export const loadDashboards = (): LoadingThunkAction => (dispatch, getState) => {
-  const load = loadDispatcher(dispatch)
+  const load = loadDispatcher(dispatch, getState)
   load('dashboards', getDashboards(pluginsSelector(getState())))
 }
 
 export const loadPlugins = (): LoadingThunkAction => (dispatch, getState) => {
-  const load = loadDispatcher(dispatch)
+  const load = loadDispatcher(dispatch, getState)
   load('plugins', backend.getAvailablePlugins())
 }
 
 export const loadConfig = (): LoadingThunkAction => (dispatch, getState) => {
-  const load = loadDispatcher(dispatch)
+  const load = loadDispatcher(dispatch, getState)
   load('config', config.loadConfig())
 }
 
 export const loadClients = (): LoadingThunkAction => (dispatch, getState) => {
-  const load = loadDispatcher(dispatch)
+  const load = loadDispatcher(dispatch, getState)
   load('clients', backend.getClients())
 }
 
 export const loadUsers = (): LoadingThunkAction => (dispatch, getState) => {
-  const load = loadDispatcher(dispatch)
+  const load = loadDispatcher(dispatch, getState)
   load('users', userBackend.getAllUsers())
 }

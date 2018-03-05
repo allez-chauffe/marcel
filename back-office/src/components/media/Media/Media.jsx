@@ -16,7 +16,7 @@ export type PropsType = {
 
 const Media = (props: PropsType) => {
   const { dashboard, uploadLayout } = props
-  const { name, rows, cols, screenRatio, plugins, displayGrid } = dashboard
+  const { name, rows, cols, screenRatio, plugins, displayGrid, isWritable } = dashboard
   return (
     <div className="Media">
       <div className="head">
@@ -24,7 +24,7 @@ const Media = (props: PropsType) => {
           {name} <br />
         </h2>
         <div className="actions">
-          <Button label="Sauvegarder" icon="save" primary onClick={uploadLayout} />
+          {isWritable && <Button label="Sauvegarder" icon="save" primary onClick={uploadLayout} />}
           <OpenButton dashboard={dashboard} />
           <DeleteDashboardButton dashboard={dashboard} />
           <ActivationButton dashboard={dashboard} />

@@ -18,6 +18,8 @@ class ActivationButton extends React.Component {
   }
 
   render() {
+    if (!this.props.isWritable) return null
+
     const className = `ActivationButton ${this.props.isActive ? 'active' : 'not-active'}`
 
     return (

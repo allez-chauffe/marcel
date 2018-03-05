@@ -6,6 +6,7 @@ import type { DashboardAction } from '../../dashboard/type'
 
 const mapStateToProps = (state: State, ownProps) => ({
   isActive: ownProps.dashboard.isactive,
+  isWritable: ownProps.dashboard.isWritable,
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<DashboardAction>, ownProps) => ({

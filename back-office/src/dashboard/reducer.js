@@ -162,7 +162,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
         : state
     }
     case loadActions.LOAD_DASHBOARDS_SUCCESSED: {
-      const { dashboards } = action.payload
+      const { dashboards, user } = action.payload
       const plugins = _chain(dashboards)
         .map('plugins')
         .map(values)
@@ -171,6 +171,7 @@ const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState
       const pluginInstances = getPluginInstances(plugins)
       const normalizedDashboards = dashboards.map(dashboard => ({
         ...dashboard,
+        isWritable: user.role === "admin" || user.id === dashboard.owner,
         plugins: keys(dashboard.plugins),
       }))
 
