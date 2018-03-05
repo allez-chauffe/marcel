@@ -32,7 +32,7 @@ func init() {
 	base := r.PathPrefix("").Subrouter()
 
 	base.HandleFunc("/login", loginHandler).Methods("POST")
-	base.HandleFunc("/logout", logoutHandler).Methods("GET")
+	base.HandleFunc("/logout", logoutHandler).Methods("PUT")
 	base.HandleFunc("/validate", validateHandler).Methods("GET")
 	base.HandleFunc("/validate/admin", validateAdminHandler).Methods("GET")
 
