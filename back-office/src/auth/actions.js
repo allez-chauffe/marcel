@@ -15,6 +15,7 @@ import { loginSelector, passwordSelector } from './selectors'
 import type { User } from './type'
 
 import { userBackend } from '../api'
+import { replace } from 'redux-little-router'
 
 export const actions = {
   LOGIN_REQUEST: 'AUTH/LOGIN_REQUEST',
@@ -64,6 +65,7 @@ export const disconnected = () => ({
 export const logout: LogoutAction = () => dispatch => {
   authBackend.logout().then(() => {
     dispatch(disconnected())
+    dispatch(replace('/medias'))
   })
 }
 
