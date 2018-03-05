@@ -84,13 +84,14 @@ func (m *Manager) Get(idMedia int) (*Media, error) {
 }
 
 // CreateMedia Create a new Media, save it into memory and commit
-func (m *Manager) CreateEmpty() *Media {
+func (m *Manager) CreateEmpty(owner string) *Media {
 
 	log.Println("Creating media")
 
 	newMedia := NewMedia()
 	newMedia.ID = m.GetNextID()
 	newMedia.Name = "Media " + strconv.Itoa(newMedia.ID)
+	newMedia.Owner = owner
 
 	//save it into the MediasConfiguration
 	m.SaveIntoDB(newMedia)
