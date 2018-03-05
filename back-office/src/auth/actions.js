@@ -7,7 +7,7 @@ import type {
   ChangePasswordAction,
   ResetFormAction,
   RefreshLoginAction,
-  UpdateConnectedUserPropertyAction, 
+  UpdateConnectedUserPropertyAction,
   UpdateConnectedUserAction,
 } from './type'
 import { authBackend } from '../api'
@@ -57,15 +57,15 @@ export const refreshLogin: RefreshLoginAction = () => (dispatch, getState) => {
   handleLogin(dispatch, authBackend.login())
 }
 
-export const logout: LogoutAction = () => dispatch => {
-  authBackend.logout().then(() => {
-    dispatch({ type: actions.LOGOUT_SUCCESS })
-  })
-}
-
 export const disconnected = () => ({
   type: actions.DISCONNECTED,
 })
+
+export const logout: LogoutAction = () => dispatch => {
+  authBackend.logout().then(() => {
+    dispatch(disconnected())
+  })
+}
 
 export const changeLogin = (login: string): ChangeLoginAction => ({
   type: actions.CHANGE_LOGIN,
@@ -81,7 +81,10 @@ export const resetForm = (): ResetFormAction => ({
   type: actions.RESET_FORM,
 })
 
-export const updateConnectedUserProperty = (property: string, value: string): UpdateConnectedUserPropertyAction => ({
+export const updateConnectedUserProperty = (
+  property: string,
+  value: string,
+): UpdateConnectedUserPropertyAction => ({
   type: actions.UPDATE_CONNECTED_USER_PROPERTY,
   payload: { property, value },
 })
@@ -89,12 +92,13 @@ export const updateConnectedUserProperty = (property: string, value: string): Up
 export const updateConnectedUserSuccess = (user: User): UpdateConnectedUserAction => ({
   type: actions.UPDATE_CONNECTED_USER_SUCCESS,
   payload: {
-    user: user
-  }
+    user: user,
+  },
 })
 
-export const updateConnectedUser = (user: User) => (dispatch) => {
-  userBackend.updateUser(user)
+export const updateConnectedUser = (user: User) => dispatch => {
+  userBackend
+    .updateUser(user)
     .then(() => dispatch(updateConnectedUserSuccess(user)))
     .catch(error => {
       console.error(error)

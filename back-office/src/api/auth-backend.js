@@ -3,13 +3,13 @@ import store from '../store'
 
 const baseUrl = () => store.getState().config.authURI
 
-const request = (url, options) =>
+const request = (url, options, isJson = true) =>
   fetch(baseUrl() + url, { ...options, credentials: 'include' })
     .then(response => {
       if (~~(response.status / 100) !== 2) throw response
       return response
     })
-    .then(response => response.json())
+    .then(response => (isJson ? response.json() : response))
 
 const post = (url, body) =>
   request(url, {
@@ -18,12 +18,12 @@ const post = (url, body) =>
     body: body ? JSON.stringify(body) : null,
   })
 
-const put = url => request(url, { method: 'PUT' })
+const put = (url, isJson = true) => request(url, { method: 'PUT' }, isJson)
 
 const authBackend = {
   login: (login: ?string, password: ?string) =>
     post('login', login && password ? { login, password } : null),
-  logout: () => put('logout')
+  logout: () => put('logout', false),
 }
 
 export default authBackend
