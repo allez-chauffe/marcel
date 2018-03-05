@@ -143,8 +143,7 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//get a new media
-	newMedia := m.manager.CreateEmpty()
-	newMedia.Owner = middleware.GetAuth(r).Subject
+	newMedia := m.manager.CreateEmpty(middleware.GetAuth(r).Subject)
 
 	commons.WriteJsonResponse(w, newMedia)
 }
