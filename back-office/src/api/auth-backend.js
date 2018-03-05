@@ -18,7 +18,7 @@ const post = (url, body) =>
     body: body ? JSON.stringify(body) : null,
   })
 
-const put = (url, isJson = true) => request(url, { method: 'PUT' }, isJson)
+const put = (url, isJson) => request(url, { method: 'PUT' }, isJson)
 
 const authBackend = {
   login: (login: ?string, password: ?string) =>
