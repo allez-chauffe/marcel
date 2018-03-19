@@ -1,0 +1,13 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": ["chrome >= 55", "ie >= 11"]
+        }
+      }
+    ]
+  ],
+  "plugins": ["transform-object-rest-spread"]
+}
