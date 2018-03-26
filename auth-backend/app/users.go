@@ -43,7 +43,7 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	hash, salt := generateHash(body.Password)
 
-	user := users.New(body.DisplayName, body.Login, hash, salt)
+	user := users.New(body.DisplayName, body.Login, body.Role, hash, salt)
 	users.SaveUsersData()
 
 	commons.WriteJsonResponse(w, user)
