@@ -12,7 +12,8 @@ type Config struct {
 	AuthExpiration    int64  `json:"authExpiration"`
 	RefreshExpiration int64  `json:"refreshExpiration"`
 	Domain            string `json:"domain"`
-	BaseURL           string `json:"baseURL`
+	BaseURL           string `json:"baseURL"`
+	CookiesNamePrefix string `json:"cookiesNamePrefix"`
 }
 
 const configPath = "config/config.json"
