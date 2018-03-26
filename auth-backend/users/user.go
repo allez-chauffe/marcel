@@ -28,14 +28,18 @@ const userFilePath = "data/users.json"
 
 var usersData = &UsersData{[]*User{}}
 
-func New(displayName, login, hash, salt string) *User {
+func New(displayName, login, pRole, hash, salt string) *User {
+	role := "user"
+	if pRole != "" {
+		role = pRole
+	}
 	user := &User{
 		ID:           uuid.NewV4().String(),
 		DisplayName:  displayName,
 		Login:        login,
 		PasswordHash: hash,
 		PasswordSalt: salt,
-		Role:         "user",
+		Role:         role,
 		CreatedAt:    time.Now().Unix(),
 	}
 
