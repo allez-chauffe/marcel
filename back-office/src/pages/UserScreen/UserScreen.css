@@ -1,6 +1,8 @@
 .UserScreen {
-  width: 80%;  
   height: 100%;
+  overflow-y: auto;
+  padding: 0 10%;
+  width: 100%;
 }
 
 .UserScreen table {
@@ -13,7 +15,7 @@
   margin-top: 20px;
 }
 
-.UserScreen table, td, th {    
+.UserScreen table, td, th {
   border: 1px solid #ddd;
   text-align: center;
 }
