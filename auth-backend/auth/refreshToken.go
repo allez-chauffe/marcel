@@ -10,8 +10,6 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-const RefreshCookieName = "RefreshAuthentication"
-
 type RefreshClaims struct {
 	jwt.StandardClaims
 }
@@ -24,7 +22,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 				IssuedAt: time.Now().Unix(),
 			},
 		},
-		RefreshCookieName, config.BaseURL+"/login",
+		refreshCookieName(), config.BaseURL+"/login",
 		time.Now().Add(time.Duration(config.RefreshExpiration)*time.Second),
 	)
 
@@ -37,7 +35,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 }
 
 func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
-	cookie, err := r.Cookie(RefreshCookieName)
+	cookie, err := r.Cookie(refreshCookieName())
 	if err != nil {
 		return nil, errors.New("No Refresh Token")
 	}
@@ -56,6 +54,11 @@ func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
 }
 
 func DeleteRefreshToken(w http.ResponseWriter) {
-	cookie := deleteCookie(RefreshCookieName, "/auth/login")
+	cookie := deleteCookie(refreshCookieName(), "/auth/login")
 	http.SetCookie(w, cookie)
+}
+
+func refreshCookieName() string {
+	const refreshCookieName = "RefreshAuthentication"
+	return config.CookiesNamePrefix + refreshCookieName
 }
