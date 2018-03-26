@@ -7,7 +7,7 @@ import { updateConnectedUser, updateConnectedUserProperty } from '../../auth'
 
 
 const mapStateToProps = state => ({
-  user: state.auth.user
+  user: state.auth.form
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -17,6 +17,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 
 export default compose(
-  router('PROFIL', { absolute: true }),  
+  router('PROFIL', { absolute: true }),
   connect(mapStateToProps, mapDispatchToProps),
 )(ProfilScreen)
