@@ -26,7 +26,6 @@ jobs:
       - restore_cache:
           keys:
           - backoffice-dependencies-{{ checksum "back-office/package.json" }}
-          - backoffice-dependencies-
       - run:
           command: yarn
           working_directory: back-office
@@ -50,7 +49,6 @@ jobs:
       - restore_cache:
           keys:
           - frontend-dependencies-{{ checksum "frontend/package.json" }}
-          - frontend-dependencies-
       - run:
           command: yarn
           working_directory: frontend
@@ -108,14 +106,14 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:stable-curl
     steps:
+      - checkout
       - setup_remote_docker
       - attach_workspace:
           at: /tmp/app
-      - run: docker build -t zenika/marcel:dev .
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push zenika/marcel:dev
+      - run: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel
 
   docker_build_backoffice:
+    working_directory: back-office
     docker:
       - image: circleci/buildpack-deps:stable-curl
     steps:
@@ -124,13 +122,10 @@ jobs:
       - restore_cache:
           keys:
             - backoffice-build-{{ .Revision }}
-      - run:
-          command: docker build -t zenika/marcel-backoffice:dev .
-          working_directory: back-office
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push zenika/marcel-backoffice:dev
+      - run: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel-backoffice
 
   docker_build_frontend:
+    working_directory: frontend
     docker:
       - image: circleci/buildpack-deps:stable-curl
     steps:
@@ -140,10 +135,7 @@ jobs:
           keys:
             - frontend-build-{{ .Revision }}
       - run:
-          command: docker build -t zenika/marcel-frontend:dev .
-          working_directory: frontend
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push zenika/marcel-frontend:dev
+          command: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel-frontend
 
   deploy_integration:
     docker:
