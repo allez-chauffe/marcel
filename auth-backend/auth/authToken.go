@@ -11,6 +11,8 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+const AuthCookieName = "Authentication"
+
 type Claims struct {
 	DisplayName string `json:"display"`
 	Role        string `json:"role"`
@@ -18,7 +20,7 @@ type Claims struct {
 }
 
 func GetAuthToken(r *http.Request) (*Claims, error) {
-	cookie, err := r.Cookie(authCookieName())
+	cookie, err := r.Cookie(AuthCookieName)
 
 	if err != nil {
 		return nil, err
@@ -47,7 +49,7 @@ func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
 				IssuedAt:  time.Now().Unix(),
 			},
 		},
-		authCookieName(), "/",
+		AuthCookieName, "/",
 		expiration,
 	)
 
@@ -60,11 +62,6 @@ func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
 }
 
 func DeleteAuthToken(w http.ResponseWriter) {
-	cookie := deleteCookie(authCookieName(), "/")
+	cookie := deleteCookie(AuthCookieName, "/")
 	http.SetCookie(w, cookie)
-}
-
-func authCookieName() string {
-	const authCookieName = "Authentication"
-	return config.CookiesNamePrefix + authCookieName
 }
