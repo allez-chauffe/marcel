@@ -3,10 +3,12 @@ module github.com/Zenika/MARCEL/auth-backend
 go 1.12
 
 require (
+	github.com/Zenika/MARCEL/backend v0.0.0-20190411135233-3fe739cde0fc
 	github.com/dgrijalva/jwt-go v3.1.0+incompatible
-	github.com/gorilla/context v0.0.0-20160226214623-1ea25387ff6f
 	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/rs/cors v0.0.0-20170727213201-7af7a1e09ba3
 	github.com/satori/go.uuid v1.2.0
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )
