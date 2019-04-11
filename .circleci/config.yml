@@ -56,9 +56,6 @@ jobs:
       - restore_cache:
           key: auth-backend-deps-{{ checksum "auth-backend/go.mod" }}
       - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
-          working_directory: auth-backend
-      - run:
           command: go mod download
           working_directory: auth-backend
       - save_cache:
