@@ -14,31 +14,26 @@ jobs:
 
   debug_go:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.12
     steps:
       - run: go version
 
   build_backend:
     <<: *defaults
-    working_directory: /go/src/github.com/Zenika/MARCEL
+    working_directory: /go/app
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.12
     steps:
       - checkout
-      - run: go get -u github.com/golang/dep/cmd/dep
       - restore_cache:
-          key: backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
+          key: backend-deps-{{ checksum "backend/go.mod" }}
       - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
-          working_directory: auth-backend
-      - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
+          command: go mod download
           working_directory: backend
       - save_cache:
-          key: backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
+          key: backend-deps-{{ checksum "backend/go.mod" }}
           paths:
-            - backend/vendor
-            - auth-backend/vendor
+            - /go/pkg/mod
       - run:
           command: go test .
           working_directory: backend
@@ -53,25 +48,20 @@ jobs:
 
   build_auth_backend:
     <<: *defaults
-    working_directory: /go/src/github.com/Zenika/MARCEL
+    working_directory: /go/app
     docker:
-      - image: circleci/golang:1.8
+      - image: circleci/golang:1.12
     steps:
       - checkout
-      - run: go get -u github.com/golang/dep/cmd/dep
       - restore_cache:
-          key: auth-backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
+          key: auth-backend-deps-{{ checksum "auth-backend/go.mod" }}
       - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
+          command: go mod download
           working_directory: auth-backend
-      - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
-          working_directory: backend
       - save_cache:
-          key: auth-backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
+          key: auth-backend-deps-{{ checksum "auth-backend/go.mod" }}
           paths:
-            - backend/vendor
-            - auth-backend/vendor
+            - /go/pkg/mod
       - run:
           command: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
           working_directory: auth-backend
