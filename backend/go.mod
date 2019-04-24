@@ -4,7 +4,6 @@ go 1.12
 
 require (
 	github.com/Pallinder/go-randomdata v0.0.0-20171227164748-442d37d9dbc7
-	github.com/Zenika/MARCEL/auth-backend v0.0.0-20190411135233-3fe739cde0fc
 	github.com/gorilla/mux v1.6.1
 	github.com/gorilla/websocket v1.2.0
 	github.com/kr/pretty v0.1.0 // indirect
