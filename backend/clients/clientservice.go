@@ -5,14 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Zenika/MARCEL/backend/config"
-
 	"github.com/Pallinder/go-randomdata"
+	"github.com/gorilla/websocket"
 
 	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
-
 	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/gorilla/websocket"
+	"github.com/Zenika/MARCEL/backend/config"
 )
 
 //Service is the websocket connection handler
