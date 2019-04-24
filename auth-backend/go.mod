@@ -3,7 +3,6 @@ module github.com/Zenika/MARCEL/auth-backend
 go 1.12
 
 require (
-	github.com/Zenika/MARCEL/backend v0.0.0-20190411135233-3fe739cde0fc
 	github.com/dgrijalva/jwt-go v3.1.0+incompatible
 	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
