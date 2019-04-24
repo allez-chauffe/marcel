@@ -1,10 +1,20 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 
 	"github.com/Zenika/MARCEL/backend/app"
 )
+
+var (
+	port uint
+)
+
+func init() {
+	Cmd.Flags().UintVarP(&port, "port", "p", 8090, "Listening port")
+}
 
 // Cmd is the root command of Marcel
 var Cmd = &cobra.Command{
@@ -15,6 +25,6 @@ var Cmd = &cobra.Command{
 		a := new(app.App)
 		a.Initialize()
 
-		a.Run(":8090")
+		a.Run(fmt.Sprintf(":%d", port))
 	},
 }
