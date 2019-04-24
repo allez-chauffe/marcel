@@ -28,6 +28,7 @@ func init() {
 var Cmd = &cobra.Command{
 	Use:   "marcel",
 	Short: "Marcel is a configurable plugin based dashboard system",
+	Args:  cobra.NoArgs,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		a := new(app.App)
