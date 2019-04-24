@@ -15,9 +15,7 @@ type Config struct {
 	BaseURL           string `json:"baseURL`
 }
 
-const configPath = "config/config.json"
-
-func LoadConfig() *Config {
+func LoadConfig(configPath string) *Config {
 
 	f, err := os.Open(configPath)
 

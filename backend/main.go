@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	if err := cmd.Cmd.Execute(); err != nil {
+	if err := cmd.MarcelCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
 }

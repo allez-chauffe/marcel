@@ -14,18 +14,18 @@ var (
 )
 
 func init() {
-	Cmd.Flags().UintVarP(&port, "port", "p", 8090, "Listening port")
+	MarcelCmd.Flags().UintVarP(&port, "port", "p", 8090, "Listening port")
 
-	Cmd.Flags().StringVar(&config.Global.ConfigPath, "config-path", "data", "Directory containing config files")
-	Cmd.Flags().StringVar(&config.Global.ClientsConfigFile, "clients-config-file", "clients.json", "Clients config file name")
-	Cmd.Flags().StringVar(&config.Global.MediasConfigFile, "medias-config-file", "medias.json", "Medias config file name")
-	Cmd.Flags().StringVar(&config.Global.PluginsConfigFile, "plugins-config-file", "plugins.json", "Plugins config file name")
+	MarcelCmd.Flags().StringVar(&config.Global.ConfigPath, "config-path", "data", "Directory containing config files")
+	MarcelCmd.Flags().StringVar(&config.Global.ClientsConfigFile, "clients-config-file", "clients.json", "Clients config file name")
+	MarcelCmd.Flags().StringVar(&config.Global.MediasConfigFile, "medias-config-file", "medias.json", "Medias config file name")
+	MarcelCmd.Flags().StringVar(&config.Global.PluginsConfigFile, "plugins-config-file", "plugins.json", "Plugins config file name")
 
-	Cmd.Flags().StringVar(&config.Plugins.Path, "plugins-path", "plugins", "Plugins directory")
+	MarcelCmd.Flags().StringVar(&config.Plugins.Path, "plugins-path", "plugins", "Plugins directory")
 }
 
-// Cmd is the root command of Marcel
-var Cmd = &cobra.Command{
+// MarcelCmd is the root command of Marcel
+var MarcelCmd = &cobra.Command{
 	Use:   "marcel",
 	Short: "Marcel is a configurable plugin based dashboard system",
 	Args:  cobra.NoArgs,

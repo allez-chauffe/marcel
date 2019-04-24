@@ -24,9 +24,10 @@ type UsersData struct {
 	Users []*User `json:"users"`
 }
 
-const userFilePath = "data/users.json"
-
-var usersData = &UsersData{[]*User{}}
+var (
+	UsersFilePath string
+	usersData     = &UsersData{[]*User{}}
+)
 
 func New(displayName, login, pRole, hash, salt string) *User {
 	role := "user"
@@ -90,7 +91,7 @@ func Delete(id string) bool {
 }
 
 func LoadUsersData() {
-	f, err := os.OpenFile(userFilePath, os.O_CREATE, 0755)
+	f, err := os.OpenFile(UsersFilePath, os.O_CREATE, 0755)
 	defer f.Close()
 
 	if err != nil {
@@ -105,16 +106,16 @@ func LoadUsersData() {
 }
 
 func SaveUsersData() {
-	f, err := os.OpenFile(userFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(UsersFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	defer f.Close()
 
 	if err != nil {
-		log.Printf("ERROR: Error while opening users database file %s (%s)", userFilePath, err.Error())
+		log.Printf("ERROR: Error while opening users database file %s (%s)", UsersFilePath, err.Error())
 		return
 	}
 
 	if err := json.NewEncoder(f).Encode(usersData); err != nil {
-		log.Printf("ERROR: Error while saving users data in %s (%s)", userFilePath, err.Error())
+		log.Printf("ERROR: Error while saving users data in %s (%s)", UsersFilePath, err.Error())
 		return
 	}
 }
