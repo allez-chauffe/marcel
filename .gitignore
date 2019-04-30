@@ -31,7 +31,7 @@ backend/marcel.log
 
 # User-specific stuff:
 .idea/
-
+.vscode/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
