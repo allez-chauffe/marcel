@@ -6,16 +6,11 @@ import (
 	"net/http"
 
 	"github.com/Pallinder/go-randomdata"
+	"github.com/gorilla/websocket"
 
 	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
-
 	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/gorilla/websocket"
-)
-
-const (
-	configPath     string = "data"
-	configFileName string = "clients.json"
+	"github.com/Zenika/MARCEL/backend/config"
 )
 
 //Service is the websocket connection handler
@@ -42,7 +37,7 @@ type newClientRequest struct {
 func NewService() *Service {
 	service := &Service{
 		make(wsclients),
-		newManager(configPath, configFileName),
+		newManager(config.Global.ConfigPath, config.Global.ClientsConfigFile),
 		make(chan *WSClient),
 		make(chan *WSClient),
 	}

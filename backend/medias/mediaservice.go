@@ -6,16 +6,14 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
+	"github.com/gorilla/mux"
 
+	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/config"
 	"github.com/Zenika/MARCEL/backend/plugins"
-	"github.com/gorilla/mux"
 )
-
-const MEDIAS_CONFIG_PATH string = "data"
-const MEDIAS_CONFIG_FILENAME string = "medias.json"
 
 type Service struct {
 	manager        *Manager
@@ -25,7 +23,7 @@ type Service struct {
 func NewService(pluginManager *plugins.Manager, clientsService *clients.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(pluginManager, clientsService, MEDIAS_CONFIG_PATH, MEDIAS_CONFIG_FILENAME)
+	service.manager = NewManager(pluginManager, clientsService, config.Global.ConfigPath, config.Global.MediasConfigFile)
 	service.clientsService = clientsService
 
 	return service

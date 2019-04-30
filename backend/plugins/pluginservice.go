@@ -4,24 +4,26 @@ import (
 	"archive/zip"
 	"encoding/json"
 	"errors"
+	"github.com/gorilla/mux"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
-
 	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/gorilla/mux"
+	"github.com/Zenika/MARCEL/backend/config"
 )
 
-const PLUGINS_CONFIG_PATH string = "data"
-const PLUGINS_CONFIG_FILENAME string = "plugins.json"
-const PLUGINS_TEMPORARY_FOLDER string = "uploadedfiles"
-const PLUGINS_FOLDER string = "plugins"
+var (
+	pluginsTempDir     string
+	initPluginsTempDir sync.Once
+)
 
 type Service struct {
 	Manager *Manager
@@ -30,7 +32,7 @@ type Service struct {
 func NewService() *Service {
 	var p = new(Service)
 
-	p.Manager = NewManager(PLUGINS_CONFIG_PATH, PLUGINS_CONFIG_FILENAME)
+	p.Manager = NewManager(config.Global.ConfigPath, config.Global.PluginsConfigFile)
 
 	return p
 }
@@ -106,6 +108,14 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// -1 : Create temp dir once
+	initPluginsTempDir.Do(func() {
+		var err error
+		if pluginsTempDir, err = ioutil.TempDir(config.Plugins.Path, "upload"); err != nil {
+			log.Panic(err)
+		}
+	})
+
 	// 0 : Get files content and copy it into a temporary folder
 	foldername, filename, err := UploadFile(r)
 	if err != nil {
@@ -116,15 +126,15 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// 1 : Check extension
 	_, err = CheckExtension(filename)
 	if err != nil {
-		os.Remove(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername))
+		os.Remove(filepath.Join(pluginsTempDir, foldername))
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
 	}
 
 	// 2 : unzip into /plugins folder
-	pluginFolder := filepath.Join(PLUGINS_FOLDER, commons.FileBasename(foldername))
+	pluginFolder := filepath.Join(config.Plugins.Path, commons.FileBasename(foldername))
 
-	err = UncompressFile(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername), pluginFolder)
+	err = UncompressFile(filepath.Join(pluginsTempDir, foldername), pluginFolder)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
 		return
@@ -157,13 +167,13 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// todo : if plugin already exists and at least 1 instance of the backend is running, so stop them before replacing the files and relaunch them again after
 
 	// 5 : rename plugin folder with it's EltName (should be unique)
-	os.Rename(pluginFolder, filepath.Join(PLUGINS_FOLDER, plugin.EltName))
+	os.Rename(pluginFolder, filepath.Join(config.Plugins.Path, plugin.EltName))
 
 	// 6 : check there's no plugin already installed with same name or remove&replace
 	s.Manager.Add(plugin)
 
 	// 7 : delete temporary file
-	os.Remove(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername))
+	os.Remove(filepath.Join(pluginsTempDir, foldername))
 
 	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added to the catalog")
 }
@@ -179,7 +189,7 @@ func UploadFile(r *http.Request) (string, string, error) {
 	defer file.Close()
 
 	foldername := commons.GetUID()
-	out, err := os.Create(filepath.Join(PLUGINS_TEMPORARY_FOLDER, foldername))
+	out, err := os.Create(filepath.Join(pluginsTempDir, foldername))
 	if err != nil {
 		log.Println("Unable to create the file for writing. Check your write access privilege")
 		return "", "", err
