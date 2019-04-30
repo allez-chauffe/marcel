@@ -1,21 +1,14 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/Zenika/MARCEL/backend/app"
 	"github.com/Zenika/MARCEL/backend/config"
 )
 
-var (
-	port uint
-)
-
 func init() {
-	MarcelCmd.Flags().UintVarP(&port, "port", "p", 8090, "Listening port")
-
+	MarcelCmd.Flags().UintVarP(&config.Global.Port, "port", "p", 8090, "Listening port")
 	MarcelCmd.Flags().StringVar(&config.Global.ConfigPath, "config-path", "data", "Directory containing config files")
 	MarcelCmd.Flags().StringVar(&config.Global.ClientsConfigFile, "clients-config-file", "clients.json", "Clients config file name")
 	MarcelCmd.Flags().StringVar(&config.Global.MediasConfigFile, "medias-config-file", "medias.json", "Medias config file name")
@@ -34,6 +27,6 @@ var MarcelCmd = &cobra.Command{
 		a := new(app.App)
 		a.Initialize()
 
-		a.Run(fmt.Sprintf(":%d", port))
+		a.Run()
 	},
 }

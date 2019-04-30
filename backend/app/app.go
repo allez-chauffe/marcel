@@ -1,17 +1,20 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
+
 	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/apidoc"
 	"github.com/Zenika/MARCEL/backend/clients"
+	"github.com/Zenika/MARCEL/backend/config"
 	"github.com/Zenika/MARCEL/backend/medias"
 	"github.com/Zenika/MARCEL/backend/plugins"
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 )
 
 //current version of the API
@@ -40,7 +43,9 @@ func (a *App) Initialize() {
 	a.initializeRoutes()
 }
 
-func (a *App) Run(addr string) {
+func (a *App) Run() {
+	var addr = fmt.Sprintf(":%d", config.Global.Port)
+
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 	log.Printf("Server is started and listening on port %v", addr)
 

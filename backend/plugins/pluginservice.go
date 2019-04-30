@@ -108,7 +108,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// -1
+	// -1 : Create temp dir once
 	initPluginsTempDir.Do(func() {
 		var err error
 		if pluginsTempDir, err = ioutil.TempDir(config.Plugins.Path, "upload"); err != nil {
