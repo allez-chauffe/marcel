@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
@@ -23,7 +23,7 @@ type Service struct {
 func NewService(pluginManager *plugins.Manager, clientsService *clients.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(pluginManager, clientsService, config.Global.ConfigPath, config.Global.MediasConfigFile)
+	service.manager = NewManager(pluginManager, clientsService, config.Global.DataPath, config.Global.MediasFile)
 	service.clientsService = clientsService
 
 	return service

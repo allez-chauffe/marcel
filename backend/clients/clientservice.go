@@ -8,7 +8,7 @@ import (
 	"github.com/Pallinder/go-randomdata"
 	"github.com/gorilla/websocket"
 
-	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
 )
@@ -37,7 +37,7 @@ type newClientRequest struct {
 func NewService() *Service {
 	service := &Service{
 		make(wsclients),
-		newManager(config.Global.ConfigPath, config.Global.ClientsConfigFile),
+		newManager(config.Global.DataPath, config.Global.ClientsFile),
 		make(chan *WSClient),
 		make(chan *WSClient),
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Zenika/MARCEL/auth-backend/auth"
+	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/commons"
 )
 

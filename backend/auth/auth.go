@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Zenika/MARCEL/auth-backend/conf"
 	jwt "github.com/dgrijalva/jwt-go"
+
+	"github.com/Zenika/MARCEL/backend/auth/conf"
 )
 
 var (
