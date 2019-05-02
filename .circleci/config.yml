@@ -38,41 +38,13 @@ jobs:
           command: go test .
           working_directory: backend
       - run:
-          command: CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .
+          command: CGO_ENABLED=0 go build -a -installsuffix cgo -o marcel .
           working_directory: backend
       - persist_to_workspace:
           root: .
           paths:
             - backend/Dockerfile
-            - backend/backend
-
-  build_auth_backend:
-    <<: *defaults
-    working_directory: /go/app
-    docker:
-      - image: circleci/golang:1.12
-    steps:
-      - checkout
-      - restore_cache:
-          key: auth-backend-deps-{{ checksum "auth-backend/go.mod" }}
-      - run:
-          command: go mod download
-          working_directory: auth-backend
-      - save_cache:
-          key: auth-backend-deps-{{ checksum "auth-backend/go.mod" }}
-          paths:
-            - /go/pkg/mod
-      - run:
-          command: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
-          working_directory: auth-backend
-      - run:
-          command: go test .
-          working_directory: auth-backend
-      - persist_to_workspace:
-          root: .
-          paths:
-            - auth-backend/Dockerfile
-            - auth-backend/auth-backend
+            - backend/marcel
 
   build_backoffice:
     docker:
@@ -148,19 +120,6 @@ jobs:
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-backend:dev
 
-  auth_backend_docker_build:
-    <<: *defaults
-    working_directory: /tmp/auth-backend
-    docker:
-      - image: circleci/buildpack-deps:xenial-scm
-    steps:
-      - setup_remote_docker
-      - attach_workspace:
-          at: /tmp
-      - run: docker build -t zenika/marcel-auth:dev .
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push zenika/marcel-auth:dev
-
   backoffice_docker_build:
     docker:
       - image: circleci/node:latest
@@ -213,19 +172,14 @@ workflows:
        - debug_node
        - debug_go
        - build_backend
-       - build_auth_backend
        - build_backoffice
        - build_frontend
        - package_plugins:
           requires:
             - build_backend
-            - build_auth_backend
             - build_backoffice
             - build_frontend
        - backend_docker_build:
-          requires:
-            - package_plugins
-       - auth_backend_docker_build:
           requires:
             - package_plugins
        - backoffice_docker_build:
@@ -237,7 +191,6 @@ workflows:
        - deploy_integration:
           requires:
             - backend_docker_build
-            - auth_backend_docker_build
             - backoffice_docker_build
             - frontend_docker_build
           filters:

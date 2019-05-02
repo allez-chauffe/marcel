@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"time"
 
-	auth "github.com/Zenika/MARCEL/auth-backend/auth/middleware"
-	"github.com/Zenika/MARCEL/auth-backend/users"
+	auth "github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/users"
 	"github.com/gorilla/mux"
 )
 

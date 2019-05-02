@@ -8,9 +8,9 @@ import (
 
 	"github.com/gorilla/handlers"
 
-	"github.com/Zenika/MARCEL/auth-backend/auth"
-	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
-	"github.com/Zenika/MARCEL/auth-backend/conf"
+	"github.com/Zenika/MARCEL/backend/auth"
+	"github.com/Zenika/MARCEL/backend/auth/conf"
+	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -59,7 +59,7 @@ func Run(c *conf.Config) {
 		secureMode = "with secure mode enabled"
 	}
 
-	log.Printf("Starting auth-backend on %s %s", addr, secureMode)
+	log.Printf("Starting auth server on %s %s", addr, secureMode)
 
 	log.Fatal(http.ListenAndServe(addr, app))
 }

@@ -1,3 +1,5 @@
+version: '3.0'
+
 services:
   backoffice:
     depends_on:
@@ -22,28 +24,32 @@ services:
   auth:
     depends_on:
       - proxy
-    image: zenika/marcel-auth:dev
+    image: zenika/marcel-backend:dev
+    command: ["auth"]
     labels:
       traefik.backend: auth
       traefik.frontend.rule: "PathPrefixStrip: /auth/"
     ports:
       - 8091:8091
     volumes:
-      - ./backend/data:/auth-backend/data
-      - ./auth:/auth-backend/config:ro
+      - ./backend/data:/var/lib/marcel/data
+      - ./auth:/var/lib/marcel/auth/config:ro
 
   backend:
     depends_on:
       - proxy
     image: zenika/marcel-backend:dev
+    command: ["backend"]
     labels:
       traefik.backend: backend
       traefik.frontend.rule: "PathPrefix: /api/v1/"
     volumes:
-      - ./backend/data:/backend/data
-      - ./backend/plugins:/backend/plugins
-      - ./backend/medias:/backend/medias
-      - ./logs:/backend/logs
+      - ./backend/data:/var/lib/marcel/data
+      - ./backend/plugins:/var/lib/marcel/plugins
+      - ./backend/medias:/var/lib/marcel/medias
+      - ./logs:/var/log/marcel
+    environment:
+      MARCEL_LOG_FILE: /var/log/marcel/auth.log
 
   proxy:
     command: --web --docker --logLevel=DEBUG
@@ -54,4 +60,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev/null:/traefik.toml
-version: '3.0'

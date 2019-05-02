@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Zenika/MARCEL/auth-backend/auth"
-	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
-	"github.com/Zenika/MARCEL/auth-backend/users"
+	"github.com/Zenika/MARCEL/backend/auth"
+	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/users"
 )
 
 type Credentials struct {

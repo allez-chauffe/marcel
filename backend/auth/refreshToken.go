@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Zenika/MARCEL/auth-backend/users"
-	"github.com/Zenika/MARCEL/backend/commons"
 	jwt "github.com/dgrijalva/jwt-go"
+
+	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/users"
 )
 
 const RefreshCookieName = "RefreshAuthentication"

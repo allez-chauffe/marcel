@@ -1,9 +1,8 @@
 FROM alpine
 
-COPY backend /backend/
+COPY marcel /usr/bin/
 
-ENV MARCEL_LOG_FILE=/backend/logs/backend.log
-WORKDIR /backend
-
-ENTRYPOINT ["/backend/backend"]
+ENV MARCEL_LOG_FILE=/var/log/marcel/marcel.log
+WORKDIR /var/lib/marcel/
+ENTRYPOINT ["marcel"]
 EXPOSE 8090
