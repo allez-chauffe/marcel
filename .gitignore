@@ -65,6 +65,9 @@ medias.config.json
 /backend/swagger.json
 /back-office/.vscode/chrome
 /backend/backend
+/backend/marcel
+/backend/auth/config/config.json
+/backend/auth/config/users.json
 
 test_env
 scripts/build_all.sh

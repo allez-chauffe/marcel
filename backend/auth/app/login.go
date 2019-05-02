@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Zenika/MARCEL/auth-backend/auth"
-	"github.com/Zenika/MARCEL/auth-backend/auth/middleware"
-	"github.com/Zenika/MARCEL/auth-backend/users"
+	"github.com/Zenika/MARCEL/backend/auth/auth"
+	"github.com/Zenika/MARCEL/backend/auth/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/auth/users"
 	"github.com/Zenika/MARCEL/backend/commons"
 )
 

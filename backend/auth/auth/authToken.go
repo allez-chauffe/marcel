@@ -7,7 +7,7 @@ import (
 
 	"github.com/Zenika/MARCEL/backend/commons"
 
-	"github.com/Zenika/MARCEL/auth-backend/users"
+	"github.com/Zenika/MARCEL/backend/auth/users"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
