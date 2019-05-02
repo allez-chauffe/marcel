@@ -7,8 +7,8 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 
-	"github.com/Zenika/MARCEL/backend/auth/users"
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/users"
 )
 
 const RefreshCookieName = "RefreshAuthentication"

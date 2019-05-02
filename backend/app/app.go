@@ -9,8 +9,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 
-	"github.com/Zenika/MARCEL/backend/auth/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/apidoc"
+	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/config"
 	"github.com/Zenika/MARCEL/backend/medias"

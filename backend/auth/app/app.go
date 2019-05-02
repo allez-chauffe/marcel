@@ -8,9 +8,9 @@ import (
 
 	"github.com/gorilla/handlers"
 
-	"github.com/Zenika/MARCEL/backend/auth/auth"
-	"github.com/Zenika/MARCEL/backend/auth/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/auth/conf"
+	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )

@@ -5,7 +5,7 @@ import (
 
 	"github.com/Zenika/MARCEL/backend/auth/app"
 	"github.com/Zenika/MARCEL/backend/auth/conf"
-	"github.com/Zenika/MARCEL/backend/auth/users"
+	"github.com/Zenika/MARCEL/backend/users"
 )
 
 var (
