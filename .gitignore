@@ -67,7 +67,7 @@ medias.config.json
 /backend/backend
 /backend/marcel
 /backend/auth/config/config.json
-/backend/auth/config/users.json
+/backend/data/users.json
 
 test_env
 scripts/build_all.sh

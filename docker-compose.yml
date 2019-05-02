@@ -32,6 +32,7 @@ services:
     ports:
       - 8091:8091
     volumes:
+      - ./backend/data:/var/lib/marcel/data
       - ./auth:/var/lib/marcel/auth/config:ro
 
   backend:

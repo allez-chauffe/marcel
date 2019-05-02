@@ -14,7 +14,7 @@ var (
 
 func init() {
 	auth.Flags().StringVarP(&configPath, "config-file", "c", "auth/config/config.json", "Auth config file")
-	auth.Flags().StringVar(&users.UsersFilePath, "users-file", "auth/config/users.json", "Users data file")
+	auth.Flags().StringVar(&users.UsersFilePath, "users-file", "data/users.json", "Users data file")
 
 	Marcel.AddCommand(auth)
 }
