@@ -9,10 +9,10 @@ import (
 
 func init() {
 	backend.Flags().UintVarP(&config.Global.Port, "port", "p", 8090, "Listening port")
-	backend.Flags().StringVar(&config.Global.ConfigPath, "config-path", "data", "Directory containing config files")
-	backend.Flags().StringVar(&config.Global.ClientsConfigFile, "clients-config-file", "clients.json", "Clients config file name")
-	backend.Flags().StringVar(&config.Global.MediasConfigFile, "medias-config-file", "medias.json", "Medias config file name")
-	backend.Flags().StringVar(&config.Global.PluginsConfigFile, "plugins-config-file", "plugins.json", "Plugins config file name")
+	backend.Flags().StringVar(&config.Global.DataPath, "data-path", "data", "Directory containing data files")
+	backend.Flags().StringVar(&config.Global.ClientsFile, "clients-file", "clients.json", "Clients data file name")
+	backend.Flags().StringVar(&config.Global.MediasFile, "medias-file", "medias.json", "Medias data file name")
+	backend.Flags().StringVar(&config.Global.PluginsFile, "plugins-file", "plugins.json", "Plugins data file name")
 
 	backend.Flags().StringVar(&config.Plugins.Path, "plugins-path", "plugins", "Plugins directory")
 

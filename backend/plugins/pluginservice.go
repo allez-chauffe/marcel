@@ -32,7 +32,7 @@ type Service struct {
 func NewService() *Service {
 	var p = new(Service)
 
-	p.Manager = NewManager(config.Global.ConfigPath, config.Global.PluginsConfigFile)
+	p.Manager = NewManager(config.Global.DataPath, config.Global.PluginsFile)
 
 	return p
 }

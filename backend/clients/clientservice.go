@@ -37,7 +37,7 @@ type newClientRequest struct {
 func NewService() *Service {
 	service := &Service{
 		make(wsclients),
-		newManager(config.Global.ConfigPath, config.Global.ClientsConfigFile),
+		newManager(config.Global.DataPath, config.Global.ClientsFile),
 		make(chan *WSClient),
 		make(chan *WSClient),
 	}

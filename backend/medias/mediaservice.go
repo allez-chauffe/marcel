@@ -23,7 +23,7 @@ type Service struct {
 func NewService(pluginManager *plugins.Manager, clientsService *clients.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(pluginManager, clientsService, config.Global.ConfigPath, config.Global.MediasConfigFile)
+	service.manager = NewManager(pluginManager, clientsService, config.Global.DataPath, config.Global.MediasFile)
 	service.clientsService = clientsService
 
 	return service
