@@ -2,8 +2,9 @@ package conf
 
 import (
 	"encoding/json"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Config struct {
@@ -39,7 +40,7 @@ func LoadConfig(configPath string) *Config {
 
 func checkError(err error, message string) *Config {
 	if err != nil {
-		log.Printf(message+" (%s)", err.Error())
+		log.Errorf(message+" (%s)", err.Error())
 		return &Config{
 			Port:              8091,
 			SecuredCookies:    true,

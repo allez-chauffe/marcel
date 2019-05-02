@@ -2,11 +2,11 @@ package users
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type User struct {
@@ -95,12 +95,12 @@ func LoadUsersData() {
 	defer f.Close()
 
 	if err != nil {
-		log.Println("Error while loading users database", err.Error())
+		log.Errorln("Error while loading users database", err.Error())
 		return
 	}
 
 	if err := json.NewDecoder(f).Decode(usersData); err != nil {
-		log.Printf("ERROR: Malformed JSON in users database file (%s)", err.Error())
+		log.Errorf("ERROR: Malformed JSON in users database file (%s)", err.Error())
 		return
 	}
 }
@@ -110,12 +110,12 @@ func SaveUsersData() {
 	defer f.Close()
 
 	if err != nil {
-		log.Printf("ERROR: Error while opening users database file %s (%s)", UsersFilePath, err.Error())
+		log.Errorf("ERROR: Error while opening users database file %s (%s)", UsersFilePath, err.Error())
 		return
 	}
 
 	if err := json.NewEncoder(f).Encode(usersData); err != nil {
-		log.Printf("ERROR: Error while saving users data in %s (%s)", UsersFilePath, err.Error())
+		log.Errorf("ERROR: Error while saving users data in %s (%s)", UsersFilePath, err.Error())
 		return
 	}
 }

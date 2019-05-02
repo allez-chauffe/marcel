@@ -4,16 +4,18 @@ import (
 	"archive/zip"
 	"encoding/json"
 	"errors"
-	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/gorilla/mux"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/commons"
@@ -182,7 +184,7 @@ func UploadFile(r *http.Request) (string, string, error) {
 	file, header, err := r.FormFile("uploadfile")
 
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return "", "", err
 	}
 
@@ -191,7 +193,7 @@ func UploadFile(r *http.Request) (string, string, error) {
 	foldername := commons.GetUID()
 	out, err := os.Create(filepath.Join(pluginsTempDir, foldername))
 	if err != nil {
-		log.Println("Unable to create the file for writing. Check your write access privilege")
+		log.Errorln("Unable to create the file for writing. Check your write access privilege")
 		return "", "", err
 	}
 
@@ -200,11 +202,11 @@ func UploadFile(r *http.Request) (string, string, error) {
 	// write the content from POST to the file
 	_, err = io.Copy(out, file)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return "", "", err
 	}
 
-	log.Println("File uploaded successfully : ")
+	log.Debugln("File uploaded successfully : ")
 
 	return foldername, header.Filename, nil
 }

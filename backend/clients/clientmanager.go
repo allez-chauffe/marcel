@@ -1,8 +1,9 @@
 package clients
 
 import (
-	"log"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/commons"
 )
@@ -36,11 +37,11 @@ func newEmptyConfig() *Config {
 
 //LoadFromDB loads medias configuration from DB and stor it in memory
 func (m *Manager) LoadFromDB() {
-	log.Printf("Start Loading Clients from DB.")
+	log.Debugln("Start Loading Clients from DB.")
 
 	commons.LoadFromDB(m)
 
-	log.Print("Clients configurations is loaded...")
+	log.Debugln("Clients configurations is loaded...")
 }
 
 //Commit writes the current configuration to the save file

@@ -2,11 +2,11 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/handlers"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/auth/conf"
@@ -56,10 +56,9 @@ func Run(c *conf.Config) {
 
 	secureMode := ""
 	if config.SecuredCookies {
-		secureMode = "with secure mode enabled"
+		secureMode = " with secure mode enabled"
 	}
 
-	log.Printf("Starting auth server on %s %s", addr, secureMode)
-
+	log.Infof("Starting auth server on %s%s", addr, secureMode)
 	log.Fatal(http.ListenAndServe(addr, app))
 }

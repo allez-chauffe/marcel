@@ -45,9 +45,6 @@ services:
       - ./backend/data:/var/lib/marcel/data
       - ./backend/plugins:/var/lib/marcel/plugins
       - ./backend/medias:/var/lib/marcel/medias
-      - ./logs:/var/log/marcel
-    environment:
-      MARCEL_LOG_FILE: /var/log/marcel/marcel.log
 
   proxy:
     command: --web --docker --logLevel=DEBUG
