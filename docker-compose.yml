@@ -29,8 +29,6 @@ services:
     labels:
       traefik.backend: auth
       traefik.frontend.rule: "PathPrefixStrip: /auth/"
-    ports:
-      - 8091:8091
     volumes:
       - ./backend/data:/var/lib/marcel/data
       - ./auth:/var/lib/marcel/auth/config:ro
@@ -49,7 +47,7 @@ services:
       - ./backend/medias:/var/lib/marcel/medias
       - ./logs:/var/log/marcel
     environment:
-      MARCEL_LOG_FILE: /var/log/marcel/auth.log
+      MARCEL_LOG_FILE: /var/log/marcel/marcel.log
 
   proxy:
     command: --web --docker --logLevel=DEBUG
