@@ -151,7 +151,7 @@ declare module 'react-scripts/scripts/test.js' {
 declare module 'react-scripts/scripts/utils/createJestConfig.js' {
   declare module.exports: $Exports<'react-scripts/scripts/utils/createJestConfig'>;
 }
-declare module 'react-scripts/template/src/App.js' {
+declare module 'react-scripts/template/src/App.jsx' {
   declare module.exports: $Exports<'react-scripts/template/src/App'>;
 }
 declare module 'react-scripts/template/src/App.test.js' {
