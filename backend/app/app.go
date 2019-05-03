@@ -80,8 +80,8 @@ func (a *App) initializeRoutes() {
 
 	plugins := s.PathPrefix("/plugins").Subrouter()
 	plugins.HandleFunc("/", a.pluginService.GetAllHandler).Methods("GET")
+	plugins.HandleFunc("/", a.pluginService.AddHandler).Methods("POST")
 	plugins.HandleFunc("/config", a.pluginService.GetConfigHandler).Methods("GET")
-	plugins.HandleFunc("/add", a.pluginService.AddHandler).Methods("POST")
 	plugins.HandleFunc("/{eltName}", a.pluginService.GetHandler).Methods("GET")
 
 	a.Router = middleware.AuthMiddlware(c.Handler(r))
