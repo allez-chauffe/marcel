@@ -2,15 +2,28 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/Zenika/MARCEL/backend/config"
 )
 
 func init() {
-	Marcel.PersistentFlags().Var((*LogLevel)(&config.Global.LogLevel), "log-level", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
+	Marcel.PersistentFlags().Var((*LogLevel)(&config.Config.LogLevel), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
+	viper.BindPFlag("logLevel", Marcel.PersistentFlags().Lookup("logLevel"))
+
+	var configFile = Marcel.PersistentFlags().StringP("configFile", "c", "", fmt.Sprintf("Config file (default /etc/marcel/config.xxx or ./config.xxx, supports %s)", strings.Join(viper.SupportedExts, " ")))
+
+	cobra.OnInitialize(
+		func() {
+			config.Init(*configFile)
+		},
+		setLogLevel,
+		debugConfig,
+	)
 }
 
 // Marcel is the root command of Marcel
@@ -18,9 +31,6 @@ var Marcel = &cobra.Command{
 	Use:   "marcel",
 	Short: "Marcel is a configurable plugin based dashboard system",
 	Args:  cobra.NoArgs,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		log.SetLevel(config.Global.LogLevel)
-	},
 }
 
 // LogLevel implements a pflag.Value with logrus.Level
@@ -41,4 +51,13 @@ func (l *LogLevel) Set(s string) error {
 
 func (l *LogLevel) Type() string {
 	return "log.Level"
+}
+
+func setLogLevel() {
+	log.SetLevel(config.Config.LogLevel)
+	log.Infof("Log level set to %s", config.Config.LogLevel)
+}
+
+func debugConfig() {
+	log.Debugf("Config: %+v", config.Config)
 }

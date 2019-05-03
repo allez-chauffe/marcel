@@ -33,7 +33,7 @@ func (a *App) Initialize() {
 }
 
 func (a *App) Run() {
-	var addr = fmt.Sprintf(":%d", config.Global.Port)
+	var addr = fmt.Sprintf(":%d", config.Config.Port)
 
 	log.Infof("Starting backend server on port %v", addr)
 	log.Fatal(http.ListenAndServe(addr, a.Router))

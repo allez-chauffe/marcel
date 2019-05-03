@@ -6,19 +6,17 @@ import (
 	"os"
 
 	"github.com/gorilla/handlers"
-	log "github.com/sirupsen/logrus"
-
-	"github.com/Zenika/MARCEL/backend/auth"
-	"github.com/Zenika/MARCEL/backend/auth/conf"
-	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/Zenika/MARCEL/backend/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/config"
 )
 
 var (
 	secretKey = []byte("ThisIsTheSecret")
 	app       http.Handler
-	config    *conf.Config
 )
 
 func init() {
@@ -49,13 +47,11 @@ func userRoutes(r *mux.Router) {
 	r.HandleFunc("/{userID}", updateUserHandler).Methods("PUT")
 }
 
-func Run(c *conf.Config) {
-	config = c
-	auth.SetConfig(c)
-	addr := fmt.Sprintf(":%d", config.Port)
+func Run() {
+	addr := fmt.Sprintf(":%d", config.Config.Auth.Port)
 
 	secureMode := ""
-	if config.SecuredCookies {
+	if config.Config.Auth.Secured {
 		secureMode = " with secure mode enabled"
 	}
 

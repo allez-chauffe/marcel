@@ -8,6 +8,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/config"
 	"github.com/Zenika/MARCEL/backend/users"
 )
 
@@ -25,8 +26,8 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 				IssuedAt: time.Now().Unix(),
 			},
 		},
-		RefreshCookieName, config.BaseURL+"/login",
-		time.Now().Add(time.Duration(config.RefreshExpiration)*time.Second),
+		RefreshCookieName, config.Config.Auth.BaseURL+"/login",
+		time.Now().Add(time.Duration(config.Config.Auth.RefreshExpiration)*time.Second),
 	)
 
 	if err != nil {

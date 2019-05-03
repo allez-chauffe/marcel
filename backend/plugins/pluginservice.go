@@ -34,7 +34,7 @@ type Service struct {
 func NewService() *Service {
 	var p = new(Service)
 
-	p.Manager = NewManager(config.Global.DataPath, config.Global.PluginsFile)
+	p.Manager = NewManager(config.Config.DataPath, config.Config.PluginsFile)
 
 	return p
 }
@@ -113,7 +113,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// -1 : Create temp dir once
 	initPluginsTempDir.Do(func() {
 		var err error
-		if pluginsTempDir, err = ioutil.TempDir(config.Plugins.Path, "upload"); err != nil {
+		if pluginsTempDir, err = ioutil.TempDir(config.Config.PluginsPath, "upload"); err != nil {
 			log.Panic(err)
 		}
 	})
@@ -134,7 +134,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2 : unzip into /plugins folder
-	pluginFolder := filepath.Join(config.Plugins.Path, commons.FileBasename(foldername))
+	pluginFolder := filepath.Join(config.Config.PluginsPath, commons.FileBasename(foldername))
 
 	err = UncompressFile(filepath.Join(pluginsTempDir, foldername), pluginFolder)
 	if err != nil {
@@ -169,7 +169,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	// todo : if plugin already exists and at least 1 instance of the backend is running, so stop them before replacing the files and relaunch them again after
 
 	// 5 : rename plugin folder with it's EltName (should be unique)
-	os.Rename(pluginFolder, filepath.Join(config.Plugins.Path, plugin.EltName))
+	os.Rename(pluginFolder, filepath.Join(config.Config.PluginsPath, plugin.EltName))
 
 	// 6 : check there's no plugin already installed with same name or remove&replace
 	s.Manager.Add(plugin)
