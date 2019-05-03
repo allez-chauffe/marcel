@@ -23,7 +23,7 @@ func LoadFromDB(manager Manager) {
 
 func Commit(manager Manager) error {
 	configFullPath, _, configFileName := manager.GetSaveFilePath()
-	f, err := OpenSaveFile(manager, os.O_WRONLY)
+	f, err := OpenSaveFile(manager, os.O_WRONLY|os.O_TRUNC)
 	defer f.Close()
 
 	if err != nil {
