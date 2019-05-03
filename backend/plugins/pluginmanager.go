@@ -2,8 +2,9 @@ package plugins
 
 import (
 	"errors"
-	"log"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/commons"
 )
@@ -29,15 +30,15 @@ func NewManager(configPath, configFilename string) *Manager {
 
 // LoadPlugins loads plugins configuration from DB and store it in memory
 func (m *Manager) LoadFromDB() {
-	log.Printf("Start Loading Plugins from DB.")
+	log.Debugln("Start Loading Plugins from DB.")
 
 	commons.LoadFromDB(m)
 
-	log.Print("Plugins configurations is loaded...")
+	log.Debugln("Plugins configurations is loaded...")
 }
 
 func (m *Manager) GetConfiguration() *Configuration {
-	log.Println("Getting global plugins config")
+	log.Debugln("Getting global plugins config")
 
 	return m.Config
 }
@@ -47,7 +48,7 @@ func (m *Manager) GetConfig() interface{} {
 }
 
 func (m *Manager) GetAll() []Plugin {
-	log.Println("Getting all plugins")
+	log.Debugln("Getting all plugins")
 
 	return m.Config.Plugins
 }
@@ -55,7 +56,7 @@ func (m *Manager) GetAll() []Plugin {
 // GetPlugin Return the plugin with its eltName
 func (m *Manager) Get(eltName string) (*Plugin, error) {
 
-	log.Println("Getting plugin with eltName: ", eltName)
+	log.Debugln("Getting plugin with eltName: ", eltName)
 	for _, plugin := range m.Config.Plugins {
 		if eltName == plugin.EltName {
 			return &plugin, nil
@@ -67,7 +68,7 @@ func (m *Manager) Get(eltName string) (*Plugin, error) {
 
 // RemovePlugin Remove plugin from memory and commit
 func (m *Manager) RemoveFromDB(plugin *Plugin) {
-	log.Println("Removing plugin")
+	log.Debugln("Removing plugin")
 	i := m.GetPosition(plugin)
 
 	if i >= 0 {
@@ -79,7 +80,7 @@ func (m *Manager) RemoveFromDB(plugin *Plugin) {
 
 // Save plugin information.
 func (m *Manager) Add(plugin *Plugin) {
-	log.Println("Saving plugin")
+	log.Debugln("Saving plugin")
 	m.RemoveFromDB(plugin)
 	m.Config.Plugins = append(m.Config.Plugins, *plugin)
 

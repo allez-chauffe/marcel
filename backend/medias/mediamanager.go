@@ -2,11 +2,12 @@ package medias
 
 import (
 	"errors"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
@@ -41,7 +42,7 @@ func NewManager(pluginManager *plugins.Manager, clientsService *clients.Service,
 
 // LoadMedias loads medias configuration from DB and stor it in memory
 func (m *Manager) LoadFromDB() {
-	log.Printf("Start Loading Medias from DB.")
+	log.Debugln("Start Loading Medias from DB.")
 
 	commons.LoadFromDB(m)
 
@@ -51,11 +52,11 @@ func (m *Manager) LoadFromDB() {
 		}
 	}
 
-	log.Print("Medias configurations is loaded...")
+	log.Debugln("Medias configurations is loaded...")
 }
 
 func (m *Manager) GetConfiguration() *Configuration {
-	log.Println("Getting global medias config")
+	log.Debugln("Getting global medias config")
 
 	return m.Config
 }
@@ -65,7 +66,7 @@ func (m *Manager) GetConfig() interface{} {
 }
 
 func (m *Manager) GetAll() []Media {
-	log.Println("Getting all medias")
+	log.Debugln("Getting all medias")
 
 	return m.Config.Medias
 }
@@ -73,7 +74,7 @@ func (m *Manager) GetAll() []Media {
 // GetMedia Return the media with this id
 func (m *Manager) Get(idMedia int) (*Media, error) {
 
-	log.Println("Getting media with id: ", idMedia)
+	log.Debugln("Getting media with id: ", idMedia)
 	for _, media := range m.Config.Medias {
 		if idMedia == media.ID {
 			return &media, nil
@@ -86,7 +87,7 @@ func (m *Manager) Get(idMedia int) (*Media, error) {
 // CreateMedia Create a new Media, save it into memory and commit
 func (m *Manager) CreateEmpty(owner string) *Media {
 
-	log.Println("Creating media")
+	log.Debugln("Creating media")
 
 	newMedia := NewMedia()
 	newMedia.ID = m.GetNextID()
@@ -102,7 +103,7 @@ func (m *Manager) CreateEmpty(owner string) *Media {
 
 // RemoveMedia RemoveFromDB media from memory
 func (m *Manager) RemoveFromDB(media *Media) {
-	log.Println("Removing media")
+	log.Debugln("Removing media")
 	i := m.getPosition(media)
 
 	if i >= 0 {
@@ -112,7 +113,7 @@ func (m *Manager) RemoveFromDB(media *Media) {
 
 // SaveIntoDB saves media information in memory.
 func (m *Manager) SaveIntoDB(media *Media) {
-	log.Println("Saving media")
+	log.Debugln("Saving media")
 	m.RemoveFromDB(media)
 	m.Config.Medias = append(m.Config.Medias, *media)
 }
@@ -127,7 +128,7 @@ func (m *Manager) Commit() error {
 func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		log.Println("Data directory did not exist. Create it.")
+		log.Infoln("Data directory did not exist. Create it.")
 		os.Mkdir(filePath, 0755)
 	}
 
@@ -137,7 +138,7 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 		f, err := os.Create(fullPath)
 		commons.Check(err)
 
-		log.Println("Medias configuration file created at %v", fullPath)
+		log.Infoln("Medias configuration file created at %v", fullPath)
 
 		f.Close()
 
@@ -154,7 +155,7 @@ func (m *Manager) Activate(media *Media) error {
 		plugin, err := m.pluginManager.Get(mp.EltName)
 		if err != nil {
 			//plugin does not exist (anymore ?) in the catalog. Obviously, it should never append.
-			log.Println(err.Error())
+			log.Errorln(err.Error())
 			//Don't return an error now, we need to activate the other plugins
 			errorMessages += err.Error() + "\n"
 		}
@@ -163,7 +164,7 @@ func (m *Manager) Activate(media *Media) error {
 		mpPath := m.GetPluginDirectory(media, mp.EltName, mp.InstanceId)
 		err = m.copyNewInstanceOfPlugin(media, &mp, mpPath)
 		if err != nil {
-			log.Println(err.Error())
+			log.Errorln(err.Error())
 			//Don't return an error now, we need to activate the other plugins
 			errorMessages += err.Error() + "\n"
 		}
@@ -172,7 +173,7 @@ func (m *Manager) Activate(media *Media) error {
 			retour, err := containers.InstallImage(filepath.Join(mpPath, "back", plugin.Backend.Dockerimage))
 			if err != nil {
 				//Don't return an error now, we need to activate the other plugins
-				log.Println(err.Error())
+				log.Errorln(err.Error())
 				errorMessages += err.Error() + "\n"
 			}
 
@@ -182,7 +183,7 @@ func (m *Manager) Activate(media *Media) error {
 			dockerContainerId, err := containers.StartContainer(imageName, plugin.Backend.Port, externalPort, mp.BackEnd.Props, mpPath)
 			if err != nil {
 				//Don't return an error now, we need to activate the other plugins
-				log.Println(err.Error())
+				log.Errorln(err.Error())
 				errorMessages += err.Error() + "\n"
 			} else {
 				mp.BackEnd.Port = externalPort

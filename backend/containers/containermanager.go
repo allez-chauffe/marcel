@@ -1,11 +1,12 @@
 package containers
 
 import (
-	"os/exec"
 	"bytes"
-	"log"
-	"strconv"
 	"os"
+	"os/exec"
+	"strconv"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func InstallImage(path string) (string, error) {
@@ -16,7 +17,7 @@ func InstallImage(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	log.Println(string(cmdOutput.Bytes()))
+	log.Debugln(string(cmdOutput.Bytes()))
 
 	return string(cmdOutput.Bytes()), nil
 }
@@ -32,7 +33,7 @@ func StartContainer(imageName string, internalport int, externalport int, props 
 
 	pwd, err := os.Getwd()
 	if err != nil {
-		return  "", err
+		return "", err
 	}
 
 	containerVolume := "/data"
@@ -52,7 +53,7 @@ func StartContainer(imageName string, internalport int, externalport int, props 
 	cmd.Stdout = cmdOutput
 	err = cmd.Run()
 	if err != nil {
-		log.Println(err.Error())
+		log.Errorln(err.Error())
 		return "", err
 	}
 
@@ -68,7 +69,7 @@ func StopContainer(containerId string) error {
 	if err != nil {
 		return err
 	}
-	log.Println(string(cmdOutput.Bytes()))
+	log.Debugln(string(cmdOutput.Bytes()))
 
 	return nil
 }

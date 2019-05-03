@@ -1,9 +1,10 @@
 package app
 
 import (
-	"log"
 	"os"
 	"testing"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var logFileTest *os.File
