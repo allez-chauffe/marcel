@@ -2,12 +2,11 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/apidoc"
 	"github.com/Zenika/MARCEL/backend/auth/middleware"
@@ -20,9 +19,6 @@ import (
 //current version of the API
 const MARCEL_API_VERSION = "1"
 
-var logFileName string = os.Getenv("MARCEL_LOG_FILE")
-var logFile *os.File
-
 type App struct {
 	Router http.Handler
 
@@ -32,26 +28,15 @@ type App struct {
 }
 
 func (a *App) Initialize() {
-
-	err := a.InitializeLog(logFileName, logFile)
-	if err != nil {
-		print(err)
-	}
-
 	a.initializeData()
-
 	a.initializeRoutes()
 }
 
 func (a *App) Run() {
 	var addr = fmt.Sprintf(":%d", config.Global.Port)
 
+	log.Infof("Starting backend server on port %v", addr)
 	log.Fatal(http.ListenAndServe(addr, a.Router))
-	log.Printf("Server is started and listening on port %v", addr)
-
-	defer logFile.Close()
-
-	select {}
 }
 
 func (a *App) initializeRoutes() {
@@ -100,20 +85,6 @@ func (a *App) initializeRoutes() {
 	plugins.HandleFunc("/{eltName}", a.pluginService.GetHandler).Methods("GET")
 
 	a.Router = middleware.AuthMiddlware(c.Handler(r))
-}
-
-func (a *App) InitializeLog(filename string, logFile *os.File) error {
-	if len(filename) == 0 {
-		filename = "marcel.log"
-	}
-	logFile, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		return err
-	}
-
-	log.SetOutput(logFile)
-
-	return nil
 }
 
 func (a *App) initializeData() {

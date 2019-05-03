@@ -2,11 +2,11 @@ package clients
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/Pallinder/go-randomdata"
 	"github.com/gorilla/websocket"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/commons"
@@ -61,7 +61,7 @@ func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("Websocket establishement failed for client %s : %s", client.ID, err.Error())
+		log.Errorf("Websocket establishement failed for client %s : %s", client.ID, err.Error())
 		commons.WriteResponse(w, http.StatusInternalServerError, "Failed to establish websocket connection")
 		return
 	}
@@ -76,7 +76,7 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Getting client configuration")
+	log.Debugln("Getting client configuration")
 
 	client, exists := s.getClientFromRequest(w, r)
 	if !exists {
@@ -120,7 +120,7 @@ func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := s.manager.addNewClient(params.name, params.mediaID)
-	log.Printf("Created a new client : %v", client)
+	log.Debugf("Created a new client : %v", client)
 	commons.WriteJsonResponse(w, ClientJSON{client, false})
 }
 
@@ -139,7 +139,7 @@ func (s *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.manager.deleteClient(client.ID)
 	s.unregister <- s.wsclients[client.ID]
-	log.Printf("Deleted client %s-%s (%s)", client.Name, client.ID, client.Type)
+	log.Debugf("Deleted client %s-%s (%s)", client.Name, client.ID, client.Type)
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
@@ -154,7 +154,7 @@ func (s *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 		s.unregister <- ws
 	}
 
-	log.Println("All client deleted and disconnected")
+	log.Debugln("All client deleted and disconnected")
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
@@ -187,7 +187,7 @@ func (s *Service) run() {
 	for {
 		select {
 		case ws := <-s.register:
-			log.Printf("Client connected : %s-%s (%s)", ws.client.Name, ws.client.ID, ws.client.Type)
+			log.Debugf("Client connected : %s-%s (%s)", ws.client.Name, ws.client.ID, ws.client.Type)
 			s.wsclients[ws.client.ID] = ws
 		case ws := <-s.unregister:
 			if _, exists := s.wsclients[ws.client.ID]; exists {
@@ -205,10 +205,10 @@ func (s *Service) GetManager() *Manager {
 
 //SendByMedia sends a message to each client connected to the given media
 func (s *Service) SendByMedia(mediaID int, msg string) {
-	log.Printf("Sending %q to all clients of media %d", msg, mediaID)
+	log.Debugf("Sending %q to all clients of media %d", msg, mediaID)
 	for _, ws := range s.wsclients {
 		if ws.client.MediaID == mediaID {
-			log.Printf("Sending %q to %s", msg, ws)
+			log.Debugf("Sending %q to %s", msg, ws)
 			select {
 			case ws.send <- msg:
 			default:
@@ -223,7 +223,7 @@ func (s *Service) SendByID(clientID string, msg string) {
 		return
 	}
 
-	log.Printf("Sending %q to client %s", msg, ws)
+	log.Debugf("Sending %q to client %s", msg, ws)
 	select {
 	case ws.send <- msg:
 	default:

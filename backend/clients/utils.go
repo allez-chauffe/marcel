@@ -2,13 +2,14 @@ package clients
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
-	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/Zenika/MARCEL/backend/commons"
 )
 
 //getClientFromRequest return (if any) the client configuration based on id fiven in URL
@@ -17,14 +18,14 @@ func (s *Service) getClientFromRequest(w http.ResponseWriter, r *http.Request) (
 	clientID, found := vars["clientID"]
 
 	if !found {
-		log.Printf("Malformed URL (missing client id)")
+		log.Errorf("Malformed URL (missing client id)")
 		commons.WriteResponse(w, http.StatusBadRequest, "Malformed URL (missing client id)")
 		return nil, false
 	}
 
 	client, clientFound := s.manager.Get(clientID)
 	if !clientFound {
-		log.Printf("Unknown client : %s", clientID)
+		log.Errorf("Unknown client : %s", clientID)
 		commons.WriteResponse(w, http.StatusNotFound, "Client not found")
 		return nil, false
 	}
@@ -45,7 +46,7 @@ func (s *Service) getClientFromRequestBody(w http.ResponseWriter, r *http.Reques
 
 func (ws *WSClient) writeMessageWithType(msgType int, msg []byte, logMsg string, errorMsg string) bool {
 	if logMsg != "" {
-		log.Println(logMsg)
+		log.Debugln(logMsg)
 	}
 
 	ws.conn.SetWriteDeadline(time.Now().Add(writeWait))
@@ -61,7 +62,7 @@ func (ws *WSClient) writeMessageWithType(msgType int, msg []byte, logMsg string,
 
 	if err != nil {
 		if errorMsg != "" {
-			log.Println(errorMsg, err)
+			log.Errorln(errorMsg, err)
 		}
 		ws.Unregister()
 	}

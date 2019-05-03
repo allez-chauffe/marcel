@@ -2,10 +2,10 @@ package clients
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/gorilla/websocket"
+	log "github.com/sirupsen/logrus"
 )
 
 //WSClient represent a websocket connection to a client.
@@ -42,7 +42,7 @@ func (ws *WSClient) run() {
 			)
 
 		case msg := <-ws.receive:
-			log.Printf("Message received from %s : %s", ws, msg)
+			log.Debugf("Message received from %s : %s", ws, msg)
 
 		case <-ws.close:
 			close(ws.send)

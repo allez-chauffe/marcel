@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -12,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -161,13 +162,12 @@ func WriteResponse(w http.ResponseWriter, statusCode int, message string) {
 func WriteJsonResponse(w http.ResponseWriter, body interface{}) {
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(body); err != nil {
-		log.Printf("Error while send JSON data (%s)", err.Error())
+		log.Errorf("Error while send JSON data (%s)", err.Error())
 	}
 }
 
 func Check(e error) {
 	if e != nil {
 		log.Fatal(e)
-		panic(e)
 	}
 }
