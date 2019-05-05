@@ -24,12 +24,11 @@ func LoadFromDB(manager Manager) {
 func Commit(manager Manager) error {
 	configFullPath, _, configFileName := manager.GetSaveFilePath()
 	f, err := OpenSaveFile(manager, os.O_WRONLY|os.O_TRUNC)
-	defer f.Close()
-
 	if err != nil {
 		log.Errorf("Unable to open configuration file %s (%s) : %s", configFileName, configFullPath, err)
 		return err
 	}
+	defer f.Close()
 
 	if err = json.NewEncoder(f).Encode(manager.GetConfig()); err != nil {
 		log.Errorf("Unable to write in configuration file %s (%s) : %s", configFileName, configFullPath, err)
