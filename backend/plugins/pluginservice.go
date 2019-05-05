@@ -103,7 +103,7 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type AddPluginBody struct {
-	Url string `json:"url"`
+	URL string `json:"url"`
 }
 
 func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
@@ -118,26 +118,26 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("Plugin registration requested for %s", body.Url)
+	log.Infof("Plugin registration requested for %s", body.URL)
 
-	log.Debugf("Cloning %s...", body.Url)
+	log.Debugf("Cloning %s...", body.URL)
 
 	repo, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
-		URL:          body.Url,
+		URL:          body.URL,
 		SingleBranch: true,
 		NoCheckout:   true,
 		Depth:        1,
 		Tags:         git.NoTags,
 	})
 	if err != nil {
-		log.Errorf("Error while cloning %s: %s", body.Url, err)
+		log.Errorf("Error while cloning %s: %s", body.URL, err)
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	remote, err := repo.Remote("origin")
 	if err != nil {
-		log.Errorf("Error retrieving origin remote from %s: %s", body.Url, err)
+		log.Errorf("Error retrieving origin remote from %s: %s", body.URL, err)
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -145,7 +145,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Fetching tags...")
 	refs, err := remote.List(&git.ListOptions{})
 	if err != nil {
-		log.Errorf("Error fetching tags from %s: %s", body.Url, err)
+		log.Errorf("Error fetching tags from %s: %s", body.URL, err)
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -168,10 +168,10 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		ref = tags[0]
 	} else if master != "" {
 		ref = master
-		log.Warnf("No tags were found on %s. Using default reference (%s)", body.Url, ref.Short())
+		log.Warnf("No tags were found on %s. Using default reference (%s)", body.URL, ref.Short())
 	} else {
 		err := "The repository %s has no tags and no master branch."
-		log.Errorf(err, body.Url, err)
+		log.Errorf(err, body.URL, err)
 		commons.WriteResponse(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -185,7 +185,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Debugf("Cloning %s into %s ...", ref.Short(), tempDir)
 	repo, err = git.Clone(memory.NewStorage(), osfs.New(tempDir), &git.CloneOptions{
-		URL:           body.Url,
+		URL:           body.URL,
 		SingleBranch:  true,
 		NoCheckout:    true,
 		Depth:         1,
@@ -200,20 +200,20 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 
 	wt, err := repo.Worktree()
 	if err != nil {
-		log.Errorf("Error while getting WorkTree of %s: %s", body.Url, err)
+		log.Errorf("Error while getting WorkTree of %s: %s", body.URL, err)
 		commons.WriteResponse(w, http.StatusInternalServerError, "Error while checking out manifest : Unable to open WorkTree")
 		return
 	}
 
 	if err = wt.Checkout(&git.CheckoutOptions{Branch: ref}); err != nil {
-		log.Errorf("Error while checking out manifest of %s: %s", body.Url, err)
+		log.Errorf("Error while checking out manifest of %s: %s", body.URL, err)
 		commons.WriteResponse(w, http.StatusInternalServerError, fmt.Sprintf("Error while checking out manifest : %s", err))
 		return
 	}
 
 	manifest, err := wt.Filesystem.Open("marcel.json")
 	if err != nil {
-		log.Errorf("Error while opening manifest of %s: %s", body.Url, err)
+		log.Errorf("Error while opening manifest of %s: %s", body.URL, err)
 		commons.WriteResponse(w, http.StatusInternalServerError, fmt.Sprintf("Error while opening manifest : %s", err))
 		return
 	}
@@ -221,7 +221,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 
 	plugin := &Plugin{}
 	if err := json.NewDecoder(manifest).Decode(plugin); err != nil {
-		log.Errorf("Error while reading manifest of %s: %s", body.Url, err)
+		log.Errorf("Error while reading manifest of %s: %s", body.URL, err)
 		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while reading manifest : %s", err))
 		return
 	}
@@ -241,6 +241,11 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Debugf("Moving temporary directory (%s) to plugin's folder (%s)", tempDir, plugin.GetDirectory())
 	os.Rename(tempDir, plugin.GetDirectory())
+
+	plugin.URL = body.URL
+	for _, tag := range tags {
+		plugin.Versions = append(plugin.Versions, tag.Short())
+	}
 	s.Manager.Add(plugin)
 
 	log.Infof("Plugin successfuly registered : %s (%s)", plugin.EltName, plugin.Name)
