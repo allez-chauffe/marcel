@@ -1,9 +1,16 @@
 package plugins
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/src-d/go-billy.v4/osfs"
+	git "gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing"
+	"gopkg.in/src-d/go-git.v4/storage/memory"
 
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
@@ -130,4 +137,100 @@ func (m *Manager) Exists(eltName string) (bool, error) {
 
 func (p *Plugin) GetDirectory() string {
 	return filepath.Join(config.Config.PluginsPath, p.EltName)
+}
+
+func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err error) {
+	log.Debugf("Cloning %s...", url)
+
+	repo, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
+		URL:          url,
+		SingleBranch: true,
+		NoCheckout:   true,
+		Depth:        1,
+		Tags:         git.NoTags,
+	})
+	if err != nil {
+		return nil, "", fmt.Errorf("Error while cloning %s: %s", url, err)
+	}
+
+	remote, err := repo.Remote("origin")
+	if err != nil {
+		return nil, "", fmt.Errorf("Error retrieving origin remote from %s: %s", url, err)
+	}
+
+	log.Debug("Fetching tags...")
+	refs, err := remote.List(&git.ListOptions{})
+	if err != nil {
+		return nil, "", fmt.Errorf("Error fetching tags from %s: %s", url, err)
+	}
+
+	var tags []plumbing.ReferenceName
+	var master plumbing.ReferenceName
+	for _, ref := range refs {
+		name := ref.Name()
+		if name.IsTag() {
+			tags = append(tags, name)
+		}
+
+		if name.IsBranch() && name.Short() == "master" {
+			master = name
+		}
+	}
+
+	var ref plumbing.ReferenceName
+	if len(tags) != 0 {
+		ref = tags[0]
+	} else if master != "" {
+		ref = master
+		log.Warnf("No tags were found on %s. Using default reference (%s)", url, ref.Short())
+	} else {
+		return nil, "", fmt.Errorf("The repository %s has no tags and no master branch.")
+	}
+
+	tempDir, err = ioutil.TempDir(config.Plugins.Path, "new_plugin")
+	if err != nil {
+		return nil, "", fmt.Errorf("Error while trying to create temporary directory : %s", err)
+	}
+
+	log.Debugf("Cloning %s into %s ...", ref.Short(), tempDir)
+	repo, err = git.Clone(memory.NewStorage(), osfs.New(tempDir), &git.CloneOptions{
+		URL:           url,
+		SingleBranch:  true,
+		NoCheckout:    true,
+		Depth:         1,
+		Tags:          git.NoTags,
+		ReferenceName: ref,
+	})
+	if err != nil {
+		return nil, tempDir, fmt.Errorf("Error while cloning %s into %s : %s", ref.Short(), tempDir, err)
+	}
+
+	log.Debug("Checking out manifest...")
+
+	wt, err := repo.Worktree()
+	if err != nil {
+		return nil, tempDir, fmt.Errorf("Error while getting WorkTree of %s: %s", url, err)
+	}
+
+	if err = wt.Checkout(&git.CheckoutOptions{Branch: ref}); err != nil {
+		return nil, tempDir, fmt.Errorf("Error while checking out manifest of %s: %s", url, err)
+	}
+
+	manifest, err := wt.Filesystem.Open("marcel.json")
+	if err != nil {
+		return nil, tempDir, fmt.Errorf("Error while opening manifest of %s: %s", url, err)
+	}
+	defer manifest.Close()
+
+	plugin = &Plugin{}
+	if err := json.NewDecoder(manifest).Decode(plugin); err != nil {
+		return nil, tempDir, fmt.Errorf("Error while reading manifest of %s: %s", url, err)
+	}
+
+	plugin.URL = url
+	for _, tag := range tags {
+		plugin.Versions = append(plugin.Versions, tag.Short())
+	}
+
+	return plugin, tempDir, nil
 }
