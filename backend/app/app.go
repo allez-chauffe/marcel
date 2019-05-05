@@ -83,6 +83,7 @@ func (a *App) initializeRoutes() {
 	plugins.HandleFunc("/", a.pluginService.AddHandler).Methods("POST")
 	plugins.HandleFunc("/config", a.pluginService.GetConfigHandler).Methods("GET")
 	plugins.HandleFunc("/{eltName}", a.pluginService.GetHandler).Methods("GET")
+	plugins.HandleFunc("/{eltName}", a.pluginService.UpdateHandler).Methods("PUT")
 
 	a.Router = middleware.AuthMiddlware(c.Handler(r))
 }
