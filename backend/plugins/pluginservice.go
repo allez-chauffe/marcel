@@ -157,6 +157,8 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Infof("Plugin update requested for %s", eltName)
+
 	plugin, tempDir, err := s.Manager.FetchFromGit(plugin.URL)
 	// The temp dir cleanup should be done before handling because it can be created even if an error occured
 	defer os.RemoveAll(tempDir)
