@@ -2,19 +2,30 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/Zenika/MARCEL/backend/app"
 	"github.com/Zenika/MARCEL/backend/config"
 )
 
 func init() {
-	backend.Flags().UintVarP(&config.Global.Port, "port", "p", 8090, "Listening port")
-	backend.Flags().StringVar(&config.Global.DataPath, "data-path", "data", "Directory containing data files")
-	backend.Flags().StringVar(&config.Global.ClientsFile, "clients-file", "clients.json", "Clients data file name")
-	backend.Flags().StringVar(&config.Global.MediasFile, "medias-file", "medias.json", "Medias data file name")
-	backend.Flags().StringVar(&config.Global.PluginsFile, "plugins-file", "plugins.json", "Plugins data file name")
+	backend.Flags().UintP("port", "p", config.Config.Port, "Listening port")
+	viper.BindPFlag("port", backend.Flags().Lookup("port"))
 
-	backend.Flags().StringVar(&config.Plugins.Path, "plugins-path", "plugins", "Plugins directory")
+	backend.Flags().String("dataPath", config.Config.DataPath, "Data files directory")
+	viper.BindPFlag("dataPath", backend.Flags().Lookup("dataPath"))
+
+	backend.Flags().String("clientsFile", config.Config.ClientsFile, "Clients data file name")
+	viper.BindPFlag("clientsFile", backend.Flags().Lookup("clientsFile"))
+
+	backend.Flags().String("mediasFile", config.Config.MediasFile, "Medias data file name")
+	viper.BindPFlag("mediasFile", backend.Flags().Lookup("mediasFile"))
+
+	backend.Flags().String("pluginsFile", config.Config.PluginsFile, "Plugins data file name")
+	viper.BindPFlag("pluginsFile", backend.Flags().Lookup("pluginsFile"))
+
+	backend.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
+	viper.BindPFlag("pluginsPath", backend.Flags().Lookup("pluginsPath"))
 
 	Marcel.AddCommand(backend)
 }

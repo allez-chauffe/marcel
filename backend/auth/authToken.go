@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Zenika/MARCEL/backend/commons"
-
-	"github.com/Zenika/MARCEL/backend/users"
 	jwt "github.com/dgrijalva/jwt-go"
+
+	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/config"
+	"github.com/Zenika/MARCEL/backend/users"
 )
 
 const AuthCookieName = "Authentication"
@@ -37,7 +38,7 @@ func GetAuthToken(r *http.Request) (*Claims, error) {
 }
 
 func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
-	expiration := time.Now().Add(time.Duration(config.AuthExpiration) * time.Second)
+	expiration := time.Now().Add(config.Config.Auth.AuthExpiration)
 
 	cookie, err := createTokenCookie(
 		&Claims{
@@ -49,7 +50,8 @@ func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
 				IssuedAt:  time.Now().Unix(),
 			},
 		},
-		AuthCookieName, "/",
+		AuthCookieName,
+		"/",
 		expiration,
 	)
 

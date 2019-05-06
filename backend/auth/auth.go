@@ -7,17 +7,12 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 
-	"github.com/Zenika/MARCEL/backend/auth/conf"
+	"github.com/Zenika/MARCEL/backend/config"
 )
 
 var (
-	key    = []byte("ThisIsTheSecret")
-	config *conf.Config
+	key = []byte("ThisIsTheSecret")
 )
-
-func SetConfig(c *conf.Config) {
-	config = c
-}
 
 func getVerifiedClaims(tokenString string, sampleClaims jwt.Claims) (jwt.Claims, error) {
 	token, err := jwt.ParseWithClaims(
@@ -44,8 +39,8 @@ func createTokenCookie(claims jwt.Claims, name string, path string, expiration t
 		Name:     name,
 		Value:    token,
 		Expires:  expiration,
-		Domain:   config.Domain,
-		Secure:   config.SecuredCookies,
+		Domain:   config.Config.Auth.Domain,
+		Secure:   config.Config.Auth.Secured,
 		HttpOnly: true,
 		Path:     path,
 	}
@@ -57,9 +52,9 @@ func deleteCookie(name, path string) *http.Cookie {
 	cookie := &http.Cookie{
 		Name:     name,
 		Expires:  time.Now(),
-		Domain:   config.Domain,
+		Domain:   config.Config.Auth.Domain,
 		Path:     path,
-		Secure:   config.SecuredCookies,
+		Secure:   config.Config.Auth.Secured,
 		HttpOnly: true,
 	}
 
