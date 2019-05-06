@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/Zenika/MARCEL/backend/config"
+
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 )
@@ -25,8 +27,7 @@ type UsersData struct {
 }
 
 var (
-	UsersFilePath string
-	usersData     = &UsersData{[]*User{}}
+	usersData = &UsersData{[]*User{}}
 )
 
 func New(displayName, login, pRole, hash, salt string) *User {
@@ -91,7 +92,7 @@ func Delete(id string) bool {
 }
 
 func LoadUsersData() {
-	f, err := os.OpenFile(UsersFilePath, os.O_CREATE, 0755)
+	f, err := os.OpenFile(config.Config.Auth.UsersFile, os.O_CREATE, 0755)
 	defer f.Close()
 
 	if err != nil {
@@ -106,16 +107,16 @@ func LoadUsersData() {
 }
 
 func SaveUsersData() {
-	f, err := os.OpenFile(UsersFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(config.Config.Auth.UsersFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	defer f.Close()
 
 	if err != nil {
-		log.Errorf("ERROR: Error while opening users database file %s (%s)", UsersFilePath, err.Error())
+		log.Errorf("ERROR: Error while opening users database file %s (%s)", config.Config.Auth.UsersFile, err.Error())
 		return
 	}
 
 	if err := json.NewEncoder(f).Encode(usersData); err != nil {
-		log.Errorf("ERROR: Error while saving users data in %s (%s)", UsersFilePath, err.Error())
+		log.Errorf("ERROR: Error while saving users data in %s (%s)", config.Config.Auth.UsersFile, err.Error())
 		return
 	}
 }
