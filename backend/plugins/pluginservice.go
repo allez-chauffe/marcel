@@ -162,6 +162,7 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	plugin, tempDir, err := s.Manager.FetchFromGit(plugin.URL)
+	// The temp dir cleanup should be done before handling because it can be created even if an error occured
 	defer os.RemoveAll(tempDir)
 	if err != nil {
 		log.Error(err)
