@@ -19,6 +19,8 @@ func NewConfiguration() *Configuration {
 //
 // swagger:model
 type Plugin struct {
+	URL         string   `json:url`
+	Versions    []string `json:versions`
 	EltName     string   `json:"eltName"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`

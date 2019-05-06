@@ -1,13 +1,23 @@
 package plugins
 
 import (
-	"errors"
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/backend/config"
 )
+
+const (
+	ErrPluginNotFound errPluginNotFound = "NO_PLUGIN_FOUND"
+)
+
+type errPluginNotFound string
+
+func (err errPluginNotFound) Error() string {
+	return string(err)
+}
 
 type Manager struct {
 	ConfigPath     string
@@ -63,7 +73,7 @@ func (m *Manager) Get(eltName string) (*Plugin, error) {
 		}
 	}
 
-	return nil, errors.New("NO_MEDIA_FOUND")
+	return nil, ErrPluginNotFound
 }
 
 // RemovePlugin Remove plugin from memory and commit
@@ -105,4 +115,19 @@ func (m *Manager) GetPosition(plugin *Plugin) int {
 
 func (m *Manager) GetSaveFilePath() (string, string, string) {
 	return m.ConfigFullpath, m.ConfigPath, m.ConfigFileName
+}
+
+func (m *Manager) Exists(eltName string) (bool, error) {
+	switch _, err := m.Get(eltName); err {
+	case nil:
+		return true, nil
+	case ErrPluginNotFound:
+		return false, nil
+	default:
+		return false, err
+	}
+}
+
+func (p *Plugin) GetDirectory() string {
+	return filepath.Join(config.Config.PluginsPath, p.EltName)
 }
