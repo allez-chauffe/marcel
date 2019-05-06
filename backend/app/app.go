@@ -11,14 +11,12 @@ import (
 	"github.com/Zenika/MARCEL/backend/apidoc"
 	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/clients"
+	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
 	"github.com/Zenika/MARCEL/backend/medias"
 	"github.com/Zenika/MARCEL/backend/plugins"
 	"github.com/Zenika/MARCEL/backend/users"
 )
-
-//current version of the API
-const MARCEL_API_VERSION = "1"
 
 type App struct {
 	Router http.Handler
@@ -55,7 +53,7 @@ func (a *App) initializeRouter() {
 		AllowCredentials: true,
 	}).Handler)
 
-	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
+	s := r.PathPrefix("/api/v" + commons.MarcelAPIVersion).Subrouter()
 	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
 
 	medias := s.PathPrefix("/medias").Subrouter()

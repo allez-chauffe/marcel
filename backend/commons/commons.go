@@ -15,6 +15,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// MarcelAPIVersion is the current version of the API
+const MarcelAPIVersion = "1"
+
 func init() {
 	rand.Seed(time.Now().UnixNano())
 }

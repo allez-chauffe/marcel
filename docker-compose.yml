@@ -21,18 +21,6 @@ services:
     volumes:
       - ./frontend:/usr/share/nginx/html/conf:ro
 
-  auth:
-    depends_on:
-      - proxy
-    image: zenika/marcel-backend:dev
-    command: ["auth"]
-    labels:
-      traefik.backend: auth
-      traefik.frontend.rule: "PathPrefixStrip: /auth/"
-    volumes:
-      - ./backend/data:/var/lib/marcel/data
-      - ./auth:/var/lib/marcel/auth/config:ro
-
   backend:
     depends_on:
       - proxy
@@ -42,6 +30,7 @@ services:
       traefik.backend: backend
       traefik.frontend.rule: "PathPrefix: /api/v1/"
     volumes:
+      - ./backend/config.json:/etc/marcel/config.json:ro
       - ./backend/data:/var/lib/marcel/data
       - ./backend/plugins:/var/lib/marcel/plugins
       - ./backend/medias:/var/lib/marcel/medias

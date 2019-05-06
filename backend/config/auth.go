@@ -7,5 +7,4 @@ type auth struct {
 	AuthExpiration    time.Duration
 	RefreshExpiration time.Duration
 	Domain            string
-	BaseURL           string
 }

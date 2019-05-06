@@ -42,9 +42,6 @@ func init() {
 	backend.Flags().String("domain", config.Config.Auth.Domain, "Cookies domain")
 	viper.BindPFlag("auth.domain", backend.Flags().Lookup("domain"))
 
-	backend.Flags().String("baseURL", config.Config.Auth.BaseURL, "Cookies base URL")
-	viper.BindPFlag("auth.baseURL", backend.Flags().Lookup("baseURL"))
-
 	Marcel.AddCommand(backend)
 }
 
