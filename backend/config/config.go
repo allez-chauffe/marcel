@@ -14,6 +14,7 @@ var Config = struct {
 	ClientsFile string
 	MediasFile  string
 	PluginsFile string
+	UsersFile   string
 	PluginsPath string
 	Auth        auth
 }{
@@ -23,12 +24,11 @@ var Config = struct {
 	ClientsFile: "clients.json",
 	MediasFile:  "medias.json",
 	PluginsFile: "plugins.json",
+	UsersFile:   "users.json",
 	PluginsPath: "plugins",
 	Auth: auth{
-		Port:              8090,
 		Secured:           true,
 		AuthExpiration:    8 * time.Hour,
 		RefreshExpiration: 15 * 24 * time.Hour,
-		UsersFile:         "data/users.json",
 	},
 }

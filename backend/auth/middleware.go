@@ -1,10 +1,9 @@
-package middleware
+package auth
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/commons"
 )
 
@@ -12,9 +11,9 @@ type authContextKeyType string
 
 const authContextKey = authContextKeyType("MARCEL/AUT_BACKEND/AUTH")
 
-func AuthMiddlware(h http.Handler) http.Handler {
+func Middleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token, err := auth.GetAuthToken(r)
+		token, err := GetAuthToken(r)
 
 		if err != nil {
 			h.ServeHTTP(w, r)
@@ -27,8 +26,8 @@ func AuthMiddlware(h http.Handler) http.Handler {
 	})
 }
 
-func GetAuth(r *http.Request) *auth.Claims {
-	auth, ok := r.Context().Value(authContextKey).(*auth.Claims)
+func GetAuth(r *http.Request) *Claims {
+	auth, ok := r.Context().Value(authContextKey).(*Claims)
 
 	if !ok {
 		return nil

@@ -24,8 +24,26 @@ func init() {
 	backend.Flags().String("pluginsFile", config.Config.PluginsFile, "Plugins data file name")
 	viper.BindPFlag("pluginsFile", backend.Flags().Lookup("pluginsFile"))
 
+	backend.Flags().String("usersFile", config.Config.UsersFile, "Users data file")
+	viper.BindPFlag("usersFile", backend.Flags().Lookup("usersFile"))
+
 	backend.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
 	viper.BindPFlag("pluginsPath", backend.Flags().Lookup("pluginsPath"))
+
+	backend.Flags().Bool("secured", config.Config.Auth.Secured, "Use secured cookies")
+	viper.BindPFlag("auth.secured", backend.Flags().Lookup("secured"))
+
+	backend.Flags().Duration("authExpiration", config.Config.Auth.AuthExpiration, "Authentication token expiration")
+	viper.BindPFlag("auth.authExpiration", backend.Flags().Lookup("authExpiration"))
+
+	backend.Flags().Duration("refreshExpiration", config.Config.Auth.RefreshExpiration, "Refresh token expiration")
+	viper.BindPFlag("auth.refreshExpiration", backend.Flags().Lookup("refreshExpiration"))
+
+	backend.Flags().String("domain", config.Config.Auth.Domain, "Cookies domain")
+	viper.BindPFlag("auth.domain", backend.Flags().Lookup("domain"))
+
+	backend.Flags().String("baseURL", config.Config.Auth.BaseURL, "Cookies base URL")
+	viper.BindPFlag("auth.baseURL", backend.Flags().Lookup("baseURL"))
 
 	Marcel.AddCommand(backend)
 }

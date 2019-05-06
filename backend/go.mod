@@ -8,7 +8,6 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/dgrijalva/jwt-go v3.1.0+incompatible
 	github.com/gorilla/context v1.1.1 // indirect
-	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
 	github.com/gorilla/websocket v1.2.0
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
