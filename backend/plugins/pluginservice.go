@@ -50,7 +50,7 @@ func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	commons.WriteJsonResponse(w, s.Manager.GetConfiguration())
+	commons.WriteJsonResponse(w, s.Manager.GetConfig())
 }
 
 // swagger:route GET /plugins GetAllHandler
@@ -123,11 +123,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if exists, err := s.Manager.Exists(plugin.EltName); err != nil {
-		log.Errorf("Error while fetching plugin from database: %s", err)
-		commons.WriteResponse(w, http.StatusInternalServerError, "Error while reading plugin's database")
-		return
-	} else if exists {
+	if s.Manager.Exists(plugin.EltName) {
 		log.Errorf("The plugin '%s' already exists", plugin.EltName)
 		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("The plugin '%s' already exists", plugin.EltName))
 		return
@@ -184,7 +180,7 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.Manager.Add(plugin)
+	s.Manager.Replace(plugin)
 
 	log.Infof("Plugin successfuly updated : %s (%s)", plugin.EltName, plugin.Name)
 	commons.WriteJsonResponse(w, plugin)
