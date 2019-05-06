@@ -129,5 +129,5 @@ func (m *Manager) Exists(eltName string) (bool, error) {
 }
 
 func (p *Plugin) GetDirectory() string {
-	return filepath.Join(config.Plugins.Path, p.EltName)
+	return filepath.Join(config.Config.PluginsPath, p.EltName)
 }
