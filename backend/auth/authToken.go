@@ -38,7 +38,7 @@ func GetAuthToken(r *http.Request) (*Claims, error) {
 }
 
 func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
-	expiration := time.Now().Add(time.Duration(config.Config.Auth.AuthExpiration) * time.Second)
+	expiration := time.Now().Add(config.Config.Auth.AuthExpiration)
 
 	cookie, err := createTokenCookie(
 		&Claims{

@@ -27,7 +27,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 			},
 		},
 		RefreshCookieName, config.Config.Auth.BaseURL+"/login",
-		time.Now().Add(time.Duration(config.Config.Auth.RefreshExpiration)*time.Second),
+		time.Now().Add(config.Config.Auth.RefreshExpiration),
 	)
 
 	if err != nil {
