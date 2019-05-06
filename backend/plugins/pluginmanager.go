@@ -187,7 +187,7 @@ func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err 
 		return nil, "", fmt.Errorf("The repository %s has no tags and no master branch.")
 	}
 
-	tempDir, err = ioutil.TempDir(config.Plugins.Path, "new_plugin")
+	tempDir, err = ioutil.TempDir(config.Config.PluginsPath, "new_plugin")
 	if err != nil {
 		return nil, "", fmt.Errorf("Error while trying to create temporary directory : %s", err)
 	}
