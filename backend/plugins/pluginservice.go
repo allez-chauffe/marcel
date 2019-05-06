@@ -1,25 +1,23 @@
 package plugins
 
 import (
-	"archive/zip"
 	"encoding/json"
-	"errors"
-	"io"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
-	"path/filepath"
-	"strings"
 	"sync"
 
 	"github.com/gorilla/mux"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
+	"gopkg.in/src-d/go-billy.v4/osfs"
+	git "gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing"
+	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
 var (
@@ -104,181 +102,153 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteJsonResponse(w, plugin)
 }
 
+type AddPluginBody struct {
+	URL string `json:"url"`
+}
+
 func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil, "admin") {
-		commons.WriteResponse(w, http.StatusForbidden, "")
+	// if !middleware.CheckPermissions(r, nil, "admin") {
+	// 	commons.WriteResponse(w, http.StatusForbidden, "")
+	// 	return
+	// }
+
+	body := &AddPluginBody{}
+	if err := json.NewDecoder(r.Body).Decode(body); err != nil {
+		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	// -1 : Create temp dir once
-	initPluginsTempDir.Do(func() {
-		var err error
-		if pluginsTempDir, err = ioutil.TempDir(config.Config.PluginsPath, "upload"); err != nil {
-			log.Panic(err)
-		}
+	log.Infof("Plugin registration requested for %s", body.URL)
+
+	log.Debugf("Cloning %s...", body.URL)
+
+	repo, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
+		URL:          body.URL,
+		SingleBranch: true,
+		NoCheckout:   true,
+		Depth:        1,
+		Tags:         git.NoTags,
 	})
-
-	// 0 : Get files content and copy it into a temporary folder
-	foldername, filename, err := UploadFile(r)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+		log.Errorf("Error while cloning %s: %s", body.URL, err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// 1 : Check extension
-	_, err = CheckExtension(filename)
+	remote, err := repo.Remote("origin")
 	if err != nil {
-		os.Remove(filepath.Join(pluginsTempDir, foldername))
-		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
+		log.Errorf("Error retrieving origin remote from %s: %s", body.URL, err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// 2 : unzip into /plugins folder
-	pluginFolder := filepath.Join(config.Config.PluginsPath, commons.FileBasename(foldername))
-
-	err = UncompressFile(filepath.Join(pluginsTempDir, foldername), pluginFolder)
+	log.Debug("Fetching tags...")
+	refs, err := remote.List(&git.ListOptions{})
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotAcceptable, err.Error())
+		log.Errorf("Error fetching tags from %s: %s", body.URL, err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// 3 : check structure of the plugin
-	if exists := commons.FileOrFolderExists(filepath.Join(pluginFolder, "description.json")); exists == false {
-		commons.WriteResponse(w, http.StatusNotAcceptable, "'description.json' file not found at the root of the plugin folder")
+	var tags []plumbing.ReferenceName
+	var master plumbing.ReferenceName
+	for _, ref := range refs {
+		name := ref.Name()
+		if name.IsTag() {
+			tags = append(tags, name)
+		}
+
+		if name.IsBranch() && name.Short() == "master" {
+			master = name
+		}
+	}
+
+	var ref plumbing.ReferenceName
+	if len(tags) != 0 {
+		ref = tags[0]
+	} else if master != "" {
+		ref = master
+		log.Warnf("No tags were found on %s. Using default reference (%s)", body.URL, ref.Short())
+	} else {
+		err := "The repository %s has no tags and no master branch."
+		log.Errorf(err, body.URL, err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	if exists := commons.FileOrFolderExists(filepath.Join(pluginFolder, "front")); exists == false {
-		commons.WriteResponse(w, http.StatusNotAcceptable, "'front' folder not found at the root of the plugin folder")
-		return
-	}
-
-	f, err := os.Open(filepath.Join(pluginFolder, "description.json"))
+	tempDir, err := ioutil.TempDir(config.Config.PluginsPath, "new_plugin")
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotAcceptable, "Impossible to read 'description.json' file")
+		log.Errorf("Error while trying to create temporary directory : %s", err)
+		commons.WriteResponse(w, http.StatusInternalServerError, "Error while trying to creat temprorary directory")
 		return
 	}
 
-	// 4 : Parse description file and add
-	plugin := NewPlugin()
-	if err = json.NewDecoder(f).Decode(plugin); err != nil {
-		commons.WriteResponse(w, http.StatusNotAcceptable, "Impossible to parse 'description.json' file : "+err.Error())
+	log.Debugf("Cloning %s into %s ...", ref.Short(), tempDir)
+	repo, err = git.Clone(memory.NewStorage(), osfs.New(tempDir), &git.CloneOptions{
+		URL:           body.URL,
+		SingleBranch:  true,
+		NoCheckout:    true,
+		Depth:         1,
+		Tags:          git.NoTags,
+		ReferenceName: ref,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Debug("Checking out manifest...")
+
+	wt, err := repo.Worktree()
+	if err != nil {
+		log.Errorf("Error while getting WorkTree of %s: %s", body.URL, err)
+		commons.WriteResponse(w, http.StatusInternalServerError, "Error while checking out manifest : Unable to open WorkTree")
 		return
 	}
 
-	// todo : if plugin already exists and at least 1 instance of the backend is running, so stop them before replacing the files and relaunch them again after
+	if err = wt.Checkout(&git.CheckoutOptions{Branch: ref}); err != nil {
+		log.Errorf("Error while checking out manifest of %s: %s", body.URL, err)
+		commons.WriteResponse(w, http.StatusInternalServerError, fmt.Sprintf("Error while checking out manifest : %s", err))
+		return
+	}
 
-	// 5 : rename plugin folder with it's EltName (should be unique)
-	os.Rename(pluginFolder, filepath.Join(config.Config.PluginsPath, plugin.EltName))
+	manifest, err := wt.Filesystem.Open("marcel.json")
+	if err != nil {
+		log.Errorf("Error while opening manifest of %s: %s", body.URL, err)
+		commons.WriteResponse(w, http.StatusInternalServerError, fmt.Sprintf("Error while opening manifest : %s", err))
+		return
+	}
+	defer manifest.Close()
 
-	// 6 : check there's no plugin already installed with same name or remove&replace
+	plugin := &Plugin{}
+	if err := json.NewDecoder(manifest).Decode(plugin); err != nil {
+		log.Errorf("Error while reading manifest of %s: %s", body.URL, err)
+		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while reading manifest : %s", err))
+		return
+	}
+
+	exists, err := s.Manager.Exists(plugin.EltName)
+	if err != nil {
+		log.Errorf("Error while fetching plugin from database: %s", err)
+		commons.WriteResponse(w, http.StatusInternalServerError, "Error while reading plugins database.")
+		return
+	}
+
+	if exists {
+		log.Errorf("The plugin '%s' already exists.", plugin.EltName)
+		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("A plugin with '%s' element name already exists", plugin.EltName))
+		return
+	}
+
+	log.Debugf("Moving temporary directory (%s) to plugin's folder (%s)", tempDir, plugin.GetDirectory())
+	os.Rename(tempDir, plugin.GetDirectory())
+
+	plugin.URL = body.URL
+	for _, tag := range tags {
+		plugin.Versions = append(plugin.Versions, tag.Short())
+	}
 	s.Manager.Add(plugin)
 
-	// 7 : delete temporary file
-	os.Remove(filepath.Join(pluginsTempDir, foldername))
+	log.Infof("Plugin successfuly registered : %s (%s)", plugin.EltName, plugin.Name)
 
-	commons.WriteResponse(w, http.StatusOK, "Plugin correctly added to the catalog")
-}
-
-func UploadFile(r *http.Request) (string, string, error) {
-	file, header, err := r.FormFile("uploadfile")
-
-	if err != nil {
-		log.Errorln(err)
-		return "", "", err
-	}
-
-	defer file.Close()
-
-	foldername := commons.GetUID()
-	out, err := os.Create(filepath.Join(pluginsTempDir, foldername))
-	if err != nil {
-		log.Errorln("Unable to create the file for writing. Check your write access privilege")
-		return "", "", err
-	}
-
-	defer out.Close()
-
-	// write the content from POST to the file
-	_, err = io.Copy(out, file)
-	if err != nil {
-		log.Errorln(err)
-		return "", "", err
-	}
-
-	log.Debugln("File uploaded successfully : ")
-
-	return foldername, header.Filename, nil
-}
-
-// Return extension of the file or an error if the extension is not supported by this program
-func CheckExtension(filename string) (string, error) {
-	acceptedExtensions := []string{".zip"}
-
-	ext := path.Ext(filename)
-
-	if accepted, _ := commons.IsInArray(ext, acceptedExtensions); accepted == false {
-		v := strings.Join(acceptedExtensions, ", ")
-		return "", errors.New("File extension (" + ext + ") is not supported. Accepted extensions are: " + v)
-	}
-
-	return ext, nil
-}
-
-func UncompressFile(src, dest string) error {
-	r, err := zip.OpenReader(src)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err := r.Close(); err != nil {
-			panic(err)
-		}
-	}()
-
-	os.MkdirAll(dest, 0755)
-
-	extractAndWriteFile := func(f *zip.File) error {
-		rc, err := f.Open()
-		if err != nil {
-			return err
-		}
-		defer func() {
-			if err := rc.Close(); err != nil {
-				panic(err)
-			}
-		}()
-
-		path := filepath.Join(dest, f.Name)
-
-		if f.FileInfo().IsDir() {
-			os.MkdirAll(path, f.Mode())
-		} else {
-			os.MkdirAll(filepath.Dir(path), f.Mode())
-			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if err := f.Close(); err != nil {
-					panic(err)
-				}
-			}()
-
-			_, err = io.Copy(f, rc)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-
-	for _, f := range r.File {
-		err := extractAndWriteFile(f)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	commons.WriteJsonResponse(w, plugin)
 }
