@@ -184,7 +184,7 @@ func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err 
 		ref = master
 		log.Warnf("No tags were found on %s. Using default reference (%s)", url, ref.Short())
 	} else {
-		return nil, "", fmt.Errorf("The repository %s has no tags and no master branch.")
+		return nil, "", fmt.Errorf("The repository %s has no tags and no master branch", url)
 	}
 
 	tempDir, err = ioutil.TempDir(config.Config.PluginsPath, "new_plugin")
