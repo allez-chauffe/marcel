@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"net/http"
+	"path"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -26,7 +27,8 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 				IssuedAt: time.Now().Unix(),
 			},
 		},
-		RefreshCookieName, config.Config.Auth.BaseURL+"/login",
+		RefreshCookieName,
+		path.Join(config.Config.Auth.BaseURL, "login"),
 		time.Now().Add(config.Config.Auth.RefreshExpiration),
 	)
 
@@ -51,13 +53,13 @@ func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
 
 	refreshClaims, ok := claims.(*RefreshClaims)
 	if !ok {
-		return nil, errors.New("Invlaid Refresh Token")
+		return nil, errors.New("Invalid Refresh Token")
 	}
 
 	return refreshClaims, nil
 }
 
 func DeleteRefreshToken(w http.ResponseWriter) {
-	cookie := deleteCookie(RefreshCookieName, "/auth/login")
+	cookie := deleteCookie(RefreshCookieName, path.Join(config.Config.Auth.BaseURL, "login"))
 	http.SetCookie(w, cookie)
 }

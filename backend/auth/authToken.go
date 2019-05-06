@@ -50,7 +50,8 @@ func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
 				IssuedAt:  time.Now().Unix(),
 			},
 		},
-		AuthCookieName, "/",
+		AuthCookieName,
+		"/",
 		expiration,
 	)
 
