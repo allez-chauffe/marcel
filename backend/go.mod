@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Pallinder/go-randomdata v0.0.0-20171227164748-442d37d9dbc7
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/dgrijalva/jwt-go v3.1.0+incompatible
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.3.0
