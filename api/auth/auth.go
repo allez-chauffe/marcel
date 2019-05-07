@@ -30,19 +30,18 @@ func getVerifiedClaims(tokenString string, sampleClaims jwt.Claims) (jwt.Claims,
 
 func createTokenCookie(claims jwt.Claims, name string, path string, expiration time.Time) (*http.Cookie, error) {
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(key)
-
 	if err != nil {
 		return nil, err
 	}
 
 	cookie := &http.Cookie{
-		Name:     name,
+		Name:     cookieName(name, path),
 		Value:    token,
 		Expires:  expiration,
-		Domain:   config.Config.Auth.Domain,
-		Secure:   config.Config.Auth.Secured,
+		Secure:   config.Config.Auth.Secure,
 		HttpOnly: true,
 		Path:     path,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	return cookie, nil
@@ -50,13 +49,23 @@ func createTokenCookie(claims jwt.Claims, name string, path string, expiration t
 
 func deleteCookie(name, path string) *http.Cookie {
 	cookie := &http.Cookie{
-		Name:     name,
+		Name:     cookieName(name, path),
 		Expires:  time.Now(),
-		Domain:   config.Config.Auth.Domain,
 		Path:     path,
-		Secure:   config.Config.Auth.Secured,
+		Secure:   config.Config.Auth.Secure,
 		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	return cookie
+}
+
+func cookieName(name, path string) string {
+	if !config.Config.Auth.Secure {
+		return name
+	}
+	if path == "/" {
+		return "__Host-" + name
+	}
+	return "__Secure-" + name
 }
