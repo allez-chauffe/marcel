@@ -62,7 +62,7 @@ func deleteCookie(name, path string) *http.Cookie {
 
 func cookieName(name, path string) string {
 	if !config.Config.Auth.Secure {
-		return ""
+		return name
 	}
 	if path == "/" {
 		return "__Host-" + name
