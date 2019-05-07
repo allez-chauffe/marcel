@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"sort"
+
+	"gopkg.in/src-d/go-billy.v4"
 
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/src-d/go-billy.v4/osfs"
@@ -14,10 +17,17 @@ import (
 
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
+
+	"github.com/blang/semver"
 )
 
 const (
 	ErrPluginNotFound errPluginNotFound = "NO_PLUGIN_FOUND"
+	masterRef                           = "refs/heads/master"
+)
+
+var (
+	master = Version{ReferenceName: masterRef}
 )
 
 type errPluginNotFound string
@@ -33,6 +43,8 @@ type Manager struct {
 	Config         *Configuration
 }
 
+// NewManager instantiates a new plugin manager
+// and initializes its configuration
 func NewManager(configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
@@ -45,7 +57,7 @@ func NewManager(configPath, configFilename string) *Manager {
 	return manager
 }
 
-// LoadPlugins loads plugins configuration from DB and store it in memory
+// LoadFromDB loads plugins configuration from DB and stores it in memory
 func (m *Manager) LoadFromDB() {
 	log.Debugln("Start Loading Plugins from DB.")
 
@@ -54,23 +66,19 @@ func (m *Manager) LoadFromDB() {
 	log.Debugln("Plugins configurations is loaded...")
 }
 
-func (m *Manager) GetConfiguration() *Configuration {
-	log.Debugln("Getting global plugins config")
-
-	return m.Config
-}
-
+// GetConfig returns the current configuration
 func (m *Manager) GetConfig() interface{} {
 	return m.Config
 }
 
+// GetAll returns the entire list of registered plugins
 func (m *Manager) GetAll() []Plugin {
 	log.Debugln("Getting all plugins")
 
 	return m.Config.Plugins
 }
 
-// GetPlugin Return the plugin with its eltName
+// Get Return the plugin
 func (m *Manager) Get(eltName string) (*Plugin, error) {
 
 	log.Debugln("Getting plugin with eltName: ", eltName)
@@ -83,25 +91,48 @@ func (m *Manager) Get(eltName string) (*Plugin, error) {
 	return nil, ErrPluginNotFound
 }
 
-// RemovePlugin Remove plugin from memory and commit
+// RemoveFromDB Remove plugin
+// This is a no-op if the plugin doesn't exists
 func (m *Manager) RemoveFromDB(plugin *Plugin) {
 	log.Debugln("Removing plugin")
 	i := m.GetPosition(plugin)
 
 	if i >= 0 {
 		m.Config.Plugins = append(m.Config.Plugins[:i], m.Config.Plugins[i+1:]...)
+	} else {
+		log.Debugf("Plugin doesn't exsits")
 	}
 
 	m.Commit()
 }
 
-// Save plugin information.
+// Add plugin information.
+// Panics if the plugin already exists
 func (m *Manager) Add(plugin *Plugin) {
 	log.Debugln("Saving plugin")
-	m.RemoveFromDB(plugin)
+	if plugin == nil {
+		log.Fatal("Can't add nil to plugin list")
+	}
+	if m.Exists(plugin.EltName) {
+		log.Fatalf("Plugin already exists")
+	}
 	m.Config.Plugins = append(m.Config.Plugins, *plugin)
 
 	m.Commit()
+}
+
+// Replace an existing plugin
+// This is a no-op when the given plugin is not found
+func (m *Manager) Replace(plugin *Plugin) {
+	log.Debugf("Replacing plugin")
+	i := m.GetPosition(plugin)
+
+	if i >= 0 {
+		m.Config.Plugins[i] = *plugin
+		m.Commit()
+	} else {
+		log.Debug("Plugin not found. Replacing ingored")
+	}
 }
 
 // Commit Save all plugins in DB.
@@ -110,7 +141,7 @@ func (m *Manager) Commit() error {
 	return commons.Commit(m)
 }
 
-// GetPluginPosition Return position of a plugin in the list
+// GetPosition returns the position of a plugin in the list
 func (m *Manager) GetPosition(plugin *Plugin) int {
 	for p, m := range m.Config.Plugins {
 		if m.EltName == plugin.EltName {
@@ -120,80 +151,94 @@ func (m *Manager) GetPosition(plugin *Plugin) int {
 	return -1
 }
 
+// GetSaveFilePath returns the three components needed to build
+// the plugin full directory path
 func (m *Manager) GetSaveFilePath() (string, string, string) {
 	return m.ConfigFullpath, m.ConfigPath, m.ConfigFileName
 }
 
-func (m *Manager) Exists(eltName string) (bool, error) {
-	switch _, err := m.Get(eltName); err {
-	case nil:
-		return true, nil
-	case ErrPluginNotFound:
-		return false, nil
-	default:
-		return false, err
-	}
+// Exists checks if a plugin is registered with the given element name
+func (m *Manager) Exists(eltName string) bool {
+	i := m.GetPosition(&Plugin{EltName: eltName})
+	return i != -1
 }
 
+// GetDirectory returns the plugin's static files directory path
 func (p *Plugin) GetDirectory() string {
 	return filepath.Join(config.Config.PluginsPath, p.EltName)
 }
 
-func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err error) {
-	log.Debugf("Cloning %s...", url)
-
-	repo, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
-		URL:          url,
-		SingleBranch: true,
-		NoCheckout:   true,
-		Depth:        1,
-		Tags:         git.NoTags,
-	})
+// FetchVersionsFromGit returns a sorted list of versions found in the remote tag list
+func FetchVersionsFromGit(url string) (Versions, error) {
+	repo, err := CloneGitRepository(url, "", nil)
 	if err != nil {
-		return nil, "", fmt.Errorf("Error while cloning %s: %s", url, err)
+		return nil, fmt.Errorf("Error while cloning %s: %s", url, err)
 	}
 
 	remote, err := repo.Remote("origin")
 	if err != nil {
-		return nil, "", fmt.Errorf("Error retrieving origin remote from %s: %s", url, err)
+		return nil, fmt.Errorf("Error retrieving origin remote from %s: %s", url, err)
 	}
 
 	log.Debug("Fetching tags...")
 	refs, err := remote.List(&git.ListOptions{})
 	if err != nil {
-		return nil, "", fmt.Errorf("Error fetching tags from %s: %s", url, err)
+		return nil, fmt.Errorf("Error fetching tags from %s: %s", url, err)
 	}
 
-	var tags []plumbing.ReferenceName
-	var master plumbing.ReferenceName
+	var versions Versions
 	for _, ref := range refs {
 		name := ref.Name()
 		if name.IsTag() {
-			tags = append(tags, name)
-		}
-
-		if name.IsBranch() && name.Short() == "master" {
-			master = name
+			if version, err := semver.ParseTolerant(name.Short()); err != nil {
+				log.Debugf("Ignoring non semver tag: %s", name.Short())
+			} else {
+				versions = append(versions, Version{name, version})
+			}
 		}
 	}
 
-	var ref plumbing.ReferenceName
-	if len(tags) != 0 {
-		ref = tags[0]
-	} else if master != "" {
-		ref = master
-		log.Warnf("No tags were found on %s. Using default reference (%s)", url, ref.Short())
-	} else {
-		return nil, "", fmt.Errorf("The repository %s has no tags and no master branch", url)
-	}
+	sort.Sort(versions)
 
-	tempDir, err = ioutil.TempDir(config.Config.PluginsPath, "new_plugin")
+	return versions, nil
+}
+
+// FetchManifestFromGit reads the marcel's manifest file from the given repository
+func FetchManifestFromGit(repo *git.Repository, ref plumbing.ReferenceName) (*Plugin, error) {
+	wt, err := repo.Worktree()
 	if err != nil {
-		return nil, "", fmt.Errorf("Error while trying to create temporary directory : %s", err)
+		return nil, fmt.Errorf("Error while getting WorkTree : %s", err)
 	}
 
-	log.Debugf("Cloning %s into %s ...", ref.Short(), tempDir)
-	repo, err = git.Clone(memory.NewStorage(), osfs.New(tempDir), &git.CloneOptions{
+	if err = wt.Checkout(&git.CheckoutOptions{Branch: ref}); err != nil {
+		return nil, fmt.Errorf("Error while checking out manifest: %s", err)
+	}
+
+	manifest, err := wt.Filesystem.Open("marcel.json")
+	if err != nil {
+		return nil, fmt.Errorf("Error while opening manifest : %s", err)
+	}
+	defer manifest.Close()
+
+	plugin := &Plugin{}
+	if err := json.NewDecoder(manifest).Decode(plugin); err != nil {
+		return nil, fmt.Errorf("Error while reading manifest : %s", err)
+	}
+
+	return plugin, nil
+}
+
+// CloneGitRepository returns a repo initialised for url and checked out for ref.
+// ref can be omited to fetch default remote's HEAD
+// fs can be omitted to avoid checking out repository's content
+func CloneGitRepository(url string, ref plumbing.ReferenceName, fs billy.Filesystem) (*git.Repository, error) {
+	if fs != nil {
+		log.Debugf("Cloning %s (%s) into %s ...", url, ref.Short(), fs.Root())
+	} else {
+		log.Debugf("Cloning %s (%s)...", url, ref.Short())
+	}
+
+	repo, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 		URL:           url,
 		SingleBranch:  true,
 		NoCheckout:    true,
@@ -202,34 +247,48 @@ func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err 
 		ReferenceName: ref,
 	})
 	if err != nil {
-		return nil, tempDir, fmt.Errorf("Error while cloning %s into %s : %s", ref.Short(), tempDir, err)
+		return nil, err
+	}
+
+	return repo, nil
+}
+
+// FetchFromGit returns the plugin found in the git repo pointed by url
+// It also returns the fullpath of the temporary directory where the plugin's repo content is stored
+// The caller should take care of the temporary directory removal
+func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err error) {
+
+	versions, err := FetchVersionsFromGit(url)
+	if err != nil {
+		return nil, tempDir, fmt.Errorf("Error while retreiving versions: %s", err)
+	}
+
+	latest, err := versions.Last()
+	if err != nil {
+		latest = master
+		log.Warnf("No versions were found on %s. Using default reference (%s)", url, latest.Short())
+	}
+
+	tempDir, err = ioutil.TempDir(config.Config.PluginsPath, "new_plugin")
+	if err != nil {
+		return nil, tempDir, fmt.Errorf("Error while trying to create temporary directory: %s", err)
+	}
+
+	repo, err := CloneGitRepository(url, latest.ReferenceName, osfs.New(tempDir))
+	if err != nil {
+		return nil, tempDir, fmt.Errorf("Error while cloning %s into %s : %s", latest.Short(), tempDir, err)
 	}
 
 	log.Debug("Checking out manifest...")
 
-	wt, err := repo.Worktree()
+	plugin, err = FetchManifestFromGit(repo, latest.ReferenceName)
 	if err != nil {
-		return nil, tempDir, fmt.Errorf("Error while getting WorkTree of %s: %s", url, err)
-	}
-
-	if err = wt.Checkout(&git.CheckoutOptions{Branch: ref}); err != nil {
-		return nil, tempDir, fmt.Errorf("Error while checking out manifest of %s: %s", url, err)
-	}
-
-	manifest, err := wt.Filesystem.Open("marcel.json")
-	if err != nil {
-		return nil, tempDir, fmt.Errorf("Error while opening manifest of %s: %s", url, err)
-	}
-	defer manifest.Close()
-
-	plugin = &Plugin{}
-	if err := json.NewDecoder(manifest).Decode(plugin); err != nil {
-		return nil, tempDir, fmt.Errorf("Error while reading manifest of %s: %s", url, err)
+		return nil, tempDir, fmt.Errorf("Error while fetching manifest: %s", err)
 	}
 
 	plugin.URL = url
-	for _, tag := range tags {
-		plugin.Versions = append(plugin.Versions, tag.Short())
+	for _, version := range versions {
+		plugin.Versions = append(plugin.Versions, version.String())
 	}
 
 	return plugin, tempDir, nil
