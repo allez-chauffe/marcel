@@ -6,5 +6,4 @@ type auth struct {
 	Secured           bool
 	AuthExpiration    time.Duration
 	RefreshExpiration time.Duration
-	Domain            string
 }

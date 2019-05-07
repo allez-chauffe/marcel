@@ -39,9 +39,6 @@ func init() {
 	apiCmd.Flags().Duration("refreshExpiration", config.Config.Auth.RefreshExpiration, "Refresh token expiration")
 	viper.BindPFlag("auth.refreshExpiration", apiCmd.Flags().Lookup("refreshExpiration"))
 
-	apiCmd.Flags().String("domain", config.Config.Auth.Domain, "Cookies domain")
-	viper.BindPFlag("auth.domain", apiCmd.Flags().Lookup("domain"))
-
 	Marcel.AddCommand(apiCmd)
 }
 

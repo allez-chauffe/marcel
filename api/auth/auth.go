@@ -39,7 +39,6 @@ func createTokenCookie(claims jwt.Claims, name string, path string, expiration t
 		Name:     name,
 		Value:    token,
 		Expires:  expiration,
-		Domain:   config.Config.Auth.Domain,
 		Secure:   config.Config.Auth.Secured,
 		HttpOnly: true,
 		Path:     path,
@@ -52,7 +51,6 @@ func deleteCookie(name, path string) *http.Cookie {
 	cookie := &http.Cookie{
 		Name:     name,
 		Expires:  time.Now(),
-		Domain:   config.Config.Auth.Domain,
 		Path:     path,
 		Secure:   config.Config.Auth.Secured,
 		HttpOnly: true,
