@@ -167,10 +167,10 @@ workflows:
        - debug_go
        - build_backoffice
        - build_frontend
-       - build_marcel:
-          requires:
-            - build_backoffice
-            - build_frontend
+       - build_marcel
+          # requires:
+          #   - build_backoffice
+          #   - build_frontend
        - package_plugins
        - docker_build_backoffice:
           requires:
