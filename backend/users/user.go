@@ -3,6 +3,7 @@ package users
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/Zenika/MARCEL/backend/config"
@@ -92,13 +93,14 @@ func Delete(id string) bool {
 }
 
 func LoadUsersData() {
-	f, err := os.OpenFile(config.Config.Auth.UsersFile, os.O_CREATE, 0755)
-	defer f.Close()
+	p := filepath.Join(config.Config.DataPath, config.Config.UsersFile)
 
+	f, err := os.OpenFile(p, os.O_CREATE, 0755)
 	if err != nil {
 		log.Errorln("Error while loading users database", err.Error())
 		return
 	}
+	defer f.Close()
 
 	if err := json.NewDecoder(f).Decode(usersData); err != nil {
 		log.Errorf("ERROR: Malformed JSON in users database file (%s)", err.Error())
@@ -107,16 +109,17 @@ func LoadUsersData() {
 }
 
 func SaveUsersData() {
-	f, err := os.OpenFile(config.Config.Auth.UsersFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	defer f.Close()
+	p := filepath.Join(config.Config.DataPath, config.Config.UsersFile)
 
+	f, err := os.OpenFile(p, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		log.Errorf("ERROR: Error while opening users database file %s (%s)", config.Config.Auth.UsersFile, err.Error())
+		log.Errorf("ERROR: Error while opening users database file %s (%s)", p, err.Error())
 		return
 	}
+	defer f.Close()
 
 	if err := json.NewEncoder(f).Encode(usersData); err != nil {
-		log.Errorf("ERROR: Error while saving users data in %s (%s)", config.Config.Auth.UsersFile, err.Error())
+		log.Errorf("ERROR: Error while saving users data in %s (%s)", p, err.Error())
 		return
 	}
 }

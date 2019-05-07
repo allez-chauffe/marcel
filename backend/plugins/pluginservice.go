@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/backend/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
 )
@@ -45,7 +45,7 @@ func (s *Service) GetManager() *Manager {
 //
 //     Schemes: http, https
 func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -62,7 +62,7 @@ func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -80,7 +80,7 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idPlugin
 func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -102,7 +102,7 @@ type AddPluginBody struct {
 }
 
 func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
-	// if !middleware.CheckPermissions(r, nil, "admin") {
+	// if !auth.CheckPermissions(r, nil, "admin") {
 	// 	commons.WriteResponse(w, http.StatusForbidden, "")
 	// 	return
 	// }
@@ -143,7 +143,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
-	// if !middleware.CheckPermissions(r, nil, "admin") {
+	// if !auth.CheckPermissions(r, nil, "admin") {
 	// 	commons.WriteResponse(w, http.StatusForbidden, "")
 	// 	return
 	// }

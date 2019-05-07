@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/Zenika/MARCEL/backend/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/clients"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
@@ -42,7 +42,7 @@ func (m *Service) GetManager() *Manager {
 //
 //     Schemes: http, https
 func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -59,7 +59,7 @@ func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -77,7 +77,7 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idMedia
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -112,7 +112,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !middleware.CheckPermissions(r, []string{tmpMedia.Owner}, "admin") {
+	if !auth.CheckPermissions(r, []string{tmpMedia.Owner}, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -135,13 +135,13 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
 	//get a new media
-	newMedia := m.manager.CreateEmpty(middleware.GetAuth(r).Subject)
+	newMedia := m.manager.CreateEmpty(auth.GetAuth(r).Subject)
 
 	commons.WriteJsonResponse(w, newMedia)
 }
@@ -157,7 +157,7 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !middleware.CheckPermissions(r, []string{media.Owner}, "admin") {
+	if !auth.CheckPermissions(r, []string{media.Owner}, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -180,7 +180,7 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !middleware.CheckPermissions(r, []string{media.Owner}, "admin") {
+	if !auth.CheckPermissions(r, []string{media.Owner}, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -202,7 +202,7 @@ func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !middleware.CheckPermissions(r, []string{media.Owner}, "admin") {
+	if !auth.CheckPermissions(r, []string{media.Owner}, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -227,7 +227,7 @@ func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !middleware.CheckPermissions(r, []string{media.Owner}, "admin") {
+	if !auth.CheckPermissions(r, []string{media.Owner}, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -240,7 +240,7 @@ func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 //
 // Delete all medias
 func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil, "admin") {
+	if !auth.CheckPermissions(r, nil, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -259,7 +259,7 @@ func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 //
 // Serves static frontend files of the given plugin instance for the given media.
 func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/Zenika/MARCEL/backend/auth"
-	"github.com/Zenika/MARCEL/backend/auth/middleware"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/users"
 )
@@ -73,9 +72,9 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	if middleware.CheckPermissions(r, nil) {
+	if auth.CheckPermissions(r, nil) {
 		// If the user is connected, update it in database
-		userID := middleware.GetAuth(r).Subject
+		userID := auth.GetAuth(r).Subject
 
 		if user := users.GetByID(userID); user != nil {
 			user.LastDisconection = time.Now().Unix()

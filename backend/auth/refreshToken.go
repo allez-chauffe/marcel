@@ -28,7 +28,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 			},
 		},
 		RefreshCookieName,
-		path.Join(config.Config.Auth.BaseURL, "login"),
+		path.Join("/api/v" + commons.MarcelAPIVersion, "auth", "login"),
 		time.Now().Add(config.Config.Auth.RefreshExpiration),
 	)
 
@@ -60,6 +60,6 @@ func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
 }
 
 func DeleteRefreshToken(w http.ResponseWriter) {
-	cookie := deleteCookie(RefreshCookieName, path.Join(config.Config.Auth.BaseURL, "login"))
+	cookie := deleteCookie(RefreshCookieName, path.Join("/api/v" + commons.MarcelAPIVersion, "auth", "login"))
 	http.SetCookie(w, cookie)
 }
