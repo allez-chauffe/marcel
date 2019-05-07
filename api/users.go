@@ -1,10 +1,6 @@
 package api
 
 import (
-	"crypto/hmac"
-	"crypto/rand"
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,19 +10,18 @@ import (
 
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/users"
+	"github.com/Zenika/MARCEL/api/db/users"
+	"github.com/Zenika/MARCEL/api/user"
 )
 
-var passwordSecretKey = []byte("This is the password secret key !")
-
 type User struct {
-	ID               string `json:"id"`
-	DisplayName      string `json:"displayName"`
-	Login            string `json:"login"`
-	Role             string `json:"role"`
-	CreatedAt        int64  `json:"createdAt"`
-	LastDisconection int64  `json:"lastDisconnection"`
-	Password         string `json:"password"`
+	ID               string    `json:"id"`
+	DisplayName      string    `json:"displayName"`
+	Login            string    `json:"login"`
+	Role             string    `json:"role"`
+	CreatedAt        time.Time `json:"createdAt"`
+	LastDisconection time.Time `json:"lastDisconnection"`
+	Password         string    `json:"password"`
 }
 
 func createUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,12 +37,19 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hash, salt := generateHash(body.Password)
+	u, err := user.New(body.DisplayName, body.Login, body.Role, body.Password)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
 
-	user := users.New(body.DisplayName, body.Login, body.Role, hash, salt)
-	users.SaveUsersData()
+	err = users.Put(u)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	commons.WriteJsonResponse(w, user)
+	commons.WriteJsonResponse(w, u)
 }
 
 func updateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,19 +62,34 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body := getUserFromRequest(w, r)
-	savedUser := users.GetByID(userID)
+	savedUser, err := users.Get(userID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	if savedUser == nil || savedUser.ID != body.ID {
 		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
 	}
 
-	if body.Password != "" && !checkHash(body.Password, savedUser.PasswordHash, savedUser.PasswordSalt) {
-		savedUser.LastDisconection = time.Now().Unix()
-		hash, salt := generateHash(body.Password)
-		savedUser.PasswordHash = hash
-		savedUser.PasswordSalt = salt
+	if body.Password != "" {
+		changed, err := savedUser.CheckPassword(body.Password)
+		if err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		if changed {
+			if err := savedUser.SetPassword(body.Password); err != nil {
+				commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			savedUser.LastDisconection = time.Now() // FIXME why ?!
+		}
 	}
+
 	savedUser.DisplayName = body.DisplayName
 	savedUser.Login = body.Login
 
@@ -80,20 +97,28 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 		savedUser.Role = body.Role
 	}
 
-	users.SaveUsersData()
 	commons.WriteJsonResponse(w, savedUser)
 }
 
 func getUsersHandler(w http.ResponseWriter, r *http.Request) {
-	result := []*User{}
-	for _, user := range users.GetAll() {
-		result = append(result, adaptUser(user))
+	// FIXME check permissions
+
+	users, err := users.List()
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
 	}
-	commons.WriteJsonResponse(w, result)
+
+	result := make([]*User, len(users))
+	for i, u := range users {
+		result[i] = adaptUser(u)
+	}
+
+	commons.WriteJsonResponse(w, users)
 }
 
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) { // FIXME no roles?
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -101,14 +126,18 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["userID"]
 
-	user := users.GetByID(userID)
+	u, err := users.Get(userID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	if user == nil {
+	if u == nil {
 		commons.WriteResponse(w, http.StatusNotFound, "User not found")
 		return
 	}
 
-	commons.WriteJsonResponse(w, adaptUser(user))
+	commons.WriteJsonResponse(w, adaptUser(u))
 }
 
 func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -120,14 +149,12 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok := users.Delete(userID)
-
-	if !ok {
-		commons.WriteResponse(w, http.StatusNotFound, "")
+	err := users.Delete(userID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	users.SaveUsersData()
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
@@ -141,25 +168,7 @@ func getUserFromRequest(w http.ResponseWriter, r *http.Request) *User {
 	return user
 }
 
-func generateHash(password string) (string, string) {
-	salt := make([]byte, 40)
-	rand.Read(salt)
-	saltString := base64.StdEncoding.EncodeToString(salt)
-
-	return hash(password, saltString), saltString
-}
-
-func checkHash(password, hashString, saltString string) bool {
-	return hash(password, saltString) == hashString
-}
-
-func hash(password, salt string) string {
-	h := hmac.New(sha256.New, passwordSecretKey)
-	h.Write([]byte(password + salt))
-	return base64.StdEncoding.EncodeToString(h.Sum(nil))
-}
-
-func adaptUser(user *users.User) *User {
+func adaptUser(user *user.User) *User {
 	return &User{
 		ID:               user.ID,
 		DisplayName:      user.DisplayName,

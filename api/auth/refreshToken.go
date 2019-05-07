@@ -9,7 +9,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/users"
+	"github.com/Zenika/MARCEL/api/user"
 	"github.com/Zenika/MARCEL/config"
 )
 
@@ -19,7 +19,7 @@ type RefreshClaims struct {
 	jwt.StandardClaims
 }
 
-func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
+func GenerateRefreshToken(w http.ResponseWriter, user *user.User) {
 	cookie, err := createTokenCookie(
 		&RefreshClaims{
 			StandardClaims: jwt.StandardClaims{

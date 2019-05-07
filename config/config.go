@@ -10,6 +10,7 @@ import (
 var Config = struct {
 	Port        uint
 	LogLevel    log.Level
+	DBFile      string
 	DataPath    string
 	ClientsFile string
 	MediasFile  string
@@ -20,6 +21,7 @@ var Config = struct {
 }{
 	Port:        8090,
 	LogLevel:    log.InfoLevel,
+	DBFile:      "marcel.db",
 	DataPath:    "data",
 	ClientsFile: "clients.json",
 	MediasFile:  "medias.json",

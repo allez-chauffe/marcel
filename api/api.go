@@ -11,9 +11,9 @@ import (
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/clients"
 	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/api/db"
 	"github.com/Zenika/MARCEL/api/medias"
 	"github.com/Zenika/MARCEL/api/plugins"
-	"github.com/Zenika/MARCEL/api/users"
 	"github.com/Zenika/MARCEL/config"
 )
 
@@ -26,6 +26,9 @@ type App struct {
 }
 
 func (a *App) Initialize() {
+	if err := db.Open(); err != nil {
+		log.Fatalln(err)
+	}
 	a.initializeData()
 	a.initializeRouter()
 }
@@ -110,6 +113,4 @@ func (a *App) initializeData() {
 	//Load Medias configuration from DB
 	a.mediaService = medias.NewService(a.pluginService.GetManager(), a.clientsService)
 	a.mediaService.GetManager().LoadFromDB()
-
-	users.LoadUsersData()
 }

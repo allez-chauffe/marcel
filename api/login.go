@@ -7,7 +7,7 @@ import (
 
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/users"
+	"github.com/Zenika/MARCEL/api/db/users"
 )
 
 type Credentials struct {
@@ -32,10 +32,25 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 		return
 	}
 
-	user := users.GetByLogin(login)
+	user, err := users.GetByLogin(login)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	if user == nil || !checkHash(password, user.PasswordHash, user.PasswordSalt) {
-		commons.WriteResponse(w, http.StatusForbidden, "")
+	if user == nil {
+		commons.WriteResponse(w, http.StatusForbidden, "") // FIXME Unauthorized ? BadRequest ?
+		return
+	}
+
+	ok, err := user.CheckPassword(password)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if !ok {
+		commons.WriteResponse(w, http.StatusForbidden, "") // FIXME Unauthorized ? BadRequest ?
 		return
 	}
 
@@ -46,21 +61,25 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 }
 
 func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
-
 	refreshClaims, err := auth.GetRefreshToken(r)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
-	user := users.GetByID(refreshClaims.Subject)
+	user, err := users.Get(refreshClaims.Subject)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	if user == nil {
 		auth.DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusNotFound, "User not found")
 		return
 	}
 
-	if user.LastDisconection > refreshClaims.IssuedAt {
+	if user.LastDisconection.Unix() > refreshClaims.IssuedAt {
 		auth.DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusForbidden, "Refresh token has been invalidated")
 		return
@@ -76,9 +95,14 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 		// If the user is connected, update it in database
 		userID := auth.GetAuth(r).Subject
 
-		if user := users.GetByID(userID); user != nil {
-			user.LastDisconection = time.Now().Unix()
-			users.SaveUsersData()
+		user, err := users.Get(userID)
+		if err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		if user != nil {
+			user.LastDisconection = time.Now()
 		}
 	}
 
