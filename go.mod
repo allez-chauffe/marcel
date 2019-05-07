@@ -12,7 +12,6 @@ require (
 	github.com/gorilla/websocket v1.2.0
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.2
-	github.com/rs/cors v0.0.0-20170727213201-7af7a1e09ba3
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.1
 	github.com/spf13/cobra v0.0.3

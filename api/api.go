@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/api/apidoc"
@@ -46,12 +45,6 @@ func (a *App) initializeRouter() {
 	a.Router = r
 
 	r.Use(auth.Middleware)
-
-	r.Use(cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTION", "PUT"},
-		AllowCredentials: true,
-	}).Handler)
 
 	s := r.PathPrefix("/api/v" + commons.MarcelAPIVersion).Subrouter()
 	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
