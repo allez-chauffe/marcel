@@ -34,10 +34,6 @@ func (versions Versions) Last() (Version, error) {
 	return versions[len(versions)-1], nil
 }
 
-func (version Version) Ref() plumbing.ReferenceName {
-	return version.ReferenceName
-}
-
 func (version Version) String() string {
 	return version.Version.String()
 }

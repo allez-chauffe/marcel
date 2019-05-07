@@ -274,14 +274,14 @@ func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err 
 		return nil, tempDir, fmt.Errorf("Error while trying to create temporary directory: %s", err)
 	}
 
-	repo, err := CloneGitRepository(url, latest.Ref(), osfs.New(tempDir))
+	repo, err := CloneGitRepository(url, latest.ReferenceName, osfs.New(tempDir))
 	if err != nil {
 		return nil, tempDir, fmt.Errorf("Error while cloning %s into %s : %s", latest.Short(), tempDir, err)
 	}
 
 	log.Debug("Checking out manifest...")
 
-	plugin, err = FetchManifestFromGit(repo, latest.Ref())
+	plugin, err = FetchManifestFromGit(repo, latest.ReferenceName)
 	if err != nil {
 		return nil, tempDir, fmt.Errorf("Error while fetching manifest: %s", err)
 	}
