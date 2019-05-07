@@ -8,11 +8,11 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/Zenika/MARCEL/backend/auth"
-	"github.com/Zenika/MARCEL/backend/clients"
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/config"
-	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/Zenika/MARCEL/api/auth"
+	"github.com/Zenika/MARCEL/api/clients"
+	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/api/plugins"
+	"github.com/Zenika/MARCEL/config"
 )
 
 type Service struct {
