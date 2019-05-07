@@ -9,15 +9,14 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/backend/apidoc"
-	"github.com/Zenika/MARCEL/backend/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/clients"
+	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
 	"github.com/Zenika/MARCEL/backend/medias"
 	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/Zenika/MARCEL/backend/users"
 )
-
-//current version of the API
-const MARCEL_API_VERSION = "1"
 
 type App struct {
 	Router http.Handler
@@ -29,27 +28,32 @@ type App struct {
 
 func (a *App) Initialize() {
 	a.initializeData()
-	a.initializeRoutes()
+	a.initializeRouter()
 }
 
 func (a *App) Run() {
-	var addr = fmt.Sprintf(":%d", config.Config.Port)
+	log.Infof("Starting backend server on port %d...", config.Config.Port)
 
-	log.Infof("Starting backend server on port %v", addr)
-	log.Fatal(http.ListenAndServe(addr, a.Router))
+	if !config.Config.Auth.Secured {
+		log.Warnln("Secured mode is disabled")
+	}
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), a.Router))
 }
 
-func (a *App) initializeRoutes() {
+func (a *App) initializeRouter() {
+	r := mux.NewRouter()
+	a.Router = r
 
-	c := cors.New(cors.Options{
+	r.Use(auth.Middleware)
+
+	r.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTION", "PUT"},
 		AllowCredentials: true,
-	})
+	}).Handler)
 
-	r := mux.NewRouter()
-
-	s := r.PathPrefix("/api/v" + MARCEL_API_VERSION).Subrouter()
+	s := r.PathPrefix("/api/v" + commons.MarcelAPIVersion).Subrouter()
 	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
 
 	medias := s.PathPrefix("/medias").Subrouter()
@@ -85,11 +89,23 @@ func (a *App) initializeRoutes() {
 	plugins.HandleFunc("/{eltName}", a.pluginService.GetHandler).Methods("GET")
 	plugins.HandleFunc("/{eltName}", a.pluginService.UpdateHandler).Methods("PUT")
 
-	a.Router = middleware.AuthMiddlware(c.Handler(r))
+	auth := s.PathPrefix("/auth").Subrouter()
+	auth.HandleFunc("/login", loginHandler).Methods("POST")
+	auth.HandleFunc("/logout", logoutHandler).Methods("PUT")
+	auth.HandleFunc("/validate", validateHandler).Methods("GET")
+	auth.HandleFunc("/validate/admin", validateAdminHandler).Methods("GET")
+
+	users := auth.PathPrefix("/users").Subrouter()
+	users.HandleFunc("/", createUserHandler).Methods("POST")
+	users.HandleFunc("/", getUsersHandler).Methods("GET")
+
+	user := users.PathPrefix("/{userID}").Subrouter()
+	user.HandleFunc("/", getUserHandler).Methods("GET")
+	user.HandleFunc("/", deleteUserHandler).Methods("DELETE")
+	user.HandleFunc("/", updateUserHandler).Methods("PUT")
 }
 
 func (a *App) initializeData() {
-
 	//load clients list from DB
 	a.clientsService = clients.NewService()
 	a.clientsService.GetManager().LoadFromDB()
@@ -101,4 +117,6 @@ func (a *App) initializeData() {
 	//Load Medias configuration from DB
 	a.mediaService = medias.NewService(a.pluginService.GetManager(), a.clientsService)
 	a.mediaService.GetManager().LoadFromDB()
+
+	users.LoadUsersData()
 }

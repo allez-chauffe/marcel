@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/backend/auth/middleware"
+	"github.com/Zenika/MARCEL/backend/auth"
 	"github.com/Zenika/MARCEL/backend/commons"
 	"github.com/Zenika/MARCEL/backend/config"
 )
@@ -49,7 +49,7 @@ func NewService() *Service {
 
 //WSConnectionHandler Handles a connection request from a given client.
 func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -71,7 +71,7 @@ func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
 
 //GetHandler send the requested client configuration.
 func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -90,7 +90,7 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 //GetAllHandler send the list of all registered clients.
 func (s *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -100,7 +100,7 @@ func (s *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 
 //CreateHandler create a new client entry in the database.
 func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -126,7 +126,7 @@ func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 //DeleteHandler delete a client from the database
 func (s *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -144,7 +144,7 @@ func (s *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -160,7 +160,7 @@ func (s *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 
 //UpdateHandler update a client configuration in the database
 func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
-	if !middleware.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}

@@ -22,7 +22,7 @@ func getVerifiedClaims(tokenString string, sampleClaims jwt.Claims) (jwt.Claims,
 	)
 
 	if err != nil || !token.Valid {
-		return nil, errors.New("Invlaid token")
+		return nil, errors.New("Invalid token")
 	}
 
 	return token.Claims, nil
