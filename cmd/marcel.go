@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/Zenika/MARCEL/backend/config"
+	"github.com/Zenika/MARCEL/config"
 )
 
 func init() {

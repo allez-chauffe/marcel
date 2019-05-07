@@ -8,9 +8,9 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/config"
-	"github.com/Zenika/MARCEL/backend/users"
+	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/api/users"
+	"github.com/Zenika/MARCEL/config"
 )
 
 const RefreshCookieName = "RefreshAuthentication"
@@ -28,7 +28,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 			},
 		},
 		RefreshCookieName,
-		path.Join("/api/v" + commons.MarcelAPIVersion, "auth", "login"),
+		path.Join("/api/v"+commons.MarcelAPIVersion, "auth", "login"),
 		time.Now().Add(config.Config.Auth.RefreshExpiration),
 	)
 
@@ -60,6 +60,6 @@ func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
 }
 
 func DeleteRefreshToken(w http.ResponseWriter) {
-	cookie := deleteCookie(RefreshCookieName, path.Join("/api/v" + commons.MarcelAPIVersion, "auth", "login"))
+	cookie := deleteCookie(RefreshCookieName, path.Join("/api/v"+commons.MarcelAPIVersion, "auth", "login"))
 	http.SetCookie(w, cookie)
 }

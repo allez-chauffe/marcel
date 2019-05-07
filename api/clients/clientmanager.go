@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/api/commons"
 )
 
 //Manager manage clients config.

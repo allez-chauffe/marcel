@@ -10,9 +10,9 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/backend/auth"
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/config"
+	"github.com/Zenika/MARCEL/api/auth"
+	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/config"
 )
 
 var (

@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/api/commons"
 )
 
 type authContextKeyType string
