@@ -27,7 +27,7 @@ var Config = struct {
 	UsersFile:   "users.json",
 	PluginsPath: "plugins",
 	Auth: auth{
-		Secured:           true,
+		Secure:            true,
 		AuthExpiration:    8 * time.Hour,
 		RefreshExpiration: 15 * 24 * time.Hour,
 	},

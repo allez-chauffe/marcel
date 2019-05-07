@@ -3,8 +3,7 @@ package config
 import "time"
 
 type auth struct {
-	Secured           bool
+	Secure            bool
 	AuthExpiration    time.Duration
 	RefreshExpiration time.Duration
-	Domain            string
 }
