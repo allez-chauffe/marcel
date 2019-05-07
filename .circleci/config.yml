@@ -20,7 +20,7 @@ jobs:
 
   build_backoffice:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:12
     steps:
       - checkout
       - restore_cache:
@@ -44,7 +44,7 @@ jobs:
 
   build_frontend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:12
     steps:
       - checkout
       - restore_cache:
@@ -91,7 +91,7 @@ jobs:
 
   package_plugins:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/buildpack-deps:stable-scm
     steps:
       - checkout
       - run: git submodule sync
@@ -104,20 +104,20 @@ jobs:
 
   docker_build_marcel:
     <<: *defaults
-    working_directory: /tmp
+    working_directory: /tmp/app
     docker:
-      - image: circleci/buildpack-deps:xenial-scm
+      - image: circleci/buildpack-deps:stable-curl
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: /tmp
+          at: /tmp/app
       - run: docker build -t zenika/marcel:dev .
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel:dev
 
   docker_build_backoffice:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/buildpack-deps:stable-curl
     steps:
       - checkout
       - setup_remote_docker
@@ -132,7 +132,7 @@ jobs:
 
   docker_build_frontend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/buildpack-deps:stable-curl
     steps:
       - checkout
       - setup_remote_docker
@@ -147,7 +147,7 @@ jobs:
 
   deploy_integration:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/buildpack-deps:stable-curl
     steps:
       - checkout
       - restore_cache:
