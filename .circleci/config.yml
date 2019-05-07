@@ -1,13 +1,13 @@
 defaults: &defaults
   working_directory: /tmp
   docker:
-    - image: buildpack-deps:xenial
+    - image: circleci/buildpack-deps:stable-curl
 
 version: 2
 jobs:
   debug_node:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:12
     steps:
       - run: node --version
       - run: yarn --version
