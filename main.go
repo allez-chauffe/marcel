@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/backend/cmd"
+	"github.com/Zenika/MARCEL/cmd"
 )
 
 func init() {

@@ -1,10 +1,10 @@
-package app
+package api
 
 import (
 	"net/http"
 
-	"github.com/Zenika/MARCEL/backend/auth"
-	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/api/auth"
+	"github.com/Zenika/MARCEL/api/commons"
 )
 
 func validateHandler(w http.ResponseWriter, r *http.Request) {

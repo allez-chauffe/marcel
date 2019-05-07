@@ -21,19 +21,19 @@ services:
     volumes:
       - ./frontend:/usr/share/nginx/html/conf:ro
 
-  backend:
+  api:
     depends_on:
       - proxy
-    image: zenika/marcel-backend:dev
+    image: zenika/marcel:dev
     command: ["api"]
     labels:
-      traefik.backend: backend
+      traefik.backend: api
       traefik.frontend.rule: "PathPrefix: /api/v1/"
     volumes:
-      - ./backend/config.json:/etc/marcel/config.json:ro
-      - ./backend/data:/var/lib/marcel/data
-      - ./backend/plugins:/var/lib/marcel/plugins
-      - ./backend/medias:/var/lib/marcel/medias
+      - ./config.json:/etc/marcel/config.json:ro
+      - ./api/data:/var/lib/marcel/data
+      - ./api/plugins:/var/lib/marcel/plugins
+      - ./api/medias:/var/lib/marcel/medias
 
   proxy:
     command: --web --docker --logLevel=DEBUG

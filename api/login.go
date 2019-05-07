@@ -1,13 +1,13 @@
-package app
+package api
 
 import (
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/Zenika/MARCEL/backend/auth"
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/users"
+	"github.com/Zenika/MARCEL/api/auth"
+	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/api/users"
 )
 
 type Credentials struct {

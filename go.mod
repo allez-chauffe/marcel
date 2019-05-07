@@ -1,4 +1,4 @@
-module github.com/Zenika/MARCEL/backend
+module github.com/Zenika/MARCEL
 
 go 1.12
 

@@ -1,4 +1,4 @@
-package app
+package api
 
 import (
 	"fmt"
@@ -8,14 +8,14 @@ import (
 	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/backend/apidoc"
-	"github.com/Zenika/MARCEL/backend/auth"
-	"github.com/Zenika/MARCEL/backend/clients"
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/config"
-	"github.com/Zenika/MARCEL/backend/medias"
-	"github.com/Zenika/MARCEL/backend/plugins"
-	"github.com/Zenika/MARCEL/backend/users"
+	"github.com/Zenika/MARCEL/api/apidoc"
+	"github.com/Zenika/MARCEL/api/auth"
+	"github.com/Zenika/MARCEL/api/clients"
+	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/api/medias"
+	"github.com/Zenika/MARCEL/api/plugins"
+	"github.com/Zenika/MARCEL/api/users"
+	"github.com/Zenika/MARCEL/config"
 )
 
 type App struct {

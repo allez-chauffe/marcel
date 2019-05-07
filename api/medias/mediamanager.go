@@ -9,10 +9,10 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/backend/clients"
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/containers"
-	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/Zenika/MARCEL/api/clients"
+	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/api/containers"
+	"github.com/Zenika/MARCEL/api/plugins"
 )
 
 type Manager struct {

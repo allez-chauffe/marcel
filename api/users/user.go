@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/Zenika/MARCEL/backend/config"
-
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/Zenika/MARCEL/config"
 )
 
 type User struct {

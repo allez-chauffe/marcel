@@ -18,34 +18,6 @@ jobs:
     steps:
       - run: go version
 
-  build_backend:
-    <<: *defaults
-    working_directory: /go/app
-    docker:
-      - image: circleci/golang:1.12
-    steps:
-      - checkout
-      - restore_cache:
-          key: backend-deps-{{ checksum "backend/go.mod" }}
-      - run:
-          command: go mod download
-          working_directory: backend
-      - save_cache:
-          key: backend-deps-{{ checksum "backend/go.mod" }}
-          paths:
-            - /go/pkg/mod
-      - run:
-          command: go test .
-          working_directory: backend
-      - run:
-          command: CGO_ENABLED=0 go build -a -installsuffix cgo -o marcel .
-          working_directory: backend
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/Dockerfile
-            - backend/marcel
-
   build_backoffice:
     docker:
       - image: circleci/node:latest
@@ -94,6 +66,29 @@ jobs:
             - frontend/build
           key: frontend-build-{{ .Revision }}
 
+
+  build_marcel:
+    <<: *defaults
+    working_directory: /go/app
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - restore_cache:
+          key: marcel-deps-{{ checksum "go.mod" }}
+      - run: go mod download
+      - save_cache:
+          key: marcel-deps-{{ checksum "go.mod" }}
+          paths:
+            - /go/pkg/mod
+      - run: go test .
+      - run: CGO_ENABLED=0 go build -a -installsuffix cgo -o marcel .
+      - persist_to_workspace:
+          root: .
+          paths:
+            - Dockerfile
+            - marcel
+
   package_plugins:
     docker:
       - image: circleci/node:latest
@@ -107,20 +102,20 @@ jobs:
             - plugins.tar.gz
           key: plugins-package-{{ .Revision }}
 
-  backend_docker_build:
+  docker_build_marcel:
     <<: *defaults
-    working_directory: /tmp/backend
+    working_directory: /tmp
     docker:
       - image: circleci/buildpack-deps:xenial-scm
     steps:
       - setup_remote_docker
       - attach_workspace:
           at: /tmp
-      - run: docker build -t zenika/marcel-backend:dev .
+      - run: docker build -t zenika/marcel:dev .
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push zenika/marcel-backend:dev
+      - run: docker push zenika/marcel:dev
 
-  backoffice_docker_build:
+  docker_build_backoffice:
     docker:
       - image: circleci/node:latest
     steps:
@@ -135,7 +130,7 @@ jobs:
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-backoffice:dev
 
-  frontend_docker_build:
+  docker_build_frontend:
     docker:
       - image: circleci/node:latest
     steps:
@@ -149,7 +144,6 @@ jobs:
           working_directory: frontend
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-frontend:dev
-
 
   deploy_integration:
     docker:
@@ -171,28 +165,28 @@ workflows:
     jobs:
        - debug_node
        - debug_go
-       - build_backend
        - build_backoffice
        - build_frontend
-       - package_plugins:
+       - build_marcel:
           requires:
-            - build_backend
             - build_backoffice
             - build_frontend
-       - backend_docker_build:
+       - package_plugins
+       - docker_build_backoffice:
           requires:
-            - package_plugins
-       - backoffice_docker_build:
+            - build_backoffice
+       - docker_build_frontend:
           requires:
-            - package_plugins
-       - frontend_docker_build:
+            - build_frontend
+       - docker_build_marcel:
           requires:
-            - package_plugins
+            - build_marcel
        - deploy_integration:
           requires:
-            - backend_docker_build
-            - backoffice_docker_build
-            - frontend_docker_build
+            - docker_build_marcel
+            - docker_build_backoffice
+            - docker_build_frontend
+            - package_plugins
           filters:
             branches:
               only:

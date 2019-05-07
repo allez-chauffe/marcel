@@ -3,8 +3,8 @@ package medias
 import (
 	"testing"
 
-	"github.com/Zenika/MARCEL/backend/clients"
-	"github.com/Zenika/MARCEL/backend/plugins"
+	"github.com/Zenika/MARCEL/api/clients"
+	"github.com/Zenika/MARCEL/api/plugins"
 )
 
 func TestNewManager(t *testing.T) {

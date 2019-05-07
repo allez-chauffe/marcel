@@ -9,16 +9,15 @@ import (
 
 	"gopkg.in/src-d/go-billy.v4"
 
+	"github.com/blang/semver"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/src-d/go-billy.v4/osfs"
-	git "gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 
-	"github.com/Zenika/MARCEL/backend/commons"
-	"github.com/Zenika/MARCEL/backend/config"
-
-	"github.com/blang/semver"
+	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/config"
 )
 
 const (

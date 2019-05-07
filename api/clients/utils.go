@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/backend/commons"
+	"github.com/Zenika/MARCEL/api/commons"
 )
 
 //getClientFromRequest return (if any) the client configuration based on id fiven in URL
