@@ -184,6 +184,6 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.Manager.Replace(plugin)
 
-	log.Infof("Plugin successfuly updated : %s (%s)", plugin.EltName, plugin.Name)
+	log.Infof("Plugin successfuly updated: %s (%s)", plugin.EltName, plugin.Name)
 	commons.WriteJsonResponse(w, plugin)
 }

@@ -43,8 +43,8 @@ type Manager struct {
 	Config         *Configuration
 }
 
-// NewManager instantiate an new plugin manager
-// this also initialize the configuration
+// NewManager instantiates a new plugin manager
+// and initializes its configuration
 func NewManager(configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
@@ -57,7 +57,7 @@ func NewManager(configPath, configFilename string) *Manager {
 	return manager
 }
 
-// LoadFromDB loads plugins configuration from DB and store it in memory
+// LoadFromDB loads plugins configuration from DB and stores it in memory
 func (m *Manager) LoadFromDB() {
 	log.Debugln("Start Loading Plugins from DB.")
 
@@ -141,7 +141,7 @@ func (m *Manager) Commit() error {
 	return commons.Commit(m)
 }
 
-// GetPosition Return position of a plugin in the list
+// GetPosition returns the position of a plugin in the list
 func (m *Manager) GetPosition(plugin *Plugin) int {
 	for p, m := range m.Config.Plugins {
 		if m.EltName == plugin.EltName {
@@ -163,7 +163,7 @@ func (m *Manager) Exists(eltName string) bool {
 	return i != -1
 }
 
-// GetDirectory returns the plugin's statuc files directory path
+// GetDirectory returns the plugin's static files directory path
 func (p *Plugin) GetDirectory() string {
 	return filepath.Join(config.Config.PluginsPath, p.EltName)
 }
@@ -191,7 +191,7 @@ func FetchVersionsFromGit(url string) (Versions, error) {
 		name := ref.Name()
 		if name.IsTag() {
 			if version, err := semver.ParseTolerant(name.Short()); err != nil {
-				log.Debugf("Malformed tag name : %s. Ignoring it", name.Short())
+				log.Debugf("Ignoring non semver tag: %s", name.Short())
 			} else {
 				versions = append(versions, Version{name, version})
 			}
@@ -260,7 +260,7 @@ func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err 
 
 	versions, err := FetchVersionsFromGit(url)
 	if err != nil {
-		return nil, tempDir, fmt.Errorf("Error while retreiving versions : %s", err)
+		return nil, tempDir, fmt.Errorf("Error while retreiving versions: %s", err)
 	}
 
 	latest, err := versions.Last()
@@ -271,7 +271,7 @@ func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err 
 
 	tempDir, err = ioutil.TempDir(config.Config.PluginsPath, "new_plugin")
 	if err != nil {
-		return nil, tempDir, fmt.Errorf("Error while trying to create temporary directory : %s", err)
+		return nil, tempDir, fmt.Errorf("Error while trying to create temporary directory: %s", err)
 	}
 
 	repo, err := CloneGitRepository(url, latest.Ref(), osfs.New(tempDir))
@@ -283,7 +283,7 @@ func (m *Manager) FetchFromGit(url string) (plugin *Plugin, tempDir string, err 
 
 	plugin, err = FetchManifestFromGit(repo, latest.Ref())
 	if err != nil {
-		return nil, tempDir, fmt.Errorf("Error while fetching manifest : %s", err)
+		return nil, tempDir, fmt.Errorf("Error while fetching manifest: %s", err)
 	}
 
 	plugin.URL = url
