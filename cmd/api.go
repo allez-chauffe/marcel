@@ -30,8 +30,8 @@ func init() {
 	apiCmd.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
 	viper.BindPFlag("pluginsPath", apiCmd.Flags().Lookup("pluginsPath"))
 
-	apiCmd.Flags().Bool("secured", config.Config.Auth.Secured, "Use secured cookies")
-	viper.BindPFlag("auth.secured", apiCmd.Flags().Lookup("secured"))
+	apiCmd.Flags().Bool("secure", config.Config.Auth.Secure, "Use secured cookies")
+	viper.BindPFlag("auth.secure", apiCmd.Flags().Lookup("secure"))
 
 	apiCmd.Flags().Duration("authExpiration", config.Config.Auth.AuthExpiration, "Authentication token expiration")
 	viper.BindPFlag("auth.authExpiration", apiCmd.Flags().Lookup("authExpiration"))

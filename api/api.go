@@ -34,8 +34,8 @@ func (a *App) Initialize() {
 func (a *App) Run() {
 	log.Infof("Starting backend server on port %d...", config.Config.Port)
 
-	if !config.Config.Auth.Secured {
-		log.Warnln("Secured mode is disabled")
+	if !config.Config.Auth.Secure {
+		log.Warnln("Secure mode is disabled")
 	}
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), a.Router))
