@@ -104,6 +104,8 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 		if user != nil {
 			user.LastDisconection = time.Now()
 		}
+
+		// FIXME Update user
 	}
 
 	auth.DeleteAuthToken(w)

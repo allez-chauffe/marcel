@@ -8,22 +8,20 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"time"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 // FIXME something ?
 var secret = []byte("This is the password secret key !")
 
 type User struct {
-	ID               string    `json:"id"`
-	DisplayName      string    `json:"displayName"`
-	Login            string    `json:"login"`
-	Role             string    `json:"role"`
-	CreatedAt        time.Time `json:"createdAt"`
-	LastDisconection time.Time `json:"lastDisconnection"`
-	PasswordHash     string    `json:"passwordHash"`
-	PasswordSalt     string    `json:"passwordSalt"`
+	ID               string `boltholdKey:"ID"`
+	DisplayName      string
+	Login            string `boltholdIndex:"Login"`
+	Role             string
+	CreatedAt        time.Time
+	LastDisconection time.Time
+	PasswordHash     string
+	PasswordSalt     string
 }
 
 func New(displayName, login, pRole, password string) (*User, error) {
@@ -38,7 +36,6 @@ func New(displayName, login, pRole, password string) (*User, error) {
 	}
 
 	return &User{
-		ID:           uuid.NewV4().String(),
 		DisplayName:  displayName,
 		Login:        login,
 		Role:         role,

@@ -1,7 +1,7 @@
 package db
 
 import (
-	bolt "go.etcd.io/bbolt"
+	"github.com/timshannon/bolthold"
 )
 
-var DB *bolt.DB
+var Store *bolthold.Store

@@ -43,7 +43,7 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = users.Put(u)
+	err = users.Insert(u)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -111,10 +111,10 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 	result := make([]*User, len(users))
 	for i, u := range users {
-		result[i] = adaptUser(u)
+		result[i] = adaptUser(&u)
 	}
 
-	commons.WriteJsonResponse(w, users)
+	commons.WriteJsonResponse(w, result)
 }
 
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
