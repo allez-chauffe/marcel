@@ -82,7 +82,7 @@ jobs:
           paths:
             - /go/pkg/mod
       - run: go test .
-      - run: CGO_ENABLED=0 go build -a -installsuffix cgo -o marcel .
+      - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -tags 'osusergo netgo' -o marcel
       - persist_to_workspace:
           root: .
           paths:
