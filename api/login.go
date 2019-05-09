@@ -82,7 +82,7 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.LastDisconection.Unix() > refreshClaims.IssuedAt {
+	if user.LastDisconnection.Unix() > refreshClaims.IssuedAt {
 		auth.DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusUnauthorized, "Refresh token has been invalidated")
 		return
@@ -105,7 +105,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if user != nil {
-			user.LastDisconection = time.Now()
+			user.LastDisconnection = time.Now()
 		}
 
 		// FIXME Update user

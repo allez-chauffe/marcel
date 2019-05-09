@@ -12,14 +12,14 @@ import (
 var secret = []byte("This is the password secret key !")
 
 type User struct {
-	ID               string    `json:"id" boltholdKey:"ID"`
-	DisplayName      string    `json:"displayName"`
-	Login            string    `json:"login" boltholdIndex:"Login"`
-	Role             string    `json:"role"`
-	CreatedAt        time.Time `json:"createdAt"`
-	LastDisconection time.Time `json:"lastDisconnection"`
-	PasswordHash     string    `json:"-"`
-	PasswordSalt     string    `json:"-"`
+	ID                string    `json:"id" boltholdKey:"ID"`
+	DisplayName       string    `json:"displayName"`
+	Login             string    `json:"login" boltholdIndex:"Login"`
+	Role              string    `json:"role"`
+	CreatedAt         time.Time `json:"createdAt"`
+	LastDisconnection time.Time `json:"lastDisconnection"`
+	PasswordHash      string    `json:"-"`
+	PasswordSalt      string    `json:"-"`
 }
 
 func (u *User) CheckPassword(password string) (bool, error) {

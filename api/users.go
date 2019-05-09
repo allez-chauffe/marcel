@@ -81,7 +81,7 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			savedUser.LastDisconection = time.Now() // FIXME why ?!
+			savedUser.LastDisconnection = time.Now() // FIXME why ?!
 		}
 	}
 
