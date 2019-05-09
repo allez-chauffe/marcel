@@ -1,18 +1,19 @@
 package users
 
 import (
+	"time"
+
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/Zenika/MARCEL/api/db/internal/db"
-	"github.com/Zenika/MARCEL/api/user"
 )
 
 func EnsureOneUser() error {
 	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
-		res, err := db.Store.TxFindAggregate(tx, &user.User{}, nil)
+		res, err := db.Store.TxFindAggregate(tx, &User{}, nil)
 		if err != nil {
 			return err
 		}
@@ -23,9 +24,13 @@ func EnsureOneUser() error {
 
 		log.Info("No users, creating an admin user...")
 
+		u := &User{
+			DisplayName: "Admin",
+			Login:       "admin",
+		}
+
 		// FIXME generate password
-		u, err := user.New("Admin", "admin", "admin", "admin")
-		if err != nil {
+		if err := u.SetPassword("admin"); err != nil {
 			return err
 		}
 
@@ -33,24 +38,29 @@ func EnsureOneUser() error {
 	})
 }
 
-func Insert(u *user.User) error {
+func Insert(u *User) error {
+	if u.Role == "" {
+		u.Role = "user"
+	}
+	u.CreatedAt = time.Now()
+
 	return db.Store.Insert(uuid.NewV4().String(), u)
 }
 
-func List() ([]user.User, error) {
-	users := []user.User{}
+func List() ([]User, error) {
+	users := []User{}
 
 	return users, db.Store.Find(&users, nil)
 }
 
-func Get(id string) (*user.User, error) {
-	u := &user.User{}
+func Get(id string) (*User, error) {
+	u := &User{}
 
 	return u, db.Store.Get(id, &u)
 }
 
-func GetByLogin(login string) (*user.User, error) {
-	var users []user.User
+func GetByLogin(login string) (*User, error) {
+	var users []User
 
 	err := db.Store.Find(&users, bolthold.Where("Login").Eq(login))
 	if err != nil {
@@ -65,5 +75,5 @@ func GetByLogin(login string) (*user.User, error) {
 }
 
 func Delete(id string) error {
-	return db.Store.Delete(id, &user.User{})
+	return db.Store.Delete(id, &User{})
 }

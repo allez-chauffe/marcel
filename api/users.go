@@ -11,17 +11,11 @@ import (
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/commons"
 	"github.com/Zenika/MARCEL/api/db/users"
-	"github.com/Zenika/MARCEL/api/user"
 )
 
-type User struct {
-	ID               string    `json:"id"`
-	DisplayName      string    `json:"displayName"`
-	Login            string    `json:"login"`
-	Role             string    `json:"role"`
-	CreatedAt        time.Time `json:"createdAt"`
-	LastDisconection time.Time `json:"lastDisconnection"`
-	Password         string    `json:"password"`
+type UserPayload struct {
+	*users.User
+	Password string `json:"password"`
 }
 
 func createUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,21 +24,21 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body := getUserFromRequest(w, r)
+	payload := getUserPayload(w, r)
 
-	if body.Login == "" || body.DisplayName == "" || body.Password == "" {
+	if payload.Login == "" || payload.DisplayName == "" || payload.Password == "" {
 		commons.WriteResponse(w, http.StatusBadRequest, "Malformed request, missing required fields")
 		return
 	}
 
-	u, err := user.New(body.DisplayName, body.Login, body.Role, body.Password)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
+	u := payload.User
+
+	if err := u.SetPassword(payload.Password); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = users.Insert(u)
-	if err != nil {
+	if err := users.Insert(u); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -61,27 +55,28 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body := getUserFromRequest(w, r)
+	payload := getUserPayload(w, r)
+
 	savedUser, err := users.Get(userID)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if savedUser == nil || savedUser.ID != body.ID {
+	if savedUser == nil || savedUser.ID != payload.ID {
 		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
 	}
 
-	if body.Password != "" {
-		changed, err := savedUser.CheckPassword(body.Password)
+	if payload.Password != "" {
+		changed, err := savedUser.CheckPassword(payload.Password)
 		if err != nil {
 			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		if changed {
-			if err := savedUser.SetPassword(body.Password); err != nil {
+			if err := savedUser.SetPassword(payload.Password); err != nil {
 				commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 				return
 			}
@@ -90,11 +85,11 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	savedUser.DisplayName = body.DisplayName
-	savedUser.Login = body.Login
+	savedUser.DisplayName = payload.DisplayName
+	savedUser.Login = payload.Login
 
 	if auth.CheckPermissions(r, nil, "admin") {
-		savedUser.Role = body.Role
+		savedUser.Role = payload.Role
 	}
 
 	commons.WriteJsonResponse(w, savedUser)
@@ -109,12 +104,7 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := make([]*User, len(users))
-	for i, u := range users {
-		result[i] = adaptUser(&u)
-	}
-
-	commons.WriteJsonResponse(w, result)
+	commons.WriteJsonResponse(w, users)
 }
 
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -137,7 +127,7 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	commons.WriteJsonResponse(w, adaptUser(u))
+	commons.WriteJsonResponse(w, u)
 }
 
 func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -158,23 +148,15 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
-func getUserFromRequest(w http.ResponseWriter, r *http.Request) *User {
-	user := &User{}
+func getUserPayload(w http.ResponseWriter, r *http.Request) *UserPayload {
+	user := &UserPayload{
+		User: &users.User{},
+	}
+
 	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while parsing JSON (%s)", err.Error()))
 		return nil
 	}
 
 	return user
-}
-
-func adaptUser(user *user.User) *User {
-	return &User{
-		ID:               user.ID,
-		DisplayName:      user.DisplayName,
-		Login:            user.Login,
-		CreatedAt:        user.CreatedAt,
-		LastDisconection: user.LastDisconection,
-		Role:             user.Role,
-	}
 }

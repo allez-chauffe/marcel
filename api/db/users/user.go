@@ -1,12 +1,10 @@
-package user
+package users
 
 import (
-	"bytes"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/json"
 	"time"
 )
 
@@ -14,53 +12,14 @@ import (
 var secret = []byte("This is the password secret key !")
 
 type User struct {
-	ID               string `boltholdKey:"ID"`
-	DisplayName      string
-	Login            string `boltholdIndex:"Login"`
-	Role             string
-	CreatedAt        time.Time
-	LastDisconection time.Time
-	PasswordHash     string
-	PasswordSalt     string
-}
-
-func New(displayName, login, pRole, password string) (*User, error) {
-	role := pRole
-	if role == "" {
-		role = "user"
-	}
-
-	hash, salt, err := generateHash(password)
-	if err != nil {
-		return nil, err
-	}
-
-	return &User{
-		DisplayName:  displayName,
-		Login:        login,
-		Role:         role,
-		CreatedAt:    time.Now(),
-		PasswordHash: hash,
-		PasswordSalt: salt,
-	}, nil
-}
-
-func FromValue(value []byte) (*User, error) {
-	user := &User{}
-
-	return user, json.NewDecoder(bytes.NewReader(value)).Decode(user)
-}
-
-func (u *User) Key() []byte {
-	return []byte(u.ID)
-}
-
-func (u *User) Value() ([]byte, error) {
-	b := bytes.NewBuffer([]byte{})
-
-	err := json.NewEncoder(b).Encode(u)
-
-	return b.Bytes(), err
+	ID               string    `json:"id" boltholdKey:"ID"`
+	DisplayName      string    `json:"displayName"`
+	Login            string    `json:"login" boltholdIndex:"Login"`
+	Role             string    `json:"role"`
+	CreatedAt        time.Time `json:"createdAt"`
+	LastDisconection time.Time `json:"lastDisconnection"`
+	PasswordHash     string    `json:"-"`
+	PasswordSalt     string    `json:"-"`
 }
 
 func (u *User) CheckPassword(password string) (bool, error) {

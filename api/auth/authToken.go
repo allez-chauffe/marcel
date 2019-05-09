@@ -8,7 +8,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/user"
+	"github.com/Zenika/MARCEL/api/db/users"
 	"github.com/Zenika/MARCEL/config"
 )
 
@@ -37,7 +37,7 @@ func GetAuthToken(r *http.Request) (*Claims, error) {
 	return claims, nil
 }
 
-func GenerateAuthToken(w http.ResponseWriter, user *user.User) {
+func GenerateAuthToken(w http.ResponseWriter, user *users.User) {
 	expiration := time.Now().Add(config.Config.Auth.AuthExpiration)
 
 	cookie, err := createTokenCookie(
