@@ -1,0 +1,4 @@
+:
+rewrite {
+    to {path} {path}/ /
+}

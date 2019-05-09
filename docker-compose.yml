@@ -9,7 +9,7 @@ services:
       traefik.backend: backoffice
       traefik.frontend.rule: "PathPrefix: /"
     volumes:
-      - ./backoffice:/usr/share/nginx/html/conf:ro
+      - ./backoffice:/www/conf:ro
 
   frontend:
     depends_on:
@@ -19,7 +19,7 @@ services:
       traefik.backend: frontend
       traefik.frontend.rule: "PathPrefixStrip: /front/"
     volumes:
-      - ./frontend:/usr/share/nginx/html/conf:ro
+      - ./frontend:/www/conf:ro
 
   api:
     depends_on:
