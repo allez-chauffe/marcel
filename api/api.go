@@ -3,6 +3,9 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -29,6 +32,7 @@ func (a *App) Initialize() {
 	if err := db.Open(); err != nil {
 		log.Fatalln(err)
 	}
+	a.waitSignal()
 	a.initializeData()
 	a.initializeRouter()
 }
@@ -41,6 +45,23 @@ func (a *App) Run() {
 	}
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), a.Router))
+}
+
+func (a *App) waitSignal() {
+	ch := make(chan os.Signal, 1)
+
+	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-ch
+
+		err := db.Close()
+		if err != nil {
+			log.Errorln(err)
+		}
+
+		os.Exit(0)
+	}()
 }
 
 func (a *App) initializeRouter() {

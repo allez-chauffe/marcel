@@ -1,6 +1,7 @@
 package db
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/timshannon/bolthold"
 
 	"github.com/Zenika/MARCEL/api/db/internal/db"
@@ -19,7 +20,18 @@ func Open() error {
 		return err
 	}
 
-	// FIXME wait for signal and close ?
+	return nil
+}
+
+func Close() error {
+	log.Info("Closing database...")
+
+	err := db.Store.Close()
+	if err != nil {
+		return err
+	}
+
+	log.Info("Database closed")
 
 	return nil
 }
