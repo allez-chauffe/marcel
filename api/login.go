@@ -39,7 +39,7 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 	}
 
 	if user == nil {
-		commons.WriteResponse(w, http.StatusForbidden, "") // FIXME Unauthorized ? BadRequest ?
+		commons.WriteResponse(w, http.StatusUnauthorized, "")
 		return
 	}
 
@@ -50,7 +50,7 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 	}
 
 	if !ok {
-		commons.WriteResponse(w, http.StatusForbidden, "") // FIXME Unauthorized ? BadRequest ?
+		commons.WriteResponse(w, http.StatusUnauthorized, "")
 		return
 	}
 
@@ -63,7 +63,11 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 	refreshClaims, err := auth.GetRefreshToken(r)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusForbidden, err.Error())
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if refreshClaims == nil {
+		commons.WriteResponse(w, http.StatusUnauthorized, "Refresh token not found")
 		return
 	}
 
@@ -72,16 +76,15 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
 	if user == nil {
 		auth.DeleteRefreshToken(w)
-		commons.WriteResponse(w, http.StatusNotFound, "User not found")
+		commons.WriteResponse(w, http.StatusUnauthorized, "User not found")
 		return
 	}
 
 	if user.LastDisconection.Unix() > refreshClaims.IssuedAt {
 		auth.DeleteRefreshToken(w)
-		commons.WriteResponse(w, http.StatusForbidden, "Refresh token has been invalidated")
+		commons.WriteResponse(w, http.StatusUnauthorized, "Refresh token has been invalidated")
 		return
 	}
 
