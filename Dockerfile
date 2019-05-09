@@ -1,4 +1,4 @@
-FROM alpine
+FROM gcr.io/distroless/static
 
 COPY marcel /usr/bin/
 
