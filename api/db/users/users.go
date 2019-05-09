@@ -3,6 +3,7 @@ package users
 import (
 	"time"
 
+	rand "github.com/Pallinder/go-randomdata"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/timshannon/bolthold"
@@ -22,19 +23,26 @@ func EnsureOneUser() error {
 			return nil
 		}
 
-		log.Info("No users, creating an admin user...")
+		log.Info("No users in database, creating admin...")
 
 		u := &User{
 			DisplayName: "Admin",
 			Login:       "admin",
+			Role:        "admin",
 		}
 
-		// FIXME generate password
-		if err := u.SetPassword("admin"); err != nil {
+		password := rand.RandStringRunes(10)
+		if err := u.SetPassword(password); err != nil {
 			return err
 		}
 
-		return db.Store.TxInsert(tx, uuid.NewV4().String(), u)
+		if err := db.Store.TxInsert(tx, uuid.NewV4().String(), u); err != nil {
+			return err
+		}
+
+		log.Infof("User admin created with password %s", password)
+
+		return nil
 	})
 }
 
