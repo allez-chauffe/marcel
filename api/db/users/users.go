@@ -66,12 +66,13 @@ func Get(id string) (*User, error) {
 	u := &User{}
 
 	return u, db.Store.Get(id, &u)
+
 }
 
 func GetByLogin(login string) (*User, error) {
 	var users []User
 
-	err := db.Store.Find(&users, bolthold.Where("Login").Eq(login))
+	err := db.Store.Find(&users, bolthold.Where("Login").Eq(login).Index("Login"))
 	if err != nil {
 		return nil, err
 	}
