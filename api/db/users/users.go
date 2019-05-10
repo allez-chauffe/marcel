@@ -29,6 +29,7 @@ func EnsureOneUser() error {
 			DisplayName: "Admin",
 			Login:       "admin",
 			Role:        "admin",
+			CreatedAt:   time.Now(),
 		}
 
 		password := rand.RandStringRunes(10)
@@ -84,4 +85,21 @@ func GetByLogin(login string) (*User, error) {
 
 func Delete(id string) error {
 	return db.Store.Delete(id, &User{})
+}
+
+func Disconnect(id string) error {
+	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+		u := new(User)
+
+		if err := db.Store.TxGet(tx, id, u); err != nil {
+			if err == bolthold.ErrNotFound {
+				return nil
+			}
+			return err
+		}
+
+		u.LastDisconnection = time.Now()
+
+		return db.Store.TxUpdate(tx, id, u)
+	})
 }

@@ -3,7 +3,8 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/commons"
@@ -76,7 +77,7 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if user == nil {
+	if user == nil { // FIXME not possible
 		auth.DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusUnauthorized, "User not found")
 		return
@@ -98,17 +99,10 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 		// If the user is connected, update it in database
 		userID := auth.GetAuth(r).Subject
 
-		user, err := users.Get(userID)
-		if err != nil {
-			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-			return
+		if err := users.Disconnect(userID); err != nil {
+			// Do not return here we want to delete the tokens
+			log.Errorf("Error while disconnecting user %s: %s", userID, err)
 		}
-
-		if user != nil {
-			user.LastDisconnection = time.Now()
-		}
-
-		// FIXME Update user
 	}
 
 	auth.DeleteAuthToken(w)
