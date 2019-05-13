@@ -7,10 +7,12 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gliderlabs/ssh v0.2.2 // indirect
+	github.com/gobuffalo/packd v0.2.0 // indirect
+	github.com/gobuffalo/packr/v2 v2.4.0
 	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/gorilla/mux v1.7.2
 	github.com/gorilla/websocket v1.4.0
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
+	github.com/karrick/godirwalk v1.10.12 // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/pelletier/go-toml v1.4.0 // indirect
