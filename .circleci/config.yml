@@ -27,21 +27,21 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - backoffice-deps-{{ checksum "back-office/package.json" }}
+            - backoffice-deps-{{ checksum "backoffice/package.json" }}
       - run:
           command: yarn
-          working_directory: back-office
+          working_directory: backoffice
       - save_cache:
           paths:
-            - back-office/node_modules
-          key: backoffice-deps-{{ checksum "back-office/package.json" }}
+            - backoffice/node_modules
+          key: backoffice-deps-{{ checksum "backoffice/package.json" }}
       - run:
           command: yarn build
-          working_directory: back-office
+          working_directory: backoffice
       - persist_to_workspace:
           root: .
           paths:
-            - back-office/build
+            - backoffice/build
 
   build_frontend:
     <<: *defaults
@@ -102,7 +102,7 @@ jobs:
           at: /tmp/app
       - run:
           command: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel-backoffice
-          working_directory: back-office
+          working_directory: backoffice
 
   docker_build_frontend:
     <<: *defaults
