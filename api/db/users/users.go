@@ -37,7 +37,7 @@ func EnsureOneUser() error {
 			return err
 		}
 
-		if err := db.Store.TxInsert(tx, uuid.NewV4().String(), u); err != nil {
+		if err := insert(tx, u); err != nil {
 			return err
 		}
 
@@ -48,12 +48,20 @@ func EnsureOneUser() error {
 }
 
 func Insert(u *User) error {
+	return insert(nil, u)
+}
+
+func insert(tx *bolt.Tx, u *User) error {
+	u.ID = uuid.NewV4().String()
 	if u.Role == "" {
 		u.Role = "user"
 	}
 	u.CreatedAt = time.Now()
 
-	return db.Store.Insert(uuid.NewV4().String(), u)
+	if tx == nil {
+		return db.Store.Insert(u.ID, u)
+	}
+	return db.Store.TxInsert(tx, u.ID, u)
 }
 
 func List() ([]User, error) {
@@ -66,7 +74,6 @@ func Get(id string) (*User, error) {
 	u := &User{}
 
 	return u, db.Store.Get(id, &u)
-
 }
 
 func GetByLogin(login string) (*User, error) {
