@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gobuffalo/packr/v2"
+	"github.com/gobuffalo/packr"
 )
 
-var Box = packr.New("backoffice", "./build/")
+var Box = packr.NewBox("./build/")
 
 func ListenAndServe(port uint, pBase string) error {
 	base := pBase
