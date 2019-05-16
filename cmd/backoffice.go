@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/Zenika/marcel/backoffice"
-	"github.com/Zenika/marcel/config"
 )
 
 func init() {
@@ -17,6 +16,6 @@ var backofficeCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return backoffice.ListenAndServe(config.Config.Port, "")
+		return backoffice.Start()
 	},
 }
