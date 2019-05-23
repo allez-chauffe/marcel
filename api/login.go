@@ -77,7 +77,7 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if user == nil { // FIXME not possible
+	if user == nil {
 		auth.DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusUnauthorized, "User not found")
 		return

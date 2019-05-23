@@ -2,7 +2,7 @@ package db
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/timshannon/bolthold"
+	bh "github.com/timshannon/bolthold"
 
 	"github.com/Zenika/MARCEL/api/db/internal/db"
 	"github.com/Zenika/MARCEL/api/db/users"
@@ -11,7 +11,7 @@ import (
 
 func Open() error {
 	var err error
-	if db.Store, err = bolthold.Open(config.Config.DBFile, 0644, nil); err != nil {
+	if db.Store, err = bh.Open(config.Config.DBFile, 0644, nil); err != nil {
 		return err
 	}
 

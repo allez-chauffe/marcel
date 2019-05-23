@@ -6,7 +6,7 @@ import (
 	rand "github.com/Pallinder/go-randomdata"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
-	"github.com/timshannon/bolthold"
+	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/Zenika/MARCEL/api/db/internal/db"
@@ -71,15 +71,21 @@ func List() ([]User, error) {
 }
 
 func Get(id string) (*User, error) {
-	u := &User{}
+	u := new(User)
 
-	return u, db.Store.Get(id, u)
+	if err := db.Store.Get(id, u); err != nil {
+		if err == bh.ErrNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return u, nil
 }
 
 func GetByLogin(login string) (*User, error) {
 	var users []User
 
-	err := db.Store.Find(&users, bolthold.Where("Login").Eq(login).Index("Login"))
+	err := db.Store.Find(&users, bh.Where("Login").Eq(login).Index("Login"))
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +106,7 @@ func Disconnect(id string) error {
 		u := new(User)
 
 		if err := db.Store.TxGet(tx, id, u); err != nil {
-			if err == bolthold.ErrNotFound {
+			if err == bh.ErrNotFound {
 				return nil
 			}
 			return err
@@ -110,4 +116,8 @@ func Disconnect(id string) error {
 
 		return db.Store.TxUpdate(tx, id, u)
 	})
+}
+
+func Update(user *User) error {
+	return db.Store.Update(user.ID, user)
 }

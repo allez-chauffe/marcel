@@ -117,9 +117,8 @@ func (a *App) initializeRouter() {
 	users.HandleFunc("/", getUsersHandler).Methods("GET")
 
 	user := users.PathPrefix("/{userID}").Subrouter()
-	user.HandleFunc("/", getUserHandler).Methods("GET")
-	user.HandleFunc("/", deleteUserHandler).Methods("DELETE")
-	user.HandleFunc("/", updateUserHandler).Methods("PUT")
+	user.HandleFunc("", deleteUserHandler).Methods("DELETE")
+	user.HandleFunc("", updateUserHandler).Methods("PUT")
 }
 
 func (a *App) initializeData() {
