@@ -27,9 +27,6 @@ func init() {
 	apiCmd.Flags().String("pluginsFile", config.Config.PluginsFile, "Plugins data file name")
 	viper.BindPFlag("pluginsFile", apiCmd.Flags().Lookup("pluginsFile"))
 
-	apiCmd.Flags().String("usersFile", config.Config.UsersFile, "Users data file")
-	viper.BindPFlag("usersFile", apiCmd.Flags().Lookup("usersFile"))
-
 	apiCmd.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
 	viper.BindPFlag("pluginsPath", apiCmd.Flags().Lookup("pluginsPath"))
 

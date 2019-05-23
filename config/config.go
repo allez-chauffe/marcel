@@ -15,7 +15,6 @@ var Config = struct {
 	ClientsFile string
 	MediasFile  string
 	PluginsFile string
-	UsersFile   string
 	PluginsPath string
 	Auth        auth
 }{
@@ -26,7 +25,6 @@ var Config = struct {
 	ClientsFile: "clients.json",
 	MediasFile:  "medias.json",
 	PluginsFile: "plugins.json",
-	UsersFile:   "users.json",
 	PluginsPath: "plugins",
 	Auth: auth{
 		Secure:            true,
