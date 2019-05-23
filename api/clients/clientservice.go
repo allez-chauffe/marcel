@@ -10,13 +10,17 @@ import (
 
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/MARCEL/api/db/clients"
 )
+
+type ClientPayload struct {
+	*clients.Client
+	IsConnected bool `json:"isConnected"`
+}
 
 //Service is the websocket connection handler
 type Service struct {
 	wsclients  wsclients
-	manager    *Manager
 	register   chan *WSClient
 	unregister chan *WSClient
 }
@@ -25,19 +29,12 @@ type wsclients map[string]*WSClient
 
 type connRequest struct {
 	conn   *websocket.Conn
-	client Client
+	client clients.Client
 }
 
-type newClientRequest struct {
-	name    string
-	mediaID int
-}
-
-//Create a new
 func NewService() *Service {
 	service := &Service{
 		make(wsclients),
-		newManager(config.Config.DataPath, config.Config.ClientsFile),
 		make(chan *WSClient),
 		make(chan *WSClient),
 	}
@@ -47,15 +44,15 @@ func NewService() *Service {
 	return service
 }
 
-//WSConnectionHandler Handles a connection request from a given client.
+// WSConnectionHandler Handles a connection request from a given client.
 func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	client, found := s.getClientFromRequest(w, r)
-	if !found {
+	client, err := s.getClientFromRequest(w, r)
+	if err != nil {
 		return
 	}
 
@@ -71,85 +68,105 @@ func (s *Service) WSConnectionHandler(w http.ResponseWriter, r *http.Request) {
 
 //GetHandler send the requested client configuration.
 func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
 	log.Debugln("Getting client configuration")
 
-	client, exists := s.getClientFromRequest(w, r)
-	if !exists {
+	client, err := s.getClientFromRequest(w, r)
+	if err != nil {
 		return
 	}
 
 	_, isConnected := s.wsclients[client.ID]
 
-	commons.WriteJsonResponse(w, ClientJSON{client, isConnected})
+	commons.WriteJsonResponse(w, ClientPayload{client, isConnected})
 }
 
 //GetAllHandler send the list of all registered clients.
 func (s *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	commons.WriteJsonResponse(w, s.getClientsJson())
+	payload, err := s.getClientsPayload()
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	commons.WriteJsonResponse(w, payload)
 }
 
 //CreateHandler create a new client entry in the database.
 func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	params := &newClientRequest{}
-	if err := json.NewDecoder(r.Body).Decode(params); err != nil {
+	client := new(clients.Client)
+	if err := json.NewDecoder(r.Body).Decode(client); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if params.name == "" {
-		params.name = randomdata.SillyName()
+	if client.Name == "" {
+		client.Name = randomdata.SillyName()
 	}
 
-	if params.mediaID < 0 {
-		params.mediaID = 0
+	if client.MediaID < 0 {
+		client.MediaID = 0
 	}
 
-	client := s.manager.addNewClient(params.name, params.mediaID)
+	if err := clients.Insert(client); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	log.Debugf("Created a new client : %v", client)
-	commons.WriteJsonResponse(w, ClientJSON{client, false})
+
+	commons.WriteJsonResponse(w, ClientPayload{client, false})
 }
 
 //DeleteHandler delete a client from the database
 func (s *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	client, exists := s.getClientFromRequest(w, r)
-
-	if !exists {
+	client, err := s.getClientFromRequest(w, r)
+	if err != nil {
 		return
 	}
 
-	s.manager.deleteClient(client.ID)
+	if err := clients.Delete(client.ID); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	s.unregister <- s.wsclients[client.ID]
+
 	log.Debugf("Deleted client %s-%s (%s)", client.Name, client.ID, client.Type)
+
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
 func (s *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	s.manager.deleteAllClients()
+	if err := clients.DeleteAll(); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	for _, ws := range s.wsclients {
 		s.unregister <- ws
 	}
@@ -160,26 +177,37 @@ func (s *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 
 //UpdateHandler update a client configuration in the database
 func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	client, ok := s.getClientFromRequestBody(w, r)
-	if !ok {
+	client, err := s.getClientFromRequestBody(w, r)
+	if err != nil {
 		return
 	}
 
-	_, exists := s.manager.Get(client.ID)
-	if !exists {
+	// FIXME is this necessary ?
+	dbClient, err := clients.Get(client.ID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if dbClient == nil {
 		commons.WriteResponse(w, http.StatusNotFound, "Client not found")
 		return
 	}
 
-	savedClient := s.manager.updateClient(client)
+	if err := clients.Update(client); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	s.SendByID(client.ID, "update")
+	//FIXME what is this ?
 	// <-s.WaitForClose(client.ID)
-	commons.WriteJsonResponse(w, savedClient)
+
+	commons.WriteJsonResponse(w, client)
 }
 
 //Run is a goroutine managing connected client list (s.clients)
@@ -196,11 +224,6 @@ func (s *Service) run() {
 			}
 		}
 	}
-}
-
-//GetManager returns the client manager of the service
-func (s *Service) GetManager() *Manager {
-	return s.manager
 }
 
 //SendByMedia sends a message to each client connected to the given media

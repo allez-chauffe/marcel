@@ -65,7 +65,7 @@ func insert(tx *bolt.Tx, u *User) error {
 }
 
 func List() ([]User, error) {
-	users := []User{}
+	var users []User
 
 	return users, db.Store.Find(&users, nil)
 }

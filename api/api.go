@@ -124,7 +124,6 @@ func (a *App) initializeRouter() {
 func (a *App) initializeData() {
 	//load clients list from DB
 	a.clientsService = clients.NewService()
-	a.clientsService.GetManager().LoadFromDB()
 
 	//Load plugins list from DB
 	a.pluginService = plugins.NewService()

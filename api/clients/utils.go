@@ -2,6 +2,7 @@ package clients
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
@@ -10,38 +11,44 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/api/db/clients"
 )
 
 //getClientFromRequest return (if any) the client configuration based on id fiven in URL
-func (s *Service) getClientFromRequest(w http.ResponseWriter, r *http.Request) (*Client, bool) {
+func (s *Service) getClientFromRequest(w http.ResponseWriter, r *http.Request) (*clients.Client, error) {
 	vars := mux.Vars(r)
 	clientID, found := vars["clientID"]
 
 	if !found {
 		log.Errorf("Malformed URL (missing client id)")
 		commons.WriteResponse(w, http.StatusBadRequest, "Malformed URL (missing client id)")
-		return nil, false
+		return nil, errors.New("Malformed URL (missing client id)")
 	}
 
-	client, clientFound := s.manager.Get(clientID)
-	if !clientFound {
+	client, err := clients.Get(clientID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return nil, err
+	}
+	if client == nil {
 		log.Errorf("Unknown client : %s", clientID)
 		commons.WriteResponse(w, http.StatusNotFound, "Client not found")
-		return nil, false
+		return nil, errors.New("Client not found")
 	}
 
-	return client, true
+	return client, nil
 }
 
 //getClientFromRequest return the client configuration parsed from the request body
-func (s *Service) getClientFromRequestBody(w http.ResponseWriter, r *http.Request) (*Client, bool) {
-	client := &Client{}
+func (s *Service) getClientFromRequestBody(w http.ResponseWriter, r *http.Request) (*clients.Client, error) {
+	client := new(clients.Client)
+
 	if err := json.NewDecoder(r.Body).Decode(client); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
-		return nil, false
+		return nil, err
 	}
 
-	return client, true
+	return client, nil
 }
 
 func (ws *WSClient) writeMessageWithType(msgType int, msg []byte, logMsg string, errorMsg string) bool {
@@ -70,17 +77,23 @@ func (ws *WSClient) writeMessageWithType(msgType int, msg []byte, logMsg string,
 	return err == nil
 }
 
-func (s *Service) getClientJson(client *Client) *ClientJSON {
+func (s *Service) getClientPayload(client *clients.Client) *ClientPayload {
 	_, isConnected := s.wsclients[client.ID]
-	return &ClientJSON{client, isConnected}
+	return &ClientPayload{client, isConnected}
 }
 
-func (s *Service) getClientsJson() map[string]*ClientJSON {
-	clients := map[string]*ClientJSON{}
-	for id, client := range s.manager.GetAll() {
-		clients[id] = s.getClientJson(client)
+func (s *Service) getClientsPayload() (map[string]*ClientPayload, error) {
+	clients, err := clients.List()
+	if err != nil {
+		return nil, err
 	}
-	return clients
+
+	clientsPayload := map[string]*ClientPayload{}
+	for _, client := range clients {
+		clientsPayload[client.ID] = s.getClientPayload(&client)
+	}
+
+	return clientsPayload, nil
 }
 
 func (ws *WSClient) writeMessage(msg string, logMsg string, errorMsg string) bool {

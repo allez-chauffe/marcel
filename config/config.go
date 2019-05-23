@@ -12,7 +12,6 @@ var Config = struct {
 	LogLevel    log.Level
 	DBFile      string
 	DataPath    string
-	ClientsFile string
 	MediasFile  string
 	PluginsFile string
 	PluginsPath string
@@ -22,7 +21,6 @@ var Config = struct {
 	LogLevel:    log.InfoLevel,
 	DBFile:      "marcel.db",
 	DataPath:    "data",
-	ClientsFile: "clients.json",
 	MediasFile:  "medias.json",
 	PluginsFile: "plugins.json",
 	PluginsPath: "plugins",
