@@ -3,6 +3,9 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -11,9 +14,9 @@ import (
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/clients"
 	"github.com/Zenika/MARCEL/api/commons"
+	"github.com/Zenika/MARCEL/api/db"
 	"github.com/Zenika/MARCEL/api/medias"
 	"github.com/Zenika/MARCEL/api/plugins"
-	"github.com/Zenika/MARCEL/api/users"
 	"github.com/Zenika/MARCEL/config"
 )
 
@@ -26,6 +29,10 @@ type App struct {
 }
 
 func (a *App) Initialize() {
+	if err := db.Open(); err != nil {
+		log.Fatalln(err)
+	}
+	a.waitSignal()
 	a.initializeData()
 	a.initializeRouter()
 }
@@ -38,6 +45,23 @@ func (a *App) Run() {
 	}
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), a.Router))
+}
+
+func (a *App) waitSignal() {
+	ch := make(chan os.Signal, 1)
+
+	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-ch
+
+		err := db.Close()
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		os.Exit(0)
+	}()
 }
 
 func (a *App) initializeRouter() {
@@ -93,9 +117,8 @@ func (a *App) initializeRouter() {
 	users.HandleFunc("/", getUsersHandler).Methods("GET")
 
 	user := users.PathPrefix("/{userID}").Subrouter()
-	user.HandleFunc("/", getUserHandler).Methods("GET")
-	user.HandleFunc("/", deleteUserHandler).Methods("DELETE")
-	user.HandleFunc("/", updateUserHandler).Methods("PUT")
+	user.HandleFunc("", deleteUserHandler).Methods("DELETE")
+	user.HandleFunc("", updateUserHandler).Methods("PUT")
 }
 
 func (a *App) initializeData() {
@@ -110,6 +133,4 @@ func (a *App) initializeData() {
 	//Load Medias configuration from DB
 	a.mediaService = medias.NewService(a.pluginService.GetManager(), a.clientsService)
 	a.mediaService.GetManager().LoadFromDB()
-
-	users.LoadUsersData()
 }

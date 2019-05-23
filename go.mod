@@ -16,6 +16,8 @@ require (
 	github.com/sirupsen/logrus v1.4.1
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.3.2
+	github.com/timshannon/bolthold v0.0.0-20190315152903-eed35b755671
+	go.etcd.io/bbolt v1.3.2
 	golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.0
 	gopkg.in/src-d/go-git.v4 v4.11.0

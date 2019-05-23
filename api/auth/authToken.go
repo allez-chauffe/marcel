@@ -8,7 +8,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/users"
+	"github.com/Zenika/MARCEL/api/db/users"
 	"github.com/Zenika/MARCEL/config"
 )
 

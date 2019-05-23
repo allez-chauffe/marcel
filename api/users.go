@@ -1,10 +1,6 @@
 package api
 
 import (
-	"crypto/hmac"
-	"crypto/rand"
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,19 +10,12 @@ import (
 
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/users"
+	"github.com/Zenika/MARCEL/api/db/users"
 )
 
-var passwordSecretKey = []byte("This is the password secret key !")
-
-type User struct {
-	ID               string `json:"id"`
-	DisplayName      string `json:"displayName"`
-	Login            string `json:"login"`
-	Role             string `json:"role"`
-	CreatedAt        int64  `json:"createdAt"`
-	LastDisconection int64  `json:"lastDisconnection"`
-	Password         string `json:"password"`
+type UserPayload struct {
+	*users.User
+	Password string `json:"password"`
 }
 
 func createUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,19 +24,26 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body := getUserFromRequest(w, r)
+	payload := getUserPayload(w, r)
 
-	if body.Login == "" || body.DisplayName == "" || body.Password == "" {
+	if payload.Login == "" || payload.DisplayName == "" || payload.Password == "" {
 		commons.WriteResponse(w, http.StatusBadRequest, "Malformed request, missing required fields")
 		return
 	}
 
-	hash, salt := generateHash(body.Password)
+	u := payload.User
 
-	user := users.New(body.DisplayName, body.Login, body.Role, hash, salt)
-	users.SaveUsersData()
+	if err := u.SetPassword(payload.Password); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	commons.WriteJsonResponse(w, user)
+	if err := users.Insert(u); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	commons.WriteJsonResponse(w, u)
 }
 
 func updateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -59,56 +55,64 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body := getUserFromRequest(w, r)
-	savedUser := users.GetByID(userID)
+	payload := getUserPayload(w, r)
 
-	if savedUser == nil || savedUser.ID != body.ID {
+	savedUser, err := users.Get(userID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if savedUser == nil || savedUser.ID != payload.ID {
 		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
 	}
 
-	if body.Password != "" && !checkHash(body.Password, savedUser.PasswordHash, savedUser.PasswordSalt) {
-		savedUser.LastDisconection = time.Now().Unix()
-		hash, salt := generateHash(body.Password)
-		savedUser.PasswordHash = hash
-		savedUser.PasswordSalt = salt
+	if payload.Password != "" {
+		unchanged, err := savedUser.CheckPassword(payload.Password)
+		if err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		if !unchanged {
+			if err := savedUser.SetPassword(payload.Password); err != nil {
+				commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			savedUser.LastDisconnection = time.Now()
+		}
 	}
-	savedUser.DisplayName = body.DisplayName
-	savedUser.Login = body.Login
+
+	savedUser.DisplayName = payload.DisplayName
+	savedUser.Login = payload.Login
 
 	if auth.CheckPermissions(r, nil, "admin") {
-		savedUser.Role = body.Role
+		savedUser.Role = payload.Role
 	}
 
-	users.SaveUsersData()
+	if err := users.Update(savedUser); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	commons.WriteJsonResponse(w, savedUser)
 }
 
 func getUsersHandler(w http.ResponseWriter, r *http.Request) {
-	result := []*User{}
-	for _, user := range users.GetAll() {
-		result = append(result, adaptUser(user))
-	}
-	commons.WriteJsonResponse(w, result)
-}
-
-func getUserHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	vars := mux.Vars(r)
-	userID := vars["userID"]
-
-	user := users.GetByID(userID)
-
-	if user == nil {
-		commons.WriteResponse(w, http.StatusNotFound, "User not found")
+	users, err := users.List()
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	commons.WriteJsonResponse(w, adaptUser(user))
+	commons.WriteJsonResponse(w, users)
 }
 
 func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -120,52 +124,22 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok := users.Delete(userID)
-
-	if !ok {
-		commons.WriteResponse(w, http.StatusNotFound, "")
+	err := users.Delete(userID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	users.SaveUsersData()
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
-func getUserFromRequest(w http.ResponseWriter, r *http.Request) *User {
-	user := &User{}
+func getUserPayload(w http.ResponseWriter, r *http.Request) *UserPayload {
+	user := new(UserPayload)
+
 	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while parsing JSON (%s)", err.Error()))
 		return nil
 	}
 
 	return user
-}
-
-func generateHash(password string) (string, string) {
-	salt := make([]byte, 40)
-	rand.Read(salt)
-	saltString := base64.StdEncoding.EncodeToString(salt)
-
-	return hash(password, saltString), saltString
-}
-
-func checkHash(password, hashString, saltString string) bool {
-	return hash(password, saltString) == hashString
-}
-
-func hash(password, salt string) string {
-	h := hmac.New(sha256.New, passwordSecretKey)
-	h.Write([]byte(password + salt))
-	return base64.StdEncoding.EncodeToString(h.Sum(nil))
-}
-
-func adaptUser(user *users.User) *User {
-	return &User{
-		ID:               user.ID,
-		DisplayName:      user.DisplayName,
-		Login:            user.Login,
-		CreatedAt:        user.CreatedAt,
-		LastDisconection: user.LastDisconection,
-		Role:             user.Role,
-	}
 }

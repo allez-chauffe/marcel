@@ -9,7 +9,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/users"
+	"github.com/Zenika/MARCEL/api/db/users"
 	"github.com/Zenika/MARCEL/config"
 )
 
@@ -42,8 +42,11 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 
 func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
 	cookie, err := r.Cookie(RefreshCookieName)
-	if err != nil {
-		return nil, errors.New("No Refresh Token")
+	if err == http.ErrNoCookie {
+		return nil, nil
+	}
+	if err != nil { // Should not happen
+		return nil, err
 	}
 
 	claims, err := getVerifiedClaims(cookie.Value, &RefreshClaims{})
