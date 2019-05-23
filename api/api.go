@@ -57,7 +57,7 @@ func (a *App) waitSignal() {
 
 		err := db.Close()
 		if err != nil {
-			log.Errorln(err)
+			log.Fatalln(err)
 		}
 
 		os.Exit(0)

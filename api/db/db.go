@@ -11,8 +11,7 @@ import (
 
 func Open() error {
 	var err error
-	db.Store, err = bolthold.Open(config.Config.DBFile, 0644, nil)
-	if err != nil {
+	if db.Store, err = bolthold.Open(config.Config.DBFile, 0644, nil); err != nil {
 		return err
 	}
 

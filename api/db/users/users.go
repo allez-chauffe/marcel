@@ -73,7 +73,7 @@ func List() ([]User, error) {
 func Get(id string) (*User, error) {
 	u := &User{}
 
-	return u, db.Store.Get(id, &u)
+	return u, db.Store.Get(id, u)
 }
 
 func GetByLogin(login string) (*User, error) {
