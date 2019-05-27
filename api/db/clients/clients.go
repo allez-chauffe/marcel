@@ -8,7 +8,7 @@ import (
 )
 
 func Get(id string) (*Client, error) {
-	c := new(Client)
+	var c = new(Client)
 
 	if err := db.Store.Get(id, c); err != nil {
 		if err == bh.ErrNotFound {
@@ -20,7 +20,7 @@ func Get(id string) (*Client, error) {
 }
 
 func List() ([]Client, error) {
-	var clients []Client
+	var clients = []Client{}
 
 	return clients, db.Store.Find(&clients, nil)
 }

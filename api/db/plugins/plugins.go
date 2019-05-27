@@ -7,13 +7,13 @@ import (
 )
 
 func List() ([]Plugin, error) {
-	var plugins []Plugin
+	var plugins = []Plugin{}
 
 	return plugins, db.Store.Find(&plugins, nil)
 }
 
 func Get(eltName string) (*Plugin, error) {
-	p := new(Plugin)
+	var p = new(Plugin)
 
 	if err := db.Store.Get(eltName, p); err != nil {
 		if err == bh.ErrNotFound {
