@@ -13,7 +13,6 @@ var Config = struct {
 	DBFile      string
 	DataPath    string
 	MediasFile  string
-	PluginsFile string
 	PluginsPath string
 	Auth        auth
 }{
@@ -22,7 +21,6 @@ var Config = struct {
 	DBFile:      "marcel.db",
 	DataPath:    "data",
 	MediasFile:  "medias.json",
-	PluginsFile: "plugins.json",
 	PluginsPath: "plugins",
 	Auth: auth{
 		Secure:            true,

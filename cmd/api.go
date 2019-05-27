@@ -21,9 +21,6 @@ func init() {
 	apiCmd.Flags().String("mediasFile", config.Config.MediasFile, "Medias data file name")
 	viper.BindPFlag("mediasFile", apiCmd.Flags().Lookup("mediasFile"))
 
-	apiCmd.Flags().String("pluginsFile", config.Config.PluginsFile, "Plugins data file name")
-	viper.BindPFlag("pluginsFile", apiCmd.Flags().Lookup("pluginsFile"))
-
 	apiCmd.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
 	viper.BindPFlag("pluginsPath", apiCmd.Flags().Lookup("pluginsPath"))
 
