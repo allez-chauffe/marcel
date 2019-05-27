@@ -11,7 +11,6 @@ import (
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/clients"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/plugins"
 	"github.com/Zenika/MARCEL/config"
 )
 
@@ -20,10 +19,10 @@ type Service struct {
 	clientsService *clients.Service
 }
 
-func NewService(pluginManager *plugins.Manager, clientsService *clients.Service) *Service {
+func NewService(clientsService *clients.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(pluginManager, clientsService, config.Config.DataPath, config.Config.MediasFile)
+	service.manager = NewManager(clientsService, config.Config.DataPath, config.Config.MediasFile)
 	service.clientsService = clientsService
 
 	return service

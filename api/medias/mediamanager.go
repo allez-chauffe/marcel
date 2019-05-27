@@ -5,14 +5,11 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/api/clients"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/containers"
-	"github.com/Zenika/MARCEL/api/plugins"
 )
 
 type Manager struct {
@@ -21,17 +18,15 @@ type Manager struct {
 	configFullpath string
 	Config         *Configuration
 
-	pluginManager  *plugins.Manager
 	clientsService *clients.Service
 }
 
-func NewManager(pluginManager *plugins.Manager, clientsService *clients.Service, configPath, configFilename string) *Manager {
+func NewManager(clientsService *clients.Service, configPath, configFilename string) *Manager {
 	manager := new(Manager)
 
 	manager.configPath = configPath
 	manager.configFileName = configFilename
 
-	manager.pluginManager = pluginManager
 	manager.clientsService = clientsService
 
 	manager.configFullpath = filepath.Join(configPath, configFilename)
@@ -138,7 +133,7 @@ func (m *Manager) CreateSaveFileIfNotExist(filePath string, fileName string) {
 		f, err := os.Create(fullPath)
 		commons.Check(err)
 
-		log.Infoln("Medias configuration file created at %v", fullPath)
+		log.Infof("Medias configuration file created at %v", fullPath)
 
 		f.Close()
 
@@ -151,45 +146,12 @@ func (m *Manager) Activate(media *Media) error {
 	errorMessages := ""
 
 	for _, mp := range media.Plugins {
-
-		plugin, err := m.pluginManager.Get(mp.EltName)
-		if err != nil {
-			//plugin does not exist (anymore ?) in the catalog. Obviously, it should never append.
-			log.Errorln(err.Error())
-			//Don't return an error now, we need to activate the other plugins
-			errorMessages += err.Error() + "\n"
-		}
-
 		// duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
 		mpPath := m.GetPluginDirectory(media, mp.EltName, mp.InstanceId)
-		err = m.copyNewInstanceOfPlugin(media, &mp, mpPath)
-		if err != nil {
+		if err := m.copyNewInstanceOfPlugin(media, &mp, mpPath); err != nil {
 			log.Errorln(err.Error())
 			//Don't return an error now, we need to activate the other plugins
 			errorMessages += err.Error() + "\n"
-		}
-
-		if mp.BackEnd != nil {
-			retour, err := containers.InstallImage(filepath.Join(mpPath, "back", plugin.Backend.Dockerimage))
-			if err != nil {
-				//Don't return an error now, we need to activate the other plugins
-				log.Errorln(err.Error())
-				errorMessages += err.Error() + "\n"
-			}
-
-			imageName := strings.TrimSpace(strings.TrimPrefix(retour, "Loaded image: "))
-			externalPort := m.GetPortNumberForPlugin()
-
-			dockerContainerId, err := containers.StartContainer(imageName, plugin.Backend.Port, externalPort, mp.BackEnd.Props, mpPath)
-			if err != nil {
-				//Don't return an error now, we need to activate the other plugins
-				log.Errorln(err.Error())
-				errorMessages += err.Error() + "\n"
-			} else {
-				mp.BackEnd.Port = externalPort
-				mp.BackEnd.DockerImageName = imageName
-				mp.BackEnd.DockerContainerId = strings.TrimSpace(dockerContainerId)
-			}
 		}
 	}
 
@@ -206,27 +168,9 @@ func (m *Manager) Activate(media *Media) error {
 
 func (m *Manager) Deactivate(media *Media) error {
 
-	errorMessages := ""
-	//stop all backends instances and free ports number
-	for _, mp := range media.Plugins {
-		if mp.BackEnd != nil {
-
-			err := containers.StopContainer(mp.BackEnd.DockerContainerId)
-			if err != nil {
-				errorMessages += err.Error() + "\n"
-			} else {
-				m.FreePortNumberForPlugin(mp.BackEnd.Port)
-			}
-		}
-	}
-
 	media.IsActive = false
 
 	m.SaveIntoDB(media)
-
-	if errorMessages != "" {
-		return errors.New(errorMessages)
-	}
 
 	return nil
 }

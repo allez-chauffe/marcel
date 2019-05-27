@@ -12,46 +12,13 @@ import (
 
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/MARCEL/api/db/plugins"
 )
 
 var (
 	pluginsTempDir     string
 	initPluginsTempDir sync.Once
 )
-
-type Service struct {
-	Manager *Manager
-}
-
-func NewService() *Service {
-	var p = new(Service)
-
-	p.Manager = NewManager(config.Config.DataPath, config.Config.PluginsFile)
-
-	return p
-}
-
-func (s *Service) GetManager() *Manager {
-	return s.Manager
-}
-
-// swagger:route GET /plugins/config GetConfigHandler
-//
-// Gets information of all plugins
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
-func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
-		commons.WriteResponse(w, http.StatusForbidden, "")
-		return
-	}
-
-	commons.WriteJsonResponse(w, s.Manager.GetConfig())
-}
 
 // swagger:route GET /plugins GetAllHandler
 //
@@ -61,13 +28,19 @@ func (s *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //     - application/json
 //
 //     Schemes: http, https
-func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+func GetAllHandler(w http.ResponseWriter, r *http.Request) {
+	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	commons.WriteJsonResponse(w, m.Manager.GetAll())
+	plugins, err := plugins.List()
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	commons.WriteJsonResponse(w, plugins)
 }
 
 // swagger:route GET /plugins/{idMedia} GetHandler
@@ -79,8 +52,8 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 // swagger:parameters idPlugin
-func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+func GetHandler(w http.ResponseWriter, r *http.Request) {
+	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -88,9 +61,13 @@ func (s *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]
 
-	plugin, err := s.Manager.Get(eltName)
+	plugin, err := plugins.Get(eltName)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if plugin == nil {
+		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
 	}
 
@@ -101,11 +78,11 @@ type AddPluginBody struct {
 	URL string `json:"url"`
 }
 
-func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
-	// if !auth.CheckPermissions(r, nil, "admin") {
-	// 	commons.WriteResponse(w, http.StatusForbidden, "")
-	// 	return
-	// }
+func AddHandler(w http.ResponseWriter, r *http.Request) {
+	if !auth.CheckPermissions(r, nil, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
 
 	body := &AddPluginBody{}
 	if err := json.NewDecoder(r.Body).Decode(body); err != nil {
@@ -115,7 +92,7 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Infof("Plugin registration requested for %s", body.URL)
 
-	plugin, tempDir, err := s.Manager.FetchFromGit(body.URL)
+	plugin, tempDir, err := FetchFromGit(body.URL)
 	defer os.RemoveAll(tempDir)
 	if err != nil {
 		log.Error(err)
@@ -123,7 +100,13 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if s.Manager.Exists(plugin.EltName) {
+	exists, err := plugins.Exists(plugin.EltName)
+	if err != nil {
+		log.Error(err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if exists {
 		log.Errorf("The plugin '%s' already exists", plugin.EltName)
 		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("The plugin '%s' already exists", plugin.EltName))
 		return
@@ -136,30 +119,39 @@ func (s *Service) AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.Manager.Add(plugin)
+	if err := plugins.Insert(plugin); err != nil {
+		log.Error(err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	log.Infof("Plugin successfuly registered : %s (%s)", plugin.EltName, plugin.Name)
 	commons.WriteJsonResponse(w, plugin)
 }
 
-func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
-	// if !auth.CheckPermissions(r, nil, "admin") {
-	// 	commons.WriteResponse(w, http.StatusForbidden, "")
-	// 	return
-	// }
+func UpdateHandler(w http.ResponseWriter, r *http.Request) {
+	if !auth.CheckPermissions(r, nil, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
 
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]
 
-	plugin, err := s.Manager.Get(eltName)
+	plugin, err := plugins.Get(eltName)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+		log.Error(err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if plugin == nil {
+		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
 	}
 
 	log.Infof("Plugin update requested for %s", eltName)
 
-	plugin, tempDir, err := s.Manager.FetchFromGit(plugin.URL)
+	plugin, tempDir, err := FetchFromGit(plugin.URL)
 	// The temp dir cleanup should be done before handling because it can be created even if an error occured
 	defer os.RemoveAll(tempDir)
 	if err != nil {
@@ -182,7 +174,11 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.Manager.Replace(plugin)
+	if err := plugins.Update(plugin); err != nil {
+		log.Error(err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	log.Infof("Plugin successfuly updated: %s (%s)", plugin.EltName, plugin.Name)
 	commons.WriteJsonResponse(w, plugin)

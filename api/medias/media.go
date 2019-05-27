@@ -44,7 +44,6 @@ type MediaPlugin struct {
 	InstanceId string               `json:"instanceId"`
 	EltName    string               `json:"eltName"`
 	FrontEnd   *MediaPluginFrontEnd `json:"frontend"`
-	BackEnd    *MediaPluginBackEnd  `json:"backend"`
 }
 
 type MediaPluginFrontEnd struct {
@@ -54,11 +53,4 @@ type MediaPluginFrontEnd struct {
 	Rows  int                    `json:"rows"`
 	Cols  int                    `json:"cols"`
 	Props map[string]interface{} `json:"props"`
-}
-
-type MediaPluginBackEnd struct {
-	Port              int                    `json:"port"`
-	Props             map[string]interface{} `json:"props"`
-	DockerImageName   string
-	DockerContainerId string
 }
