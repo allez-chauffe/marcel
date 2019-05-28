@@ -11,42 +11,19 @@ import (
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/clients"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/MARCEL/api/db/medias"
 )
 
 type Service struct {
-	manager        *Manager
 	clientsService *clients.Service
 }
 
 func NewService(clientsService *clients.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(clientsService, config.Config.DataPath, config.Config.MediasFile)
 	service.clientsService = clientsService
 
 	return service
-}
-
-func (m *Service) GetManager() *Manager {
-	return m.manager
-}
-
-// swagger:route GET /medias/config GetConfigHandler
-//
-// Gets information of all medias
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
-func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
-		commons.WriteResponse(w, http.StatusForbidden, "")
-		return
-	}
-
-	commons.WriteJsonResponse(w, m.manager.GetConfiguration())
 }
 
 // swagger:route GET /medias GetAllHandler
@@ -58,12 +35,18 @@ func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	commons.WriteJsonResponse(w, m.manager.GetAll())
+	medias, err := medias.List()
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	commons.WriteJsonResponse(w, medias)
 }
 
 // swagger:route GET /medias/{idMedia} GetHandler
@@ -76,7 +59,7 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idMedia
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -99,13 +82,17 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	// 1 : Get content and check structure
-	media := &Media{}
+	media := &medias.Media{}
 	if err := json.NewDecoder(r.Body).Decode(media); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	tmpMedia, _ := m.manager.Get(media.ID)
+	tmpMedia, err := medias.Get(media.ID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 	if tmpMedia == nil {
 		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
@@ -279,7 +266,7 @@ func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (media *Media) {
+func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (media *medias.Media) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
 
@@ -289,9 +276,13 @@ func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (m
 		return nil
 	}
 
-	media, err = m.manager.Get(idMedia)
+	media, err = medias.Get(idMedia)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return nil
+	}
+	if media == nil {
+		commons.WriteResponse(w, http.StatusNotFound, "")
 		return nil
 	}
 
