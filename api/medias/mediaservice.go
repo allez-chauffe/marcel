@@ -155,7 +155,7 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
-	if media != nil {
+	if media == nil {
 		return
 	}
 

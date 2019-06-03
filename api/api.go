@@ -79,6 +79,7 @@ func (a *App) initializeRouter() {
 
 	media := medias.PathPrefix("/{idMedia:[0-9]*}").Subrouter()
 	media.HandleFunc("/", a.mediaService.GetHandler).Methods("GET")
+	media.HandleFunc("/", a.mediaService.DeleteHandler).Methods("DELETE")
 	media.HandleFunc("/activate", a.mediaService.ActivateHandler).Methods("GET")
 	media.HandleFunc("/deactivate", a.mediaService.DeactivateHandler).Methods("GET")
 	media.HandleFunc("/plugins/{eltName}/{instanceId}/{filePath:.*}", a.mediaService.GetPluginFilesHandler).Methods("GET")

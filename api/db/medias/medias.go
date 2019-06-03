@@ -34,7 +34,7 @@ func Insert(m *Media) error {
 			return err
 		}
 
-		if len(agg) != 0 {
+		if len(agg) != 0 && agg[0].Count() != 0 {
 			agg[0].Max("ID", m)
 		}
 
