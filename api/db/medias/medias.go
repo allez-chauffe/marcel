@@ -1,7 +1,10 @@
 package medias
 
 import (
+	"fmt"
+
 	bh "github.com/timshannon/bolthold"
+	bolt "go.etcd.io/bbolt"
 
 	"github.com/Zenika/MARCEL/api/db/internal/db"
 )
@@ -22,4 +25,30 @@ func Get(id int) (*Media, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func Insert(m *Media) error {
+	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+		agg, err := db.Store.TxFindAggregate(tx, &Media{}, nil)
+		if err != nil {
+			return err
+		}
+
+		if len(agg) != 0 {
+			agg[0].Max("ID", m)
+		}
+
+		m.ID++
+		m.Name = fmt.Sprintf("Media %d", m.ID)
+
+		return db.Store.TxInsert(tx, m.ID, m)
+	})
+}
+
+func Update(m *Media) error {
+	return db.Store.Update(m.ID, m)
+}
+
+func Delete(id int) error {
+	return db.Store.Delete(id, &Media{})
 }

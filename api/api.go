@@ -76,15 +76,11 @@ func (a *App) initializeRouter() {
 	medias.HandleFunc("/", a.mediaService.GetAllHandler).Methods("GET")
 	medias.HandleFunc("/", a.mediaService.CreateHandler).Methods("POST")
 	medias.HandleFunc("/", a.mediaService.SaveHandler).Methods("PUT")
-	medias.HandleFunc("/", a.mediaService.DeleteAllHandler).Methods("DELETE")
-	medias.HandleFunc("/config", a.mediaService.GetConfigHandler).Methods("GET")
 
 	media := medias.PathPrefix("/{idMedia:[0-9]*}").Subrouter()
 	media.HandleFunc("/", a.mediaService.GetHandler).Methods("GET")
-	media.HandleFunc("/", a.mediaService.DeleteHandler).Methods("DELETE")
 	media.HandleFunc("/activate", a.mediaService.ActivateHandler).Methods("GET")
 	media.HandleFunc("/deactivate", a.mediaService.DeactivateHandler).Methods("GET")
-	media.HandleFunc("/restart", a.mediaService.RestartHandler).Methods("GET")
 	media.HandleFunc("/plugins/{eltName}/{instanceId}/{filePath:.*}", a.mediaService.GetPluginFilesHandler).Methods("GET")
 
 	clients := s.PathPrefix("/clients").Subrouter()
@@ -125,5 +121,4 @@ func (a *App) initializeData() {
 
 	//Load Medias configuration from DB
 	a.mediaService = medias.NewService(a.clientsService)
-	a.mediaService.GetManager().LoadFromDB()
 }
