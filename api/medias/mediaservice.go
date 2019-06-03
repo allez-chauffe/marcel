@@ -137,7 +137,13 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	media := &medias.Media{
-		Owner: auth.GetAuth(r).Subject,
+		Owner:       auth.GetAuth(r).Subject,
+		Stylesvar:   make(map[string]interface{}),
+		Plugins:     []medias.MediaPlugin{},
+		Rows:        10,
+		Cols:        10,
+		ScreenRatio: 16.0 / 9.0,
+		DisplayGrid: true,
 	}
 
 	if err := medias.Insert(media); err != nil {
