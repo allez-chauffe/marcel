@@ -136,15 +136,7 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	media := &medias.Media{
-		Owner:       auth.GetAuth(r).Subject,
-		Stylesvar:   make(map[string]interface{}),
-		Plugins:     []medias.MediaPlugin{},
-		Rows:        10,
-		Cols:        10,
-		ScreenRatio: 16.0 / 9.0,
-		DisplayGrid: true,
-	}
+	media := medias.New(auth.GetAuth(r).Subject)
 
 	if err := medias.Insert(media); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())

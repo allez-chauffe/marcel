@@ -22,17 +22,16 @@ type Media struct {
 	DisplayGrid bool                   `json:"displayGrid"`
 }
 
-func NewMedia() *Media {
-	var media = new(Media)
-
-	media.Stylesvar = make(map[string]interface{})
-	media.Plugins = []MediaPlugin{}
-	media.Rows = 10
-	media.Cols = 10
-	media.ScreenRatio = 16.0 / 9.0
-	media.DisplayGrid = true
-
-	return media
+func New(owner string) *Media {
+	return &Media{
+		Owner:       owner,
+		Stylesvar:   make(map[string]interface{}),
+		Plugins:     []MediaPlugin{},
+		Rows:        10,
+		Cols:        10,
+		ScreenRatio: 16.0 / 9.0,
+		DisplayGrid: true,
+	}
 }
 
 // MediaPlugin represents a plugin configuration for the media
