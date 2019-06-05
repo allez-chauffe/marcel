@@ -187,17 +187,6 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// FIXME is this necessary ?
-	dbClient, err := clients.Get(client.ID)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if dbClient == nil {
-		commons.WriteResponse(w, http.StatusNotFound, "Client not found")
-		return
-	}
-
 	if err := clients.Update(client); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
