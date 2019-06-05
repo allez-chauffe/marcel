@@ -19,12 +19,12 @@ type Plugin struct {
 }
 
 type Frontend struct {
-	Cols  int     `json:"cols"`
-	Rows  int     `json:"rows"`
-	Props []Props `json:"props"`
+	Cols  int    `json:"cols"`
+	Rows  int    `json:"rows"`
+	Props []Prop `json:"props"`
 }
 
-type Props struct {
+type Prop struct {
 	Name        string `json:"name"`
 	Type        string `json:"type"`
 	Description string `json:"description"`
