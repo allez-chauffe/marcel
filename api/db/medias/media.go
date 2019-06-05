@@ -22,17 +22,16 @@ type Media struct {
 	DisplayGrid bool                   `json:"displayGrid"`
 }
 
-func NewMedia() *Media {
-	var media = new(Media)
-
-	media.Stylesvar = make(map[string]interface{})
-	media.Plugins = []MediaPlugin{}
-	media.Rows = 10
-	media.Cols = 10
-	media.ScreenRatio = 16.0 / 9.0
-	media.DisplayGrid = true
-
-	return media
+func New(owner string) *Media {
+	return &Media{
+		Owner:       owner,
+		Stylesvar:   make(map[string]interface{}),
+		Plugins:     []MediaPlugin{},
+		Rows:        10,
+		Cols:        10,
+		ScreenRatio: 16.0 / 9.0,
+		DisplayGrid: true,
+	}
 }
 
 // MediaPlugin represents a plugin configuration for the media
@@ -41,24 +40,15 @@ func NewMedia() *Media {
 //
 // swagger:model
 type MediaPlugin struct {
-	InstanceId string               `json:"instanceId"`
+	InstanceID string               `json:"instanceId"`
 	EltName    string               `json:"eltName"`
 	FrontEnd   *MediaPluginFrontEnd `json:"frontend"`
-	BackEnd    *MediaPluginBackEnd  `json:"backend"`
 }
 
 type MediaPluginFrontEnd struct {
-	//Files []string               `json:"files"`
 	X     int                    `json:"x"`
 	Y     int                    `json:"y"`
 	Rows  int                    `json:"rows"`
 	Cols  int                    `json:"cols"`
 	Props map[string]interface{} `json:"props"`
-}
-
-type MediaPluginBackEnd struct {
-	Port              int                    `json:"port"`
-	Props             map[string]interface{} `json:"props"`
-	DockerImageName   string
-	DockerContainerId string
 }

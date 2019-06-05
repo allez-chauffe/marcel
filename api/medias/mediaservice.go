@@ -2,52 +2,31 @@ package medias
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/clients"
 	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/plugins"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/MARCEL/api/db/medias"
 )
 
 type Service struct {
-	manager        *Manager
 	clientsService *clients.Service
 }
 
-func NewService(pluginManager *plugins.Manager, clientsService *clients.Service) *Service {
+func NewService(clientsService *clients.Service) *Service {
 	service := new(Service)
 
-	service.manager = NewManager(pluginManager, clientsService, config.Config.DataPath, config.Config.MediasFile)
 	service.clientsService = clientsService
 
 	return service
-}
-
-func (m *Service) GetManager() *Manager {
-	return m.manager
-}
-
-// swagger:route GET /medias/config GetConfigHandler
-//
-// Gets information of all medias
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
-func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
-		commons.WriteResponse(w, http.StatusForbidden, "")
-		return
-	}
-
-	commons.WriteJsonResponse(w, m.manager.GetConfiguration())
 }
 
 // swagger:route GET /medias GetAllHandler
@@ -59,12 +38,18 @@ func (m *Service) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 //
 //     Schemes: http, https
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	commons.WriteJsonResponse(w, m.manager.GetAll())
+	medias, err := medias.List()
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	commons.WriteJsonResponse(w, medias)
 }
 
 // swagger:route GET /medias/{idMedia} GetHandler
@@ -77,7 +62,7 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 // swagger:parameters idMedia
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil) {
+	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
@@ -100,13 +85,17 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	// 1 : Get content and check structure
-	media := &Media{}
+	media := &medias.Media{}
 	if err := json.NewDecoder(r.Body).Decode(media); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	tmpMedia, _ := m.manager.Get(media.ID)
+	tmpMedia, err := medias.Get(media.ID)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 	if tmpMedia == nil {
 		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
@@ -117,10 +106,17 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.manager.Deactivate(tmpMedia)
-	m.manager.SaveIntoDB(media)
-	m.manager.Activate(media)
-	m.manager.Commit()
+	if err := activate(media); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	media.IsActive = true
+
+	if err := medias.Update(media); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	commons.WriteJsonResponse(w, media)
 	m.clientsService.SendByMedia(media.ID, "update")
@@ -140,10 +136,14 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//get a new media
-	newMedia := m.manager.CreateEmpty(auth.GetAuth(r).Subject)
+	media := medias.New(auth.GetAuth(r).Subject)
 
-	commons.WriteJsonResponse(w, newMedia)
+	if err := medias.Insert(media); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	commons.WriteJsonResponse(w, media)
 }
 
 // swagger:route GET /medias/{idMedia:[0-9]*}/activate ActivateHandler
@@ -153,7 +153,7 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 //     Schemes: http, https
 func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
-	if media != nil {
+	if media == nil {
 		return
 	}
 
@@ -162,13 +162,20 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.manager.Activate(media)
+	if err := activate(media); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	m.manager.Commit()
+	media.IsActive = true
+
+	if err := medias.Update(media); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	commons.WriteResponse(w, http.StatusOK, "Media is active")
 	m.clientsService.SendByMedia(media.ID, "update")
-
 }
 
 // swagger:route GET /medias/{idMedia:[0-9]*}/deactivate DeactivateHandler
@@ -185,36 +192,14 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.manager.Deactivate(media)
+	media.IsActive = false
 
-	m.manager.Commit()
+	if err := medias.Update(media); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	commons.WriteResponse(w, http.StatusOK, "Media has been deactivated")
-	m.clientsService.SendByMedia(media.ID, "update")
-}
-
-// swagger:route GET /medias/{idMedia:[0-9]*}/restart RestartHandler
-//
-// restart backends for the plugins of this media
-func (m *Service) RestartHandler(w http.ResponseWriter, r *http.Request) {
-	media := m.getMediaFromRequest(w, r)
-	if media == nil {
-		return
-	}
-
-	if !auth.CheckPermissions(r, []string{media.Owner}, "admin") {
-		commons.WriteResponse(w, http.StatusForbidden, "")
-		return
-	}
-
-	if media.IsActive {
-		m.manager.Deactivate(media)
-	}
-	m.manager.Activate(media)
-
-	m.manager.Commit()
-
-	commons.WriteResponse(w, http.StatusOK, "Media has been correctly restarted")
 	m.clientsService.SendByMedia(media.ID, "update")
 }
 
@@ -232,27 +217,17 @@ func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.manager.Delete(media)
-	commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
-}
-
-// swagger:route DELETE /medias DeleteAllHandler
-//
-// Delete all medias
-func (m *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
-	if !auth.CheckPermissions(r, nil, "admin") {
-		commons.WriteResponse(w, http.StatusForbidden, "")
+	if err := medias.Delete(media.ID); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	for i := len(m.manager.Config.Medias) - 1; i >= 0; i-- {
-		media := m.manager.Config.Medias[i]
-		m.manager.Deactivate(&media)
-
-		m.manager.RemoveFromDB(&media)
-		m.manager.Commit()
+	if err := os.RemoveAll(filepath.Join("medias", strconv.Itoa(media.ID))); err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
 	}
-	commons.WriteResponse(w, http.StatusOK, "All medias have been correctly deleted")
+
+	commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
 }
 
 // swagger:route GET /medias{idMedia:[0-9]*}/plugins/{eltName}/{instanceId}/*
@@ -274,13 +249,13 @@ func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	if media := m.getMediaFromRequest(w, r); media != nil {
-		pluginDirectoryPath := m.manager.GetPluginDirectory(media, eltName, instanceID)
+		pluginDirectoryPath := getPluginDirectory(media, eltName, instanceID)
 		pluginFilePath := filepath.Join(pluginDirectoryPath, "frontend", filePath)
 		http.ServeFile(w, r, pluginFilePath)
 	}
 }
 
-func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (media *Media) {
+func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (media *medias.Media) {
 	vars := mux.Vars(r)
 	attr := vars["idMedia"]
 
@@ -290,11 +265,43 @@ func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (m
 		return nil
 	}
 
-	media, err = m.manager.Get(idMedia)
+	media, err = medias.Get(idMedia)
 	if err != nil {
-		commons.WriteResponse(w, http.StatusNotFound, err.Error())
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return nil
+	}
+	if media == nil {
+		commons.WriteResponse(w, http.StatusNotFound, "")
 		return nil
 	}
 
 	return media
+}
+
+func activate(media *medias.Media) error {
+	errorMessages := ""
+
+	for _, mp := range media.Plugins {
+		// duplicate plugin files into "medias/{idMedia}/{plugins_EltName}/{idInstance}"
+		mpPath := getPluginDirectory(media, mp.EltName, mp.InstanceID)
+		if err := copyNewInstanceOfPlugin(media, &mp, mpPath); err != nil {
+			log.Errorln(err.Error())
+			//Don't return an error now, we need to activate the other plugins
+			errorMessages += err.Error() + "\n"
+		}
+	}
+
+	if errorMessages != "" {
+		return errors.New(errorMessages)
+	}
+
+	return nil
+}
+
+func copyNewInstanceOfPlugin(media *medias.Media, mp *medias.MediaPlugin, path string) error {
+	return commons.CopyDir(filepath.Join("plugins", mp.EltName, "frontend"), filepath.Join(path, "frontend"))
+}
+
+func getPluginDirectory(media *medias.Media, eltName string, instanceID string) string {
+	return filepath.Join("medias", strconv.Itoa(media.ID), eltName, instanceID)
 }

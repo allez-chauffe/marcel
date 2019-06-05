@@ -24,7 +24,6 @@ type App struct {
 	Router http.Handler
 
 	mediaService   *medias.Service
-	pluginService  *plugins.Service
 	clientsService *clients.Service
 }
 
@@ -77,15 +76,12 @@ func (a *App) initializeRouter() {
 	medias.HandleFunc("/", a.mediaService.GetAllHandler).Methods("GET")
 	medias.HandleFunc("/", a.mediaService.CreateHandler).Methods("POST")
 	medias.HandleFunc("/", a.mediaService.SaveHandler).Methods("PUT")
-	medias.HandleFunc("/", a.mediaService.DeleteAllHandler).Methods("DELETE")
-	medias.HandleFunc("/config", a.mediaService.GetConfigHandler).Methods("GET")
 
 	media := medias.PathPrefix("/{idMedia:[0-9]*}").Subrouter()
 	media.HandleFunc("/", a.mediaService.GetHandler).Methods("GET")
 	media.HandleFunc("/", a.mediaService.DeleteHandler).Methods("DELETE")
 	media.HandleFunc("/activate", a.mediaService.ActivateHandler).Methods("GET")
 	media.HandleFunc("/deactivate", a.mediaService.DeactivateHandler).Methods("GET")
-	media.HandleFunc("/restart", a.mediaService.RestartHandler).Methods("GET")
 	media.HandleFunc("/plugins/{eltName}/{instanceId}/{filePath:.*}", a.mediaService.GetPluginFilesHandler).Methods("GET")
 
 	clients := s.PathPrefix("/clients").Subrouter()
@@ -99,12 +95,11 @@ func (a *App) initializeRouter() {
 	client.HandleFunc("/", a.clientsService.DeleteHandler).Methods("DELETE")
 	client.HandleFunc("/ws", a.clientsService.WSConnectionHandler)
 
-	plugins := s.PathPrefix("/plugins").Subrouter()
-	plugins.HandleFunc("/", a.pluginService.GetAllHandler).Methods("GET")
-	plugins.HandleFunc("/", a.pluginService.AddHandler).Methods("POST")
-	plugins.HandleFunc("/config", a.pluginService.GetConfigHandler).Methods("GET")
-	plugins.HandleFunc("/{eltName}", a.pluginService.GetHandler).Methods("GET")
-	plugins.HandleFunc("/{eltName}", a.pluginService.UpdateHandler).Methods("PUT")
+	pluginsRouter := s.PathPrefix("/plugins").Subrouter()
+	pluginsRouter.HandleFunc("/", plugins.GetAllHandler).Methods("GET")
+	pluginsRouter.HandleFunc("/", plugins.AddHandler).Methods("POST")
+	pluginsRouter.HandleFunc("/{eltName}", plugins.GetHandler).Methods("GET")
+	pluginsRouter.HandleFunc("/{eltName}", plugins.UpdateHandler).Methods("PUT")
 
 	auth := s.PathPrefix("/auth").Subrouter()
 	auth.HandleFunc("/login", loginHandler).Methods("POST")
@@ -124,13 +119,7 @@ func (a *App) initializeRouter() {
 func (a *App) initializeData() {
 	//load clients list from DB
 	a.clientsService = clients.NewService()
-	a.clientsService.GetManager().LoadFromDB()
-
-	//Load plugins list from DB
-	a.pluginService = plugins.NewService()
-	a.pluginService.GetManager().LoadFromDB()
 
 	//Load Medias configuration from DB
-	a.mediaService = medias.NewService(a.pluginService.GetManager(), a.clientsService)
-	a.mediaService.GetManager().LoadFromDB()
+	a.mediaService = medias.NewService(a.clientsService)
 }

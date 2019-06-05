@@ -6,12 +6,14 @@ import (
 
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/Zenika/MARCEL/api/db/clients"
 )
 
 //WSClient represent a websocket connection to a client.
 type WSClient struct {
 	service   *Service
-	client    *Client
+	client    *clients.Client
 	conn      *websocket.Conn
 	send      chan string
 	waitClose chan chan bool
@@ -86,7 +88,7 @@ func (ws *WSClient) listen() {
 	}
 }
 
-func newWSClient(service *Service, client *Client, conn *websocket.Conn) *WSClient {
+func newWSClient(service *Service, client *clients.Client, conn *websocket.Conn) *WSClient {
 	ws := &WSClient{
 		service,
 		client,

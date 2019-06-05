@@ -18,14 +18,8 @@ func init() {
 	apiCmd.Flags().String("dbFile", config.Config.DBFile, "Database file name")
 	viper.BindPFlag("dbFile", apiCmd.Flags().Lookup("dbFile"))
 
-	apiCmd.Flags().String("clientsFile", config.Config.ClientsFile, "Clients data file name")
-	viper.BindPFlag("clientsFile", apiCmd.Flags().Lookup("clientsFile"))
-
 	apiCmd.Flags().String("mediasFile", config.Config.MediasFile, "Medias data file name")
 	viper.BindPFlag("mediasFile", apiCmd.Flags().Lookup("mediasFile"))
-
-	apiCmd.Flags().String("pluginsFile", config.Config.PluginsFile, "Plugins data file name")
-	viper.BindPFlag("pluginsFile", apiCmd.Flags().Lookup("pluginsFile"))
 
 	apiCmd.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
 	viper.BindPFlag("pluginsPath", apiCmd.Flags().Lookup("pluginsPath"))

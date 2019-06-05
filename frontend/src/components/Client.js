@@ -42,7 +42,7 @@ class Client extends Component {
     return this.backend
       .post('/clients/', {
         name: window.location.queryParams.name,
-        mediaID: window.location.queryParams.mediaID,
+        mediaID: parseInt(window.location.queryParams.mediaID, 10)
       })
       .then(client => {
         localStorage.clientID = client.id
