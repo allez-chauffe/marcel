@@ -110,29 +110,7 @@ A Go executable needs some external library missing from alpine docker image. To
 GOOS=linux CGO_ENABLED=0 go build -a -installsuffix cgo
 ```
 
-### Generate swagger.json generation
-
-Install library :
-```
-go get -u github.com/go-swagger/go-swagger/cmd/swagger
-```
-
-or without docker :
-
-```shel
-docker pull quay.io/goswagger/swagger
-alias swagger="docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
-```
-
-Generate the API doc :
-```
-swagger generate spec -o ./swagger.json
-```
-
-You can now run Swagger UI on port 3000
-
 ## Credits
 
 * [Gorilla Mux](https://github.com/gorilla/mux)
 * [MapStructure](https://github.com/mitchellh/mapstructure) from Mitchellh
-* [Go-Swagger.io](https://goswagger.io)

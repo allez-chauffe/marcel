@@ -7,8 +7,6 @@ import (
 )
 
 // Plugin represents a plugin configuration
-//
-// swagger:model
 type Plugin struct {
 	URL         string   `json:"url"`
 	Versions    []string `json:"versions"`

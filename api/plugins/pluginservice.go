@@ -20,14 +20,7 @@ var (
 	initPluginsTempDir sync.Once
 )
 
-// swagger:route GET /plugins GetAllHandler
-//
-// Gets information of all plugins
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
+// GetAllHandler gets information of all plugins
 func GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
@@ -43,15 +36,7 @@ func GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteJsonResponse(w, plugins)
 }
 
-// swagger:route GET /plugins/{idMedia} GetHandler
-//
-// Gets information of a plugin
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
-// swagger:parameters idPlugin
+// GetHandler gets information of a plugin
 func GetHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
