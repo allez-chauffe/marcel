@@ -12,14 +12,8 @@ func init() {
 	apiCmd.Flags().UintP("port", "p", config.Config.Port, "Listening port")
 	viper.BindPFlag("port", apiCmd.Flags().Lookup("port"))
 
-	apiCmd.Flags().String("dataPath", config.Config.DataPath, "Data files directory")
-	viper.BindPFlag("dataPath", apiCmd.Flags().Lookup("dataPath"))
-
 	apiCmd.Flags().String("dbFile", config.Config.DBFile, "Database file name")
 	viper.BindPFlag("dbFile", apiCmd.Flags().Lookup("dbFile"))
-
-	apiCmd.Flags().String("mediasFile", config.Config.MediasFile, "Medias data file name")
-	viper.BindPFlag("mediasFile", apiCmd.Flags().Lookup("mediasFile"))
 
 	apiCmd.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
 	viper.BindPFlag("pluginsPath", apiCmd.Flags().Lookup("pluginsPath"))
