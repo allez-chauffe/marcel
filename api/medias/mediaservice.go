@@ -29,14 +29,7 @@ func NewService(clientsService *clients.Service) *Service {
 	return service
 }
 
-// swagger:route GET /medias GetAllHandler
-//
-// Gets information of all medias
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
+// GetAllHandler gets information of all medias
 func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
@@ -52,15 +45,7 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteJsonResponse(w, medias)
 }
 
-// swagger:route GET /medias/{idMedia} GetHandler
-//
-// Gets information of a media
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
-// swagger:parameters idMedia
+// GetHandler gets information of a media
 func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil, "user", "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
@@ -72,19 +57,8 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route POST /medias SaveHandler
-//
-// SaveIntoDB a media.
-// If it's an update of an existing media, it will be first deactivated (all plugins stopped)
-//  prior to be activated and saved.
-// By default, the media will be activated
-//
-//     Consumes:
-//     - application/json
-//
-//     Schemes: http, https
+// SaveHandler saves a media
 func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
-	// 1 : Get content and check structure
 	media := &medias.Media{}
 	if err := json.NewDecoder(r.Body).Decode(media); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
@@ -122,14 +96,7 @@ func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	m.clientsService.SendByMedia(media.ID, "update")
 }
 
-// swagger:route GET /medias CreateHandler
-//
-// Gets information of all medias
-//
-//     Produces:
-//     - application/json
-//
-//     Schemes: http, https
+// CreateHandler creates a new empty media
 func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")
@@ -146,11 +113,7 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteJsonResponse(w, media)
 }
 
-// swagger:route GET /medias/{idMedia:[0-9]*}/activate ActivateHandler
-//
-// If the media was deactivated (IsActive==false), backends for its plugins are started
-//
-//     Schemes: http, https
+// ActivateHandler activates a media
 func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 	if media == nil {
@@ -178,9 +141,7 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 	m.clientsService.SendByMedia(media.ID, "update")
 }
 
-// swagger:route GET /medias/{idMedia:[0-9]*}/deactivate DeactivateHandler
-//
-// If the media was activated (IsActive==true), backends for its plugins are stopped
+// DeactivateHandler deactivates a media
 func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 	if media == nil {
@@ -203,9 +164,7 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 	m.clientsService.SendByMedia(media.ID, "update")
 }
 
-// swagger:route DELETE /medias/{idMedia:[0-9]*} DeleteHandler
-//
-// Delete this media
+// DeleteHandler deletes a media
 func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	media := m.getMediaFromRequest(w, r)
 	if media == nil {
@@ -230,9 +189,7 @@ func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
 }
 
-// swagger:route GET /medias{idMedia:[0-9]*}/plugins/{eltName}/{instanceId}/*
-//
-// Serves static frontend files of the given plugin instance for the given media.
+// GetPluginFilesHandler Serves static frontend files of the given plugin instance for the given media.
 func (m *Service) GetPluginFilesHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil) {
 		commons.WriteResponse(w, http.StatusForbidden, "")

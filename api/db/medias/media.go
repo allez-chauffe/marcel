@@ -1,14 +1,7 @@
 package medias
 
 // Media represents a media configuration
-//
-// swagger:model
 type Media struct {
-	// the id for this media
-	//
-	// required: true
-	// unique: true
-	// min: 1
 	ID          int                    `json:"id"`
 	Name        string                 `json:"name"`
 	IsActive    bool                   `json:"isactive"`
@@ -35,10 +28,6 @@ func New(owner string) *Media {
 }
 
 // MediaPlugin represents a plugin configuration for the media
-//
-// Properties and configuration for a plugin used in the media
-//
-// swagger:model
 type MediaPlugin struct {
 	InstanceID string               `json:"instanceId"`
 	EltName    string               `json:"eltName"`

@@ -10,7 +10,6 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/api/apidoc"
 	"github.com/Zenika/MARCEL/api/auth"
 	"github.com/Zenika/MARCEL/api/clients"
 	"github.com/Zenika/MARCEL/api/commons"
@@ -70,7 +69,6 @@ func (a *App) initializeRouter() {
 	r.Use(auth.Middleware)
 
 	s := r.PathPrefix("/api/v" + commons.MarcelAPIVersion).Subrouter()
-	r.HandleFunc("/swagger.json", apidoc.GetConfigHandler).Methods("GET")
 
 	medias := s.PathPrefix("/medias").Subrouter()
 	medias.HandleFunc("/", a.mediaService.GetAllHandler).Methods("GET")
