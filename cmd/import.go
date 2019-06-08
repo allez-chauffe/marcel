@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/Zenika/MARCEL/api/db/export"
 	"github.com/Zenika/MARCEL/api/db/imp0rt"
 	"github.com/Zenika/MARCEL/config"
 )
@@ -49,7 +48,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return export.Plugins(args[0])
+			return imp0rt.Plugins(args[0])
 		},
 	}
 
