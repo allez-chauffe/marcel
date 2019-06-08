@@ -2,6 +2,7 @@ package plugins
 
 import (
 	bh "github.com/timshannon/bolthold"
+	bolt "go.etcd.io/bbolt"
 
 	"github.com/Zenika/MARCEL/api/db/internal/db"
 )
@@ -40,4 +41,16 @@ func Insert(p *Plugin) error {
 
 func Update(p *Plugin) error {
 	return db.Store.Update(p.EltName, p)
+}
+
+func UpsertAll(plugins []Plugin) error {
+	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+		for _, p := range plugins {
+			if err := db.Store.TxUpsert(tx, p.EltName, &p); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }

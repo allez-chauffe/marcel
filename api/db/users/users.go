@@ -125,7 +125,7 @@ func Update(user *User) error {
 func UpsertAll(users []User) error {
 	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
 		for _, u := range users {
-			if err := db.Store.TxUpsert(tx, u.ID, u); err != nil {
+			if err := db.Store.TxUpsert(tx, u.ID, &u); err != nil {
 				return err
 			}
 		}

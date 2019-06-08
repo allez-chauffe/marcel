@@ -10,31 +10,17 @@ import (
 var usersWPassword bool
 
 func init() {
-	exportCmd.PersistentFlags().StringVar(&config.Config.DBFile, "dbFile", config.Config.DBFile, "Database file name")
-
-	Marcel.AddCommand(exportCmd)
-
-	usersCmd.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
-
-	exportCmd.AddCommand(usersCmd)
-
-	exportCmd.AddCommand(mediasCmd)
-
-	exportCmd.AddCommand(pluginsCmd)
-
-	allCmd.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
-
-	exportCmd.AddCommand(allCmd)
-}
-
-var (
-	exportCmd = &cobra.Command{
+	var exportCmd = &cobra.Command{
 		Use:   "export",
 		Short: "Exports data from Marcel's database",
 		Args:  cobra.NoArgs,
 	}
 
-	usersCmd = &cobra.Command{
+	exportCmd.PersistentFlags().StringVar(&config.Config.DBFile, "dbFile", config.Config.DBFile, "Database file name")
+
+	Marcel.AddCommand(exportCmd)
+
+	var users = &cobra.Command{
 		Use:   "users FILE",
 		Short: "Exports users from Marcel's database",
 		Args:  cobra.ExactArgs(1),
@@ -44,7 +30,11 @@ var (
 		},
 	}
 
-	mediasCmd = &cobra.Command{
+	users.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
+
+	exportCmd.AddCommand(users)
+
+	var medias = &cobra.Command{
 		Use:   "medias FILE",
 		Short: "Exports medias from Marcel's database",
 		Args:  cobra.ExactArgs(1),
@@ -54,7 +44,9 @@ var (
 		},
 	}
 
-	pluginsCmd = &cobra.Command{
+	exportCmd.AddCommand(medias)
+
+	var plugins = &cobra.Command{
 		Use:   "plugins FILE",
 		Short: "Exports plugins from Marcel's database",
 		Args:  cobra.ExactArgs(1),
@@ -64,7 +56,9 @@ var (
 		},
 	}
 
-	allCmd = &cobra.Command{
+	exportCmd.AddCommand(plugins)
+
+	var all = &cobra.Command{
 		Use:   "all FILE",
 		Short: "Exports all data from Marcel's database",
 		Args:  cobra.ExactArgs(1),
@@ -73,4 +67,8 @@ var (
 			return export.All(usersWPassword, args[0])
 		},
 	}
-)
+
+	all.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
+
+	exportCmd.AddCommand(all)
+}

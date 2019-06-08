@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/Zenika/MARCEL/api/db/export"
 	"github.com/Zenika/MARCEL/api/db/imp0rt"
 	"github.com/Zenika/MARCEL/config"
 )
@@ -18,7 +19,7 @@ func init() {
 
 	Marcel.AddCommand(importCmd)
 
-	var usersCmd = &cobra.Command{
+	var users = &cobra.Command{
 		Use:   "users FILE",
 		Short: "Imports users from Marcel's database",
 		Args:  cobra.ExactArgs(1),
@@ -28,31 +29,31 @@ func init() {
 		},
 	}
 
-	importCmd.AddCommand(usersCmd)
+	importCmd.AddCommand(users)
 
-	// mediasCmd = &cobra.Command{
-	// 	Use:   "medias FILE",
-	// 	Short: "Imports medias from Marcel's database",
-	// 	Args:  cobra.ExactArgs(1),
+	var medias = &cobra.Command{
+		Use:   "medias FILE",
+		Short: "Imports medias from Marcel's database",
+		Args:  cobra.ExactArgs(1),
 
-	// 	RunE: func(cmd *cobra.Command, args []string) error {
-	// 		return export.Medias(args[0])
-	// 	},
-	// }
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return imp0rt.Medias(args[0])
+		},
+	}
 
-	// importCmd.AddCommand(mediasCmd)
+	importCmd.AddCommand(medias)
 
-	// pluginsCmd = &cobra.Command{
-	// 	Use:   "plugins FILE",
-	// 	Short: "Imports plugins from Marcel's database",
-	// 	Args:  cobra.ExactArgs(1),
+	var plugins = &cobra.Command{
+		Use:   "plugins FILE",
+		Short: "Imports plugins from Marcel's database",
+		Args:  cobra.ExactArgs(1),
 
-	// 	RunE: func(cmd *cobra.Command, args []string) error {
-	// 		return export.Plugins(args[0])
-	// 	},
-	// }
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return export.Plugins(args[0])
+		},
+	}
 
-	// importCmd.AddCommand(pluginsCmd)
+	importCmd.AddCommand(plugins)
 
 	// allCmd = &cobra.Command{
 	// 	Use:   "all FILE",
