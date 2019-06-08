@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"github.com/Zenika/MARCEL/api/db/imp0rt"
 	"github.com/Zenika/MARCEL/config"
@@ -15,8 +14,7 @@ func init() {
 		Args:  cobra.NoArgs,
 	}
 
-	importCmd.PersistentFlags().String("dbFile", config.Config.DBFile, "Database file name")
-	viper.BindPFlag("dbFile", importCmd.PersistentFlags().Lookup("dbFile"))
+	importCmd.PersistentFlags().StringVar(&config.Config.DBFile, "dbFile", config.Config.DBFile, "Database file name")
 
 	Marcel.AddCommand(importCmd)
 

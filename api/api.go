@@ -14,6 +14,7 @@ import (
 	"github.com/Zenika/MARCEL/api/clients"
 	"github.com/Zenika/MARCEL/api/commons"
 	"github.com/Zenika/MARCEL/api/db"
+	"github.com/Zenika/MARCEL/api/db/users"
 	"github.com/Zenika/MARCEL/api/medias"
 	"github.com/Zenika/MARCEL/api/plugins"
 	"github.com/Zenika/MARCEL/config"
@@ -30,8 +31,14 @@ func (a *App) Initialize() {
 	if err := db.Open(); err != nil {
 		log.Fatalln(err)
 	}
+
 	a.waitSignal()
-	a.initializeData()
+
+	if err := users.EnsureOneUser(); err != nil {
+		log.Fatal(err)
+	}
+
+	a.initializeServices()
 	a.initializeRouter()
 }
 
@@ -114,7 +121,7 @@ func (a *App) initializeRouter() {
 	user.HandleFunc("", updateUserHandler).Methods("PUT")
 }
 
-func (a *App) initializeData() {
+func (a *App) initializeServices() {
 	//load clients list from DB
 	a.clientsService = clients.NewService()
 

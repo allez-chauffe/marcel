@@ -6,7 +6,6 @@ import (
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/Zenika/MARCEL/api/db/internal/db"
-	"github.com/Zenika/MARCEL/api/db/users"
 	"github.com/Zenika/MARCEL/config"
 )
 
@@ -26,14 +25,6 @@ func open(readOnly bool) error {
 	if db.Store, err = bh.Open(config.Config.DBFile, 0644, &bh.Options{
 		Options: &options,
 	}); err != nil {
-		return err
-	}
-
-	if readOnly {
-		return nil
-	}
-
-	if err := users.EnsureOneUser(); err != nil {
 		return err
 	}
 
