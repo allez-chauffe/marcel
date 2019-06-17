@@ -2,6 +2,7 @@ package export
 
 import (
 	"encoding/json"
+	"io"
 	"os"
 
 	"github.com/Zenika/MARCEL/api/db"
@@ -13,16 +14,21 @@ func export(fetch func() (interface{}, error), outputFile string) error {
 	}
 	defer db.Close()
 
-	f, err := os.Create(outputFile)
-	if err != nil {
-		return err
+	var w io.WriteCloser
+	if outputFile == "" {
+		w = os.Stdout
+	} else {
+		var err error
+		if w, err = os.Create(outputFile); err != nil {
+			return err
+		}
+		defer w.Close()
 	}
-	defer f.Close()
 
 	data, err := fetch()
 	if err != nil {
 		return err
 	}
 
-	return json.NewEncoder(f).Encode(data)
+	return json.NewEncoder(w).Encode(data)
 }
