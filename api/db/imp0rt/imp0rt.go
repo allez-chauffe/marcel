@@ -2,6 +2,7 @@ package imp0rt
 
 import (
 	"encoding/json"
+	"io"
 	"os"
 
 	"github.com/Zenika/MARCEL/api/db"
@@ -13,13 +14,18 @@ func imp0rt(inputFile string, value interface{}, save func() error) error {
 	}
 	defer db.Close()
 
-	f, err := os.Open(inputFile)
-	if err != nil {
-		return err
+	var r io.ReadCloser
+	if inputFile == "" {
+		r = os.Stdin
+	} else {
+		var err error
+		if r, err = os.Open(inputFile); err != nil {
+			return err
+		}
+		defer r.Close()
 	}
-	defer f.Close()
 
-	if err := json.NewDecoder(f).Decode(value); err != nil {
+	if err := json.NewDecoder(r).Decode(value); err != nil {
 		return err
 	}
 
