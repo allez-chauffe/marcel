@@ -54,15 +54,15 @@ func init() {
 
 	importCmd.AddCommand(plugins)
 
-	// allCmd = &cobra.Command{
-	// 	Use:   "all FILE",
-	// 	Short: "Imports all data from Marcel's database",
-	// 	Args:  cobra.ExactArgs(1),
+	var all = &cobra.Command{
+		Use:   "all FILE",
+		Short: "Imports all data from Marcel's database",
+		Args:  cobra.ExactArgs(1),
 
-	// 	RunE: func(cmd *cobra.Command, args []string) error {
-	// 		return export.All(usersWPassword, args[0])
-	// 	},
-	// }
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return imp0rt.All(args[0])
+		},
+	}
 
-	// importCmd.AddCommand(allCmd)
+	importCmd.AddCommand(all)
 }
