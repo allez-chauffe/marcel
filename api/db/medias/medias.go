@@ -52,3 +52,15 @@ func Update(m *Media) error {
 func Delete(id int) error {
 	return db.Store.Delete(id, &Media{})
 }
+
+func UpsertAll(medias []Media) error {
+	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+		for _, m := range medias {
+			if err := db.Store.TxUpsert(tx, m.ID, &m); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}

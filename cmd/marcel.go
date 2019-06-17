@@ -26,41 +26,4 @@ var Marcel = &cobra.Command{
 	Short:         "Marcel is a configurable plugin based dashboard system",
 	Args:          cobra.NoArgs,
 	SilenceErrors: true,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if cmd.Name() == "help" {
-			return
-		}
-		config.Init(configFile)
-		setLogLevel()
-		debugConfig()
-	},
-}
-
-// LogLevel implements a pflag.Value with logrus.Level
-type LogLevel log.Level
-
-func (l *LogLevel) String() string {
-	return log.Level(*l).String()
-}
-
-func (l *LogLevel) Set(s string) error {
-	v, err := log.ParseLevel(s)
-	if err != nil {
-		return err
-	}
-	*l = LogLevel(v)
-	return nil
-}
-
-func (l *LogLevel) Type() string {
-	return "log.Level"
-}
-
-func setLogLevel() {
-	log.SetLevel(config.Config.LogLevel)
-	log.Infof("Log level set to %s", config.Config.LogLevel)
-}
-
-func debugConfig() {
-	log.Debugf("Config: %+v", config.Config)
 }

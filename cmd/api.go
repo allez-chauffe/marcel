@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"os"
+
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -35,9 +38,45 @@ var apiCmd = &cobra.Command{
 	Short: "Starts Marcel's api server",
 	Args:  cobra.NoArgs,
 
+	PreRun: func(cmd *cobra.Command, args []string) {
+		log.SetOutput(os.Stdout)
+		config.Init(configFile)
+		setLogLevel()
+		debugConfig()
+	},
+
 	Run: func(cmd *cobra.Command, args []string) {
 		a := new(api.App)
 		a.Initialize()
 		a.Run()
 	},
+}
+
+// LogLevel implements a pflag.Value with logrus.Level
+type LogLevel log.Level
+
+func (l *LogLevel) String() string {
+	return log.Level(*l).String()
+}
+
+func (l *LogLevel) Set(s string) error {
+	v, err := log.ParseLevel(s)
+	if err != nil {
+		return err
+	}
+	*l = LogLevel(v)
+	return nil
+}
+
+func (l *LogLevel) Type() string {
+	return "log.Level"
+}
+
+func setLogLevel() {
+	log.SetLevel(config.Config.LogLevel)
+	log.Infof("Log level set to %s", config.Config.LogLevel)
+}
+
+func debugConfig() {
+	log.Debugf("Config: %+v", config.Config)
 }

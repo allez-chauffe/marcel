@@ -3,19 +3,28 @@ package db
 import (
 	log "github.com/sirupsen/logrus"
 	bh "github.com/timshannon/bolthold"
+	bolt "go.etcd.io/bbolt"
 
 	"github.com/Zenika/MARCEL/api/db/internal/db"
-	"github.com/Zenika/MARCEL/api/db/users"
 	"github.com/Zenika/MARCEL/config"
 )
 
 func Open() error {
-	var err error
-	if db.Store, err = bh.Open(config.Config.DBFile, 0644, nil); err != nil {
-		return err
-	}
+	return open(false)
+}
 
-	if err := users.EnsureOneUser(); err != nil {
+func OpenRO() error {
+	return open(true)
+}
+
+func open(readOnly bool) error {
+	var options = *bolt.DefaultOptions
+	options.ReadOnly = readOnly
+
+	var err error
+	if db.Store, err = bh.Open(config.Config.DBFile, 0644, &bh.Options{
+		Options: &options,
+	}); err != nil {
 		return err
 	}
 

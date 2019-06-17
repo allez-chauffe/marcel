@@ -2,44 +2,16 @@ package commons
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
-	"math/rand"
 	"net/http"
 	"os"
 	"reflect"
-	"strconv"
-	"strings"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
 // MarcelAPIVersion is the current version of the API
 const MarcelAPIVersion = "1"
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-func GetUID() string {
-	s := 6
-	return randomString(s)
-}
-
-func randomString(l int) string {
-	r := strconv.Itoa(rand.Intn(10000))
-
-	bytes := make([]byte, l)
-	for i := 0; i < l; i++ {
-		bytes[i] = byte(randInt(64, 90))
-	}
-	return string(bytes) + r
-}
-
-func randInt(min int, max int) int {
-	return min + rand.Intn(max-min)
-}
 
 func IsInArray(val interface{}, array interface{}) (exists bool, index int) {
 	return FindIndexInArray(
@@ -68,25 +40,6 @@ func FindIndexInArray(predicate func(val interface{}) bool, array interface{}) (
 	}
 
 	return
-}
-
-func FileBasename(s string) string {
-	n := strings.LastIndexByte(s, '.')
-	if n >= 0 {
-		return s[:n]
-	}
-	return s
-}
-
-func FileOrFolderExists(path string) bool {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	if os.IsNotExist(err) {
-		return false
-	}
-	return true
 }
 
 // Thx to https://www.socketloop.com/tutorials/golang-copy-directory-including-sub-directories-files
@@ -143,13 +96,13 @@ func CopyDir(source string, dest string) (err error) {
 			// create sub-directories - recursively
 			err = CopyDir(sourcefilepointer, destinationfilepointer)
 			if err != nil {
-				fmt.Println(err)
+				log.Errorln(err)
 			}
 		} else {
 			// perform copy
 			err = CopyFile(sourcefilepointer, destinationfilepointer)
 			if err != nil {
-				fmt.Println(err)
+				log.Errorln(err)
 			}
 		}
 
@@ -166,11 +119,5 @@ func WriteJsonResponse(w http.ResponseWriter, body interface{}) {
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(body); err != nil {
 		log.Errorf("Error while send JSON data (%s)", err.Error())
-	}
-}
-
-func Check(e error) {
-	if e != nil {
-		log.Fatal(e)
 	}
 }

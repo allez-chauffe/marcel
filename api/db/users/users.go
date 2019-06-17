@@ -121,3 +121,15 @@ func Disconnect(id string) error {
 func Update(user *User) error {
 	return db.Store.Update(user.ID, user)
 }
+
+func UpsertAll(users []User) error {
+	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+		for _, u := range users {
+			if err := db.Store.TxUpsert(tx, u.ID, &u); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
