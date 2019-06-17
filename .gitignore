@@ -7,31 +7,10 @@
 *.iml
 out
 gen### Go template
-# Compiled Object files, Static and Dynamic libs (Shared Objects)
-backend/*.o
-backend/*.a
-backend/*.so
-
-# Folders
-backend/bin
-backend/_obj
-backend/_test
-
-backend/*.cgo1.go
-backend/*.cgo2.c
-backend/_cgo_defun.c
-backend/_cgo_gotypes.go
-backend/_cgo_export.*
-
-backend/_testmain.go
-
-backend/*.iml
-
-backend/marcel.log
 
 # User-specific stuff:
 .idea/
-
+.vscode/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -60,11 +39,6 @@ frontend/config.js
 google_api_key_file.json
 medias.config.json
 .DS_Store
-/backend/data/plugins.json
-/backend/data/medias.json
-/backend/swagger.json
-/back-office/.vscode/chrome
-/backend/backend
+marcel
 
 test_env
-scripts/build_all.sh

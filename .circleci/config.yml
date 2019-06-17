@@ -1,92 +1,26 @@
 defaults: &defaults
   working_directory: /tmp
   docker:
-    - image: buildpack-deps:xenial
+    - image: circleci/buildpack-deps:stable-curl
 
 version: 2
 jobs:
   debug_node:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:12
     steps:
       - run: node --version
       - run: yarn --version
 
   debug_go:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.12
     steps:
       - run: go version
 
-  build_backend:
-    <<: *defaults
-    working_directory: /go/src/github.com/Zenika/MARCEL
-    docker:
-      - image: circleci/golang:1.9
-    steps:
-      - checkout
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - restore_cache:
-          key: backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
-      - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
-          working_directory: auth-backend
-      - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
-          working_directory: backend
-      - save_cache:
-          key: backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
-          paths:
-            - backend/vendor
-            - auth-backend/vendor
-      - run:
-          command: go test .
-          working_directory: backend
-      - run:
-          command: CGO_ENABLED=0 go build -a -installsuffix cgo -o backend .
-          working_directory: backend
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/Dockerfile
-            - backend/backend
-
-  build_auth_backend:
-    <<: *defaults
-    working_directory: /go/src/github.com/Zenika/MARCEL
-    docker:
-      - image: circleci/golang:1.8
-    steps:
-      - checkout
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - restore_cache:
-          key: auth-backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
-      - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
-          working_directory: auth-backend
-      - run:
-          command: "[ -d vendor ] || dep ensure -vendor-only"
-          working_directory: backend
-      - save_cache:
-          key: auth-backend-deps-{{ checksum "backend/Gopkg.lock" }}-{{ checksum "auth-backend/Gopkg.lock" }}
-          paths:
-            - backend/vendor
-            - auth-backend/vendor
-      - run:
-          command: CGO_ENABLED=0 go build -a -installsuffix cgo -o auth-backend .
-          working_directory: auth-backend
-      - run:
-          command: go test .
-          working_directory: auth-backend
-      - persist_to_workspace:
-          root: .
-          paths:
-            - auth-backend/Dockerfile
-            - auth-backend/auth-backend
-
   build_backoffice:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:12
     steps:
       - checkout
       - restore_cache:
@@ -110,7 +44,7 @@ jobs:
 
   build_frontend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:12
     steps:
       - checkout
       - restore_cache:
@@ -132,9 +66,32 @@ jobs:
             - frontend/build
           key: frontend-build-{{ .Revision }}
 
+
+  build_marcel:
+    <<: *defaults
+    working_directory: /go/app
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - restore_cache:
+          key: marcel-deps-{{ checksum "go.mod" }}
+      - run: go mod download
+      - save_cache:
+          key: marcel-deps-{{ checksum "go.mod" }}
+          paths:
+            - /go/pkg/mod
+      - run: go test .
+      - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -tags 'osusergo netgo' -o marcel
+      - persist_to_workspace:
+          root: .
+          paths:
+            - Dockerfile
+            - marcel
+
   package_plugins:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/buildpack-deps:stable-scm
     steps:
       - checkout
       - run: git submodule sync
@@ -145,35 +102,22 @@ jobs:
             - plugins.tar.gz
           key: plugins-package-{{ .Revision }}
 
-  backend_docker_build:
+  docker_build_marcel:
     <<: *defaults
-    working_directory: /tmp/backend
+    working_directory: /tmp/app
     docker:
-      - image: circleci/buildpack-deps:xenial-scm
+      - image: circleci/buildpack-deps:stable-curl
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: /tmp
-      - run: docker build -t zenika/marcel-backend:dev .
+          at: /tmp/app
+      - run: docker build -t zenika/marcel:dev .
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push zenika/marcel-backend:dev
+      - run: docker push zenika/marcel:dev
 
-  auth_backend_docker_build:
-    <<: *defaults
-    working_directory: /tmp/auth-backend
+  docker_build_backoffice:
     docker:
-      - image: circleci/buildpack-deps:xenial-scm
-    steps:
-      - setup_remote_docker
-      - attach_workspace:
-          at: /tmp
-      - run: docker build -t zenika/marcel-auth:dev .
-      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push zenika/marcel-auth:dev
-
-  backoffice_docker_build:
-    docker:
-      - image: circleci/node:latest
+      - image: circleci/buildpack-deps:stable-curl
     steps:
       - checkout
       - setup_remote_docker
@@ -186,9 +130,9 @@ jobs:
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-backoffice:dev
 
-  frontend_docker_build:
+  docker_build_frontend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/buildpack-deps:stable-curl
     steps:
       - checkout
       - setup_remote_docker
@@ -201,10 +145,9 @@ jobs:
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
       - run: docker push zenika/marcel-frontend:dev
 
-
   deploy_integration:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/buildpack-deps:stable-curl
     steps:
       - checkout
       - restore_cache:
@@ -212,7 +155,7 @@ jobs:
             - plugins-package-{{ .Revision }}
       - run: echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
       - run: chmod 400 integration_key.pem
-      - run: scp -o StrictHostKeyChecking=no -i integration_key.pem plugins.tar.gz docker-compose.yml ubuntu@35.158.222.144:~/
+      - run: scp -o StrictHostKeyChecking=no -i integration_key.pem plugins.tar.gz ubuntu@35.158.222.144:~/
       - run: ssh -o StrictHostKeyChecking=no -i integration_key.pem ubuntu@35.158.222.144 "./MARCEL/deploy.sh"
       - run: rm -f integration_key.pem
 
@@ -222,34 +165,28 @@ workflows:
     jobs:
        - debug_node
        - debug_go
-       - build_backend
-       - build_auth_backend
        - build_backoffice
        - build_frontend
-       - package_plugins:
+       - build_marcel
+          # requires:
+          #   - build_backoffice
+          #   - build_frontend
+       - package_plugins
+       - docker_build_backoffice:
           requires:
-            - build_backend
-            - build_auth_backend
             - build_backoffice
+       - docker_build_frontend:
+          requires:
             - build_frontend
-       - backend_docker_build:
+       - docker_build_marcel:
           requires:
-            - package_plugins
-       - auth_backend_docker_build:
-          requires:
-            - package_plugins
-       - backoffice_docker_build:
-          requires:
-            - package_plugins
-       - frontend_docker_build:
-          requires:
-            - package_plugins
+            - build_marcel
        - deploy_integration:
           requires:
-            - backend_docker_build
-            - auth_backend_docker_build
-            - backoffice_docker_build
-            - frontend_docker_build
+            - docker_build_marcel
+            - docker_build_backoffice
+            - docker_build_frontend
+            - package_plugins
           filters:
             branches:
               only:

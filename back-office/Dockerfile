@@ -1,8 +1,7 @@
-FROM nginx
+FROM nlepage/distroless-http
 
-WORKDIR /usr/share/nginx/html
+COPY Caddyfile /Caddyfile
 
-ADD build .
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY build/ /www
 
-EXPOSE 80
+CMD ["-conf", "/Caddyfile"]

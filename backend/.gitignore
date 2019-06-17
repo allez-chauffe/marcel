@@ -1,7 +1,0 @@
-test_env/
-data/medias.json
-data/plugins.json
-marcel.log
-start-dev.sh
-.vscode
-vendor/
