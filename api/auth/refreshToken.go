@@ -41,7 +41,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 }
 
 func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
-	cookie, err := r.Cookie(RefreshCookieName)
+	cookie, err := r.Cookie(cookieName(RefreshCookieName, path.Join("/api/v"+commons.MarcelAPIVersion, "auth", "login")))
 	if err == http.ErrNoCookie {
 		return nil, nil
 	}

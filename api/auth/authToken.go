@@ -21,7 +21,7 @@ type Claims struct {
 }
 
 func GetAuthToken(r *http.Request) (*Claims, error) {
-	cookie, err := r.Cookie(AuthCookieName)
+	cookie, err := r.Cookie(cookieName(AuthCookieName, "/"))
 
 	if err != nil {
 		return nil, err
