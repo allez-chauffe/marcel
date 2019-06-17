@@ -1,6 +1,3 @@
-//@flow
-import type { Reducer } from 'redux'
-import type { LoadersState, LoadersAction } from './type'
 import { actions } from './actions'
 
 const initialState = {
@@ -9,10 +6,10 @@ const initialState = {
   dashboards: false,
   clients: false,
   initial: false,
-  users: false
+  users: false,
 }
 
-const loaders: Reducer<LoadersState, LoadersAction> = (state = initialState, action) => {
+const loaders = (state = initialState, action) => {
   switch (action.type) {
     case actions.LOAD_INITIAL_STARTED:
       return { ...state, initial: true }
@@ -33,11 +30,11 @@ const loaders: Reducer<LoadersState, LoadersAction> = (state = initialState, act
     case actions.LOAD_PLUGINS_SUCCESSED:
     case actions.LOAD_PLUGINS_FAILED:
       return { ...state, plugins: false }
-      case actions.LOAD_USERS_STARTED:
+    case actions.LOAD_USERS_STARTED:
       return { ...state, users: true }
     case actions.LOAD_USERS_SUCCESSED:
     case actions.LOAD_USERS_FAILED:
-      return { ...state, users: false }      
+      return { ...state, users: false }
     default:
       return state
   }

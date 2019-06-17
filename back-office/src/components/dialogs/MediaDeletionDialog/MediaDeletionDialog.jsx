@@ -1,14 +1,7 @@
-//@flow
 import React from 'react'
 import Dialog from 'react-toolbox/lib/dialog/Dialog'
 
-export type PropsType = {
-  isDeletingDashboard: boolean,
-  confirmDeletion: () => void,
-  cancelDeletion: () => void,
-}
-
-const MediaDeletionDialog = (props: PropsType) => {
+const MediaDeletionDialog = props => {
   const { isDeletingDashboard, confirmDeletion, cancelDeletion } = props
 
   return (

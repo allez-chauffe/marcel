@@ -1,4 +1,3 @@
-//@flow
 import { connect } from 'react-redux'
 import { uploadLayout, selectedDashboardSelector } from '../../../dashboard'
 import Dashboard from './Media'
@@ -14,4 +13,7 @@ const mapDispatchToProps = {
   uploadLayout,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Dashboard)

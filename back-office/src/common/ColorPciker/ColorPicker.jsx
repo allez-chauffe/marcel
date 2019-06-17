@@ -1,22 +1,15 @@
-//@flow
-import React from 'react'
+import React, { Component } from 'react'
 import { ChromePicker } from 'react-color'
 
 import './ColorPicker.css'
 
-class ColorPicker extends React.Component {
-  props: {
-    label: string,
-    value: string,
-    onChange: string => void,
-  }
-
+class ColorPicker extends Component {
   state = {
     displayed: false,
     oldColor: '',
   }
 
-  onKeypressed = (event: KeyboardEvent) => {
+  onKeypressed = event => {
     // Enter pressed
     if (event.keyCode === 13) this.close()
 
@@ -37,7 +30,7 @@ class ColorPicker extends React.Component {
     this.setState({ displayed: false })
   }
 
-  onChange = (newColor: { hex: string }) => this.props.onChange(newColor.hex)
+  onChange = newColor => this.props.onChange(newColor.hex)
 
   render() {
     const { label, value } = this.props
@@ -49,20 +42,14 @@ class ColorPicker extends React.Component {
           <div className="swatch">
             <div className="color" style={{ backgroundColor: value }} />
           </div>
-          <div className="label">
-            {label}
-          </div>
+          <div className="label">{label}</div>
         </div>
-        {displayed
-          ? <div className="popover">
-              <div className="cover" onClick={close} />
-              <ChromePicker
-                color={value}
-                disableAlpha={true}
-                onChange={onChange}
-              />
-            </div>
-          : null}
+        {displayed ? (
+          <div className="popover">
+            <div className="cover" onClick={close} />
+            <ChromePicker color={value} disableAlpha={true} onChange={onChange} />
+          </div>
+        ) : null}
       </div>
     )
   }

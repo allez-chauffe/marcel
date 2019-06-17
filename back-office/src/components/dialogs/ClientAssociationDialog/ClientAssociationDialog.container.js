@@ -1,6 +1,4 @@
-//@flow
 import { connect } from 'react-redux'
-import type { State } from '../../../store'
 import {
   associatingClientSelector,
   confirmClientAssociation,
@@ -10,7 +8,7 @@ import {
 import { dashboardsSelector } from '../../../dashboard'
 import AssociationClientDialog from './ClientAssociationDialog'
 
-const mapStateToProps = (state: State) => {
+const mapStateToProps = state => {
   const associating = associatingClientSelector(state)
   return {
     associating,
@@ -24,4 +22,7 @@ const mapDispatchToProps = {
   associate: associateClient,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssociationClientDialog)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AssociationClientDialog)

@@ -1,4 +1,3 @@
-//@flow
 import store from '../store'
 
 const baseUrl = () => store.getState().config.authURI

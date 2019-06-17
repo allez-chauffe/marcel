@@ -1,20 +1,13 @@
-//@flow
 import React from 'react'
 import Button from 'react-toolbox/lib/button/Button'
 import Grid from '../Grid'
 import { values } from 'lodash'
 
 import { ActivationButton, OpenButton, DeleteDashboardButton } from '../../../common'
-import type { Dashboard as DashboardT } from '../../../dashboard/type'
 
 import './Media.css'
 
-export type PropsType = {
-  dashboard: DashboardT,
-  uploadLayout: () => void,
-}
-
-const Media = (props: PropsType) => {
+const Media = props => {
   const { dashboard, uploadLayout } = props
   const { name, rows, cols, screenRatio, plugins, displayGrid, isWritable } = dashboard
   return (

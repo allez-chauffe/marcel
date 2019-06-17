@@ -1,4 +1,3 @@
-//@flow
 import { routerForBrowser } from 'redux-little-router'
 import routes from './routes.js'
 

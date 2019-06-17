@@ -1,9 +1,7 @@
-//@flow
 import { toastr } from 'react-redux-toastr'
 import { map } from 'lodash/fp'
 import { mapPluginsToDashboard } from '../../common/utils'
 import { config, backend, userBackend } from '../../api'
-import type { LoadingThunkAction } from './type'
 import { pluginsSelector } from '../../plugins'
 import { userSelector } from '../../auth'
 
@@ -52,7 +50,7 @@ const loadDispatcher = (dispatch, getState) => (ressource, loadPromise) => {
 const getDashboards = availablePlugins =>
   backend.getAllDashboards().then(map(mapPluginsToDashboard(availablePlugins)))
 
-export const loadInitData = (): LoadingThunkAction => (dispatch, getState) => {
+export const loadInitData = () => (dispatch, getState) => {
   dispatch({ type: actions.LOAD_INITIAL_STARTED })
 
   const load = loadDispatcher(dispatch, getState)
@@ -63,27 +61,27 @@ export const loadInitData = (): LoadingThunkAction => (dispatch, getState) => {
     .catch((error: Error) => toastr.error('Erreur lors du chargement', error.message))
 }
 
-export const loadDashboards = (): LoadingThunkAction => (dispatch, getState) => {
+export const loadDashboards = () => (dispatch, getState) => {
   const load = loadDispatcher(dispatch, getState)
   load('dashboards', getDashboards(pluginsSelector(getState())))
 }
 
-export const loadPlugins = (): LoadingThunkAction => (dispatch, getState) => {
+export const loadPlugins = () => (dispatch, getState) => {
   const load = loadDispatcher(dispatch, getState)
   load('plugins', backend.getAvailablePlugins())
 }
 
-export const loadConfig = (): LoadingThunkAction => (dispatch, getState) => {
+export const loadConfig = () => (dispatch, getState) => {
   const load = loadDispatcher(dispatch, getState)
   load('config', config.loadConfig())
 }
 
-export const loadClients = (): LoadingThunkAction => (dispatch, getState) => {
+export const loadClients = () => (dispatch, getState) => {
   const load = loadDispatcher(dispatch, getState)
   load('clients', backend.getClients())
 }
 
-export const loadUsers = (): LoadingThunkAction => (dispatch, getState) => {
+export const loadUsers = () => (dispatch, getState) => {
   const load = loadDispatcher(dispatch, getState)
   load('users', userBackend.getAllUsers())
 }

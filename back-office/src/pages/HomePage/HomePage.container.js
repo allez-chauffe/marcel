@@ -1,4 +1,3 @@
-//@flow
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { replace } from 'redux-little-router'
@@ -7,5 +6,8 @@ import HomePage from './HomePage'
 
 export default compose(
   router('HOME', { absolute: true }),
-  connect(null, { goToMedias: () => replace('/medias') }),
+  connect(
+    null,
+    { goToMedias: () => replace('/medias') },
+  ),
 )(HomePage)

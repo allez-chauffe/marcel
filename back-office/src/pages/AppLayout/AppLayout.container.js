@@ -1,8 +1,6 @@
-//@flow
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import loader from 'hoc-react-loader'
-import type { Dispatch } from 'redux'
 import { push } from 'redux-little-router'
 import { unselectDashboard, selectedDashboardSelector } from '../../dashboard'
 import { loadConfig, isConfigLoading } from '../../store/loaders'
@@ -16,7 +14,7 @@ const mapStateToProps = state => ({
   user: state.auth.user,
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<*>) => ({
+const mapDispatchToProps = dispatch => ({
   goBack() {
     // WORKAROUND: Waiting for redux refactoring
     dispatch(unselectDashboard)
@@ -31,6 +29,9 @@ const mapDispatchToProps = (dispatch: Dispatch<*>) => ({
 })
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   loader({ print: ['loaded'], LoadingIndicator }),
 )(AppLayout)

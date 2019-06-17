@@ -1,4 +1,3 @@
-//@flow
 import { connect } from 'react-redux'
 import ClientList from './ClientList'
 import {
@@ -6,9 +5,8 @@ import {
   partionedFilteredClientsSelector,
   changeClientsFilter,
 } from '../../store/filters'
-import type { State } from '../../store'
 
-const mapStateToProps = (state: State) => ({
+const mapStateToProps = (state) => ({
   clients: partionedFilteredClientsSelector(state),
   filter: clientsFilterSelector(state),
 })

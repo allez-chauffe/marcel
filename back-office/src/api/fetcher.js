@@ -1,10 +1,9 @@
-//@flow
 import store from '../store'
 import authBackend from './auth-backend'
 import { disconnected } from '../auth'
 
-const fetcher = (baseUrl: () => string) => {
-  const request = (url: string, options?) => {
+const fetcher = baseUrl => {
+  const request = (url, options) => {
     const request = () =>
       fetch(baseUrl() + url, { ...options, credentials: 'include' }).then(response => {
         if (~~(response.status / 100) !== 2) throw response
@@ -23,7 +22,7 @@ const fetcher = (baseUrl: () => string) => {
     })
   }
 
-  const requestWithBody = (url: string, body: ?mixed, options = {}) =>
+  const requestWithBody = (url, body, options) =>
     request(url, {
       headers: body ? { 'Content-Type': 'application/json' } : {},
       body: body ? JSON.stringify(body) : null,
@@ -31,10 +30,10 @@ const fetcher = (baseUrl: () => string) => {
     })
 
   return {
-    get: (url: string) => request(url),
-    post: (url: string, body: ?mixed) => requestWithBody(url, body, { method: 'POST' }),
-    put: (url: string, body: ?mixed) => requestWithBody(url, body, { method: 'PUT' }),
-    del: (url: string) => request(url, { method: 'DELETE' }),
+    get: url => request(url),
+    post: (url, body) => requestWithBody(url, body, { method: 'POST' }),
+    put: (url, body) => requestWithBody(url, body, { method: 'PUT' }),
+    del: url => request(url, { method: 'DELETE' }),
   }
 }
 

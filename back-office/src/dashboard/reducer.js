@@ -1,5 +1,3 @@
-//@flow
-import type { Reducer } from 'redux'
 import { mapValues, keyBy, keys, chain as _chain, pickBy, omit, map, flatten, reduce } from 'lodash'
 import { set, unset, chain, update } from 'immutadot'
 import { actions } from './actions'
@@ -7,7 +5,6 @@ import { actions as loadActions } from '../store/loaders'
 import { values } from 'lodash/fp'
 import uuid from 'uuid/v4'
 import { getPluginInstances } from '../common/utils'
-import type { DashboardAction, DashboardState, LayoutMap, PluginInstanceMap } from './type'
 
 const intialState = {
   selectedPlugin: null,
@@ -18,7 +15,7 @@ const intialState = {
   pluginInstances: {},
 }
 
-const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
+const updatePlugins = (layout) => (plugins) => {
   const updatedInstances = mapValues(layout, (layoutItem, instanceId) => {
     const plugin = plugins[instanceId]
     if (!plugin) throw new Error('Plugin instance not found in layout')
@@ -30,7 +27,7 @@ const updatePlugins = (layout: LayoutMap) => (plugins: PluginInstanceMap) => {
   return { ...plugins, ...updatedInstances }
 }
 
-const dashboard: Reducer<DashboardState, DashboardAction> = (state = intialState, action) => {
+const dashboard = (state = intialState, action) => {
   switch (action.type) {
     case actions.SELECT_PLUGIN: {
       return { ...state, selectedPlugin: action.payload.instanceId }

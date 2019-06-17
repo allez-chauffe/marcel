@@ -1,4 +1,3 @@
-//@flow
 import React from 'react'
 import { ClientAssociationDialog, MediaDeletionDialog } from '../../components/dialogs'
 

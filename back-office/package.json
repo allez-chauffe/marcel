@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "flow": "^0.2.3",
     "hoc-little-router": "^1.0.1",
     "hoc-react-loader": "^6.2.0",
     "immutadot": "^0.2.0",
     "lodash": "^4.17.4",
+    "prop-types": "^15.7.2",
     "react": "^15.5.4",
     "react-color": "^2.13.0",
     "react-dom": "^15.5.4",
@@ -27,8 +27,6 @@
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
-    "flow-bin": "^0.48.0",
-    "flow-typed": "^2.1.2",
     "jest": "^20.0.4",
     "react-scripts": "1.0.5",
     "react-toolbox-themr": "^1.0.2"

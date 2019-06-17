@@ -1,21 +1,18 @@
-//@flow
 import { createSelector } from 'reselect'
 import { keyBy } from 'lodash/fp'
 import { chain } from 'immutadot'
-import type { State } from '../store'
-import type { DashboardMap } from './type'
 import { mapPluginInstancesToProps } from '../common/utils'
 
-export const dashboardsSelector = (state: State): DashboardMap => state.dashboard.dashboards
+export const dashboardsSelector = state => state.dashboard.dashboards
 
-export const pluginInstancesSelector = (state: State) => state.dashboard.pluginInstances
+export const pluginInstancesSelector = state => state.dashboard.pluginInstances
 
-export const selectedDashboardNameSelector = (state: State) =>
+export const selectedDashboardNameSelector = state =>
   state.router.params && state.router.params.mediaID
 
-export const selectedPluginNameSelector = (state: State) => state.dashboard.selectedPlugin
+export const selectedPluginNameSelector = state => state.dashboard.selectedPlugin
 
-export const deletingDashboardSelector = (state: State) => state.dashboard.deletingDashboard
+export const deletingDashboardSelector = state => state.dashboard.deletingDashboard
 
 export const selectedDashboardSelector = createSelector(
   dashboardsSelector,

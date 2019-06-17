@@ -1,4 +1,3 @@
-//@flow
 export { default as MediaCard } from './MediaCard'
 export { default as AddMediaCard } from './AddMediaCard'
 export { default as Media } from './Media'

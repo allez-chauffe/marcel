@@ -1,4 +1,3 @@
-//@flow
 import mapPluginInstancesToProps from './mapPluginInstancesToProps'
 
 const plugin1 = {
@@ -68,9 +67,7 @@ it('should return the plugin instance', () => {
     'plugin-1#0': plugin1,
     'plugin-2#0': plugin2,
   }
-  expect(mapPluginInstancesToProps(pluginInstances)('plugin-1#0')).toEqual(
-    plugin1,
-  )
+  expect(mapPluginInstancesToProps(pluginInstances)('plugin-1#0')).toEqual(plugin1)
 })
 
 it('should return the plugin instance with plugin instances mapped', () => {
@@ -98,9 +95,7 @@ it('should return the plugin instance with plugin instances mapped', () => {
     'plugin-2#0': plugin2,
   }
 
-  expect(
-    mapPluginInstancesToProps(pluginInstances)(container.instanceId),
-  ).toEqual({
+  expect(mapPluginInstancesToProps(pluginInstances)(container.instanceId)).toEqual({
     ...container,
     props: {
       plugins: {
@@ -156,9 +151,7 @@ it('should return plugin instance and nested plugin instances on multiple levels
     'plugin-2#0': plugin2,
   }
 
-  expect(
-    mapPluginInstancesToProps(pluginInstances)(container1.instanceId),
-  ).toEqual({
+  expect(mapPluginInstancesToProps(pluginInstances)(container1.instanceId)).toEqual({
     ...container1,
     props: {
       plugins: {

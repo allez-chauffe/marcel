@@ -1,6 +1,4 @@
-// @flow
 import { combineReducers } from 'redux'
-import type { Reducer } from 'redux'
 
 import { reducer as toastr } from 'react-redux-toastr'
 
@@ -11,10 +9,9 @@ import { reducer as auth } from '../auth'
 import { reducer as clients } from '../clients'
 import { reducer as loaders, actions as loadersActions } from './loaders'
 import { reducer as router } from './router'
-import type { State, Action, Config } from './types'
 import { reducer as users } from '../user'
 
-const config: Reducer<Config, Action> = (
+const config = (
   state = {
     backendURI: 'http://marcel.com:8081/api/v1/',
     authURI: 'http://marcel.com:8081/auth/',
@@ -31,7 +28,7 @@ const config: Reducer<Config, Action> = (
   }
 }
 
-const rootReducer: Reducer<State, Action> = combineReducers({
+const rootReducer = combineReducers({
   plugins,
   filters,
   dashboard,

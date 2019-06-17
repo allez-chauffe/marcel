@@ -1,5 +1,3 @@
-//@flow
-
 export default {
   '/': {
     title: 'HOME',
@@ -9,11 +7,10 @@ export default {
       '/:mediaID': { title: 'MEDIA_DETAILS' },
     },
     '/users': {
-      title: 'USERS'
+      title: 'USERS',
     },
     '/profil': {
-      title: 'PROFIL'
-    }
-    
+      title: 'PROFIL',
+    },
   },
 }

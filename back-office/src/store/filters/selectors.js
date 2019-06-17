@@ -1,19 +1,16 @@
-// @flow
 import { createSelector } from 'reselect'
 import { filter, chain, groupBy } from 'lodash'
 import { pickBy } from 'immutadot'
 import { pluginsSelector } from '../../plugins/selectors'
 import { selectedPluginSelector, selectedDashboardSelector } from '../../dashboard'
 import { clientsSelector } from '../../clients'
-import type { PluginInstance } from '../../dashboard'
-import type { State } from '../types'
 
-export const pluginFilterSelector = (state: State) => state.filters.plugins
-export const propsFilterSelector = (state: State) => state.filters.props
-export const clientsFilterSelector = (state: State) => state.filters.clients
+export const pluginFilterSelector = state => state.filters.plugins
+export const propsFilterSelector = state => state.filters.props
+export const clientsFilterSelector = state => state.filters.clients
 
-export const filterByName = (filterString: string) => {
-  const regexPatern: string = chain(filterString)
+export const filterByName = filterString => {
+  const regexPatern = chain(filterString)
     .split('')
     .without(' ')
     .join('.*')
@@ -21,7 +18,7 @@ export const filterByName = (filterString: string) => {
 
   const regexp = RegExp(`.*${regexPatern}.*`, 'i')
 
-  return <T: { name: string }>(item: T): boolean => regexp.test(item.name)
+  return item => regexp.test(item.name)
 }
 
 export const filteredPluginsSeletor = createSelector(
@@ -33,8 +30,7 @@ export const filteredPluginsSeletor = createSelector(
 export const selectedPluginPropsFilteredSelector = createSelector(
   selectedPluginSelector,
   propsFilterSelector,
-  (plugin, filterString): ?PluginInstance =>
-    plugin && pickBy(plugin, 'props', filterByName(filterString)),
+  (plugin, filterString) => plugin && pickBy(plugin, 'props', filterByName(filterString)),
 )
 
 export const filteredClientsSelector = createSelector(

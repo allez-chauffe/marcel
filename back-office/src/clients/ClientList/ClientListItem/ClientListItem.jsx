@@ -1,18 +1,11 @@
-//@flow
 import React from 'react'
+import { shape, string, bool, func } from 'prop-types'
 import ListItem from 'react-toolbox/lib/list/ListItem'
 import IconButton from 'react-toolbox/lib/button/IconButton'
 import ProgressBar from 'react-toolbox/lib/progress_bar/ProgressBar'
 import OccupationIndicator from './OccupationIndicator'
-import type { Client } from '../../type'
 
 import './ClientListItem.css'
-
-type PropTypes = {
-  client: Client,
-  associate: () => void,
-  isLoading: boolean,
-}
 
 const ClientListItem = (props: PropTypes) => {
   const { client, associate, isLoading } = props
@@ -36,6 +29,17 @@ const ClientListItem = (props: PropTypes) => {
       />
     </div>
   )
+}
+
+ClientListItem.propTypes = {
+  client: shape({
+    name: string,
+    id: string,
+    type: string,
+    mediaId: string,
+  }),
+  associate: func,
+  isLoading: bool,
 }
 
 export default ClientListItem

@@ -1,4 +1,3 @@
-//@flow
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import router from 'hoc-little-router'
@@ -16,13 +15,19 @@ const mapDisaptchToProps = {
 }
 
 // WORKAROUND: Waiting for refactoring of redux store
-const workaround = connect(null, (dispatch, ownProps) => ({
-  selectMedia: () => dispatch(selectDashboard(ownProps.media)),
-}))
+const workaround = connect(
+  null,
+  (dispatch, ownProps) => ({
+    selectMedia: () => dispatch(selectDashboard(ownProps.media)),
+  }),
+)
 
 export default compose(
   router('MEDIA_DETAILS'),
-  connect(mapStateToProps, mapDisaptchToProps),
+  connect(
+    mapStateToProps,
+    mapDisaptchToProps,
+  ),
   loader({ print: ['media'] }),
   workaround,
 )(MediaEditPage)
