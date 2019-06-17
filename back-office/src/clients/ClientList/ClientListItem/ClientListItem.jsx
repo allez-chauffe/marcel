@@ -7,7 +7,7 @@ import OccupationIndicator from './OccupationIndicator'
 
 import './ClientListItem.css'
 
-const ClientListItem = (props: PropTypes) => {
+const ClientListItem = (props) => {
   const { client, associate, isLoading } = props
   const { name, id, type, mediaID } = client
   const mediaName = mediaID ? ` (${mediaID})` : ''

@@ -17,9 +17,6 @@ if (process.env.NODE_ENV === devMode) {
   middlewares.push(createLogger(options))
 }
 
-const store = createStore(
-  rootReducer,
-  composeEnhancers(router.enhancer, applyMiddleware(router.middleware, ...middlewares)),
-)
+const store = composeEnhancers(router.enhancer, applyMiddleware(router.middleware, ...middlewares))(createStore)(rootReducer)
 
 export default store
