@@ -1,15 +1,14 @@
 #!/bin/bash
-# Script used to install MARCEL on GCP virtual machines
+# Script used to install marcel on GCP virtual machines
 # $1 : version to install
 set -e
 set -o pipefail
 # Any subsequent(*) commands which fail will cause the shell script to exit immediately
 
-
 if [ ! -z "${1}" ] ; then
   VERSION=${1}
-elif [[ "${CIRCLE_BRANCH}" =~ ^release-[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then
-  VERSION=${CIRCLE_BRANCH:8} # remove 'release-' from branch name to get version
+elif [[ "${CIRCLE_TAG}" != "" ]] ; then
+  VERSION=${CIRCLE_TAG}
 else
   VERSION=dev
 fi

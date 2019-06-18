@@ -166,6 +166,7 @@ filters-master: &filters-master
   branches:
     only:
       - master
+      - install-multi-environment
 
 workflows:
   version: 2
