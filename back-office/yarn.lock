@@ -4906,6 +4906,11 @@ immer@1.10.0:
   resolved "https://registry.yarnpkg.com/immer/-/immer-1.10.0.tgz#bad67605ba9c810275d91e1c2a47d4582e98286d"
   integrity sha512-O3sR1/opvCDGLEVcvrGTMtLac8GJ5IwZC4puPrLuRj3l7ICKvkmA0vGuU9OW8mV9WIBRnaxp5GJh9IEAaNOoYg==
 
+immutadot-lodash@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/immutadot-lodash/-/immutadot-lodash-1.0.0.tgz#147a01aaf7844636d28ab957bf608e20e57bacd9"
+  integrity sha1-FHoBqveERjbSirlXv2COIOV7rNk=
+
 immutadot@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/immutadot/-/immutadot-1.0.0.tgz#9d99bffde37666755aff0b6f9cb7df8e5a4b4231"

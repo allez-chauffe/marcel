@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { filter, chain, groupBy } from 'lodash'
-import { pickBy } from 'immutadot'
+import { pickBy } from 'immutadot-lodash/object/pickBy'
 import { pluginsSelector } from '../../plugins/selectors'
 import { selectedPluginSelector, selectedDashboardSelector } from '../../dashboard'
 import { clientsSelector } from '../../clients'

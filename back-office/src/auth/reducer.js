@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import { actions } from './actions'
-import { set } from 'immutadot'
+import { set } from 'immutadot/core/set'
 
 const user = (state = null, action) => {
   switch (action.type) {

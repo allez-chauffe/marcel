@@ -1,4 +1,6 @@
-import { set, flow, unset } from 'immutadot'
+import { set } from 'immutadot/core/set'
+import { flow } from 'immutadot/core/flow'
+import { unset } from 'immutadot/core/set'
 import { actions as loadersActions } from '../store/loaders'
 import { actions } from './actions'
 

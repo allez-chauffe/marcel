@@ -1,5 +1,5 @@
 import { map, concat, chain } from 'lodash/fp'
-import { mapValues } from 'immutadot'
+import { mapValues } from 'immutadot-lodash/object/mapValues'
 import { values } from 'lodash/fp'
 
 export const extractPluginInstances = plugins => {
