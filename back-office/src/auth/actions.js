@@ -3,7 +3,7 @@ import { authBackend } from '../api'
 import { loginSelector, passwordSelector } from './selectors'
 
 import { userBackend } from '../api'
-import { replace } from 'redux-little-router'
+import { navigate } from '@reach/router'
 
 export const actions = {
   LOGIN_REQUEST: 'AUTH/LOGIN_REQUEST',
@@ -53,7 +53,7 @@ export const disconnected = () => ({
 export const logout = () => dispatch => {
   authBackend.logout().then(() => {
     dispatch(disconnected())
-    dispatch(replace('/medias'))
+    return navigate('/medias', { replace: true })
   })
 }
 

@@ -1,12 +1,12 @@
 import { connect } from 'react-redux'
-import { push } from 'redux-little-router'
+import { navigate } from '@reach/router'
 import MediaCard from './MediaCard'
 import { selectDashboard } from '../../../dashboard'
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   selectDashboard: () => {
     dispatch(selectDashboard(ownProps.dashboard))
-    dispatch(push(`/medias/${ownProps.dashboard.id}`))
+    return navigate(`/medias/${ownProps.dashboard.id}`)
   },
 })
 

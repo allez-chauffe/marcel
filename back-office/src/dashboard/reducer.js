@@ -1,5 +1,5 @@
 import { mapValues, keyBy, keys, chain as _chain, pickBy, omit, map, flatten, reduce } from 'lodash'
-import { set, unset, chain, update } from 'immutadot'
+import { set, unset, update, flow, push, pull } from 'immutadot'
 import { actions } from './actions'
 import { actions as loadActions } from '../store/loaders'
 import { values } from 'lodash/fp'
@@ -15,7 +15,7 @@ const intialState = {
   pluginInstances: {},
 }
 
-const updatePlugins = (layout) => (plugins) => {
+const updatePlugins = layout => plugins => {
   const updatedInstances = mapValues(layout, (layoutItem, instanceId) => {
     const plugin = plugins[instanceId]
     if (!plugin) throw new Error('Plugin instance not found in layout')
@@ -44,10 +44,10 @@ const dashboard = (state = intialState, action) => {
     case actions.DASHBOARD_DELETED: {
       const { deletingDashboard } = state
       return deletingDashboard
-        ? chain(state)
-            .set('deletingDashboard', null)
-            .unset(`dashboards.${deletingDashboard}`)
-            .value()
+        ? flow(
+            set('deletingDashboard', null),
+            unset(`dashboards.${deletingDashboard}`),
+          )(state)
         : { ...state, deletingDashboard: null }
     }
     case actions.CANCEL_DASHBOARD_DELETION: {
@@ -58,10 +58,10 @@ const dashboard = (state = intialState, action) => {
     }
     case actions.ADD_DASHBOARD: {
       const { dashboard } = action.payload
-      return chain(state)
-        .set(`dashboards.${dashboard.id}`, dashboard)
-        .set('selectedDashboard', dashboard.id)
-        .value()
+      return flow(
+        set(`dashboards.${dashboard.id}`, dashboard),
+        set('selectedDashboard', dashboard.id),
+      )(state)
     }
     case actions.ADD_SUB_PLUGIN: {
       const { selectedPlugin } = state
@@ -70,8 +70,8 @@ const dashboard = (state = intialState, action) => {
       const { propName, plugin } = action.payload
       const instanceId = uuid()
 
-      return chain(state)
-        .set(`pluginInstances.${instanceId}`, {
+      return flow(
+        set(`pluginInstances.${instanceId}`, {
           ...plugin,
           x: 0,
           y: 0,
@@ -79,30 +79,33 @@ const dashboard = (state = intialState, action) => {
           rows: 1,
           instanceId,
           parent: { plugin: selectedPlugin, prop: propName },
-        })
-        .push(`pluginInstances.${selectedPlugin}.props.${propName}.value`, instanceId)
-        .value()
+        }),
+        push(`pluginInstances.${selectedPlugin}.props.${propName}.value`, instanceId),
+      )(state)
     }
     case actions.REORDER_SUB_PLUGINS: {
-      const { instanceIds, parent: { plugin, prop } } = action.payload
+      const {
+        instanceIds,
+        parent: { plugin, prop },
+      } = action.payload
       return set(state, `pluginInstances.${plugin}.props.${prop}.value`, instanceIds)
     }
     case actions.ADD_PLUGIN: {
       const instanceId = uuid()
       const { selectedDashboard } = state
       return selectedDashboard
-        ? chain(state)
-            .set('selectedPlugin', instanceId)
-            .set(`pluginInstances.${instanceId}`, {
+        ? flow(
+            set('selectedPlugin', instanceId),
+            set(`pluginInstances.${instanceId}`, {
               ...action.payload.plugin,
               x: action.payload.x,
               y: action.payload.y,
               cols: 1,
               rows: 1,
               instanceId,
-            })
-            .push(`dashboards.${selectedDashboard}.plugins`, instanceId)
-            .value()
+            }),
+            push(`dashboards.${selectedDashboard}.plugins`, instanceId),
+          )(state)
         : state
     }
     case actions.DELETE_PLUGIN: {
@@ -125,17 +128,17 @@ const dashboard = (state = intialState, action) => {
         return reduce(pluginsToRemove, removeChilds, cleanedPluginInstances)
       }
 
-      return chain(state)
-        .update(`pluginInstances`, pluginInstances => removeChilds(pluginInstances, instanceId))
-        .unset(`pluginInstances.${instanceId}`)
-        .pull(
+      return flow(
+        update(`pluginInstances`, pluginInstances => removeChilds(pluginInstances, instanceId)),
+        unset(`pluginInstances.${instanceId}`),
+        pull(
           parent
             ? `pluginInstances.${parent.plugin}.props.${parent.prop}.value`
             : `dashboards.${selectedDashboard}.plugins`,
           instanceId,
-        )
-        .set(`selectedPlugin`, parent && parent.plugin)
-        .value()
+        ),
+        set(`selectedPlugin`, parent && parent.plugin),
+      )(state)
     }
     case actions.CHANGE_PROP: {
       const { instanceId, prop, value } = action.payload
@@ -168,7 +171,7 @@ const dashboard = (state = intialState, action) => {
       const pluginInstances = getPluginInstances(plugins)
       const normalizedDashboards = dashboards.map(dashboard => ({
         ...dashboard,
-        isWritable: user.role === "admin" || user.id === dashboard.owner,
+        isWritable: user.role === 'admin' || user.id === dashboard.owner,
         plugins: keys(dashboard.plugins),
       }))
 

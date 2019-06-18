@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import loader from 'hoc-react-loader'
-import { push } from 'redux-little-router'
+import { navigate } from '@reach/router'
 import { unselectDashboard, selectedDashboardSelector } from '../../dashboard'
 import { loadConfig, isConfigLoading } from '../../store/loaders'
 import { LoadingIndicator } from '../../components/commons'
@@ -18,7 +18,7 @@ const mapDispatchToProps = dispatch => ({
   goBack() {
     // WORKAROUND: Waiting for redux refactoring
     dispatch(unselectDashboard)
-    dispatch(push('/medias'))
+    return navigate('/medias')
   },
   load() {
     dispatch(loadConfig())

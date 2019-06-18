@@ -5,7 +5,12 @@ import './Auth.css'
 
 const Auth = (props: PropsType) => {
   const { children, isLoggedIn } = props
-  return <div className="Auth">{isLoggedIn ? children : <LoginForm />}</div>
+  if (isLoggedIn) return children
+  return (
+    <div className="Auth">
+      <LoginForm />
+    </div>
+  )
 }
 
 export default Auth

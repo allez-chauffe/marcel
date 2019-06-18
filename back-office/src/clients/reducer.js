@@ -1,4 +1,4 @@
-import { set, chain, unset } from 'immutadot'
+import { set, flow, unset } from 'immutadot'
 import { actions as loadersActions } from '../store/loaders'
 import { actions } from './actions'
 
@@ -18,10 +18,10 @@ const clients = (state = initialState, action) => {
     }
     case actions.CLIENT_ASSOCIATION_SUCCESS: {
       const { client } = action.payload
-      return chain(state)
-        .unset(`loading.${client.id}`)
-        .set(`clients.${client.id}`, client)
-        .value()
+      return flow(
+        unset(`loading.${client.id}`),
+        set(`clients.${client.id}`, client),
+      )(state)
     }
     case actions.CLIENT_ASSOCIATION_FAILED: {
       const { client } = action.payload

@@ -8,7 +8,7 @@ import { reducer as dashboard } from '../dashboard'
 import { reducer as auth } from '../auth'
 import { reducer as clients } from '../clients'
 import { reducer as loaders, actions as loadersActions } from './loaders'
-import { reducer as router } from './router'
+import { routerReducer as router } from './router'
 import { reducer as users } from '../user'
 
 const config = (

@@ -1,6 +1,5 @@
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import router from 'hoc-little-router'
 import loader from 'hoc-react-loader'
 import { selectedDashboardSelector, selectDashboard } from '../../dashboard'
 import { loadInitData } from '../../store/loaders'
@@ -23,7 +22,6 @@ const workaround = connect(
 )
 
 export default compose(
-  router('MEDIA_DETAILS'),
   connect(
     mapStateToProps,
     mapDisaptchToProps,

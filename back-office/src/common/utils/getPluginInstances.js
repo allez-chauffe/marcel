@@ -1,4 +1,4 @@
-import { map, concat, chain } from 'lodash'
+import { map, concat, chain } from 'lodash/fp'
 import { mapValues } from 'immutadot'
 import { values } from 'lodash/fp'
 

@@ -1,6 +1,6 @@
 import { keyBy, values, range, forEach, findIndex, some, map, chain } from 'lodash'
 import { toastr } from 'react-redux-toastr'
-import { push, replace } from 'redux-little-router'
+import { navigate } from '@reach/router'
 import { backend } from '../api'
 import { selectedDashboardSelector, deletingDashboardSelector } from './selectors'
 
@@ -56,7 +56,7 @@ export const confirmDashboardDeletion = () => (dispatch, getState) => {
     .then(() => {
       dispatch(dashboardDeleted())
       toastr.success('Le média à été supprimé')
-      dispatch(replace('/medias'))
+      return navigate('/medias', { replace: true })
     })
     .catch(error => {
       dispatch(cancelDashboardDeletion())
@@ -93,7 +93,7 @@ export const addDashboard = () => dispatch => {
         type: actions.ADD_DASHBOARD,
         payload: { dashboard },
       })
-      dispatch(push(`/medias/${dashboard.id}`))
+      return navigate(`/medias/${dashboard.id}`)
     })
     .catch(error => {
       toastr.error('Erreur lors de la création du dashboard')

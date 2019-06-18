@@ -1,6 +1,5 @@
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import router from 'hoc-little-router'
 import ProfilScreen from './ProfilScreen'
 import { updateConnectedUser, updateConnectedUserProperty } from '../../auth'
 
@@ -14,7 +13,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 })
 
 export default compose(
-  router('PROFIL', { absolute: true }),
   connect(
     mapStateToProps,
     mapDispatchToProps,

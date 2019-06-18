@@ -1,7 +1,6 @@
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { isUsersLoading, loadUsers } from '../../store/loaders'
-import router from 'hoc-little-router'
 import UserScreen from './UserScreen'
 import loader from 'hoc-react-loader'
 import { LoadingIndicator } from '../../components/commons'
@@ -28,7 +27,6 @@ const mapDispatchToProps = dispatch => ({
 })
 
 export default compose(
-  router('USERS', { absolute: true }),
   connect(
     mapStateToProps,
     mapDispatchToProps,
