@@ -4,7 +4,7 @@ The purpose of this part is to give an serve a graphical administration interfac
 
 ## :warning: Some parts of this README might be outdated
 
-## How to run the back-office
+## How to run the backoffice
 
 ### From sources
 
@@ -20,7 +20,7 @@ You can then create a production build :
 yarn build
 ```
 
-Once built, the back-office can be simply served by any http server :
+Once built, the backoffice can be simply served by any http server :
 
 ```shel
 serve -s ./build
@@ -39,13 +39,13 @@ Note that the trailling slash of each URI is required.
 
 ### With docker
 
-The back-office can be run with the provided docker image :
+The backoffice can be run with the provided docker image :
 
 ```shell
 docker container run \
   -d -p 81:80 \
   -v $(pwd)/conf:/usr/share/nginx/html/conf \
-  marcel-back-office
+  marcel-backoffice
 ```
 
 The conf volume should contains the `config.json` file :
