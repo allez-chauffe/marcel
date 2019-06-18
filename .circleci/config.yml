@@ -20,7 +20,7 @@ jobs:
 
   build_backoffice:
     <<: *defaults
-    working_directory: /usr/src/app
+    working_directory: /home/circleci/app
     docker:
       - image: circleci/node:12
     steps:
