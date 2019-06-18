@@ -1,4 +1,4 @@
-module github.com/Zenika/MARCEL
+module github.com/Zenika/marcel
 
 go 1.12
 
