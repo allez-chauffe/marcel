@@ -19,25 +19,32 @@ jobs:
       - run: go version
 
   build_backoffice:
-    working_directory: /usr/src/app/back-office
+    <<: *defaults
+    working_directory: /usr/src/app
     docker:
       - image: circleci/node:12
     steps:
-      - checkout:
-          path: /usr/src/app
+      - run:
+          working_directory: back-office
+          command: pwd
+      - checkout
       - restore_cache:
           keys:
-          - backoffice-dependencies-{{ checksum "package.json" }}
-      - run: yarn
+          - backoffice-dependencies-{{ checksum "back-office/package.json" }}
+      - run:
+          working_directory: back-office
+          command: yarn
       - save_cache:
           paths:
             - node_modules
-          key: backoffice-dependencies-{{ checksum "package.json" }}
-      - run: yarn build
-      # - save_cache:
-      #     paths:
-      #       - back-office/build
-      #     key: backoffice-build-{{ .Revision }}
+          key: backoffice-dependencies-{{ checksum "back-office/package.json" }}
+      - run:
+          working_directory: back-office
+          command: yarn build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - back-office/build
 
   build_frontend:
     docker:
