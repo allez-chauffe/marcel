@@ -145,17 +145,19 @@ jobs:
 
   deploy_integration:
     docker:
-      - image: circleci/buildpack-deps:stable-curl
+      - image: google/cloud-sdk:latest
     steps:
       - checkout
       - restore_cache:
           keys:
             - plugins-package-{{ .Revision }}
-      - run: echo $INTEGRATION_SERVER_KEY | sed s/retourligne/\\n/g > integration_key.pem
-      - run: chmod 400 integration_key.pem
-      - run: scp -o StrictHostKeyChecking=no -i integration_key.pem plugins.tar.gz ubuntu@preprod.marcel.zenika.com:~/
-      - run: ssh -o StrictHostKeyChecking=no -i integration_key.pem ubuntu@preprod.marcel.zenika.com "./MARCEL/deploy.sh"
-      - run: rm -f integration_key.pem
+      - run: ./scripts/install.sh
+      - run: 
+          command: rm -rf ${HOME}/.ssh
+          when: always
+      - run: 
+          command: rm -f ${HOME}/gcloud-service-key.json
+          when: always
 
 filters-all: &filters-all
   tags:
