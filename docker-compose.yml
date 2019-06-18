@@ -31,7 +31,7 @@ services:
       traefik.frontend.rule: "PathPrefix: /api/v1/"
     volumes:
       - ./config.json:/etc/marcel/config.json:ro
-      - ./api/data:/var/lib/marcel/data
+      - ./api/data:/var/lib/marcel
       - ./api/plugins:/var/lib/marcel/plugins
       - ./api/medias:/var/lib/marcel/medias
 
