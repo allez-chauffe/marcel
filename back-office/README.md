@@ -1,10 +1,12 @@
-# Backend
+# Backoffice
 
 The purpose of this part is to give an serve a graphical administration interface. It allows to create, modify and delete medias with a graphical editor.
 
+## :warning: Some parts of this README might be outdated
+
 ## How to run the back-office
 
-### Form sources
+### From sources
 
 Install dependencies :
 

@@ -20,10 +20,10 @@ func init() {
 	Marcel.PersistentFlags().StringVarP(&configFile, "configFile", "c", "", fmt.Sprintf("Config file (default /etc/marcel/config.xxx or ./config.xxx, supports %s)", strings.Join(viper.SupportedExts, " ")))
 }
 
-// Marcel is the root command of Marcel
+// Marcel is the root command of marcel
 var Marcel = &cobra.Command{
 	Use:           "marcel",
-	Short:         "Marcel is a configurable plugin based dashboard system",
+	Short:         "marcel is a configurable plugin based dashboard system",
 	Args:          cobra.NoArgs,
 	SilenceErrors: true,
 }

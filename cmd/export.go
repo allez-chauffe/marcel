@@ -15,7 +15,7 @@ func init() {
 
 	var exportCmd = &cobra.Command{
 		Use:   "export",
-		Short: "Exports data from Marcel's database",
+		Short: "Exports data from marcel's database",
 		Args:  cobra.NoArgs,
 
 		PersistentPreRun: (func(cmd *cobra.Command, args []string) {
@@ -35,7 +35,7 @@ func init() {
 
 	var users = &cobra.Command{
 		Use:   "users [FILE]",
-		Short: "Exports users from Marcel's database",
+		Short: "Exports users from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -51,7 +51,7 @@ func init() {
 
 	var medias = &cobra.Command{
 		Use:   "medias [FILE]",
-		Short: "Exports medias from Marcel's database",
+		Short: "Exports medias from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -65,7 +65,7 @@ func init() {
 
 	var plugins = &cobra.Command{
 		Use:   "plugins [FILE]",
-		Short: "Exports plugins from Marcel's database",
+		Short: "Exports plugins from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -79,7 +79,7 @@ func init() {
 
 	var all = &cobra.Command{
 		Use:   "all [FILE]",
-		Short: "Exports all data from Marcel's database",
+		Short: "Exports all data from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
