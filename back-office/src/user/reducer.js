@@ -1,6 +1,3 @@
-//@flow
-import type { Reducer } from 'redux'
-import type { UserAction, UserState } from './type'
 import { actions as loadActions } from '../store/loaders'
 import { actions as userActions } from './actions'
 import { set, unset } from 'immutadot'
@@ -17,7 +14,7 @@ const initialState = {
   },
 }
 
-const users: Reducer<UserState, UserAction> = (state = initialState, action) => {
+const users = (state = initialState, action) => {
   switch (action.type) {
     case loadActions.LOAD_USERS_SUCCESSED: {
       const { users } = action.payload

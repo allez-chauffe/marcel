@@ -1,14 +1,6 @@
-//@flow
 import { selectedDashboardSelector } from '../dashboard'
 import { toastr } from 'react-redux-toastr'
 import { backend } from '../api'
-import type {
-  AssociateClientThunk,
-  RequireClientAssociationAction,
-  ConfirmClientAssociationAction,
-  CancelClientAssociationAction,
-  Client,
-} from './type'
 
 export const actions = {
   CLIENT_ASSOCIATION_STARTED: 'CLIENTS/CLIENT_ASSOCIATION_STARTED',
@@ -19,7 +11,7 @@ export const actions = {
   CANCEL_CLIENT_ASSOCIATION: 'CLIENTS/CANCEL_CLIENT_ASSOCIATION',
 }
 
-export const associateClient = (client: Client): AssociateClientThunk => (dispatch, getState) => {
+export const associateClient = client => (dispatch, getState) => {
   dispatch({ type: actions.CLIENT_ASSOCIATION_STARTED, payload: { client } })
 
   const media = selectedDashboardSelector(getState())
@@ -42,17 +34,17 @@ export const associateClient = (client: Client): AssociateClientThunk => (dispat
     })
 }
 
-export const requireClientAssociation = (client: Client): RequireClientAssociationAction => ({
+export const requireClientAssociation = client => ({
   type: actions.REQUIRE_CLIENT_ASSOCIATION,
   payload: {
     client: client,
   },
 })
 
-export const confirmClientAssociation = (): ConfirmClientAssociationAction => ({
+export const confirmClientAssociation = () => ({
   type: actions.CONFIRM_CLIENT_ASSOCIATION,
 })
 
-export const cancelClientAssociation = (): CancelClientAssociationAction => ({
+export const cancelClientAssociation = () => ({
   type: actions.CANCEL_CLIENT_ASSOCIATION,
 })

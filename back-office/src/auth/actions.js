@@ -1,21 +1,9 @@
-//@flow
 import { toastr } from 'react-redux-toastr'
-import type {
-  LoginAction,
-  LogoutAction,
-  ChangeLoginAction,
-  ChangePasswordAction,
-  ResetFormAction,
-  RefreshLoginAction,
-  UpdateConnectedUserPropertyAction,
-  UpdateConnectedUserAction,
-} from './type'
 import { authBackend } from '../api'
 import { loginSelector, passwordSelector } from './selectors'
-import type { User } from './type'
 
 import { userBackend } from '../api'
-import { replace } from 'redux-little-router'
+import { navigate } from '@reach/router'
 
 export const actions = {
   LOGIN_REQUEST: 'AUTH/LOGIN_REQUEST',
@@ -33,7 +21,7 @@ export const actions = {
 
 const handleLogin = (dispatch, promise) =>
   promise
-    .then((user: User) => dispatch({ type: actions.LOGIN_SUCCESS, payload: { user } }))
+    .then(user => dispatch({ type: actions.LOGIN_SUCCESS, payload: { user } }))
     .catch(response => {
       if (response.status !== 403)
         toastr.error('Erreur', "Impossible de contacter le serveur d'authentification")
@@ -41,7 +29,7 @@ const handleLogin = (dispatch, promise) =>
       throw response
     })
 
-export const login: LoginAction = () => (dispatch, getState) => {
+export const login = () => (dispatch, getState) => {
   dispatch({ type: actions.LOGIN_REQUEST })
 
   const state = getState()
@@ -53,7 +41,7 @@ export const login: LoginAction = () => (dispatch, getState) => {
   })
 }
 
-export const refreshLogin: RefreshLoginAction = () => (dispatch, getState) => {
+export const refreshLogin = () => (dispatch, getState) => {
   dispatch({ type: actions.LOGIN_REQUEST })
   handleLogin(dispatch, authBackend.login())
 }
@@ -62,19 +50,19 @@ export const disconnected = () => ({
   type: actions.DISCONNECTED,
 })
 
-export const logout: LogoutAction = () => dispatch => {
+export const logout = () => dispatch => {
   authBackend.logout().then(() => {
     dispatch(disconnected())
-    dispatch(replace('/medias'))
+    return navigate('/medias', { replace: true })
   })
 }
 
-export const changeLogin = (login: string): ChangeLoginAction => ({
+export const changeLogin = (login): ChangeLoginAction => ({
   type: actions.CHANGE_LOGIN,
   payload: { login },
 })
 
-export const changePassword = (password: string): ChangePasswordAction => ({
+export const changePassword = (password): ChangePasswordAction => ({
   type: actions.CHANGE_PASSWORD,
   payload: { password },
 })
@@ -83,22 +71,19 @@ export const resetForm = (): ResetFormAction => ({
   type: actions.RESET_FORM,
 })
 
-export const updateConnectedUserProperty = (
-  property: string,
-  value: string,
-): UpdateConnectedUserPropertyAction => ({
+export const updateConnectedUserProperty = (property, value) => ({
   type: actions.UPDATE_CONNECTED_USER_PROPERTY,
   payload: { property, value },
 })
 
-export const updateConnectedUserSuccess = (user: User): UpdateConnectedUserAction => ({
+export const updateConnectedUserSuccess = user => ({
   type: actions.UPDATE_CONNECTED_USER_SUCCESS,
   payload: {
     user: user,
   },
 })
 
-export const updateConnectedUser = (user: User) => dispatch => {
+export const updateConnectedUser = user => dispatch => {
   userBackend
     .updateUser(user)
     .then(() => dispatch(updateConnectedUserSuccess(user)))

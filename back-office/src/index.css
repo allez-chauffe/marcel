@@ -1,4 +1,14 @@
-body, #root {
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+body,
+#root {
   margin: 0;
   padding: 0;
   font-family: sans-serif;

@@ -1,19 +1,19 @@
-//@flow
 import React from 'react'
+import { bool } from 'prop-types'
 
 import './OccupationIndicator.css'
 
-type PropTypes = {
-  isOccupied: boolean,
-}
-
-const OccupationIndicator = (props: PropTypes) => {
+const OccupationIndicator = props => {
   const { isOccupied } = props
   return (
     <div className="OccupationIndicator">
       <div className={`indicator ${isOccupied ? 'occupied' : ''}`} />
     </div>
   )
+}
+
+OccupationIndicator.propTypes = {
+  isOccupied: bool,
 }
 
 export default OccupationIndicator

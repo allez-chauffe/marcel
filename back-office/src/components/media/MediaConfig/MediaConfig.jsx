@@ -1,28 +1,12 @@
-//@flow
 import React from 'react'
 import Input from 'react-toolbox/lib/input/Input'
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
 import Switch from 'react-toolbox/lib/switch/Switch'
 import { ColorPicker } from '../../../common'
-import type { Dashboard } from '../../../dashboard/type'
 
 import './MediaConfig.css'
 
-export type PropsType = {
-  dashboard: Dashboard,
-  changeName: string => void,
-  changeDescription: string => void,
-  changeCols: number => void,
-  changeRows: number => void,
-  changeRatio: number => void,
-  changeDisplayGrid: boolean => void,
-  changeBackgroundColor: string => void,
-  changePrimaryColor: string => void,
-  changeSecondaryColor: string => void,
-  changeFontFamily: string => void,
-}
-
-const MediaConfig = (props: PropsType) => {
+const MediaConfig = props => {
   const { dashboard } = props
 
   const {

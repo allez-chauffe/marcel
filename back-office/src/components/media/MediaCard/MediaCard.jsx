@@ -1,5 +1,4 @@
-//@flow
-import React from 'react'
+import React, { Component } from 'react'
 import CardMedia from 'react-toolbox/lib/card/CardMedia'
 import CardTitle from 'react-toolbox/lib/card/CardTitle'
 import CardText from 'react-toolbox/lib/card/CardText'
@@ -7,19 +6,11 @@ import CardActions from 'react-toolbox/lib/card/CardActions'
 import Button from 'react-toolbox/lib/button/Button'
 import { ActivationButton, OpenButton, DeleteDashboardButton } from '../../../common'
 import { Card } from '../../commons'
-import type { Dashboard } from '../../../dashboard/type'
 
 import './MediaCard.css'
 
-class DashboardListItem extends React.Component {
-  props: {
-    dashboard: Dashboard,
-    frontendURI: string,
-    selectDashboard: () => void,
-    deleteDashboard: () => void,
-  }
-
-  onClickWithoutPropagation = (onClick: () => void) => (event: MouseEvent) => {
+class DashboardListItem extends Component {
+  onClickWithoutPropagation = onClick => event => {
     event.stopPropagation()
     onClick()
   }

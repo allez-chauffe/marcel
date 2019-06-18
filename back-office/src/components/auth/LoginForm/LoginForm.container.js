@@ -1,6 +1,4 @@
-//@flow
 import { connect } from 'react-redux'
-import type { State } from '../../../store'
 import {
   login,
   changeLogin,
@@ -11,7 +9,7 @@ import {
 } from '../../../auth'
 import LoginForm from './LoginForm'
 
-const mapStateToProps = (state: State) => ({
+const mapStateToProps = state => ({
   login: loginSelector(state),
   password: passwordSelector(state),
 })
@@ -23,4 +21,7 @@ const mapDispatchToProps = {
   reset: resetForm,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(LoginForm)

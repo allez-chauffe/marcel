@@ -1,2 +1,1 @@
-//@flow
-export {default} from './SubPluginProps.container'
+export { default } from './SubPluginProps.container'

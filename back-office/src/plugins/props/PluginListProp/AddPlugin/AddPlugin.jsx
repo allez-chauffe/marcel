@@ -1,17 +1,9 @@
-//@flow
 import React from 'react'
 import { without } from 'lodash'
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown'
-import type { Plugin } from '../../../../plugins'
 
 class AddPlugin extends React.Component {
-  props: {
-    availablePlugins: Plugin[],
-    plugins: Plugin[],
-    addPlugin: Plugin => void,
-  }
-
-  addPlugin = (plugin: Plugin) => {
+  addPlugin = plugin => {
     if (plugin !== -1) this.props.addPlugin(plugin)
   }
 

@@ -1,35 +1,8 @@
-//@flow
 import { keyBy, values, range, forEach, findIndex, some, map, chain } from 'lodash'
 import { toastr } from 'react-redux-toastr'
-import { push, replace } from 'redux-little-router'
+import { navigate } from '@reach/router'
 import { backend } from '../api'
 import { selectedDashboardSelector, deletingDashboardSelector } from './selectors'
-import type { Plugin, Prop } from '../plugins'
-import type {
-  SelectPluginAction,
-  PluginInstance,
-  AddPluginThunkAction,
-  DeletePluginAction,
-  SaveLayoutAction,
-  UpdateConfigAction,
-  Layout,
-  Dashboard,
-  ChangePropAction,
-  DashboardThunk,
-  SelectDashboardAction,
-  UnselectDashboardAction,
-  AddDashboardThunkAction,
-  DeleteDashboardAction,
-  RequireDashboardDeletionAction,
-  DashboardDeletionThunk,
-  DashboardDeletedAction,
-  CancelDashboardDeletionAction,
-  AddSubPluginAction,
-  SelectPluginParentAction,
-  ReorderSubPluginAction,
-  ActivateDashboardThunk,
-  DeactivateDashboardThunk,
-} from './type'
 
 export const actions = {
   SELECT_PLUGIN: 'DASHBOARD/SELECT_PLUGIN',
@@ -55,26 +28,26 @@ export const actions = {
   DEACTIVATE_DASHBOARD: 'DASHBOARD/DEACTIVATE_DASHBOARD',
 }
 
-export const selectPlugin = (plugin: PluginInstance): SelectPluginAction => ({
+export const selectPlugin = plugin => ({
   type: actions.SELECT_PLUGIN,
   payload: { instanceId: plugin.instanceId },
 })
 
-export const selectDashboard = (dashboard: Dashboard): SelectDashboardAction => ({
+export const selectDashboard = dashboard => ({
   type: actions.SELECT_DASHBOARD,
   payload: { dashboardId: dashboard.id },
 })
 
-export const unselectDashboard = (): UnselectDashboardAction => ({
+export const unselectDashboard = () => ({
   type: actions.UNSELECT_DASHBOARD,
 })
 
-export const requireDashboardDeletion = (dashboard: Dashboard): RequireDashboardDeletionAction => ({
+export const requireDashboardDeletion = dashboard => ({
   type: actions.REQUIRE_DASHBOARD_DELETION,
   payload: { dashboardId: dashboard.id },
 })
 
-export const confirmDashboardDeletion: DashboardDeletionThunk = () => (dispatch, getState) => {
+export const confirmDashboardDeletion = () => (dispatch, getState) => {
   const deleting = deletingDashboardSelector(getState())
   if (!deleting) throw new Error('There is no deleting media')
 
@@ -83,7 +56,7 @@ export const confirmDashboardDeletion: DashboardDeletionThunk = () => (dispatch,
     .then(() => {
       dispatch(dashboardDeleted())
       toastr.success('Le média à été supprimé')
-      dispatch(replace('/medias'))
+      return navigate('/medias', { replace: true })
     })
     .catch(error => {
       dispatch(cancelDashboardDeletion())
@@ -91,20 +64,20 @@ export const confirmDashboardDeletion: DashboardDeletionThunk = () => (dispatch,
     })
 }
 
-export const dashboardDeleted = (): DashboardDeletedAction => ({
+export const dashboardDeleted = () => ({
   type: actions.DASHBOARD_DELETED,
 })
 
-export const cancelDashboardDeletion = (): CancelDashboardDeletionAction => ({
+export const cancelDashboardDeletion = () => ({
   type: actions.CANCEL_DASHBOARD_DELETION,
 })
 
-export const deleteDashboard = (dashboard: Dashboard): DeleteDashboardAction => ({
+export const deleteDashboard = dashboard => ({
   type: actions.DELETE_DASHBOARD,
   payload: { dashboardId: dashboard.id },
 })
 
-export const addDashboard = (): AddDashboardThunkAction => dispatch => {
+export const addDashboard = () => dispatch => {
   backend
     .createDashboard()
     .then(dashboard => {
@@ -120,7 +93,7 @@ export const addDashboard = (): AddDashboardThunkAction => dispatch => {
         type: actions.ADD_DASHBOARD,
         payload: { dashboard },
       })
-      dispatch(push(`/medias/${dashboard.id}`))
+      return navigate(`/medias/${dashboard.id}`)
     })
     .catch(error => {
       toastr.error('Erreur lors de la création du dashboard')
@@ -128,12 +101,12 @@ export const addDashboard = (): AddDashboardThunkAction => dispatch => {
     })
 }
 
-export const addSubPlugin = (propName: string, plugin: Plugin): AddSubPluginAction => ({
+export const addSubPlugin = (propName, plugin) => ({
   type: actions.ADD_SUB_PLUGIN,
   payload: { propName, plugin },
 })
 
-export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (dispatch, getState) => {
+export const addPlugin = plugin => (dispatch, getState) => {
   const dashboard: ?Dashboard = selectedDashboardSelector(getState())
   if (!dashboard)
     return toastr.error(
@@ -164,12 +137,12 @@ export const addPlugin = (plugin: Plugin): AddPluginThunkAction => (dispatch, ge
   })
 }
 
-export const deletePlugin = (plugin: Plugin): DeletePluginAction => ({
+export const deletePlugin = plugin => ({
   type: actions.DELETE_PLUGIN,
   payload: { plugin },
 })
 
-export const reorderSubPlugins = (plugins: PluginInstance[]): ReorderSubPluginAction => ({
+export const reorderSubPlugins = plugins => ({
   type: actions.REORDER_SUB_PLUGINS,
   payload: {
     instanceIds: map(plugins, 'instanceId'),
@@ -180,7 +153,7 @@ export const reorderSubPlugins = (plugins: PluginInstance[]): ReorderSubPluginAc
   },
 })
 
-export const changeProp = (plugin: PluginInstance, prop: Prop, value: mixed): ChangePropAction => ({
+export const changeProp = (plugin, prop, value) => ({
   type: actions.CHANGE_PROP,
   payload: {
     instanceId: plugin.instanceId,
@@ -189,12 +162,12 @@ export const changeProp = (plugin: PluginInstance, prop: Prop, value: mixed): Ch
   },
 })
 
-export const saveLayout = (layout: Layout): SaveLayoutAction => ({
+export const saveLayout = layout => ({
   type: actions.SAVE_LAYOUT,
   payload: { layout: keyBy(layout, 'i') },
 })
 
-export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
+export const uploadLayout = () => (dispatch, getState) => {
   const state = getState()
   const dashboard = selectedDashboardSelector(state)
   if (!dashboard) throw new Error('A dashboard should be selected')
@@ -214,18 +187,18 @@ export const uploadLayout = (): DashboardThunk => (dispatch, getState) => {
     })
 }
 
-export const updateConfig = (property: string) => (value: string | number): UpdateConfigAction => {
+export const updateConfig = property => value => {
   return {
     type: actions.UPDATE_CONFIG,
     payload: { property, value },
   }
 }
 
-export const selectPluginParent = (): SelectPluginParentAction => ({
+export const selectPluginParent = () => ({
   type: actions.SELECT_PLUGIN_PARENT,
 })
 
-export const activateDashboard = (dashboardId: string): ActivateDashboardThunk => dispatch => {
+export const activateDashboard = dashboardId => dispatch => {
   backend
     .activateDashboard(dashboardId)
     .then(() =>
@@ -237,7 +210,7 @@ export const activateDashboard = (dashboardId: string): ActivateDashboardThunk =
     .catch(() => toastr.error("Erreur lors de l'activation de ce media"))
 }
 
-export const deactivateDashboard = (dashboardId: string): DeactivateDashboardThunk => dispatch => {
+export const deactivateDashboard = dashboardId => dispatch => {
   backend
     .deactivateDashboard(dashboardId)
     .then(() =>

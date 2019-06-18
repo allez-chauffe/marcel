@@ -1,9 +1,6 @@
-//@flow
 import { omit, find, map, mapValues, keyBy } from 'lodash'
-import type { Plugin } from '../../plugins'
-import type { Dashboard } from '../../dashboard/type'
 
-const mapPluginsToDashboard = (pluginCatalog: Plugin[]) => (dashboard: Dashboard) => {
+const mapPluginsToDashboard = pluginCatalog => dashboard => {
   const plugins = map(dashboard.plugins, plugin => {
     const pluginInstance = omit(plugin.frontend, ['files'])
     const { eltName, instanceId } = plugin

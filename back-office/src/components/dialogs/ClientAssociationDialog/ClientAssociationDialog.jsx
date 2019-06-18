@@ -1,18 +1,7 @@
-//@flow
-import React from 'react'
+import React, { Component } from 'react'
 import Dialog from 'react-toolbox/lib/dialog/Dialog'
-import type { Client } from '../../../clients'
-import type { Dashboard } from '../../../dashboard/type'
 
-class ClientAssociationDialog extends React.Component {
-  props: {
-    associating: ?Client,
-    media: ?Dashboard,
-    confirm: () => void,
-    cancel: () => void,
-    associate: Client => void,
-  }
-
+class ClientAssociationDialog extends Component {
   confirm = () => {
     this.props.confirm()
     this.props.associating && this.props.associate(this.props.associating)
@@ -25,9 +14,7 @@ class ClientAssociationDialog extends React.Component {
 
     return (
       <Dialog
-        title={`Le client ${clientName} affiche déjà le média ${
-          mediaName
-        }. Êtes-vous sûre de vouloir changer ?`}
+        title={`Le client ${clientName} affiche déjà le média ${mediaName}. Êtes-vous sûre de vouloir changer ?`}
         type="small"
         active={!!associating}
         onEscKeyDown={cancel}

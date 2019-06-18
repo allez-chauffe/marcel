@@ -1,21 +1,21 @@
-//@flow
 import { createSelector } from 'reselect'
 import { keyBy } from 'lodash/fp'
-import { chain } from 'immutadot'
-import type { State } from '../store'
-import type { DashboardMap } from './type'
+import { flow, map, update } from 'immutadot'
 import { mapPluginInstancesToProps } from '../common/utils'
 
-export const dashboardsSelector = (state: State): DashboardMap => state.dashboard.dashboards
+export const dashboardsSelector = state => state.dashboard.dashboards
 
-export const pluginInstancesSelector = (state: State) => state.dashboard.pluginInstances
+export const pluginInstancesSelector = state => state.dashboard.pluginInstances
 
-export const selectedDashboardNameSelector = (state: State) =>
-  state.router.params && state.router.params.mediaID
+export const selectedDashboardNameSelector = state => {
+  // WORKAOURND: the route params are not stored in redux...
+  const urlSegments = window.location.href.split('/')
+  return urlSegments[urlSegments.length - 1]
+}
 
-export const selectedPluginNameSelector = (state: State) => state.dashboard.selectedPlugin
+export const selectedPluginNameSelector = state => state.dashboard.selectedPlugin
 
-export const deletingDashboardSelector = (state: State) => state.dashboard.deletingDashboard
+export const deletingDashboardSelector = state => state.dashboard.deletingDashboard
 
 export const selectedDashboardSelector = createSelector(
   dashboardsSelector,
@@ -23,10 +23,10 @@ export const selectedDashboardSelector = createSelector(
   selectedDashboardNameSelector,
   (dashboards, pluginInstances, selectedName) => {
     if (!selectedName || !dashboards[selectedName]) return null
-    return chain(dashboards[selectedName])
-      .map('plugins', mapPluginInstancesToProps(pluginInstances))
-      .update('plugins', keyBy('instanceId'))
-      .value()
+    return flow(
+      map('plugins', mapPluginInstancesToProps(pluginInstances)),
+      update('plugins', keyBy('instanceId')),
+    )(dashboards[selectedName])
   },
 )
 

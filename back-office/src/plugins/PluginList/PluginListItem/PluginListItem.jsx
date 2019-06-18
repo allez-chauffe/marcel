@@ -1,12 +1,8 @@
-//@flow
-import React from 'react'
-import type { Plugin } from '../../type'
+import React, { Component } from 'react'
 import ListItem from 'react-toolbox/lib/list/ListItem'
 import IconButton from 'react-toolbox/lib/button/IconButton'
 
-class PluginListItem extends React.Component {
-  props: { plugin: Plugin, addPlugin: Plugin => void }
-
+class PluginListItem extends Component {
   onClick = () => this.props.addPlugin(this.props.plugin)
 
   render() {

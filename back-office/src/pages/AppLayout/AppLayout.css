@@ -18,5 +18,16 @@
 
 .AppLayout .AppBarLink {
   color: white;
-  margin: 0 8px; 
+  margin: 0 8px;
+  display: inline-flex;
+  text-decoration: none;
+  align-items: center;
+}
+
+.AppLayout .AppBarLink .material-icons {
+  margin-right: 5px;
+}
+
+.AppLayout [role='group'] {
+  height: 100%;
 }

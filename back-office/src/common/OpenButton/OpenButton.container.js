@@ -1,4 +1,3 @@
-//@flow
 import { connect } from 'react-redux'
 import OpenButton from './OpenButton'
 

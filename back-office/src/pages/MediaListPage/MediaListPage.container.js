@@ -1,7 +1,5 @@
-//@flow
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import router from 'hoc-little-router'
 import loader from 'hoc-react-loader'
 import values from 'lodash/values'
 import { LoadingIndicator } from '../../components/commons'
@@ -19,7 +17,9 @@ const mapDispatchToProps = {
 }
 
 export default compose(
-  router('MEDIAS', { absolute: true }),
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   loader({ LoadingIndicator }),
 )(MediaListPage)

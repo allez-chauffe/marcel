@@ -1,4 +1,3 @@
-//@flow
 import { connect } from 'react-redux'
 import sizeMe from 'react-sizeme'
 import Grid from './Grid'
@@ -15,4 +14,7 @@ const mapDispatchToProps = {
   saveLayout,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SizedGrid)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SizedGrid)

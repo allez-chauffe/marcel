@@ -1,10 +1,9 @@
-//@flow
-import React from 'react'
+import React, { Component } from 'react'
 import IconButton from 'react-toolbox/lib/button/IconButton'
 
 import './ActivationButton.css'
 
-class ActivationButton extends React.Component {
+class ActivationButton extends Component {
   props: {
     isActive: boolean,
     activate: () => void,

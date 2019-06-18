@@ -1,4 +1,3 @@
-//@flow
 import { range } from 'lodash'
 
 export default [

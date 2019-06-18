@@ -1,11 +1,8 @@
-//@flow
 import { combineReducers } from 'redux'
-import type { Reducer } from 'redux'
-import type { AuthState, AuthAction, User } from './type'
 import { actions } from './actions'
 import { set } from 'immutadot'
 
-const user: Reducer<?User, AuthAction> = (state = null, action) => {
+const user = (state = null, action) => {
   switch (action.type) {
     case actions.LOGIN_SUCCESS: {
       return action.payload.user
@@ -21,7 +18,7 @@ const user: Reducer<?User, AuthAction> = (state = null, action) => {
   }
 }
 
-const isLoading: Reducer<boolean, AuthAction> = (state = false, action) => {
+const isLoading = (state = false, action) => {
   if (!action.type.startsWith('AUTH/')) return state
 
   if (action.type.endsWith('REQUEST')) return true
@@ -31,10 +28,7 @@ const isLoading: Reducer<boolean, AuthAction> = (state = false, action) => {
 }
 
 const initialForm = { login: '', password: '' }
-const form: Reducer<$PropertyType<AuthState, 'form'>, AuthAction> = (
-  state = initialForm,
-  action,
-) => {
+const form = (state = initialForm, action) => {
   switch (action.type) {
     case actions.CHANGE_LOGIN: {
       return { ...state, login: action.payload.login }
@@ -58,7 +52,7 @@ const form: Reducer<$PropertyType<AuthState, 'form'>, AuthAction> = (
   }
 }
 
-const auth: Reducer<AuthState, AuthAction> = combineReducers({
+const auth = combineReducers({
   user,
   isLoading,
   form,

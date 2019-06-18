@@ -1,5 +1,4 @@
-// @flow
-import React from 'react'
+import React, { Component } from 'react'
 import Tabs from 'react-toolbox/lib/tabs/Tabs'
 import Tab from 'react-toolbox/lib/tabs/Tab'
 import { PluginList, SubPluginProps } from '../../plugins'
@@ -8,10 +7,10 @@ import { ClientList } from '../../clients'
 
 import './MediaEditPage.css'
 
-class MediaEditPage extends React.Component {
+class MediaEditPage extends Component {
   state = { currentTab: 0 }
 
-  onTabChange = (index: number) => this.setState({ currentTab: index })
+  onTabChange = index => this.setState({ currentTab: index })
 
   componentWillMount() {
     this.props.selectMedia(this.props.media.id)

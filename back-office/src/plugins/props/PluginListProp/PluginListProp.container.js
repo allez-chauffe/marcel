@@ -1,14 +1,9 @@
-//@flow
 import { connect } from 'react-redux'
 import { pluginsSelector } from '../../selectors'
-import {
-  addSubPlugin,
-  deletePlugin,
-  reorderSubPlugins,
-} from '../../../dashboard'
+import { addSubPlugin, deletePlugin, reorderSubPlugins } from '../../../dashboard'
 import PluginListProp from './PluginListProp'
 
-const mapStateToProps = (state: State) => ({
+const mapStateToProps = state => ({
   plugins: pluginsSelector(state),
 })
 
@@ -18,4 +13,7 @@ const mapDispatchToProps = {
   reorderSubPlugins,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PluginListProp)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(PluginListProp)

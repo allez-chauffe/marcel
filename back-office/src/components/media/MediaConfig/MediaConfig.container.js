@@ -1,10 +1,6 @@
-//@flow
 import { connect } from 'react-redux'
 import MediaConfig from './MediaConfig'
-import {
-  updateConfig,
-  selectedDashboardSelector,
-} from '../../../dashboard'
+import { updateConfig, selectedDashboardSelector } from '../../../dashboard'
 
 const mapStateToProps = state => {
   const dashboard = selectedDashboardSelector(state)
@@ -27,4 +23,7 @@ const mapDispatchToProps = {
   changeFontFamily: updateConfig('stylesvar.font-family'),
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MediaConfig)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(MediaConfig)

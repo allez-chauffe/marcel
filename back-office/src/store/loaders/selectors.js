@@ -1,7 +1,4 @@
-//@flow
-import type { State } from '../types'
-
-const isLoading = ressource => (state: State): boolean => state.loaders[ressource]
+const isLoading = ressource => state => state.loaders[ressource]
 
 export const isConfigLoading = isLoading('config')
 
@@ -14,4 +11,3 @@ export const isLoadingInitData = isLoading('initial')
 export const isClientsLoading = isLoading('clients')
 
 export const isUsersLoading = isLoading('users')
-

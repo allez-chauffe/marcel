@@ -1,4 +1,3 @@
-//@flow
 import getPluginInstancesRec from './getPluginInstances'
 
 const plugin1 = {

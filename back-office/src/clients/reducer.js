@@ -1,7 +1,4 @@
-//@flow
-import type { Reducer } from 'redux'
-import { set, chain, unset } from 'immutadot'
-import type { ClientState, ClientAction } from './type'
+import { set, flow, unset } from 'immutadot'
 import { actions as loadersActions } from '../store/loaders'
 import { actions } from './actions'
 
@@ -11,7 +8,7 @@ export const initialState = {
   associating: null,
 }
 
-const clients: Reducer<ClientState, ClientAction> = (state = initialState, action) => {
+const clients = (state = initialState, action) => {
   switch (action.type) {
     case loadersActions.LOAD_CLIENTS_SUCCESSED: {
       return { ...state, clients: action.payload.clients }
@@ -21,10 +18,10 @@ const clients: Reducer<ClientState, ClientAction> = (state = initialState, actio
     }
     case actions.CLIENT_ASSOCIATION_SUCCESS: {
       const { client } = action.payload
-      return chain(state)
-        .unset(`loading.${client.id}`)
-        .set(`clients.${client.id}`, client)
-        .value()
+      return flow(
+        unset(`loading.${client.id}`),
+        set(`clients.${client.id}`, client),
+      )(state)
     }
     case actions.CLIENT_ASSOCIATION_FAILED: {
       const { client } = action.payload

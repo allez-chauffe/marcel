@@ -1,9 +1,5 @@
-//@flow
 import { connect } from 'react-redux'
-import {
-  selectedPluginSelector,
-  selectPluginParent,
-} from '../../../dashboard'
+import { selectedPluginSelector, selectPluginParent } from '../../../dashboard'
 import SubPluginProps from './SubPluginProps'
 
 const mapStateToProps = state => {
@@ -14,4 +10,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = { goBack: selectPluginParent }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubPluginProps)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SubPluginProps)

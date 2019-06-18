@@ -1,9 +1,8 @@
-//@flow
-import React from 'react'
+import React, { Component } from 'react'
 import Button from 'react-toolbox/lib/button/Button'
 
-class DeleteDashboardButton extends React.Component {
-  delete = (event: Event) => {
+class DeleteDashboardButton extends Component {
+  delete = event => {
     event.stopPropagation()
     this.props.delete()
   }

@@ -1,4 +1,3 @@
-//@flow
 import React from 'react'
 import CardText from 'react-toolbox/lib/card/CardText'
 import FontIcon from 'react-toolbox/lib/font_icon/FontIcon'
@@ -6,11 +5,7 @@ import { Card } from '../../commons'
 
 import './AddMediaCard.css'
 
-export type PropsType = {
-  addDashboard: () => void,
-}
-
-const AddMediaCard = (props: PropsType) => {
+const AddMediaCard = props => {
   const { addDashboard } = props
   return (
     <div onClick={addDashboard}>
