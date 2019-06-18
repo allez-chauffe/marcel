@@ -24,10 +24,10 @@ jobs:
     docker:
       - image: circleci/node:12
     steps:
+      - checkout
       - run:
           working_directory: back-office
           command: pwd
-      - checkout
       - restore_cache:
           keys:
           - backoffice-dependencies-{{ checksum "back-office/package.json" }}
