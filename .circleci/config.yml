@@ -157,35 +157,49 @@ jobs:
       - run: ssh -o StrictHostKeyChecking=no -i integration_key.pem ubuntu@preprod.marcel.zenika.com "./MARCEL/deploy.sh"
       - run: rm -f integration_key.pem
 
+filters-all: &filters-all
+  tags:
+    only: /.*/
+filters-master: &filters-master
+  branches:
+    only:
+      - master
+
 workflows:
   version: 2
   build:
     jobs:
-       - debug_node
-       - debug_go
-       - build_backoffice
-       - build_frontend
-       - build_marcel
+       - debug_node:
+          filters: *filters-all
+       - debug_go:
+          filters: *filters-all
+       - build_backoffice:
+          filters: *filters-all
+       - build_frontend:
+          filters: *filters-all
+       - build_marcel:
+          filters: *filters-all
           # requires:
           #   - build_backoffice
           #   - build_frontend
-       - package_plugins
+       - package_plugins:
+          filters: *filters-all
        - docker_build_backoffice:
+          filters: *filters-all
           requires:
             - build_backoffice
        - docker_build_frontend:
+          filters: *filters-all
           requires:
             - build_frontend
        - docker_build_marcel:
+          filters: *filters-all
           requires:
             - build_marcel
        - deploy_integration:
+          filters: *filters-master
           requires:
             - docker_build_marcel
             - docker_build_backoffice
             - docker_build_frontend
             - package_plugins
-          filters:
-            branches:
-              only:
-                - master

@@ -5,16 +5,16 @@ set -e
 set -o pipefail
 # Any subsequent(*) commands which fail will cause the shell script to exit immediately
 
+IMAGE_NAME=${1}
+
 PUSH=false
-if [ "${CIRCLE_BRANCH}" == "master" ] ; then
+if [[ "${CIRCLE_BRANCH}" == "master" || "${CIRCLE_TAG}" != "" ]] ; then
   PUSH=true
 fi
 
-IMAGE_NAME=${1}
-
 IMAGE_VERSION=dev
-if [[ "${CIRCLE_BRANCH}" =~ ^release-[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then
-  IMAGE_VERSION=${CIRCLE_BRANCH:8} # remove 'release-' from branch name to get version
+if [[ "${CIRCLE_TAG}" != "" ]] ; then
+  IMAGE_VERSION="$CIRCLE_TAG"
   PUSH=true
 fi
 
