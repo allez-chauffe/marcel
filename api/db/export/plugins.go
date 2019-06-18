@@ -1,7 +1,7 @@
 package export
 
 import (
-	"github.com/Zenika/MARCEL/api/db/plugins"
+	"github.com/Zenika/marcel/api/db/plugins"
 )
 
 func Plugins(outputFile string) error {

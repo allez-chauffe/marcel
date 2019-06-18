@@ -15,8 +15,8 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 
-	"github.com/Zenika/MARCEL/api/db/plugins"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/marcel/api/db/plugins"
+	"github.com/Zenika/marcel/config"
 )
 
 const (

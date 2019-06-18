@@ -5,8 +5,8 @@ import (
 	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
 
-	"github.com/Zenika/MARCEL/api/db/internal/db"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/marcel/api/db/internal/db"
+	"github.com/Zenika/marcel/config"
 )
 
 func Open() error {

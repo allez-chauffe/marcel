@@ -7,7 +7,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/marcel/config"
 )
 
 var (

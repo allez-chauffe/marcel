@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/api/db/clients"
+	"github.com/Zenika/marcel/api/db/clients"
 )
 
 //WSClient represent a websocket connection to a client.

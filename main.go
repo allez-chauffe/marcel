@@ -3,7 +3,7 @@ package main
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/cmd"
+	"github.com/Zenika/marcel/cmd"
 )
 
 func main() {

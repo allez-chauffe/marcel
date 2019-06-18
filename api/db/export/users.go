@@ -1,7 +1,7 @@
 package export
 
 import (
-	"github.com/Zenika/MARCEL/api/db/users"
+	"github.com/Zenika/marcel/api/db/users"
 )
 
 type userPassword struct {

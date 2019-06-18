@@ -1,6 +1,6 @@
 package imp0rt
 
-import "github.com/Zenika/MARCEL/api/db/medias"
+import "github.com/Zenika/marcel/api/db/medias"
 
 func Medias(inputFile string) error {
 	var mediasList []medias.Media

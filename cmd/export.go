@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/Zenika/MARCEL/api/db/export"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/marcel/api/db/export"
+	"github.com/Zenika/marcel/config"
 )
 
 func init() {

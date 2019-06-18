@@ -7,9 +7,9 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 
-	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/db/users"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/marcel/api/commons"
+	"github.com/Zenika/marcel/api/db/users"
+	"github.com/Zenika/marcel/config"
 )
 
 const AuthCookieName = "Authentication"

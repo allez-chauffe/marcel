@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/Zenika/MARCEL/api/db"
+	"github.com/Zenika/marcel/api/db"
 )
 
 func imp0rt(inputFile string, value interface{}, save func() error) error {

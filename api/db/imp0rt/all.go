@@ -1,8 +1,8 @@
 package imp0rt
 
 import (
-	"github.com/Zenika/MARCEL/api/db/medias"
-	"github.com/Zenika/MARCEL/api/db/plugins"
+	"github.com/Zenika/marcel/api/db/medias"
+	"github.com/Zenika/marcel/api/db/plugins"
 )
 
 type all struct {

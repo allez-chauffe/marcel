@@ -10,14 +10,14 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/api/auth"
-	"github.com/Zenika/MARCEL/api/clients"
-	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/db"
-	"github.com/Zenika/MARCEL/api/db/users"
-	"github.com/Zenika/MARCEL/api/medias"
-	"github.com/Zenika/MARCEL/api/plugins"
-	"github.com/Zenika/MARCEL/config"
+	"github.com/Zenika/marcel/api/auth"
+	"github.com/Zenika/marcel/api/clients"
+	"github.com/Zenika/marcel/api/commons"
+	"github.com/Zenika/marcel/api/db"
+	"github.com/Zenika/marcel/api/db/users"
+	"github.com/Zenika/marcel/api/medias"
+	"github.com/Zenika/marcel/api/plugins"
+	"github.com/Zenika/marcel/config"
 )
 
 type App struct {

@@ -6,9 +6,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/api/auth"
-	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/db/users"
+	"github.com/Zenika/marcel/api/auth"
+	"github.com/Zenika/marcel/api/commons"
+	"github.com/Zenika/marcel/api/db/users"
 )
 
 type Credentials struct {

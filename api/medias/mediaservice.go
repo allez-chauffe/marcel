@@ -11,10 +11,10 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/MARCEL/api/auth"
-	"github.com/Zenika/MARCEL/api/clients"
-	"github.com/Zenika/MARCEL/api/commons"
-	"github.com/Zenika/MARCEL/api/db/medias"
+	"github.com/Zenika/marcel/api/auth"
+	"github.com/Zenika/marcel/api/clients"
+	"github.com/Zenika/marcel/api/commons"
+	"github.com/Zenika/marcel/api/db/medias"
 )
 
 type Service struct {
