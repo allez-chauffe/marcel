@@ -1,6 +1,6 @@
 const config = {
   loadConfig: () =>
-    fetch('/conf/config.json').then(response => {
+    fetch('config').then(response => {
       if (response.status !== 200) throw response
       return response.json()
     }),

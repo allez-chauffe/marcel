@@ -16,6 +16,6 @@ var backofficeCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return backoffice.Start()
+		return backoffice.Start("/test/")
 	},
 }
