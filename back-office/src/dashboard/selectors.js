@@ -8,10 +8,9 @@ export const dashboardsSelector = state => state.dashboard.dashboards
 export const pluginInstancesSelector = state => state.dashboard.pluginInstances
 
 export const selectedDashboardNameSelector = state => {
-  // WORKAOURND: the params are not stored in redux...
-  const { pathname } = state.router.location
-  const pathnameSegments = pathname.split('/')
-  return pathnameSegments[pathnameSegments.length - 1]
+  // WORKAOURND: the route params are not stored in redux...
+  const urlSegments = window.location.href.split('/')
+  return urlSegments[urlSegments.length - 1]
 }
 
 export const selectedPluginNameSelector = state => state.dashboard.selectedPlugin

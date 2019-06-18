@@ -1,9 +1,7 @@
-import { reachify } from 'redux-first-history'
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 
-import * as router from './router'
 import rootReducer from './rootReducer'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
@@ -20,9 +18,6 @@ if (process.env.NODE_ENV === devMode) {
 
 const store = createStore(
   rootReducer,
-  composeEnhancers(applyMiddleware(router.routerMiddleware, ...middlewares)),
+  composeEnhancers(applyMiddleware(...middlewares)),
 )
-
-reachify(router.createReduxHistory(store))
-
 export default store
