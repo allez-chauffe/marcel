@@ -27,7 +27,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - backoffice-deps-{{ checksum "back-office/package.json" }}
+            - backoffice-deps-{{ checksum "back-office/package.json" }}
       - run:
           command: yarn
           working_directory: back-office
@@ -52,7 +52,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - frontend-deps-{{ checksum "frontend/package.json" }}
+            - frontend-deps-{{ checksum "frontend/package.json" }}
       - run:
           command: yarn
           working_directory: frontend
@@ -89,19 +89,6 @@ jobs:
           paths:
             - Dockerfile
             - marcel
-
-  package_plugins:
-    docker:
-      - image: circleci/buildpack-deps:stable-scm
-    steps:
-      - checkout
-      - run: git submodule sync
-      - run: git submodule update --init
-      - run: tar -czf plugins.tar.gz plugins
-      - save_cache:
-          paths:
-            - plugins.tar.gz
-          key: plugins-package-{{ .Revision }}
 
   docker_build_backoffice:
     <<: *defaults
@@ -152,10 +139,10 @@ jobs:
           keys:
             - plugins-package-{{ .Revision }}
       - run: ./scripts/install.sh
-      - run: 
+      - run:
           command: rm -rf ${HOME}/.ssh
           when: always
-      - run: 
+      - run:
           command: rm -f ${HOME}/gcloud-service-key.json
           when: always
 
@@ -171,37 +158,31 @@ workflows:
   version: 2
   build:
     jobs:
-       - debug_node:
+      - debug_node:
           filters: *filters-all
-       - debug_go:
+      - debug_go:
           filters: *filters-all
-       - build_backoffice:
+      - build_backoffice:
           filters: *filters-all
-       - build_frontend:
+      - build_frontend:
           filters: *filters-all
-       - build_marcel:
+      - build_marcel:
           filters: *filters-all
-          # requires:
-          #   - build_backoffice
-          #   - build_frontend
-       - package_plugins:
-          filters: *filters-all
-       - docker_build_backoffice:
+      - docker_build_backoffice:
           filters: *filters-all
           requires:
             - build_backoffice
-       - docker_build_frontend:
+      - docker_build_frontend:
           filters: *filters-all
           requires:
             - build_frontend
-       - docker_build_marcel:
+      - docker_build_marcel:
           filters: *filters-all
           requires:
             - build_marcel
-       - deploy_integration:
+      - deploy_integration:
           filters: *filters-master
           requires:
             - docker_build_marcel
             - docker_build_backoffice
             - docker_build_frontend
-            - package_plugins
