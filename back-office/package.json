@@ -2,6 +2,7 @@
   "name": "back-office",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "proxy": "http://localhost:8090",
   "dependencies": {
     "@reach/router": "^1.2.1",

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:8090",
+  "homepage": ".",
   "dependencies": {
     "lodash": "^4.17.11",
     "react": "^16.8.6",
