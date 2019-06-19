@@ -1,0 +1,21 @@
+.AddPlugin {
+  display: flex;
+  width: 50%;
+  margin: auto;
+  align-items: center;
+}
+
+.AddPlugin .UrlInput {
+  flex: 1;
+  margin-right: 1em;
+}
+
+.AddPlugin button {
+  width: 200px;
+}
+
+.AddPlugin .loader {
+  width: 200px;
+  height: 2em;
+  margin: 0;
+}

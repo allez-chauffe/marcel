@@ -1,13 +1,17 @@
 import React from 'react'
-import { PluginCard } from '../../plugins'
+
+import { PluginCard, AddPlugin } from '../../plugins'
 
 import './PluginsScreen.css'
 
 const PluginsScreen = ({ plugins }) => (
-  <div className="PluginsScreen CardGrid">
-    {plugins.map(plugin => (
-      <PluginCard key={plugin.eltName} plugin={plugin} />
-    ))}
+  <div className="PluginsScreen">
+    <AddPlugin />
+    <div className="CardGrid">
+      {plugins.map(plugin => (
+        <PluginCard key={plugin.eltName} plugin={plugin} />
+      ))}
+    </div>
   </div>
 )
 

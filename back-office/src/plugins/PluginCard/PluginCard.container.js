@@ -1,10 +1,10 @@
 import { connect } from 'react-redux'
 import { updatePlugin } from '../actions'
-import { pluginUpdatingSelector } from '../selectors'
+import { pluginUpdating } from '../selectors'
 import PluginCard from './PluginCard'
 
 const mapState = state => ({
-  updating: pluginUpdatingSelector(state),
+  updating: pluginUpdating(state),
 })
 
 const mapDispatch = (dispatch, { plugin: { eltName } }) => ({
