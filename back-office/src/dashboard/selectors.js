@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect'
 import { keyBy } from 'lodash/fp'
-import { flow, map, update } from 'immutadot'
+import { map } from 'immutadot/array/map'
+import { update } from 'immutadot/core/update'
+import { flow } from 'immutadot/core/flow'
 import { mapPluginInstancesToProps } from '../common/utils'
 
 export const dashboardsSelector = state => state.dashboard.dashboards

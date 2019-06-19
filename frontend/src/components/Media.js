@@ -47,11 +47,14 @@ class Media extends Component {
     if (loading) return <Loader />
     if (!media.isactive) return null
 
-    const { mediaId, config: { ssl, urls } } = this.props
+    const {
+      mediaId,
+      config: { urls },
+    } = this.props
 
     const col = 100 / media.cols
     const row = 100 / media.rows
-    const pluginsURL = `http${ssl ? 's' : ''}://${urls.backend}/medias/${mediaId}/plugins`
+    const pluginsURL = `${urls.plugins}/medias/${mediaId}/plugins`
 
     const styles = {
       backgroundColor: media.stylesvar['background-color'],

@@ -1,6 +1,7 @@
 import { actions as loadActions } from '../store/loaders'
 import { actions as userActions } from './actions'
-import { set, unset } from 'immutadot'
+import { unset } from 'immutadot/core/unset'
+import { set } from 'immutadot/core/set'
 import { keyBy } from 'lodash'
 
 const initialState = {

@@ -1,8 +1,9 @@
 {
   "ssl": false,
   "urls": {
-    "backend": "marcel.com:8081/api/v1",
-    "plugins": "marcel.com:8081/api/v1",
-    "auth": "marcel.com:8081/auth"
+    "backend": "/api/v1",
+    "plugins": "http://localhost:8090/api/v1",
+    "auth": "/api/v1/auth",
+    "websocket": "ws://localhost:8090/api/v1"
   }
 }
