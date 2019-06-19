@@ -127,4 +127,6 @@ func (a *App) initializeServices() {
 
 	//Load Medias configuration from DB
 	a.mediaService = medias.NewService(a.clientsService)
+
+	plugins.Initialize()
 }
