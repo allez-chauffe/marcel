@@ -13,15 +13,18 @@
 }
 
 .AppLayout .AppBarNavigation {
-  margin-right: 10px;
+  padding: 0 10px;
+  height: 100%;
 }
 
 .AppLayout .AppBarLink {
   color: white;
-  margin: 0 8px;
+  padding: 0 8px;
   display: inline-flex;
   text-decoration: none;
   align-items: center;
+  height: 100%;
+  transition: background-color 0.3s ease-in-out;
 }
 
 .AppLayout .AppBarLink .material-icons {
@@ -30,4 +33,8 @@
 
 .AppLayout [role='group'] {
   height: 100%;
+}
+
+.AppLayout .AppBarLink.active {
+  background-color: #fff4;
 }

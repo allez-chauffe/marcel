@@ -1,0 +1,10 @@
+.PluginsScreen {
+  width: 80%;
+  margin: auto;
+}
+
+.PluginsScreen .PluginVersion {
+  margin-left: 1em;
+  font-size: 0.6em;
+  color: #0005;
+}
