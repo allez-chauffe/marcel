@@ -16,22 +16,27 @@ import (
 	"github.com/Zenika/marcel/config"
 )
 
+// Initialize unsures that the plugins directory exists
 func Initialize() {
-	absolutePluginsPath, err := filepath.Abs(config.Config.PluginsPath)
+	pluginsPath, err := filepath.Abs(config.Config.PluginsPath)
 	if err != nil {
 		log.Fatalf("Error while parsing plugins directory path: %s", err)
 	}
 
-	if err := os.Mkdir(config.Config.PluginsPath, os.ModePerm); err != nil {
-		if os.IsExist(err) {
-			log.Infof("Using plugins directory %s", absolutePluginsPath)
-		} else {
-			log.Fatalf("Error while trying to create plugins directory '%s': %s", config.Config.PluginsPath, err)
+	if stat, err := os.Stat(pluginsPath); err != nil {
+		if os.IsNotExist(err) {
+			if err := os.MkdirAll(config.Config.PluginsPath, os.ModePerm); err != nil {
+				log.Fatalf("Error while trying to create plugins directory '%s': %s", pluginsPath, err)
+			}
+
+			log.Debugf("Plugins directory '%s' created", pluginsPath)
+			return
 		}
-	} else {
-		log.Infof("Plugins directory '%s' created", absolutePluginsPath)
+	} else if !stat.IsDir() {
+		log.Fatalf("The plugins path '%s' is not a directory", pluginsPath)
 	}
 
+	log.Debugf("Using plugins directory %s", pluginsPath)
 }
 
 // GetAllHandler gets information of all plugins
