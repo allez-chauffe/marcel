@@ -1,0 +1,16 @@
+{
+  "name": "MarcelPluginTest",
+  "description": "",
+  "eltName": "marcel-plugin-test",
+  "icon": "picture_in_picture_alt",
+  "frontend": {
+    "props": [
+      {
+        "name": "firstName",
+        "description": "",
+        "type": "string",
+        "value": "Marcel"
+      }
+    ]
+  }
+}
