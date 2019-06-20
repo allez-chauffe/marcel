@@ -32,7 +32,7 @@ const PluginCard = ({ plugin, update, updating }) => (
     <CardTitle title={<PluginTitle plugin={plugin} updating={updating} />} />
     <CardText>{plugin.description}</CardText>
     <CardActions className="buttons">
-      <UpdateButton update={update} updating={updating} />
+      {plugin.url && <UpdateButton update={update} updating={updating} />}
     </CardActions>
   </Card>
 )

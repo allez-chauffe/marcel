@@ -32,7 +32,7 @@ const backend = {
       .then(plugins =>
         plugins.map(plugin => ({
           ...plugin,
-          version: plugin.versions.sort(semver.compare).reverse()[0],
+          version: plugin.versions && plugin.versions.sort(semver.compare).reverse()[0],
           props: keyBy(plugin.frontend.props, 'name'),
         })),
       ),
