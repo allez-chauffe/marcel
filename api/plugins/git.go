@@ -17,6 +17,7 @@ import (
 
 	"github.com/Zenika/marcel/api/db/plugins"
 	"github.com/Zenika/marcel/config"
+	gitConfig "gopkg.in/src-d/go-git.v4/config"
 )
 
 const (
@@ -34,17 +35,11 @@ func (err errPluginNotFound) Error() string {
 	return string(err)
 }
 
-// FetchVersionsFromGit returns a sorted list of versions found in the remote tag list
-func FetchVersionsFromGit(url string) (Versions, error) {
-	repo, err := CloneGitRepository(url, "", nil)
-	if err != nil {
-		return nil, fmt.Errorf("Error while cloning %s: %s", url, err)
-	}
-
-	remote, err := repo.Remote("origin")
-	if err != nil {
-		return nil, fmt.Errorf("Error retrieving origin remote from %s: %s", url, err)
-	}
+func fetchVersionsFromGit(url string) (Versions, error) {
+	remote := git.NewRemote(memory.NewStorage(), &gitConfig.RemoteConfig{
+		Name: "origin",
+		URLs: []string{url},
+	})
 
 	log.Debug("Fetching tags...")
 	refs, err := remote.List(&git.ListOptions{})
@@ -69,8 +64,21 @@ func FetchVersionsFromGit(url string) (Versions, error) {
 	return versions, nil
 }
 
-// FetchManifestFromGit reads the marcel's manifest file from the given repository
-func FetchManifestFromGit(repo *git.Repository, ref plumbing.ReferenceName) (*plugins.Plugin, error) {
+func fetchManifestFromGit(url string, ref plumbing.ReferenceName, fs billy.Filesystem) (*plugins.Plugin, error) {
+	log.Debugf("Cloning %s (%s) into %s ...", url, ref.Short(), fs.Root())
+
+	repo, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
+		URL:           url,
+		SingleBranch:  true,
+		NoCheckout:    true,
+		Depth:         1,
+		Tags:          git.NoTags,
+		ReferenceName: ref,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("Error while cloning %s into %s : %s", ref.Short(), fs.Root(), err)
+	}
+
 	wt, err := repo.Worktree()
 	if err != nil {
 		return nil, fmt.Errorf("Error while getting WorkTree : %s", err)
@@ -94,37 +102,12 @@ func FetchManifestFromGit(repo *git.Repository, ref plumbing.ReferenceName) (*pl
 	return plugin, nil
 }
 
-// CloneGitRepository returns a repo initialised for url and checked out for ref.
-// ref can be omited to fetch default remote's HEAD
-// fs can be omitted to avoid checking out repository's content
-func CloneGitRepository(url string, ref plumbing.ReferenceName, fs billy.Filesystem) (*git.Repository, error) {
-	if fs != nil {
-		log.Debugf("Cloning %s (%s) into %s ...", url, ref.Short(), fs.Root())
-	} else {
-		log.Debugf("Cloning %s (%s)...", url, ref.Short())
-	}
-
-	repo, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
-		URL:           url,
-		SingleBranch:  true,
-		NoCheckout:    true,
-		Depth:         1,
-		Tags:          git.NoTags,
-		ReferenceName: ref,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return repo, nil
-}
-
-// FetchFromGit returns the plugin found in the git repo pointed by url
+// fetchFromGit returns the plugin found in the git repo pointed by url
 // It also returns the fullpath of the temporary directory where the plugin's repo content is stored
 // The caller should take care of the temporary directory removal
 func FetchFromGit(url string) (plugin *plugins.Plugin, tempDir string, err error) {
 
-	versions, err := FetchVersionsFromGit(url)
+	versions, err := fetchVersionsFromGit(url)
 	if err != nil {
 		return nil, tempDir, fmt.Errorf("Error while retreiving versions: %s", err)
 	}
@@ -140,14 +123,9 @@ func FetchFromGit(url string) (plugin *plugins.Plugin, tempDir string, err error
 		return nil, tempDir, fmt.Errorf("Error while trying to create temporary directory: %s", err)
 	}
 
-	repo, err := CloneGitRepository(url, latest.ReferenceName, osfs.New(tempDir))
-	if err != nil {
-		return nil, tempDir, fmt.Errorf("Error while cloning %s into %s : %s", latest.Short(), tempDir, err)
-	}
-
 	log.Debug("Checking out manifest...")
 
-	plugin, err = FetchManifestFromGit(repo, latest.ReferenceName)
+	plugin, err = fetchManifestFromGit(url, latest.ReferenceName, osfs.New(tempDir))
 	if err != nil {
 		return nil, tempDir, fmt.Errorf("Error while fetching manifest: %s", err)
 	}
