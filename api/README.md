@@ -1,6 +1,6 @@
 # Backend
 
-The main purpose of this part is to serve information and plugins list, configured by the back-office.
+The main purpose of this part is to serve information and plugins list, configured by the backoffice.
 
 ## How to run the backend
 

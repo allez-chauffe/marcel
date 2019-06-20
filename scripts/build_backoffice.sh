@@ -1,4 +1,4 @@
-cd back-office
+cd backoffice
 yarn build
 docker image build -t zenika/marcel-backoffice:dev .
 cd ..
