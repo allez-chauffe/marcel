@@ -37,6 +37,5 @@ for url in ${INSTANCES} ; do
   zone=$(echo "${url}" | sed -e "s,${PATTERN},\1,")
   instance=$(echo "${url}" | sed -e "s,${PATTERN},\2,g")
   echo "install version ${VERSION} on instance ${zone}/${instance}"
-  gcloud compute scp /home/circleci/project/plugins.tar.gz "ubuntu@${instance}:~/" --strict-host-key-checking=no --zone="${zone}"
   gcloud compute ssh "ubuntu@${instance}" --strict-host-key-checking=no --zone="${zone}" -- "./marcel-${VERSION}/deploy.sh"
 done
