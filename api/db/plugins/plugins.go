@@ -54,3 +54,7 @@ func UpsertAll(plugins []Plugin) error {
 		return nil
 	})
 }
+
+func Delete(eltName string) error {
+	return db.Store.Delete(eltName, &Plugin{})
+}

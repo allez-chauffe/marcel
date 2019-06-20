@@ -17,6 +17,9 @@ const list = (state = [], action) => {
     case actions.ADD_PLUGIN_SUCCESS: {
       return [...state, action.payload.plugin]
     }
+    case actions.PLUGIN_DELETION_SUCCESS: {
+      return state.filter(plugin => plugin.eltName !== action.payload.eltName)
+    }
     default:
       return state
   }

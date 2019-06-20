@@ -105,6 +105,7 @@ func (a *App) initializeRouter() {
 	pluginsRouter.HandleFunc("/", plugins.AddHandler).Methods("POST")
 	pluginsRouter.HandleFunc("/{eltName}", plugins.GetHandler).Methods("GET")
 	pluginsRouter.HandleFunc("/{eltName}", plugins.UpdateHandler).Methods("PUT")
+	pluginsRouter.HandleFunc("/{eltName}", plugins.DeleteHandler).Methods("DELETE")
 
 	auth := s.PathPrefix("/auth").Subrouter()
 	auth.HandleFunc("/login", loginHandler).Methods("POST")
