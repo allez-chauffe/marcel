@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>marcel-plugin-simple</title>
+    <meta charset="utf-8" />
+    <script src="./marcel.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <p id="content"></p>
+
+    <script>
+      class Text extends Marcel.Plugin {
+        constructor() {
+          super({
+            defaultProps: {
+              text: '',
+              stylesvar: {},
+            },
+          })
+
+          this.p = document.getElementById('content')
+        }
+
+        render() {
+          const { text, stylesvar } = this.props
+
+          this.p.innerText = text
+
+          // stylesvar is a special property containing the global media theme.
+          // You should use it to have a consistent style accross all the media.
+          if (stylesvar['primary-color']) this.p.style.color = stylesvar['primary-color']
+          if (stylesvar['font-family']) this.p.style.fontFamily = stylesvar['font-family']
+        }
+      }
+
+      Marcel.init(Text)
+
+      // uncomment this line to try the plugin in a browser :
+      // Marcel.changeProps({text: 'Hello wrold !})
+    </script>
+  </body>
+</html>
