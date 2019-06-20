@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"sync"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -13,12 +13,31 @@ import (
 	"github.com/Zenika/marcel/api/auth"
 	"github.com/Zenika/marcel/api/commons"
 	"github.com/Zenika/marcel/api/db/plugins"
+	"github.com/Zenika/marcel/config"
 )
 
-var (
-	pluginsTempDir     string
-	initPluginsTempDir sync.Once
-)
+// Initialize unsures that the plugins directory exists
+func Initialize() {
+	pluginsPath, err := filepath.Abs(config.Config.PluginsPath)
+	if err != nil {
+		log.Fatalf("Error while parsing plugins directory path: %s", err)
+	}
+
+	if stat, err := os.Stat(pluginsPath); err != nil {
+		if os.IsNotExist(err) {
+			if err := os.MkdirAll(config.Config.PluginsPath, os.ModePerm); err != nil {
+				log.Fatalf("Error while trying to create plugins directory '%s': %s", pluginsPath, err)
+			}
+
+			log.Debugf("Plugins directory '%s' created", pluginsPath)
+			return
+		}
+	} else if !stat.IsDir() {
+		log.Fatalf("The plugins path '%s' is not a directory", pluginsPath)
+	}
+
+	log.Debugf("Using plugins directory %s", pluginsPath)
+}
 
 // GetAllHandler gets information of all plugins
 func GetAllHandler(w http.ResponseWriter, r *http.Request) {
