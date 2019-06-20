@@ -1,0 +1,50 @@
+{
+  "name": "marcel-plugin",
+  "version": "1.0.0",
+  "description": "Base utility for making a marcel plugin",
+  "main": "dist/index.js",
+  "repository": "https://github.com/Zenika/marcel/tree/master/node-packages/marcel-plugin",
+  "author": "Valentin Cocaud",
+  "license": "MIT",
+  "scripts": {
+    "build": "babel src -d dist",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-env": "^2.4.1",
+    "babel-eslint": "^10.0.2",
+    "eslint": "^5.16.0"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": "eslint:recommended",
+    "env": {
+      "browser": true,
+      "es6": true
+    }
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "browsers": [
+              ">0.2%",
+              "not dead",
+              "not op_mini all"
+            ]
+          }
+        }
+      ],
+      "stage-0"
+    ],
+    "plugins": [
+      "transform-class-properties",
+      "transform-decorators",
+      "transform-react-constant-elements",
+      "transform-react-inline-elements"
+    ]
+  }
+}
