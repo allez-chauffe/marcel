@@ -22,10 +22,19 @@ const list = (state = [], action) => {
   }
 }
 
-const updating = (state = false, action) => {
-  if (action.type === actions.UPDATE_PLUGIN_REQUESTED) return true
-  if (action.type === actions.UPDATE_PLUGIN_LOADED) return false
-  return state
+const updating = (state = null, action) => {
+  switch (action.type) {
+    case actions.UPDATE_PLUGIN_REQUESTED:
+    case actions.PLUGIN_DELETION_REQUESTED: {
+      return action.payload.eltName
+    }
+    case actions.UPDATE_PLUGIN_LOADED:
+    case actions.PLUGIN_DELETION_LOADED: {
+      return null
+    }
+    default:
+      return state
+  }
 }
 
 const adding = (state = false, action) => {
