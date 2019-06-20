@@ -48,6 +48,7 @@ const backend = {
   deleteDashboard: dashboardId => del(`medias/${dashboardId}/`),
 
   updatePlugin: pluginEltName => put(`plugins/${pluginEltName}`),
+  addPlugin: url => post(`plugins/`, { url }),
 }
 
 export default backend

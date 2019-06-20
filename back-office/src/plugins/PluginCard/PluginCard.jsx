@@ -27,7 +27,7 @@ const UpdateButton = ({ update, updating }) => (
 )
 
 const PluginCard = ({ plugin, update, updating }) => (
-  <Card>
+  <Card clickable={false}>
     <CardMedia aspectRatio="wide" image="https://placeimg.com/800/450/nature" />
     <CardTitle title={<PluginTitle plugin={plugin} updating={updating} />} />
     <CardText>{plugin.description}</CardText>

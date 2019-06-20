@@ -1,6 +1,11 @@
 .PluginsScreen {
   width: 80%;
   margin: auto;
+  padding-top: 20px;
+}
+
+.PluginsScreen .CardGrid {
+  height: calc(100vh - 75px - 64px - 20px);
 }
 
 .PluginsScreen .PluginVersion {
