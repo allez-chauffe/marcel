@@ -19,7 +19,7 @@ const AddPlugin = ({ add, adding }) => {
         label="Ajouter un plugin"
         onChange={value => setUrl(value)}
         value={url}
-        hint="https://github.com/Zenika/marcel-plugin-text"
+        hint="https://github.com/Zenika/marcel-plugin-helloworld"
         name="pluginUrl"
         className="UrlInput"
       />
