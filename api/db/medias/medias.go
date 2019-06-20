@@ -40,7 +40,7 @@ func nextID(tx *bolt.Tx) (int, error) {
 		return lastMedia.ID + 1, nil
 	}
 
-	return 0, nil
+	return 1, nil
 }
 
 func Insert(m *Media) error {
