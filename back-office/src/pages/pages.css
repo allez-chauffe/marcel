@@ -1,4 +1,4 @@
-.MediaListPage {
+.CardGrid {
   padding: 1em;
   width: 100%;
   height: calc(100% - 2em);
@@ -7,4 +7,9 @@
   justify-content: center;
   flex-wrap: wrap;
   overflow-y: auto;
+}
+
+.loader {
+  margin-top: 40vh;
+  width: 100%;
 }

@@ -1,4 +1,5 @@
-import { values, mapValues, pick, keyBy } from 'lodash'
+import { values, mapValues, keyBy } from 'lodash'
+import semver from 'semver'
 import store from '../store'
 import fetcher from './fetcher'
 
@@ -30,7 +31,8 @@ const backend = {
       .then(res => res.json())
       .then(plugins =>
         plugins.map(plugin => ({
-          ...pick(plugin, 'name', 'description', 'eltName'),
+          ...plugin,
+          version: plugin.versions.sort(semver.compare).reverse()[0],
           props: keyBy(plugin.frontend.props, 'name'),
         })),
       ),
@@ -44,6 +46,8 @@ const backend = {
   deactivateDashboard: dashboardId => get(`medias/${dashboardId}/deactivate`),
 
   deleteDashboard: dashboardId => del(`medias/${dashboardId}/`),
+
+  updatePlugin: pluginEltName => put(`plugins/${pluginEltName}`),
 }
 
 export default backend

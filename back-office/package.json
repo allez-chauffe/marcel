@@ -6,6 +6,7 @@
   "proxy": "http://localhost:8090",
   "dependencies": {
     "@reach/router": "^1.2.1",
+    "classnames": "^2.2.6",
     "hoc-react-loader": "^6.2.0",
     "immutadot": "^1.0.0",
     "immutadot-lodash": "^1.0.0",
@@ -26,6 +27,7 @@
     "redux-logger": "^3.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
+    "semver": "^6.1.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

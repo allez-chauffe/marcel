@@ -6,7 +6,7 @@ import './MediaListPage.css'
 class DashboardScreen extends React.Component {
   render() {
     return (
-      <div className="MediaListPage">
+      <div className="MediaListPage CardGrid">
         <AddMediaCard />
         {this.props.medias.map(media => (
           <MediaCard key={media.id} dashboard={media} />
