@@ -3,7 +3,11 @@
 
   const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
-  const init = PluginImplementation => new PluginImplementation()
+  const init = PluginImplementation => {
+    const instance = new PluginImplementation()
+    instance.render()
+    return instance
+  }
 
   const changeProps = (newProps, prevProps) => {
     dispatchEvent(

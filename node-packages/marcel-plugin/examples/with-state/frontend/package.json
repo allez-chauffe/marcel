@@ -5,5 +5,11 @@
   "license": "MIT",
   "dependencies": {
     "marcel-plugin": "^1.0.0"
+  },
+  "devDependencies": {
+    "serve": "^11.0.2"
+  },
+  "scripts": {
+    "start": "serve -s"
   }
 }
