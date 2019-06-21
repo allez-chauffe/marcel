@@ -3,7 +3,7 @@
   <head>
     <title>marcel-plugin-simple</title>
     <meta charset="utf-8" />
-    <script src="./marcel.js"></script>
+    <script src="./node_modules/marcel-plugin/dist/index.js"></script>
     <style>
       body {
         margin: 0;
@@ -32,7 +32,7 @@
         }
 
         render() {
-          const { text, stylesvar } = this.props
+          const { text, stylesvar = {} } = this.props
 
           this.p.innerText = text
 

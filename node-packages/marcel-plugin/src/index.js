@@ -73,5 +73,5 @@
     render() {}
   }
 
-  window.Marcel = { Plugin, mount: init, changeProps }
+  window.Marcel = { Plugin, init, changeProps }
 })()
