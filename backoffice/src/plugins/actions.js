@@ -20,7 +20,7 @@ export const updatePlugin = pluginEltName => async dispatch => {
   dispatch({ type: actions.UPDATE_PLUGIN_REQUESTED })
   try {
     const updatedPlugin = await backend.updatePlugin(pluginEltName)
-    dispatch(pluginUpdateSuccess(await updatedPlugin.json()))
+    dispatch(pluginUpdateSuccess(updatedPlugin))
   } catch (err) {
     console.error(err)
     toastr.error('Mise à jour du plugin', 'Erreur durant la mise à jour')
@@ -38,7 +38,7 @@ export const addPlugin = pluginUrl => async dispatch => {
   dispatch({ type: actions.ADD_PLUGIN_REQUESTED })
   try {
     const addedPlugin = await backend.addPlugin(pluginUrl)
-    dispatch(addPluginSuccess(await addedPlugin.json()))
+    dispatch(addPluginSuccess(addedPlugin))
   } catch (err) {
     console.error(err)
     let message = "Erreur durant l'ajout du plugin"
