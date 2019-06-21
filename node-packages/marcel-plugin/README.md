@@ -1,18 +1,18 @@
 # Plugins
 
 A plugin is a widget that can be added to a marcel media.
-A plugin is basicly a web site served by marcel and displayed in an iframe.
+Basically it is just a web site served by marcel and displayed in an iframe.
 
 **:warning: Some parts of this README might be outdated**
 
-# Create your own plugin
+# Create a plugin
 
 ## Setup
 
-1. Create a directory for your plugin
+1. Create a directory for the plugin
 
 ```bash
-mkdir marcel-plugin-<your plugin name> && cd marcel-plugin-<your plugin name>
+mkdir marcel-plugin-<plugin name> && cd marcel-plugin-<plugin name>
 ```
 
 2. Create a directory name `frontend`
@@ -21,7 +21,7 @@ mkdir marcel-plugin-<your plugin name> && cd marcel-plugin-<your plugin name>
 mkdir frontend && cd frontend
 ```
 
-3. Create a node module. Don't forget to give a name to your module, the default will be `frontend`.
+3. Create a node module. Don't forget to give a name to the module, the default will be `frontend`.
 
 ```bash
 # with npm
@@ -42,23 +42,22 @@ yarn add marcel-plugin
 5. Create a file `index.html`
 
 The `frontend` directory will be served by marcel as a standard web site.
-Due to this, you can put all the html, js and other static file that you need in this directory.
+Hence the html, js and other static file must be put in this directory.
 
-The plugin will be an iframe displaying `index.html`.
+The plugin will be displayed in an iframe with `index.html` as `src`.
 
-You can find a plugin example [here](./example/simple)
-For an example of a simple plugin, you can look at [marcel-plugin-text](https://github.com/EmrysMyrddin/marcel-plugin-text).
+A plugin example is available [here](./example/simple)
+[marcel-plugin-text](https://github.com/EmrysMyrddin/marcel-plugin-text) is an example of a very simple plugin.
 
 ## Structure of the frontend
 
-The first thing you will need is `marcel-plugin` which is a small script that will help you handle the interaction with marcel.
-Include it in your HTML:
+The following script must be added in `index.html` in order to the interact with marcel.
 
 ```html
 <script src="./nodes_modules/marcel-plugin/dist/index.js"></script>
 ```
 
-Then, you should create a new class that inherit `Marcel.Plugin`:
+Then, in a another script, a class that inherits `Marcel.Plugin` must be created:
 
 ```javascript
 class MyPlugin extends Marcel.Plugin {
@@ -66,7 +65,7 @@ class MyPlugin extends Marcel.Plugin {
 }
 ```
 
-This class is the representaton of your plugin. Some methods can be implemented to declare what your plugin do.
+This class is the representaton of the plugin's runtime. Some methods might be implemented in order to declare what the plugin does.
 
 ### The `render` method
 
@@ -78,30 +77,30 @@ class MyPlugin extends Marcel.Plugin {
 }
 ```
 
-This function is called every time marcel needs to render your plugin.
-As the name of the function imply, you should do everything that involve rendering your plugin in this function.
-The object `this.props` will contains every properties entered by the user in the backoffice.
+This function is called every time marcel renders the plugin.
+As its name implies, this function is responsible for rendering the plugin.
+The object `this.props` will contain every properties entered by the user in the backoffice.
 
 ### The `propsDidChange` method:
 
 ```javascript
 class MyPlugin extends Marcel.Plugin {
   propsDidChange(prevProps) {
-    const { props1, props2 } = this.props
-    if (props1 !== prevProps.props1) {
+    const { prop1, prop2 } = this.props
+    if (prop1 !== prevProps.prop1) {
       this.updateMyPluginData()
     }
   }
 }
 ```
 
-This function should be used to make any sides effect dependending on props.
+This function should be used for any sides effect dependending on the props.
 For example, if you need to fetch some data, you should make you API calls here.
 
 This function will be called after the `render()` function.
 
-You can access the current properties in `this.props` like in the `render` method, but you have also access to previous properties in the `prevProps` argument.
-This can be useful only trigger expensive API call if some properties did changed.
+The current properties are accessible in `this.props` (like in the `render` method), and the previous properties are accessible in the `prevProps` argument.
+`prevProps` might be used to avoid expensive API calls if the properties didn't change.
 
 ### Initialize the plugin
 
@@ -111,7 +110,7 @@ Finally, you should initialize your plugin:
 Marcel.init(MyPlugin)
 ```
 
-## Trying out your plugin
+## Testing the plugin
 
 To test your plugin outside marcel, you can juste serve the `frontend` directory with any http web server.
 
