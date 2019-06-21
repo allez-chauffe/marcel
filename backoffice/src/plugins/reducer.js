@@ -17,20 +17,23 @@ const list = (state = [], action) => {
     case actions.ADD_PLUGIN_SUCCESS: {
       return [...state, action.payload.plugin]
     }
+    case actions.PLUGIN_DELETION_SUCCESS: {
+      return state.filter(plugin => plugin.eltName !== action.payload.eltName)
+    }
     default:
       return state
   }
 }
 
-const updating = (state = null, action) => {
+const updating = (state = {}, action) => {
   switch (action.type) {
     case actions.UPDATE_PLUGIN_REQUESTED:
     case actions.PLUGIN_DELETION_REQUESTED: {
-      return action.payload.eltName
+      return { ...state, [action.payload.eltName]: true }
     }
     case actions.UPDATE_PLUGIN_LOADED:
     case actions.PLUGIN_DELETION_LOADED: {
-      return null
+      return { ...state, [action.payload.eltName]: false }
     }
     default:
       return state

@@ -78,6 +78,48 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteJsonResponse(w, plugin)
 }
 
+func DeleteHandler(w http.ResponseWriter, r *http.Request) {
+	if !auth.CheckPermissions(r, nil, "user", "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
+
+	vars := mux.Vars(r)
+	eltName := vars["eltName"]
+
+	log.Debugf("Plugin deletion requested: %s", eltName)
+
+	plugin, err := plugins.Get(eltName)
+	if err != nil {
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if plugin == nil {
+		commons.WriteResponse(w, http.StatusNotFound, "")
+		return
+	}
+
+	if err := os.RemoveAll(plugin.GetDirectory()); err != nil {
+		if os.IsNotExist(err) {
+			log.Warnf("The %s plugin's folder doesn't exists. Ignoring it.", plugin.EltName)
+		} else {
+			log.Errorf("Error while removing %s plugin's folder %s: %s", plugin.EltName, plugin.GetDirectory(), err.Error())
+			commons.WriteResponse(w, http.StatusInternalServerError, "Error while removing plugin's files")
+			return
+		}
+	}
+
+	if err := plugins.Delete(eltName); err != nil {
+		log.Errorf("Error while removing %s plugin from database: %s", plugin.EltName, err.Error())
+		commons.WriteResponse(w, http.StatusInternalServerError, "Error while removing plugin from database")
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+
+	log.Infof("Plugin deleted : %s", plugin.EltName)
+}
+
 type AddPluginBody struct {
 	URL string `json:"url"`
 }

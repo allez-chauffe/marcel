@@ -22,17 +22,16 @@ const PluginTitle = ({ plugin, updating }) => (
   </>
 )
 
-const UpdateButton = ({ update, updating }) => (
-  <Button icon="update" label="mettre à jour" disabled={updating} onClick={update} />
-)
-
-const PluginCard = ({ plugin, update, updating }) => (
+const PluginCard = ({ plugin, update, updating, deletePlugin }) => (
   <Card clickable={false}>
     <CardMedia aspectRatio="wide" image="https://placeimg.com/800/450/nature" />
     <CardTitle title={<PluginTitle plugin={plugin} updating={updating} />} />
     <CardText>{plugin.description}</CardText>
     <CardActions className="buttons">
-      {plugin.url && <UpdateButton update={update} updating={updating} />}
+      {plugin.url && (
+        <Button icon="update" label="mettre à jour" disabled={updating} onClick={update} />
+      )}
+      <Button icon="delete" label="Supprimer" disabled={updating} onClick={deletePlugin} />
     </CardActions>
   </Card>
 )
