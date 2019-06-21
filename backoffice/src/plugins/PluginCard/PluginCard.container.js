@@ -4,7 +4,7 @@ import { pluginUpdating } from '../selectors'
 import PluginCard from './PluginCard'
 
 const mapState = (state, { plugin: { eltName } }) => ({
-  updating: pluginUpdating(state) === eltName,
+  updating: pluginUpdating(eltName, state),
 })
 
 const mapDispatch = (dispatch, { plugin: { eltName } }) => ({

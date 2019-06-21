@@ -25,15 +25,15 @@ const list = (state = [], action) => {
   }
 }
 
-const updating = (state = null, action) => {
+const updating = (state = {}, action) => {
   switch (action.type) {
     case actions.UPDATE_PLUGIN_REQUESTED:
     case actions.PLUGIN_DELETION_REQUESTED: {
-      return action.payload.eltName
+      return { ...state, [action.payload.eltName]: true }
     }
     case actions.UPDATE_PLUGIN_LOADED:
     case actions.PLUGIN_DELETION_LOADED: {
-      return null
+      return { ...state, [action.payload.eltName]: false }
     }
     default:
       return state
