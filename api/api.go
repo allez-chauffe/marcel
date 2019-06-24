@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/marcel/api/auth"
@@ -21,7 +22,7 @@ import (
 )
 
 type App struct {
-	Router http.Handler
+	handler http.Handler
 
 	mediaService   *medias.Service
 	clientsService *clients.Service
@@ -43,13 +44,13 @@ func (a *App) Initialize() {
 }
 
 func (a *App) Run() {
-	log.Infof("Starting backend server on port %d...", config.Config.Port)
+	log.Infof("Starting API server on port %d...", config.Config.Port)
 
 	if !config.Config.Auth.Secure {
 		log.Warnln("Secure mode is disabled")
 	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), a.Router))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), a.handler))
 }
 
 func (a *App) waitSignal() {
@@ -71,7 +72,16 @@ func (a *App) waitSignal() {
 
 func (a *App) initializeRouter() {
 	r := mux.NewRouter()
-	a.Router = r
+	a.handler = r
+
+	if config.Config.CORS {
+		a.handler = cors.New(cors.Options{
+			AllowOriginFunc:  func(origin string) bool { return true },
+			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+			AllowedHeaders:   []string{"*"},
+			AllowCredentials: true,
+		}).Handler(r)
+	}
 
 	r.Use(auth.Middleware)
 

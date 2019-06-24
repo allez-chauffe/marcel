@@ -9,12 +9,14 @@ import (
 // Config is the root configuration object
 var Config = struct {
 	Port        uint
+	CORS        bool
 	LogLevel    log.Level
 	DBFile      string
 	PluginsPath string
 	Auth        auth
 }{
 	Port:        8090,
+	CORS:        false,
 	LogLevel:    log.InfoLevel,
 	DBFile:      "marcel.db",
 	PluginsPath: "plugins",

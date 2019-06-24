@@ -15,6 +15,9 @@ func init() {
 	apiCmd.Flags().UintP("port", "p", config.Config.Port, "Listening port")
 	viper.BindPFlag("port", apiCmd.Flags().Lookup("port"))
 
+	apiCmd.Flags().Bool("cors", config.Config.CORS, "Enable CORS for all origins")
+	viper.BindPFlag("cors", apiCmd.Flags().Lookup("cors"))
+
 	apiCmd.Flags().String("dbFile", config.Config.DBFile, "Database file name")
 	viper.BindPFlag("dbFile", apiCmd.Flags().Lookup("dbFile"))
 
