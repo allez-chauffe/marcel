@@ -15,10 +15,11 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/Zenika/marcel/config"
+	"github.com/Zenika/marcel/httputil"
 )
 
 var (
-	fileHandler = http.FileServer(&notFoundToIndex{&templater{packr.NewBox("./build/")}})
+	fileHandler = http.FileServer(httputil.NewNotFoundRewriter(&templater{packr.NewBox("./build/")}, "/index.html"))
 
 	backofficeConfig = struct {
 		BackendURI  string `json:"backendURI"`
@@ -48,20 +49,6 @@ func configHandler(res http.ResponseWriter, req *http.Request) {
 	if err := json.NewEncoder(res).Encode(backofficeConfig); err != nil {
 		panic(err)
 	}
-}
-
-type notFoundToIndex struct {
-	http.FileSystem
-}
-
-var _ http.FileSystem = (*notFoundToIndex)(nil)
-
-func (fs *notFoundToIndex) Open(path string) (http.File, error) {
-	f, err := fs.FileSystem.Open(path)
-	if err != nil && os.IsNotExist(err) {
-		return fs.FileSystem.Open("/index.html")
-	}
-	return f, err
 }
 
 type templater struct {
