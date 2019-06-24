@@ -1,6 +1,6 @@
 const config = {
   loadConfig: () =>
-    fetch('config').then(response => {
+    fetch(window._marcelBackofficeConfigURL).then(response => {
       if (response.status !== 200) throw response
       return response.json()
     }),
