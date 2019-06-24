@@ -18,40 +18,40 @@ type templater struct {
 var _ http.FileSystem = (*templater)(nil)
 
 func (t *templater) Open(path string) (http.File, error) {
-	// FIXME add a cache
-
-	if t.includes[path] {
-		f, err := t.fs.Open(path)
-		if err != nil {
-			return nil, err
-		}
-		defer f.Close()
-
-		var buf = new(bytes.Buffer)
-		if _, err = io.Copy(buf, f); err != nil {
-			return nil, err
-		}
-
-		tmpl, err := template.New(path).Parse(string(buf.Bytes()))
-		if err != nil {
-			return nil, err
-		}
-
-		buf.Reset()
-
-		if err = tmpl.Execute(buf, t.data); err != nil {
-			return nil, err
-		}
-
-		info, err := f.Stat()
-		if err != nil {
-			return nil, err
-		}
-
-		return newBfile(buf.Bytes(), info), nil
+	if !t.includes[path] {
+		return t.fs.Open(path)
 	}
 
-	return t.fs.Open(path)
+	// FIXME add a cache
+
+	f, err := t.fs.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	var buf = new(bytes.Buffer)
+	if _, err = io.Copy(buf, f); err != nil {
+		return nil, err
+	}
+
+	tmpl, err := template.New(path).Parse(string(buf.Bytes()))
+	if err != nil {
+		return nil, err
+	}
+
+	buf.Reset()
+
+	if err = tmpl.Execute(buf, t.data); err != nil {
+		return nil, err
+	}
+
+	info, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	return newBfile(buf.Bytes(), info), nil
 }
 
 func NewTemplater(fs http.FileSystem, includes []string, data interface{}) http.FileSystem {
