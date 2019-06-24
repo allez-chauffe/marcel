@@ -105,6 +105,4 @@ fs.writeFileSync(path.join(frontendPath, 'index.html'), pluginIndex)
 console.info('Installing dependencies...')
 execSync(`cd ${pluginPath} && yarn && cd ..`)
 
-console.info(
-  `The plugin has successfully been generated. You can now go to the ${eltName} folder and begin to make awesome things !`,
-)
+console.info(`The plugin has successfully been generated. You can now go to the ${eltName} folder and begin to make awesome things !`)
