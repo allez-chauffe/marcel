@@ -47,10 +47,9 @@ const files = [
     content: ({ eltName }) => `{
   "name": "${eltName}",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
-  "dependencies": {
-    "marcel-plugin": "^1.0.0"
+  "scripts": {
+    "start": "serve -s"
   }
 }
 `
@@ -87,7 +86,7 @@ const files = [
         render() {
           const { firstName, stylesvar = {} } = this.props
 
-          this.root.innerText = "Hello \`\${firstName} !"
+          this.root.innerText = \`Hello \${firstName} !\`
 
           // stylesvar is a special property containing the global media theme.
           // You should use it to have a consistent style accross all the media.
@@ -109,6 +108,8 @@ const files = [
 
 const commands = [
   { command: 'yarn', cwd: 'frontend' },
+  { command: 'yarn add marcel-plugin', cwd: 'frontend' },
+  { command: 'yarn add -D serve', cwd: 'frontend' },
 ]
 
 if (process.argv.length < 3) fatal('A plugin name should be given : $ yarn create marcel-plugin my-plugin')
