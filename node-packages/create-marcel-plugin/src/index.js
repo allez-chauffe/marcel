@@ -1,38 +1,30 @@
+#!/usr/bin/env node
+
 const fs = require('fs')
 const path = require('path')
-const execSync = require('child_process').execSync
+const { execSync } = require('child_process')
 const toCamelCase = require('to-camel-case')
-
-const [, , eltName] = process.argv
 
 const fatal = (...message) => {
   console.error(...message)
   process.exit(-1)
 }
 
-if (!eltName) fatal('A plugin name should be given : $ yarn create marcel-plugin my-plugin')
+const getPluginInfo = eltName => {
+  const [firstChar, ...endOfName] = toCamelCase(eltName)
+  const name = [firstChar.toUpperCase(), ...endOfName].join('')
 
-const [firstChar, ...endOfName] = toCamelCase(eltName)
-const name = [firstChar.toUpperCase(), ...endOfName].join('')
-const pluginPath = path.resolve(eltName)
-const frontendPath = path.join(pluginPath, 'frontend')
-
-if (fs.existsSync(pluginPath)) fatal(`Can't create plugin : ${pluginPath} already exists`)
-
-fs.mkdirSync(pluginPath)
-fs.mkdirSync(frontendPath)
-
-const packageDescriptor = `{
-  "name": "${eltName}",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
+  return {
+    eltName,
+    name,
+    path: path.resolve(eltName),
   }
 }
-`
 
-const pluginDescriptor = `{
+const files = [
+  {
+    path: 'marcel.json',
+    content: ({ name, eltName }) => `{
   "name": "${name}",
   "description": "",
   "eltName": "${eltName}",
@@ -49,8 +41,23 @@ const pluginDescriptor = `{
   }
 }
 `
-
-const pluginIndex = `<!DOCTYPE html>
+  },
+  {
+    path: 'frontend/package.json',
+    content: ({ eltName }) => `{
+  "name": "${eltName}",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "marcel-plugin": "^1.0.0"
+  }
+}
+`
+  },
+  {
+    path: 'frontend/index.html',
+    content: ({ name, eltName }) => `<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>${eltName}</title>
@@ -97,12 +104,33 @@ const pluginIndex = `<!DOCTYPE html>
   </body>
 </html>
 `
+  },
+]
 
-fs.writeFileSync(path.join(pluginPath, 'package.json'), packageDescriptor)
-fs.writeFileSync(path.join(pluginPath, 'marcel.json'), pluginDescriptor)
-fs.writeFileSync(path.join(frontendPath, 'index.html'), pluginIndex)
+const commands = [
+  { command: 'yarn', cwd: 'frontend' },
+]
 
-console.info('Installing dependencies...')
-execSync(`cd ${pluginPath} && yarn && cd ..`)
+if (process.argv.length < 3) fatal('A plugin name should be given : $ yarn create marcel-plugin my-plugin')
 
-console.info(`The plugin has successfully been generated. You can now go to the ${eltName} folder and begin to make awesome things !`)
+const plugin = getPluginInfo(process.argv[2])
+
+// Initialize directory
+if (fs.existsSync(plugin.path)) fatal(`Can't create plugin : directory ${plugin.path} already exists`)
+fs.mkdirSync(plugin.path)
+
+// Write files
+files.forEach((file => {
+  const filePath = path.resolve(plugin.path, file.path)
+  fs.mkdirSync(path.dirname(filePath), { recursive: true })
+  fs.writeFileSync(filePath, file.content(plugin))
+}))
+
+// Run commands
+commands.forEach(({ command, cwd })=> {
+  execSync(command, {
+    cwd: cwd ? path.resolve(plugin.path, cwd) : plugin.path,
+  })
+})
+
+console.info(`The plugin has successfully been generated. You can now go to the ${plugin.eltName} folder and start making awesome things !`)
