@@ -1,2 +1,3 @@
-./examples
-./.gitignore
+.gitignore
+examples
+webpack.config.js
