@@ -7,15 +7,19 @@ import (
 )
 
 func init() {
+	var basePath = "/"
+
+	var backofficeCmd = &cobra.Command{
+		Use:   "backoffice",
+		Short: "Starts Marcel's backoffice server",
+		Args:  cobra.NoArgs,
+
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return backoffice.Start(basePath)
+		},
+	}
+
+	backofficeCmd.Flags().StringVar(&basePath, "basePath", basePath, "Base path")
+
 	Marcel.AddCommand(backofficeCmd)
-}
-
-var backofficeCmd = &cobra.Command{
-	Use:   "backoffice",
-	Short: "Starts Marcel's backoffice server",
-	Args:  cobra.NoArgs,
-
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return backoffice.Start("/test/")
-	},
 }
