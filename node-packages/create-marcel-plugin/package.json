@@ -1,0 +1,30 @@
+{
+  "name": "create-marcel-plugin",
+  "version": "1.0.0",
+  "description": "The marcel-plugin generator",
+  "bin": {
+    "create-marcel-plugin": "./src/index.js"
+  },
+  "repository": "https://github.com/Zenika/marcel",
+  "author": "Valentin Cocaud",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "rules": {
+      "no-console": ["error", { "allow": ["info", "warn", "error"] }]
+    }
+  },
+  "dependencies": {
+    "to-camel-case": "^1.0.0"
+  }
+}
