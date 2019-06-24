@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>marcel-plugin-with-state</title>
+    <script src="./node_modules/marcel-plugin/dist/index.js"></script>
+  </head>
+
+  <body>
+    <div id="time">
+      <span id="hour"></span>
+      <span>:</span>
+      <span id="minutes"></span>
+    </div>
+
+    <script>
+      const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1)
+
+      const getTime = lastMinute => {
+        const now = new Date()
+
+        if (lastMinute === now.getMinutes()) return {}
+
+        return {
+          minutes: String(now.getMinutes()).padStart(2, '0'),
+          hour: String(now.getHours()).padStart(2, '0'),
+          lastMinute: now.getMinutes(),
+        }
+      }
+
+      class Clock extends Marcel.Plugin {
+        constructor() {
+          super({
+            defaultState: getTime(),
+          })
+          this.time = document.getElementById('time')
+          this.hour = document.getElementById('hour')
+          this.minutes = document.getElementById('minutes')
+
+          // run the clock update every 10 seconds
+          setInterval(() => this.setState(getTime(this.state.lastMinute)), 10 * 1000)
+        }
+
+        render() {
+          const { stylesvar = {} } = this.props
+
+          this.hour.innerText = this.state.hour
+          this.minutes.innerText = this.state.minutes
+
+          this.time.style.background = stylesvar['primary-color'] || 'none'
+          this.time.style.color = stylesvar['primary-color'] || 'black'
+        }
+      }
+
+      Marcel.init(Clock)
+
+      // uncomment this line to try the plugin in a browser :
+      // Marcel.changeProps({})
+    </script>
+  </body>
+</html>

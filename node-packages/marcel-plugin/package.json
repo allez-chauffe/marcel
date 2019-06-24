@@ -1,0 +1,53 @@
+{
+  "name": "marcel-plugin",
+  "version": "1.0.0",
+  "description": "Base utility for making a marcel plugin",
+  "main": "dist/index.js",
+  "repository": "https://github.com/Zenika/marcel/tree/master/node-packages/marcel-plugin",
+  "author": "Valentin Cocaud",
+  "license": "MIT",
+  "scripts": {
+    "build": "NODE_ENV=production webpack",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "babel-eslint": "^10.0.2",
+    "babel-loader": "^8.0.6",
+    "babel-preset-react-app": "^9.0.0",
+    "eslint": "^5.16.0",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.4"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": "eslint:recommended",
+    "env": {
+      "browser": true,
+      "es6": true
+    }
+  },
+  "babel": {
+    "presets": [
+      "react-app",
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "browsers": [
+              ">0.2%",
+              "not dead",
+              "not op_mini all"
+            ]
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
+    ]
+  }
+}

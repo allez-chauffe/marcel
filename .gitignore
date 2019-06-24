@@ -11,6 +11,7 @@ gen### Go template
 # User-specific stuff:
 .idea/
 .vscode/
+yarn-error.log
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

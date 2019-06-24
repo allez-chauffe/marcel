@@ -1,0 +1,9 @@
+{
+  "name": "Clock",
+  "description": "A simple plugin which display a digital clock",
+  "eltName": "marcel-plugin-clock",
+  "icon": "picture_in_picture_alt",
+  "frontend": {
+    "props": []
+  }
+}
