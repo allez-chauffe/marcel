@@ -3,15 +3,16 @@ package config
 import "time"
 
 type api struct {
-	Port        uint
-	CORS        bool
-	DBFile      string
-	PluginsPath string
-	Auth        auth
+	Port       uint
+	BasePath   string
+	CORS       bool
+	DBFile     string
+	PluginsDir string
+	Auth       auth
 }
 
 type auth struct {
 	Secure            bool
-	AuthExpiration    time.Duration
+	Expiration        time.Duration
 	RefreshExpiration time.Duration
 }

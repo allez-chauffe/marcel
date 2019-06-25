@@ -12,74 +12,70 @@ import (
 )
 
 func init() {
-	apiCmd.Flags().UintP("port", "p", config.Config.API.Port, "Listening port")
-	viper.BindPFlag("port", apiCmd.Flags().Lookup("port"))
+	var apiConfig = viper.New()
 
-	apiCmd.Flags().Bool("cors", config.Config.API.CORS, "Enable CORS for all origins")
-	viper.BindPFlag("cors", apiCmd.Flags().Lookup("cors"))
+	var apiCmd = &cobra.Command{
+		Use:   "api",
+		Short: "Starts marcel's api server",
+		Args:  cobra.NoArgs,
 
-	apiCmd.Flags().String("dbFile", config.Config.API.DBFile, "Database file name")
-	viper.BindPFlag("dbFile", apiCmd.Flags().Lookup("dbFile"))
+		PreRun: func(cmd *cobra.Command, args []string) {
+			log.SetOutput(os.Stdout)
+			config.Init(apiConfig, configFile)
+			setLogLevel()
+			config.Debug()
+		},
 
-	apiCmd.Flags().String("pluginsPath", config.Config.API.PluginsPath, "Plugins directory")
-	viper.BindPFlag("pluginsPath", apiCmd.Flags().Lookup("pluginsPath"))
+		Run: func(cmd *cobra.Command, args []string) {
+			a := api.New()
+			a.Initialize()
+			a.Start()
+		},
+	}
 
-	apiCmd.Flags().Bool("secure", config.Config.API.Auth.Secure, "Use secured cookies")
-	viper.BindPFlag("auth.secure", apiCmd.Flags().Lookup("secure"))
+	var flags = apiCmd.Flags()
 
-	apiCmd.Flags().Duration("authExpiration", config.Config.API.Auth.AuthExpiration, "Authentication token expiration")
-	viper.BindPFlag("auth.authExpiration", apiCmd.Flags().Lookup("authExpiration"))
+	// FIXME Use a flagSet to mutualize common flags with standalone
 
-	apiCmd.Flags().Duration("refreshExpiration", config.Config.API.Auth.RefreshExpiration, "Refresh token expiration")
-	viper.BindPFlag("auth.refreshExpiration", apiCmd.Flags().Lookup("refreshExpiration"))
+	flags.UintP("port", "p", config.Config.API.Port, "Listening port")
+	if err := apiConfig.BindPFlag("api.port", flags.Lookup("port")); err != nil {
+		panic(err)
+	}
+
+	flags.String("basePath", config.Config.API.BasePath, "Base path")
+	if err := apiConfig.BindPFlag("api.basePath", flags.Lookup("basePath")); err != nil {
+		panic(err)
+	}
+
+	flags.Bool("cors", config.Config.API.CORS, "Enable CORS (all origins)")
+	if err := apiConfig.BindPFlag("api.cors", flags.Lookup("cors")); err != nil {
+		panic(err)
+	}
+
+	flags.String("dbFile", config.Config.API.DBFile, "Database file")
+	if err := apiConfig.BindPFlag("api.dbFile", flags.Lookup("dbFile")); err != nil {
+		panic(err)
+	}
+
+	flags.String("pluginsDir", config.Config.API.PluginsDir, "Plugins directory")
+	if err := apiConfig.BindPFlag("api.pluginsDir", flags.Lookup("pluginsDir")); err != nil {
+		panic(err)
+	}
+
+	flags.Bool("secure", config.Config.API.Auth.Secure, "Enable secure cookies")
+	if err := apiConfig.BindPFlag("api.auth.secure", flags.Lookup("secure")); err != nil {
+		panic(err)
+	}
+
+	flags.Duration("authExpiration", config.Config.API.Auth.Expiration, "Authentication token expiration")
+	if err := apiConfig.BindPFlag("api.auth.expiration", flags.Lookup("authExpiration")); err != nil {
+		panic(err)
+	}
+
+	flags.Duration("refreshExpiration", config.Config.API.Auth.RefreshExpiration, "Refresh token expiration")
+	if err := apiConfig.BindPFlag("api.auth.refreshExpiration", flags.Lookup("refreshExpiration")); err != nil {
+		panic(err)
+	}
 
 	Marcel.AddCommand(apiCmd)
-}
-
-var apiCmd = &cobra.Command{
-	Use:   "api",
-	Short: "Starts marcel's api server",
-	Args:  cobra.NoArgs,
-
-	PreRun: func(cmd *cobra.Command, args []string) {
-		log.SetOutput(os.Stdout)
-		config.Init(configFile)
-		setLogLevel()
-		debugConfig()
-	},
-
-	Run: func(cmd *cobra.Command, args []string) {
-		a := new(api.App)
-		a.Initialize()
-		a.Run()
-	},
-}
-
-// LogLevel implements a pflag.Value with logrus.Level
-type LogLevel log.Level
-
-func (l *LogLevel) String() string {
-	return log.Level(*l).String()
-}
-
-func (l *LogLevel) Set(s string) error {
-	v, err := log.ParseLevel(s)
-	if err != nil {
-		return err
-	}
-	*l = LogLevel(v)
-	return nil
-}
-
-func (l *LogLevel) Type() string {
-	return "log.Level"
-}
-
-func setLogLevel() {
-	log.SetLevel(config.Config.LogLevel)
-	log.Infof("Log level set to %s", config.Config.LogLevel)
-}
-
-func debugConfig() {
-	log.Debugf("Config: %+v", config.Config.API)
 }

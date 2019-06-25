@@ -14,7 +14,7 @@ import (
 var configFile string
 
 func init() {
-	Marcel.PersistentFlags().Var((*LogLevel)(&config.Config.LogLevel), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
+	Marcel.PersistentFlags().Var((*logLevel)(&config.Config.LogLevel), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
 	viper.BindPFlag("logLevel", Marcel.PersistentFlags().Lookup("logLevel"))
 
 	Marcel.PersistentFlags().StringVarP(&configFile, "configFile", "c", "", fmt.Sprintf("Config file (default /etc/marcel/config.xxx or ./config.xxx, supports %s)", strings.Join(viper.SupportedExts, " ")))

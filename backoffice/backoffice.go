@@ -24,22 +24,22 @@ var (
 	}
 )
 
-func Start(base string) error {
-	base = httputil.NormalizeBase(base)
+func Start() error {
+	var r = mux.NewRouter()
 
-	r := mux.NewRouter()
+	ConfigureRouter(r)
 
-	ConfigureRouter(r.PathPrefix(httputil.TrimTrailingSlash(base)).Subrouter(), base)
-
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config.API.Port), r)
+	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Backoffice.Port), r)
 }
 
-func ConfigureRouter(r *mux.Router, base string) {
-	base = httputil.NormalizeBase(base)
+func ConfigureRouter(r *mux.Router) {
+	var base = httputil.NormalizeBase(config.Config.Backoffice.BasePath)
 
-	r.Handle("", http.RedirectHandler(base, http.StatusMovedPermanently))
-	r.HandleFunc("/config", configHandler).Methods("GET")
-	r.PathPrefix("/").Handler(fileHandler(base))
+	var b = r.PathPrefix(httputil.TrimTrailingSlash(base)).Subrouter()
+
+	b.Handle("", http.RedirectHandler(base, http.StatusMovedPermanently))
+	b.HandleFunc("/config", configHandler).Methods("GET")
+	b.PathPrefix("/").Handler(fileHandler(base))
 }
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
