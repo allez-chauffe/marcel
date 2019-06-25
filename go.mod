@@ -7,7 +7,6 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gliderlabs/ssh v0.2.2 // indirect
-	github.com/gobuffalo/packd v0.2.0 // indirect
 	github.com/gobuffalo/packr v1.26.0
 	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/gorilla/mux v1.7.2
@@ -24,7 +23,6 @@ require (
 	github.com/spf13/viper v1.4.0
 	github.com/timshannon/bolthold v0.0.0-20190315152903-eed35b755671
 	go.etcd.io/bbolt v1.3.3
-	golang.org/x/crypto v0.0.0-20190618222545-ea8f1a30c443 // indirect
 	golang.org/x/net v0.0.0-20190619014844-b5b0513f8c1b // indirect
 	golang.org/x/sys v0.0.0-20190620070143-6f217b454f45 // indirect
 	golang.org/x/text v0.3.2 // indirect
