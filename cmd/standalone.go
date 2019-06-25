@@ -36,13 +36,15 @@ func init() {
 
 			r := mux.NewRouter()
 
+			// FIXME routers should be added by basePath order !!!
+
 			a.ConfigureRouter(r)
 
 			backoffice.ConfigureRouter(r)
 
-			log.Infof("Starting standalone server on port %d...", config.Config.API.Port)
+			log.Infof("Starting standalone server on port %d...", config.Config.Standalone.Port)
 
-			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.API.Port), r))
+			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Standalone.Port), r))
 		},
 	}
 
