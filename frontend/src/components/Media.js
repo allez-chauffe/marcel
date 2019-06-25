@@ -11,7 +11,7 @@ class Media extends Component {
   }
 
   getMedia = () =>
-    this.backend.get(`/medias/${this.props.mediaId}/`).then(media => {
+    this.backend.get(`medias/${this.props.mediaId}/`).then(media => {
       console.log('Media loaded: ', media)
       return media
     })
@@ -49,12 +49,12 @@ class Media extends Component {
 
     const {
       mediaId,
-      config: { urls },
+      config: { apiURI },
     } = this.props
 
     const col = 100 / media.cols
     const row = 100 / media.rows
-    const pluginsURL = `${urls.plugins}/medias/${mediaId}/plugins`
+    const pluginsURL = `${apiURI}/medias/${mediaId}/plugins`
 
     const styles = {
       backgroundColor: media.stylesvar['background-color'],

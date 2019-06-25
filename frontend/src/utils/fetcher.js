@@ -27,13 +27,14 @@ export const fetcher = baseUrl => {
 let backendFetcherInstance
 export const backendFetcher = config => {
   if (!backendFetcherInstance) {
-    if (!config.urls.backend) {
+    if (!config.apiURI) {
       toast.error("L'URL du serveur n'est pas configurée", { autoClose: false })
       return
     }
 
-    backendFetcherInstance = fetcher(config.urls.backend)
-    backendFetcherInstance.ws = clientId => new WebSocket(`${config.urls.websocket}/clients/${clientId}/ws`)
+    backendFetcherInstance = fetcher(config.apiURI)
+    // FIXME this is an invalid socket URL
+    backendFetcherInstance.ws = clientId => new WebSocket(`${config.apiURI}clients/${clientId}/ws`)
   }
   return backendFetcherInstance
 }
@@ -41,12 +42,12 @@ export const backendFetcher = config => {
 let authFetcherInstance
 export const authFetcher = config => {
   if (!authFetcherInstance) {
-    if (!config.urls.auth) {
-      toast.error("L'URL du serveur d'authentification n'est pas configurée", { autoClose: false })
+    if (!config.apiURI) {
+      toast.error("L'URL du serveur n'est pas configurée", { autoClose: false })
       return
     }
 
-    authFetcherInstance = fetcher(config.urls.auth)
+    authFetcherInstance = fetcher(config.apiURI + 'auth/')
   }
   return authFetcherInstance
 }

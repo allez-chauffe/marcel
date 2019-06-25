@@ -13,6 +13,7 @@ import (
 	"github.com/Zenika/marcel/api"
 	"github.com/Zenika/marcel/backoffice"
 	"github.com/Zenika/marcel/config"
+	"github.com/Zenika/marcel/frontend"
 )
 
 func init() {
@@ -39,6 +40,8 @@ func init() {
 			// FIXME routers should be added by basePath order !!!
 
 			a.ConfigureRouter(r)
+
+			frontend.ConfigureRouter(r)
 
 			backoffice.ConfigureRouter(r)
 
@@ -73,6 +76,8 @@ func init() {
 		panic(err)
 	}
 
+	// FIXME add flag and config for mediasDir...
+
 	flags.Bool("secure", config.Config.API.Auth.Secure, "Enable secure cookies")
 	if err := standaloneConfig.BindPFlag("api.auth.secure", flags.Lookup("secure")); err != nil {
 		panic(err)
@@ -90,6 +95,11 @@ func init() {
 
 	flags.String("backofficeBasePath", config.Config.Backoffice.BasePath, "Backoffice base path")
 	if err := standaloneConfig.BindPFlag("backoffice.basePath", flags.Lookup("backofficeBasePath")); err != nil {
+		panic(err)
+	}
+
+	flags.String("frontendBasePath", config.Config.Frontend.BasePath, "Frontend base path")
+	if err := standaloneConfig.BindPFlag("frontend.basePath", flags.Lookup("frontendBasePath")); err != nil {
 		panic(err)
 	}
 

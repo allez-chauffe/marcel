@@ -11,6 +11,7 @@ var Config = struct {
 	LogLevel   log.Level
 	API        api
 	Backoffice backoffice
+	Frontend   frontend
 	Standalone standalone
 }{
 	LogLevel: log.InfoLevel,
@@ -31,6 +32,11 @@ var Config = struct {
 		BasePath:    "/",
 		APIURI:      "/api/v1",
 		FrontendURI: "/front",
+	},
+	Frontend: frontend{
+		Port:     8090,
+		BasePath: "/front",
+		APIURI:   "/api/v1",
 	},
 	Standalone: standalone{
 		Port: 8090,
