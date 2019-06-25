@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
@@ -13,16 +14,6 @@ import (
 )
 
 const index = "/index.html"
-
-var (
-	backofficeConfig = struct {
-		BackendURI  string `json:"backendURI"`
-		FrontendURI string `json:"frontendURI"`
-	}{
-		BackendURI:  "/api/v1/",
-		FrontendURI: "/front/",
-	}
-)
 
 func Start() error {
 	var r = mux.NewRouter()
@@ -43,7 +34,18 @@ func ConfigureRouter(r *mux.Router) {
 }
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
-	if err := json.NewEncoder(res).Encode(backofficeConfig); err != nil {
+	var apiURI = config.Config.Backoffice.APIURI
+	if !strings.HasSuffix(apiURI, "/") {
+		apiURI += "/"
+	}
+
+	if err := json.NewEncoder(res).Encode(struct {
+		APIURI      string `json:"apiURI"`
+		FrontendURI string `json:"frontendURI"`
+	}{
+		APIURI:      apiURI,
+		FrontendURI: config.Config.Backoffice.FrontendURI,
+	}); err != nil {
 		panic(err)
 	}
 }
