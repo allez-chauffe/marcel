@@ -25,7 +25,7 @@ func init() {
 		}),
 	}
 
-	exportCmd.PersistentFlags().StringVar(&config.Config.DBFile, "dbFile", config.Config.DBFile, "Database file name")
+	exportCmd.PersistentFlags().StringVar(&config.Config.API.DBFile, "dbFile", config.Config.API.DBFile, "Database file name")
 
 	Marcel.AddCommand(exportCmd)
 

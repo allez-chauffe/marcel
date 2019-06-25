@@ -22,7 +22,7 @@ func open(readOnly bool) error {
 	options.ReadOnly = readOnly
 
 	var err error
-	if db.Store, err = bh.Open(config.Config.DBFile, 0644, &bh.Options{
+	if db.Store, err = bh.Open(config.Config.API.DBFile, 0644, &bh.Options{
 		Options: &options,
 	}); err != nil {
 		return err

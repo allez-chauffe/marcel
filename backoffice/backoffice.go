@@ -31,7 +31,7 @@ func Start(base string) error {
 
 	ConfigureRouter(r.PathPrefix(httputil.TrimTrailingSlash(base)).Subrouter(), base)
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), r)
+	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config.API.Port), r)
 }
 
 func ConfigureRouter(r *mux.Router, base string) {

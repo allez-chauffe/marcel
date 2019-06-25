@@ -8,21 +8,19 @@ import (
 
 // Config is the root configuration object
 var Config = struct {
-	Port        uint
-	CORS        bool
-	LogLevel    log.Level
-	DBFile      string
-	PluginsPath string
-	Auth        auth
+	LogLevel log.Level
+	API      api
 }{
-	Port:        8090,
-	CORS:        false,
-	LogLevel:    log.InfoLevel,
-	DBFile:      "marcel.db",
-	PluginsPath: "plugins",
-	Auth: auth{
-		Secure:            true,
-		AuthExpiration:    8 * time.Hour,
-		RefreshExpiration: 15 * 24 * time.Hour,
+	LogLevel: log.InfoLevel,
+	API: api{
+		Port:        8090,
+		CORS:        false,
+		DBFile:      "marcel.db",
+		PluginsPath: "plugins",
+		Auth: auth{
+			Secure:            true,
+			AuthExpiration:    8 * time.Hour,
+			RefreshExpiration: 15 * 24 * time.Hour,
+		},
 	},
 }

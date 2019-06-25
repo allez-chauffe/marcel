@@ -29,7 +29,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 		},
 		RefreshCookieName,
 		path.Join("/api/v"+commons.MarcelAPIVersion, "auth", "login"),
-		time.Now().Add(config.Config.Auth.RefreshExpiration),
+		time.Now().Add(config.Config.API.Auth.RefreshExpiration),
 	)
 
 	if err != nil {

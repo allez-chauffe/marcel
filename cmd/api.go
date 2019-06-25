@@ -12,25 +12,25 @@ import (
 )
 
 func init() {
-	apiCmd.Flags().UintP("port", "p", config.Config.Port, "Listening port")
+	apiCmd.Flags().UintP("port", "p", config.Config.API.Port, "Listening port")
 	viper.BindPFlag("port", apiCmd.Flags().Lookup("port"))
 
-	apiCmd.Flags().Bool("cors", config.Config.CORS, "Enable CORS for all origins")
+	apiCmd.Flags().Bool("cors", config.Config.API.CORS, "Enable CORS for all origins")
 	viper.BindPFlag("cors", apiCmd.Flags().Lookup("cors"))
 
-	apiCmd.Flags().String("dbFile", config.Config.DBFile, "Database file name")
+	apiCmd.Flags().String("dbFile", config.Config.API.DBFile, "Database file name")
 	viper.BindPFlag("dbFile", apiCmd.Flags().Lookup("dbFile"))
 
-	apiCmd.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
+	apiCmd.Flags().String("pluginsPath", config.Config.API.PluginsPath, "Plugins directory")
 	viper.BindPFlag("pluginsPath", apiCmd.Flags().Lookup("pluginsPath"))
 
-	apiCmd.Flags().Bool("secure", config.Config.Auth.Secure, "Use secured cookies")
+	apiCmd.Flags().Bool("secure", config.Config.API.Auth.Secure, "Use secured cookies")
 	viper.BindPFlag("auth.secure", apiCmd.Flags().Lookup("secure"))
 
-	apiCmd.Flags().Duration("authExpiration", config.Config.Auth.AuthExpiration, "Authentication token expiration")
+	apiCmd.Flags().Duration("authExpiration", config.Config.API.Auth.AuthExpiration, "Authentication token expiration")
 	viper.BindPFlag("auth.authExpiration", apiCmd.Flags().Lookup("authExpiration"))
 
-	apiCmd.Flags().Duration("refreshExpiration", config.Config.Auth.RefreshExpiration, "Refresh token expiration")
+	apiCmd.Flags().Duration("refreshExpiration", config.Config.API.Auth.RefreshExpiration, "Refresh token expiration")
 	viper.BindPFlag("auth.refreshExpiration", apiCmd.Flags().Lookup("refreshExpiration"))
 
 	Marcel.AddCommand(apiCmd)
@@ -81,5 +81,5 @@ func setLogLevel() {
 }
 
 func debugConfig() {
-	log.Debugf("Config: %+v", config.Config)
+	log.Debugf("Config: %+v", config.Config.API)
 }

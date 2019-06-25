@@ -44,13 +44,13 @@ func (a *App) Initialize() {
 }
 
 func (a *App) Run() {
-	log.Infof("Starting API server on port %d...", config.Config.Port)
+	log.Infof("Starting API server on port %d...", config.Config.API.Port)
 
-	if !config.Config.Auth.Secure {
+	if !config.Config.API.Auth.Secure {
 		log.Warnln("Secure mode is disabled")
 	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), a.handler))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.API.Port), a.handler))
 }
 
 func (a *App) waitSignal() {
@@ -74,7 +74,7 @@ func (a *App) initializeRouter() {
 	r := mux.NewRouter()
 	a.handler = r
 
-	if config.Config.CORS {
+	if config.Config.API.CORS {
 		a.handler = cors.New(cors.Options{
 			AllowOriginFunc:  func(origin string) bool { return true },
 			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
