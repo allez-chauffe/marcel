@@ -52,7 +52,11 @@ func fileHandler(base string) http.Handler {
 	return http.StripPrefix(
 		base,
 		http.FileServer(
-			packr.NewBox("./build/"),
+			httputil.NewTemplater(
+				packr.NewBox("./build/"),
+				[]string{"/index.html"},
+				map[string]string{"REACT_APP_BASE_URL": base},
+			),
 		),
 	)
 }

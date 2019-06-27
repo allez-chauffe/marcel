@@ -52,7 +52,6 @@ func Start() {
 	sort.Sort(configurers)
 
 	for _, configurer := range configurers {
-		log.Debug("Configuring router for ", configurer.base)
 		configurer.configure(r)
 	}
 
