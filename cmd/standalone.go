@@ -1,19 +1,14 @@
 package cmd
 
 import (
-	"fmt"
-	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/Zenika/marcel/api"
-	"github.com/Zenika/marcel/backoffice"
 	"github.com/Zenika/marcel/config"
-	"github.com/Zenika/marcel/frontend"
+	"github.com/Zenika/marcel/standalone"
 )
 
 func init() {
@@ -32,22 +27,7 @@ func init() {
 		},
 
 		Run: func(cmd *cobra.Command, args []string) {
-			a := api.New()
-			a.Initialize()
-
-			r := mux.NewRouter()
-
-			// FIXME routers should be added by basePath order !!!
-
-			a.ConfigureRouter(r)
-
-			frontend.ConfigureRouter(r)
-
-			backoffice.ConfigureRouter(r)
-
-			log.Infof("Starting standalone server on port %d...", config.Config.Standalone.Port)
-
-			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Standalone.Port), r))
+			standalone.Start()
 		},
 	}
 
