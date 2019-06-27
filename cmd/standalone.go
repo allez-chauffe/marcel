@@ -102,6 +102,9 @@ func init() {
 	if err := standaloneConfig.BindPFlag("frontend.basePath", flags.Lookup("frontendBasePath")); err != nil {
 		panic(err)
 	}
+	if err := standaloneConfig.BindPFlag("backoffice.frontendURI", flags.Lookup("frontendBasePath")); err != nil {
+		panic(err)
+	}
 
 	Marcel.AddCommand(standaloneCmd)
 }

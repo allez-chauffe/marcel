@@ -8,6 +8,7 @@ import (
 
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/marcel/config"
 	"github.com/Zenika/marcel/httputil"
@@ -19,6 +20,8 @@ func Start() error {
 	var r = mux.NewRouter()
 
 	ConfigureRouter(r)
+
+	log.Infof("Starting backoffice server on port %d...", config.Config.API.Port)
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Backoffice.Port), r)
 }
