@@ -45,6 +45,9 @@ func init() {
 	if err := standaloneConfig.BindPFlag("backoffice.apiURI", flags.Lookup("apiBasePath")); err != nil {
 		panic(err)
 	}
+	if err := standaloneConfig.BindPFlag("frontend.apiURI", flags.Lookup("apiBasePath")); err != nil {
+		panic(err)
+	}
 
 	flags.String("dbFile", config.Config.API.DBFile, "Database file")
 	if err := standaloneConfig.BindPFlag("api.dbFile", flags.Lookup("dbFile")); err != nil {
