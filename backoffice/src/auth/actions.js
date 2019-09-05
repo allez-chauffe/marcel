@@ -3,7 +3,6 @@ import { authBackend } from '../api'
 import { loginSelector, passwordSelector } from './selectors'
 
 import { userBackend } from '../api'
-import { navigate } from '@reach/router'
 
 export const actions = {
   LOGIN_REQUEST: 'AUTH/LOGIN_REQUEST',
@@ -53,21 +52,22 @@ export const disconnected = () => ({
 export const logout = () => dispatch => {
   authBackend.logout().then(() => {
     dispatch(disconnected())
-    return navigate('/medias', { replace: true })
+    // return navigate('/medias', { replace: true })
+    throw "NOT IMPLEMENTED"
   })
 }
 
-export const changeLogin = (login): ChangeLoginAction => ({
+export const changeLogin = (login) => ({
   type: actions.CHANGE_LOGIN,
   payload: { login },
 })
 
-export const changePassword = (password): ChangePasswordAction => ({
+export const changePassword = (password) => ({
   type: actions.CHANGE_PASSWORD,
   payload: { password },
 })
 
-export const resetForm = (): ResetFormAction => ({
+export const resetForm = () => ({
   type: actions.RESET_FORM,
 })
 

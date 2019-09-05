@@ -1,16 +1,21 @@
 import { connect } from 'react-redux'
-import { navigate } from '@reach/router'
+import { compose } from 'redux'
+import { withRouter } from 'react-router-dom'
 import MediaCard from './MediaCard'
 import { selectDashboard } from '../../../dashboard'
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   selectDashboard: () => {
     dispatch(selectDashboard(ownProps.dashboard))
-    return navigate(`/medias/${ownProps.dashboard.id}`)
+    return ownProps.history.push(`/medias/${ownProps.dashboard.id}`)
   },
 })
 
-export default connect(
-  null,
-  mapDispatchToProps,
-)(MediaCard)
+export default compose(
+  withRouter,
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
+)
+(MediaCard)

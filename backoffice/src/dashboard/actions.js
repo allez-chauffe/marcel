@@ -1,6 +1,5 @@
 import { keyBy, values, range, forEach, findIndex, some, map, chain } from 'lodash'
 import { toastr } from 'react-redux-toastr'
-import { navigate } from '@reach/router'
 import { backend } from '../api'
 import { selectedDashboardSelector, deletingDashboardSelector } from './selectors'
 
@@ -56,7 +55,8 @@ export const confirmDashboardDeletion = () => (dispatch, getState) => {
     .then(() => {
       dispatch(dashboardDeleted())
       toastr.success('Le média à été supprimé')
-      return navigate('/medias', { replace: true })
+      // return navigate('/medias', { replace: true })
+      throw 'NOT IMPLEMENTED'
     })
     .catch(error => {
       dispatch(cancelDashboardDeletion())
@@ -93,7 +93,8 @@ export const addDashboard = () => dispatch => {
         type: actions.ADD_DASHBOARD,
         payload: { dashboard },
       })
-      return navigate(`/medias/${dashboard.id}`)
+      // return navigate(`/medias/${dashboard.id}`)
+      throw 'NOT IMPLEMENTED'
     })
     .catch(error => {
       toastr.error('Erreur lors de la création du dashboard')
@@ -107,7 +108,7 @@ export const addSubPlugin = (propName, plugin) => ({
 })
 
 export const addPlugin = plugin => (dispatch, getState) => {
-  const dashboard: ?Dashboard = selectedDashboardSelector(getState())
+  const dashboard = selectedDashboardSelector(getState())
   if (!dashboard)
     return toastr.error(
       "Erreur: Impossible d'ajouter un plugin",
@@ -115,7 +116,7 @@ export const addPlugin = plugin => (dispatch, getState) => {
     )
 
   const { rows, cols, plugins: pluginsMap } = dashboard
-  const plugins: PluginInstance[] = values(pluginsMap)
+  const plugins = values(pluginsMap)
 
   const freeSpaceMatrix = range(cols).map(() => range(rows).map(() => true))
 

@@ -5,7 +5,6 @@
   "homepage": ".",
   "proxy": "http://localhost:8090",
   "dependencies": {
-    "@reach/router": "^1.2.1",
     "classnames": "^2.2.6",
     "hoc-react-loader": "^6.2.0",
     "immutadot": "^1.0.0",
@@ -18,6 +17,7 @@
     "react-grid-layout": "https://github.com/EmrysMyrddin/react-grid-layout.git#temp_with_build",
     "react-redux": "^7.1.1",
     "react-redux-toastr": "^7.5.1",
+    "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
     "react-sizeme": "^2.3.2",
     "react-sortable-hoc": "^1.10.1",

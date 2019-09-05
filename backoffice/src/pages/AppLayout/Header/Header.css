@@ -1,0 +1,22 @@
+.AppBarNavigation {
+  padding: 0 10px;
+  height: 100%;
+}
+
+.AppBarLink {
+  color: white;
+  padding: 0 8px;
+  display: inline-flex;
+  text-decoration: none;
+  align-items: center;
+  height: 100%;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.AppBarLink .material-icons {
+  margin-right: 5px;
+}
+
+.AppBarLink.active {
+  background-color: #fff4;
+}
