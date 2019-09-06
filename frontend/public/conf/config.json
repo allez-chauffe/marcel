@@ -1,9 +1,0 @@
-{
-  "ssl": false,
-  "urls": {
-    "backend": "/api/v1",
-    "plugins": "http://localhost:8090/api/v1",
-    "auth": "/api/v1/auth",
-    "websocket": "ws://localhost:8090/api/v1"
-  }
-}

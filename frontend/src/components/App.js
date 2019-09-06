@@ -11,7 +11,7 @@ class App extends Component {
   }
 
   getConfig = () =>
-    localFetcher.get('config').then(config => {
+    localFetcher.get('./config').then(config => {
       console.log('Local config loaded', config)
       return config
     })

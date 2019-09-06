@@ -67,7 +67,7 @@ func fileHandler(base string) http.Handler {
 				httputil.NewTemplater(
 					packr.NewBox("./build/"),
 					[]string{index},
-					map[string]string{"REACT_APP_BASE_URL": base},
+					map[string]string{"REACT_APP_BASE": base},
 				),
 				index,
 			),

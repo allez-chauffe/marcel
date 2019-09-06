@@ -28,7 +28,7 @@ services:
     command: ["api"]
     labels:
       traefik.backend: api
-      traefik.frontend.rule: "PathPrefix: /api/v1/"
+      traefik.frontend.rule: "PathPrefix: /api/"
     volumes:
       - ./config.json:/etc/marcel/config.json:ro
       - ./api/data:/var/lib/marcel

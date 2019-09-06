@@ -15,7 +15,6 @@ import PluginsScreen from '../PluginsScreen'
 
 import './AppLayout.css'
 
-
 const AppLayout = () => (
   <div className="AppLayout">
     <ConnectedRouter history={history}>

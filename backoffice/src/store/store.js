@@ -9,7 +9,9 @@ import createRootReducer from './createRootReducer'
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 const devMode = 'development'
 
-export const history = createBrowserHistory()
+export const history = createBrowserHistory({
+  basename: new URL(document.baseURI).pathname,
+})
 
 const middlewares = [
   thunk,
@@ -22,7 +24,6 @@ if (process.env.NODE_ENV === devMode) {
   }
   middlewares.push(createLogger(options))
 }
-
 
 const store = createStore(
   createRootReducer(history),

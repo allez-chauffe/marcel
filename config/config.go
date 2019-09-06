@@ -17,7 +17,7 @@ var Config = struct {
 	LogLevel: log.InfoLevel,
 	API: api{
 		Port:       8090,
-		BasePath:   "/api/v1",
+		BasePath:   "/api",
 		CORS:       false,
 		DBFile:     "marcel.db",
 		PluginsDir: "plugins",
@@ -30,13 +30,13 @@ var Config = struct {
 	Backoffice: backoffice{
 		Port:        8090,
 		BasePath:    "/",
-		APIURI:      "/api/v1",
+		APIURI:      "/api",
 		FrontendURI: "/front",
 	},
 	Frontend: frontend{
 		Port:     8090,
 		BasePath: "/front",
-		APIURI:   "/api/v1",
+		APIURI:   "/api",
 	},
 	Standalone: standalone{
 		Port: 8090,

@@ -10,7 +10,7 @@ import { reducer as clients } from '../clients'
 import { reducer as loaders, actions as loadersActions } from './loaders'
 import { reducer as users } from '../user'
 
-const config = (state = {}, action) => {
+const config = (state = { apiURI: '/api/' }, action) => {
   switch (action.type) {
     case loadersActions.LOAD_CONFIG_SUCCESSED: {
       return action.payload.config
