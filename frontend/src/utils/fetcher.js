@@ -33,8 +33,10 @@ export const backendFetcher = config => {
     }
 
     backendFetcherInstance = fetcher(config.apiURI)
-    // FIXME assuming webSocket is not SSL and on same domain
-    backendFetcherInstance.ws = clientId => new WebSocket(`ws://${new URL(document.baseURI).host}${config.apiURI}clients/${clientId}/ws`)
+    // FIXME assuming webSocket is on same domain
+    const baseURI = new URL(document.baseURI)
+    console.log(baseURI.protocol)
+    backendFetcherInstance.ws = clientId => new WebSocket(`${baseURI.protocol.endsWith('s:') ? 'wss' : 'ws'}://${baseURI.host}${config.apiURI}clients/${clientId}/ws`)
   }
   return backendFetcherInstance
 }
