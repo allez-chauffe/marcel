@@ -25,7 +25,7 @@ const Header = ({ goBack, menuIcon, user, logout }) => {
     navigation = (
       <Navigation className="AppBarNavigation">
         {menuItems.map(({ url, getTitle, title, icon }) => (
-          <Link className="AppBarLink" to={url} key={url} getProps={getMenuProps}>
+          <Link className="AppBarLink" to={url} key={url}> {/* FIXME  getProps={getMenuProps} */}
             <Icon>{icon}</Icon> {title ? title : getTitle(user)}
           </Link>
         ))}

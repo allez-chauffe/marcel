@@ -17,5 +17,4 @@ export default compose(
     null,
     mapDispatchToProps,
   ),
-)
-(MediaCard)
+)(MediaCard)

@@ -1,7 +1,9 @@
 import React from 'react'
-import { Route, Redirect, BrowserRouter as Router } from "react-router-dom"
+import { Route, Redirect } from "react-router-dom"
+import { ConnectedRouter } from 'connected-react-router'
 import ReduxToastr from 'react-redux-toastr'
 
+import { history } from '../../store'
 import Header from './Header'
 import { Auth } from '../../components/auth'
 import Dialogs from '../Dialogs'
@@ -16,7 +18,7 @@ import './AppLayout.css'
 
 const AppLayout = () => (
   <div className="AppLayout">
-    <Router>
+    <ConnectedRouter history={history}>
       <Header />
 
       <main>
@@ -29,7 +31,7 @@ const AppLayout = () => (
           <Route path="/plugins" component={PluginsScreen} />
         </Auth>
       </main>
-    </Router>
+    </ConnectedRouter>
 
     <Dialogs />
     <ReduxToastr preventDuplicates position="top-right" />

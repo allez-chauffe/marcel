@@ -1,8 +1,9 @@
 import { toastr } from 'react-redux-toastr'
-import { authBackend } from '../api'
+import { replace } from 'connected-react-router'
+
+import { authBackend, userBackend } from '../api'
 import { loginSelector, passwordSelector } from './selectors'
 
-import { userBackend } from '../api'
 
 export const actions = {
   LOGIN_REQUEST: 'AUTH/LOGIN_REQUEST',
@@ -52,8 +53,7 @@ export const disconnected = () => ({
 export const logout = () => dispatch => {
   authBackend.logout().then(() => {
     dispatch(disconnected())
-    // return navigate('/medias', { replace: true })
-    throw "NOT IMPLEMENTED"
+    return dispatch(replace('/medias'))
   })
 }
 
