@@ -67,7 +67,7 @@ class Client extends Component {
       if (this.state.client.mediaID) toast.dismiss()
     }
 
-    this.conn.onclose = event => {
+    this.conn.onclose = () => {
       setTimeout(() => this.openWebsocket(), 5000)
       toast.error('Connection au backend interrompue .\nTentative de reconnexion dans 5s')
     }

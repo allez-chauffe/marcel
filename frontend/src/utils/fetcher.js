@@ -33,8 +33,8 @@ export const backendFetcher = config => {
     }
 
     backendFetcherInstance = fetcher(config.apiURI)
-    // FIXME this is an invalid socket URL
-    backendFetcherInstance.ws = clientId => new WebSocket(`${config.apiURI}clients/${clientId}/ws`)
+    // FIXME assuming webSocket is not SSL and on same domain
+    backendFetcherInstance.ws = clientId => new WebSocket(`ws://${new URL(document.baseURI).host}${config.apiURI}clients/${clientId}/ws`)
   }
   return backendFetcherInstance
 }

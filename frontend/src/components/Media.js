@@ -54,7 +54,7 @@ class Media extends Component {
 
     const col = 100 / media.cols
     const row = 100 / media.rows
-    const pluginsURL = `${apiURI}/medias/${mediaId}/plugins`
+    const pluginsURL = `${apiURI}medias/${mediaId}/plugins`
 
     const styles = {
       backgroundColor: media.stylesvar['background-color'],

@@ -4,8 +4,6 @@ import decorate from '../utils/decorator'
 
 class Plugin extends Component {
   componentDidMount = () => {
-    console.log('Plugin mount ')
-    // this.iframe.window.parent
     this.iframe.addMessageListener(message => {
       console.log(`Message from ${this.props.plugin.instanceId}`, message)
       if (message.type === 'loaded') this.emitChangeProps(this.pluginProps(), null)
