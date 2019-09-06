@@ -35,7 +35,6 @@ export const backendFetcher = config => {
     backendFetcherInstance = fetcher(config.apiURI)
     // FIXME assuming webSocket is on same domain
     const baseURI = new URL(document.baseURI)
-    console.log(baseURI.protocol)
     backendFetcherInstance.ws = clientId => new WebSocket(`${baseURI.protocol.endsWith('s:') ? 'wss' : 'ws'}://${baseURI.host}${config.apiURI}clients/${clientId}/ws`)
   }
   return backendFetcherInstance
