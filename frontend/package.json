@@ -2,9 +2,9 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8090",
   "homepage": ".",
   "dependencies": {
+    "http-proxy-middleware": "^0.20.0",
     "lodash": "^4.17.15",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
