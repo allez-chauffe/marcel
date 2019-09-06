@@ -65,7 +65,7 @@ func fileHandler(base string) http.Handler {
 		http.FileServer(
 			httputil.NewNotFoundRewriter(
 				httputil.NewTemplater(
-					packr.NewBox("./build/"),
+					packr.NewBox("../backoffice/build/"),
 					[]string{index},
 					map[string]string{"REACT_APP_BASE": base},
 				),

@@ -53,7 +53,7 @@ func fileHandler(base string) http.Handler {
 		base,
 		http.FileServer(
 			httputil.NewTemplater(
-				packr.NewBox("./build/"),
+				packr.NewBox("../frontend/build/"),
 				[]string{"/index.html"},
 				map[string]string{"REACT_APP_BASE": base},
 			),
