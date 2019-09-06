@@ -1,11 +1,17 @@
 package config
 
 import (
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 func Init(config *viper.Viper, configFile string) {
+	config.SetEnvPrefix("marcel")
+	config.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	bindEnvs(config, Config)
+
 	if configFile == "" {
 		config.AddConfigPath("/etc/marcel")
 		config.AddConfigPath(".")
