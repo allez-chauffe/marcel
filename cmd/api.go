@@ -62,6 +62,11 @@ func init() {
 		panic(err)
 	}
 
+	flags.String("mediasDir", config.Config.API.MediasDir, "Medias directory")
+	if err := apiConfig.BindPFlag("api.mediasDir", flags.Lookup("mediasDir")); err != nil {
+		panic(err)
+	}
+
 	flags.Bool("secure", config.Config.API.Auth.Secure, "Enable secure cookies")
 	if err := apiConfig.BindPFlag("api.auth.secure", flags.Lookup("secure")); err != nil {
 		panic(err)

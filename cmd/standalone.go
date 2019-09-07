@@ -59,7 +59,10 @@ func init() {
 		panic(err)
 	}
 
-	// FIXME add flag and config for mediasDir...
+	flags.String("mediasDir", config.Config.API.MediasDir, "Medias directory")
+	if err := standaloneConfig.BindPFlag("api.mediasDir", flags.Lookup("mediasDir")); err != nil {
+		panic(err)
+	}
 
 	flags.Bool("secure", config.Config.API.Auth.Secure, "Enable secure cookies")
 	if err := standaloneConfig.BindPFlag("api.auth.secure", flags.Lookup("secure")); err != nil {
