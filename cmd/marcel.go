@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -12,6 +13,12 @@ import (
 )
 
 var configFile string
+
+func CheckDefaultCommand() {
+	if len(os.Args) < 2 {
+		os.Args = []string{os.Args[0], "standalone"}
+	}
+}
 
 func init() {
 	Marcel.PersistentFlags().Var((*logLevel)(&config.Config.LogLevel), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
