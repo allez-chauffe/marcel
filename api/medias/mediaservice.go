@@ -257,7 +257,7 @@ func activate(media *medias.Media) error {
 }
 
 func copyNewInstanceOfPlugin(media *medias.Media, mp *medias.MediaPlugin, path string) error {
-	return commons.CopyDir(filepath.Join("plugins", mp.EltName, "frontend"), filepath.Join(path, "frontend"))
+	return commons.CopyDir(filepath.Join(os.ExpandEnv(config.Config.API.PluginsDir), mp.EltName, "frontend"), filepath.Join(path, "frontend"))
 }
 
 func getPluginDirectory(media *medias.Media, eltName string, instanceID string) string {
