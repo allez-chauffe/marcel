@@ -8,6 +8,7 @@ type api struct {
 	CORS       bool
 	DBFile     string
 	PluginsDir string
+	MediasDir  string
 	Auth       auth
 }
 

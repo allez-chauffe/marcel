@@ -1,6 +1,8 @@
 package db
 
 import (
+	"os"
+
 	log "github.com/sirupsen/logrus"
 	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
@@ -22,7 +24,7 @@ func open(readOnly bool) error {
 	options.ReadOnly = readOnly
 
 	var err error
-	if db.Store, err = bh.Open(config.Config.API.DBFile, 0644, &bh.Options{
+	if db.Store, err = bh.Open(os.ExpandEnv(config.Config.API.DBFile), 0644, &bh.Options{
 		Options: &options,
 	}); err != nil {
 		return err

@@ -15,6 +15,7 @@ import (
 	"github.com/Zenika/marcel/api/clients"
 	"github.com/Zenika/marcel/api/commons"
 	"github.com/Zenika/marcel/api/db/medias"
+	"github.com/Zenika/marcel/config"
 )
 
 type Service struct {
@@ -181,7 +182,7 @@ func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := os.RemoveAll(filepath.Join("medias", strconv.Itoa(media.ID))); err != nil {
+	if err := os.RemoveAll(filepath.Join(os.ExpandEnv(config.Config.API.MediasDir), strconv.Itoa(media.ID))); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -260,5 +261,5 @@ func copyNewInstanceOfPlugin(media *medias.Media, mp *medias.MediaPlugin, path s
 }
 
 func getPluginDirectory(media *medias.Media, eltName string, instanceID string) string {
-	return filepath.Join("medias", strconv.Itoa(media.ID), eltName, instanceID)
+	return filepath.Join(os.ExpandEnv(config.Config.API.MediasDir), strconv.Itoa(media.ID), eltName, instanceID)
 }

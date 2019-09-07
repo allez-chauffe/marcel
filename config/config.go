@@ -19,8 +19,9 @@ var Config = struct {
 		Port:       8090,
 		BasePath:   "/api",
 		CORS:       false,
-		DBFile:     "/var/lib/marcel/marcel.db",
-		PluginsDir: "/var/lib/marcel/plugins",
+		DBFile:     "marcel.db",
+		PluginsDir: "plugins",
+		MediasDir:   "medias",
 		Auth: auth{
 			Secure:            true,
 			Expiration:        8 * time.Hour,
