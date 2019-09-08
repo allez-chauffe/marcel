@@ -18,14 +18,14 @@ import (
 
 // Initialize unsures that the plugins directory exists
 func Initialize() {
-	pluginsPath, err := filepath.Abs(os.ExpandEnv(config.Config.API.PluginsDir))
+	pluginsPath, err := filepath.Abs(config.Config.API.GetPluginsDir())
 	if err != nil {
 		log.Fatalf("Error while parsing plugins directory path: %s", err)
 	}
 
 	if stat, err := os.Stat(pluginsPath); err != nil {
 		if os.IsNotExist(err) {
-			if err := os.MkdirAll(os.ExpandEnv(config.Config.API.PluginsDir), os.ModePerm); err != nil {
+			if err := os.MkdirAll(config.Config.API.GetPluginsDir(), os.ModePerm); err != nil {
 				log.Fatalf("Error while trying to create plugins directory '%s': %s", pluginsPath, err)
 			}
 

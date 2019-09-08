@@ -64,6 +64,11 @@ func init() {
 		panic(err)
 	}
 
+	flags.String("dataDir", config.Config.API.DataDir, "Data directory")
+	if err := standaloneConfig.BindPFlag("api.dataDir", flags.Lookup("dataDir")); err != nil {
+		panic(err)
+	}
+
 	flags.Bool("secure", config.Config.API.Auth.Secure, "Enable secure cookies")
 	if err := standaloneConfig.BindPFlag("api.auth.secure", flags.Lookup("secure")); err != nil {
 		panic(err)

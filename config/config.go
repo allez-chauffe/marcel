@@ -21,7 +21,8 @@ var Config = struct {
 		CORS:       false,
 		DBFile:     "marcel.db",
 		PluginsDir: "plugins",
-		MediasDir:   "medias",
+		MediasDir:  "medias",
+		DataDir:    "",
 		Auth: auth{
 			Secure:            true,
 			Expiration:        8 * time.Hour,

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"sort"
 
 	"gopkg.in/src-d/go-billy.v4"
@@ -119,7 +118,7 @@ func FetchFromGit(url string) (plugin *plugins.Plugin, tempDir string, err error
 		log.Warnf("No versions were found on %s. Using default reference (%s)", url, latest.Short())
 	}
 
-	tempDir, err = ioutil.TempDir(os.ExpandEnv(config.Config.API.PluginsDir), "new_plugin")
+	tempDir, err = ioutil.TempDir(config.Config.API.GetPluginsDir(), "new_plugin")
 	if err != nil {
 		return nil, tempDir, fmt.Errorf("Error while trying to create temporary directory: %s", err)
 	}
