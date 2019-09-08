@@ -31,56 +31,14 @@ func init() {
 		},
 	}
 
+	addCommonAPIFlags(standaloneConfig, standaloneCmd)
+
 	var flags = standaloneCmd.Flags()
 
-	flags.UintP("port", "p", config.Config.Standalone.Port, "Listening port")
-	if err := standaloneConfig.BindPFlag("standalone.port", flags.Lookup("port")); err != nil {
+	if err := standaloneConfig.BindPFlag("backoffice.apiURI", flags.Lookup("basePath")); err != nil {
 		panic(err)
 	}
-
-	flags.String("apiBasePath", config.Config.API.BasePath, "API base path")
-	if err := standaloneConfig.BindPFlag("api.basePath", flags.Lookup("apiBasePath")); err != nil {
-		panic(err)
-	}
-	if err := standaloneConfig.BindPFlag("backoffice.apiURI", flags.Lookup("apiBasePath")); err != nil {
-		panic(err)
-	}
-	if err := standaloneConfig.BindPFlag("frontend.apiURI", flags.Lookup("apiBasePath")); err != nil {
-		panic(err)
-	}
-
-	flags.String("dbFile", config.Config.API.DBFile, "Database file")
-	if err := standaloneConfig.BindPFlag("api.dbFile", flags.Lookup("dbFile")); err != nil {
-		panic(err)
-	}
-
-	flags.String("pluginsDir", config.Config.API.PluginsDir, "Plugins directory")
-	if err := standaloneConfig.BindPFlag("api.pluginsDir", flags.Lookup("pluginsDir")); err != nil {
-		panic(err)
-	}
-
-	flags.String("mediasDir", config.Config.API.MediasDir, "Medias directory")
-	if err := standaloneConfig.BindPFlag("api.mediasDir", flags.Lookup("mediasDir")); err != nil {
-		panic(err)
-	}
-
-	flags.String("dataDir", config.Config.API.DataDir, "Data directory")
-	if err := standaloneConfig.BindPFlag("api.dataDir", flags.Lookup("dataDir")); err != nil {
-		panic(err)
-	}
-
-	flags.Bool("secure", config.Config.API.Auth.Secure, "Enable secure cookies")
-	if err := standaloneConfig.BindPFlag("api.auth.secure", flags.Lookup("secure")); err != nil {
-		panic(err)
-	}
-
-	flags.Duration("authExpiration", config.Config.API.Auth.Expiration, "Authentication token expiration")
-	if err := standaloneConfig.BindPFlag("api.auth.expiration", flags.Lookup("authExpiration")); err != nil {
-		panic(err)
-	}
-
-	flags.Duration("refreshExpiration", config.Config.API.Auth.RefreshExpiration, "Refresh token expiration")
-	if err := standaloneConfig.BindPFlag("api.auth.refreshExpiration", flags.Lookup("refreshExpiration")); err != nil {
+	if err := standaloneConfig.BindPFlag("frontend.apiURI", flags.Lookup("basePath")); err != nil {
 		panic(err)
 	}
 
