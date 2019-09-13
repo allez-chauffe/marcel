@@ -9,79 +9,67 @@ import (
 
 func init() {
 
-	// === import command ===
+	var cfg = config.New()
 
 	var importFile string
 
-	var importCmd = &cobra.Command{
+	var cmd = &cobra.Command{
 		Use:   "import",
 		Short: "Imports data from marcel's database",
 		Args:  cobra.NoArgs,
 
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		PersistentPreRun: func(_ *cobra.Command, args []string) {
+			config.SetConfig(cfg)
+
 			if len(args) > 0 && args[0] != "-" {
 				importFile = args[0]
 			}
 		},
 	}
 
-	importCmd.PersistentFlags().StringVar(&config.Config.API.DBFile, "dbFile", config.Config.API.DBFile, "Database file name")
+	var flags = cmd.PersistentFlags()
 
-	Marcel.AddCommand(importCmd)
+	cfg.FlagString(flags, "dbFile", "marcel.db", "Database file name")
 
-	// === users command ===
+	Marcel.AddCommand(cmd)
 
-	var users = &cobra.Command{
+	cmd.AddCommand(&cobra.Command{
 		Use:   "users [FILE]",
 		Short: "Imports users from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return imp0rt.Users(importFile)
 		},
-	}
+	})
 
-	importCmd.AddCommand(users)
-
-	// === medias command ===
-
-	var medias = &cobra.Command{
+	cmd.AddCommand(&cobra.Command{
 		Use:   "medias [FILE]",
 		Short: "Imports medias from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return imp0rt.Medias(importFile)
 		},
-	}
+	})
 
-	importCmd.AddCommand(medias)
-
-	// === plugins command ===
-
-	var plugins = &cobra.Command{
+	cmd.AddCommand(&cobra.Command{
 		Use:   "plugins [FILE]",
 		Short: "Imports plugins from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return imp0rt.Plugins(importFile)
 		},
-	}
+	})
 
-	importCmd.AddCommand(plugins)
-
-	// === all command ===
-
-	var all = &cobra.Command{
+	cmd.AddCommand(&cobra.Command{
 		Use:   "all [FILE]",
 		Short: "Imports all data from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return imp0rt.All(importFile)
 		},
-	}
-
-	importCmd.AddCommand(all)
+	})
 }

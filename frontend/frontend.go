@@ -19,13 +19,13 @@ func Start() error {
 
 	ConfigureRouter(r)
 
-	log.Infof("Starting frontend server on port %d...", config.Config.Frontend.Port)
+	log.Infof("Starting frontend server on port %d...", config.Config().Frontend().Port())
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Frontend.Port), r)
+	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config().Frontend().Port()), r)
 }
 
 func ConfigureRouter(r *mux.Router) {
-	var base = httputil.NormalizeBase(config.Config.Frontend.BasePath)
+	var base = httputil.NormalizeBase(config.Config().Frontend().BasePath())
 
 	var b = r.PathPrefix(httputil.TrimTrailingSlash(base)).Subrouter()
 
@@ -34,7 +34,7 @@ func ConfigureRouter(r *mux.Router) {
 }
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
-	var apiURI = config.Config.Frontend.APIURI
+	var apiURI = config.Config().Frontend().APIURI()
 	if !strings.HasSuffix(apiURI, "/") {
 		apiURI += "/"
 	}

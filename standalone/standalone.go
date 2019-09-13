@@ -44,9 +44,9 @@ func Start() {
 	var r = mux.NewRouter()
 
 	var configurers = routerConfigurers{
-		routerConfigurer{httputil.NormalizeBase(config.Config.API.BasePath), a.ConfigureRouter},
-		routerConfigurer{httputil.NormalizeBase(config.Config.Frontend.BasePath), frontend.ConfigureRouter},
-		routerConfigurer{httputil.NormalizeBase(config.Config.Backoffice.BasePath), backoffice.ConfigureRouter},
+		routerConfigurer{httputil.NormalizeBase(config.Config().API().BasePath()), a.ConfigureRouter},
+		routerConfigurer{httputil.NormalizeBase(config.Config().Frontend().BasePath()), frontend.ConfigureRouter},
+		routerConfigurer{httputil.NormalizeBase(config.Config().Backoffice().BasePath()), backoffice.ConfigureRouter},
 	}
 
 	sort.Sort(configurers)
@@ -55,7 +55,7 @@ func Start() {
 		configurer.configure(r)
 	}
 
-	log.Infof("Starting standalone server on port %d...", config.Config.Standalone.Port)
+	log.Infof("Starting standalone server on port %d...", config.Config().Standalone().Port())
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Standalone.Port), r))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config().Standalone().Port()), r))
 }

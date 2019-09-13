@@ -38,7 +38,7 @@ func createTokenCookie(claims jwt.Claims, name string, path string, expiration t
 		Name:     cookieName(name, path),
 		Value:    token,
 		Expires:  expiration,
-		Secure:   config.Config.API.Auth.Secure,
+		Secure:   config.Config().API().Auth().Secure(),
 		HttpOnly: true,
 		Path:     path,
 		SameSite: http.SameSiteStrictMode,
@@ -52,7 +52,7 @@ func deleteCookie(name, path string) *http.Cookie {
 		Name:     cookieName(name, path),
 		Expires:  time.Now(),
 		Path:     path,
-		Secure:   config.Config.API.Auth.Secure,
+		Secure:   config.Config().API().Auth().Secure(),
 		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
 	}
@@ -61,7 +61,7 @@ func deleteCookie(name, path string) *http.Cookie {
 }
 
 func cookieName(name, path string) string {
-	if !config.Config.API.Auth.Secure {
+	if !config.Config().API().Auth().Secure() {
 		return name
 	}
 	if path == "/" {

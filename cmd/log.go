@@ -2,11 +2,11 @@ package cmd
 
 import (
 	log "github.com/sirupsen/logrus"
-
-	"github.com/Zenika/marcel/config"
 )
 
 type logLevel log.Level
+
+var ll = log.InfoLevel
 
 func (l *logLevel) String() string {
 	return log.Level(*l).String()
@@ -26,6 +26,6 @@ func (l *logLevel) Type() string {
 }
 
 func setLogLevel() {
-	log.SetLevel(config.Config.LogLevel)
-	log.Infof("Log level set to %s", config.Config.LogLevel)
+	log.SetLevel(ll)
+	log.Infof("Log level set to %s", ll)
 }

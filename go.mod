@@ -12,7 +12,6 @@ require (
 	github.com/gorilla/mux v1.7.2
 	github.com/gorilla/websocket v1.4.0
 	github.com/magiconair/properties v1.8.1 // indirect
-	github.com/mitchellh/mapstructure v1.1.2
 	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/rs/cors v1.6.0
 	github.com/satori/go.uuid v1.2.0
@@ -20,6 +19,7 @@ require (
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
+	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.4.0
 	github.com/timshannon/bolthold v0.0.0-20190624193141-3711e53b15a0
 	go.etcd.io/bbolt v1.3.3

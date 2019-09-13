@@ -2,26 +2,17 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/Zenika/marcel/config"
 )
 
 var configFile string
 
-func CheckDefaultCommand() {
-	if len(os.Args) < 2 {
-		os.Args = []string{os.Args[0], "standalone"}
-	}
-}
-
 func init() {
-	Marcel.PersistentFlags().Var((*logLevel)(&config.Config.LogLevel), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
+	Marcel.PersistentFlags().Var((*logLevel)(&ll), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
 	viper.BindPFlag("logLevel", Marcel.PersistentFlags().Lookup("logLevel"))
 
 	Marcel.PersistentFlags().StringVarP(&configFile, "configFile", "c", "", fmt.Sprintf("Config file (default /etc/marcel/config.xxx or ./config.xxx, supports %s)", strings.Join(viper.SupportedExts, " ")))

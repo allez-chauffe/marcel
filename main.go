@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-	cmd.CheckDefaultCommand()
 	if err := cmd.Marcel.Execute(); err != nil {
 		log.Fatal(err)
 	}
