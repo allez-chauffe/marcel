@@ -54,7 +54,7 @@ func init() {
 	Marcel.AddCommand(cmd)
 }
 
-func commonAPIFlags(flags *pflag.FlagSet, cfg config.ConfigType) {
+func commonAPIFlags(flags *pflag.FlagSet, cfg *config.ConfigType) {
 	if err := cfg.FlagString(flags, "dbFile", "marcel.db", "Database file", "api.dbFile"); err != nil {
 		panic(err)
 	}

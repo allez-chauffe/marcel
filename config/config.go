@@ -7,21 +7,19 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ConfigType struct {
-	v *viper.Viper
-}
+type ConfigType viper.Viper
 
-var cfg ConfigType
+var cfg *ConfigType
 
-func SetConfig(newCfg ConfigType) {
+func SetConfig(newCfg *ConfigType) {
 	cfg = newCfg
 }
 
-func Config() ConfigType {
+func Config() *ConfigType {
 	return cfg
 }
 
-func New() ConfigType {
+func New() *ConfigType {
 	var cfg = viper.New()
 
 	cfg.SetEnvPrefix("marcel")
@@ -32,15 +30,17 @@ func New() ConfigType {
 	cfg.AddConfigPath(".")
 	cfg.SetConfigName("config")
 
-	return ConfigType{cfg}
+	return (*ConfigType)(cfg)
 }
 
-func (c ConfigType) Read(configFile string) error {
+func (c *ConfigType) Read(configFile string) error {
+	var cfg = (*viper.Viper)(c)
+
 	if configFile != "" {
-		c.v.SetConfigFile(configFile)
+		cfg.SetConfigFile(configFile)
 	}
 
-	if err := c.v.ReadInConfig(); err != nil {
+	if err := cfg.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			if configFile != "" {
 				log.Fatalf("Config file %s not found", configFile)
@@ -50,74 +50,40 @@ func (c ConfigType) Read(configFile string) error {
 			log.Fatalln("Error loading config file:", err)
 		}
 	} else {
-		log.Infof("Using config file %s", c.v.ConfigFileUsed())
+		log.Infof("Using config file %s", cfg.ConfigFileUsed())
 	}
 
 	return nil
 }
 
-func (c ConfigType) Debug() {
+func (c *ConfigType) Debug() {
 	log.Debug("FIXME")
 }
 
-// func (c ConfigType) LogLevel() log.Level {
-// 	l, err := log.ParseLevel(c.v.GetString("logLevel"))
+// func (c *ConfigType) LogLevel() log.Level {
+// 	l, err := log.ParseLevel(cfg.GetString("logLevel"))
 // 	if err != nil {
 // 		panic(err)
 // 	}
 // 	return l
 // }
 
-// func (c ConfigType) SetLogLevel(l log.Level) {
-// 	c.v.Set("logLevel", l.String())
+// func (c *ConfigType) SetLogLevel(l log.Level) {
+// 	cfg.Set("logLevel", l.String())
 // }
 
-func (c ConfigType) API() API {
-	return API{c.v}
+func (c *ConfigType) API() *API {
+	return (*API)(c)
 }
 
-func (c ConfigType) Backoffice() Backoffice {
-	return Backoffice{c.v}
+func (c *ConfigType) Backoffice() *Backoffice {
+	return (*Backoffice)(c)
 }
 
-func (c ConfigType) Frontend() Frontend {
-	return Frontend{c.v}
+func (c *ConfigType) Frontend() *Frontend {
+	return (*Frontend)(c)
 }
 
-func (c ConfigType) Standalone() Standalone {
-	return Standalone{c.v}
+func (c *ConfigType) Standalone() *Standalone {
+	return (*Standalone)(c)
 }
-
-// var defaultConfig = _config{
-// 	LogLevel: log.InfoLevel,
-// 	API: _API{
-// 		Port:       8090,
-// 		BasePath:   "/api",
-// 		CORS:       false,
-// 		DBFile:     "marcel.db",
-// 		PluginsDir: "plugins",
-// 		MediasDir:  "medias",
-// 		DataDir:    "",
-// 		Auth: _Auth{
-// 			Secure:            true,
-// 			Expiration:        8 * time.Hour,
-// 			RefreshExpiration: 15 * 24 * time.Hour,
-// 		},
-// 	},
-// 	Backoffice: _Backoffice{
-// 		Port:        8090,
-// 		BasePath:    "/",
-// 		APIURI:      "/api",
-// 		FrontendURI: "/front",
-// 	},
-
-// 	Frontend: _Frontend{
-// 		Port:     8090,
-// 		BasePath: "/front",
-// 		APIURI:   "/api",
-// 	},
-
-// 	Standalone: _Standalone{
-// 		Port: 8090,
-// 	},
-// }
