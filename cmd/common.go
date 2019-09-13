@@ -24,22 +24,22 @@ func addCommonAPIFlags(conf *viper.Viper, command *cobra.Command) {
 		panic(err)
 	}
 
-	flags.String("dbFile", config.Config.API.DBFile, "Database file")
+	flags.String("dbFile", config.Config.API.DBFile(), "Database file")
 	if err := conf.BindPFlag("api.dbFile", flags.Lookup("dbFile")); err != nil {
 		panic(err)
 	}
 
-	flags.String("pluginsDir", config.Config.API.PluginsDir, "Plugins directory")
+	flags.String("pluginsDir", config.Config.API.PluginsDir(), "Plugins directory")
 	if err := conf.BindPFlag("api.pluginsDir", flags.Lookup("pluginsDir")); err != nil {
 		panic(err)
 	}
 
-	flags.String("mediasDir", config.Config.API.MediasDir, "Medias directory")
+	flags.String("mediasDir", config.Config.API.MediasDir(), "Medias directory")
 	if err := conf.BindPFlag("api.mediasDir", flags.Lookup("mediasDir")); err != nil {
 		panic(err)
 	}
 
-	flags.String("dataDir", config.Config.API.DataDir, "Data directory")
+	flags.String("dataDir", config.Config.API.DataDir(), "Data directory")
 	if err := conf.BindPFlag("api.dataDir", flags.Lookup("dataDir")); err != nil {
 		panic(err)
 	}

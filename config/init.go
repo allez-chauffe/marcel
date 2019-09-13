@@ -10,7 +10,7 @@ import (
 func Init(config *viper.Viper, configFile string) {
 	config.SetEnvPrefix("marcel")
 	config.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	bindEnvs(config, Config)
+	bindEnvs(config, defaultConfig)
 
 	if configFile == "" {
 		config.AddConfigPath("/etc/marcel")
@@ -33,7 +33,7 @@ func Init(config *viper.Viper, configFile string) {
 		log.Infof("Using config file %s", config.ConfigFileUsed())
 	}
 
-	if err := config.Unmarshal(&Config, registerLogLevelDecoder); err != nil {
+	if err := config.Unmarshal(&defaultConfig, registerLogLevelDecoder); err != nil {
 		log.Fatalln("Error in config file:", err)
 	}
 }

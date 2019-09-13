@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type api struct {
+type privateAPI struct {
 	Port       uint
 	BasePath   string
 	CORS       bool
@@ -14,34 +14,43 @@ type api struct {
 	PluginsDir string
 	MediasDir  string
 	DataDir    string
-	Auth       auth
+	Auth       privateAuth
 }
 
-type auth struct {
+type api struct {
+	*privateAPI
+	Auth auth
+}
+
+type privateAuth struct {
 	Secure            bool
 	Expiration        time.Duration
 	RefreshExpiration time.Duration
+}
+
+type auth struct {
+	*privateAuth
 }
 
 func (apiConfig api) getPath(path string) string {
 	if filepath.IsAbs(path) {
 		return path
 	}
-	return os.ExpandEnv(filepath.Join(apiConfig.DataDir, path))
+	return os.ExpandEnv(filepath.Join(apiConfig.privateAPI.DataDir, path))
 }
 
-func (apiConfig api) GetPluginsDir() string {
-	return apiConfig.getPath(apiConfig.PluginsDir)
+func (apiConfig api) PluginsDir() string {
+	return apiConfig.getPath(apiConfig.privateAPI.PluginsDir)
 }
 
-func (apiConfig api) GetMediasDir() string {
-	return apiConfig.getPath(apiConfig.MediasDir)
+func (apiConfig api) MediasDir() string {
+	return apiConfig.getPath(apiConfig.privateAPI.MediasDir)
 }
 
-func (apiConfig api) GetDataDir() string {
-	return os.ExpandEnv(apiConfig.DataDir)
+func (apiConfig api) DataDir() string {
+	return os.ExpandEnv(apiConfig.privateAPI.DataDir)
 }
 
-func (apiConfig api) GetDBFile() string {
-	return apiConfig.getPath(apiConfig.DBFile)
+func (apiConfig api) DBFile() string {
+	return apiConfig.getPath(apiConfig.privateAPI.DBFile)
 }
