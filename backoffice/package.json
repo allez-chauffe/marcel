@@ -19,7 +19,7 @@
     "react-redux": "^7.1.1",
     "react-redux-toastr": "^7.5.1",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.1.1",
+    "react-scripts": "3.1.2",
     "react-sizeme": "^2.3.2",
     "react-sortable-hoc": "^1.10.1",
     "react-toolbox": "^2.0.0-beta.8",
@@ -45,7 +45,14 @@
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
-      "no-console": ["error", { "allow": ["error"] }]
+      "no-console": [
+        "error",
+        {
+          "allow": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   "reactToolbox": {
