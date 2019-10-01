@@ -67,10 +67,17 @@ func (c *ConfigType) Debug() {
 		log.Fatalf("failed to marshall config : %s", err)
 	}
 
-	log.Debug(string(cfgString))
+	log.Debugf("Current configuration : %s", string(cfgString))
 }
 
 func (c *ConfigType) LogLevel() log.Level {
+	logLevelString := c.cfg().GetString("logLevel")
+
+	// Default to info if no log level is given
+	if logLevelString == "" {
+		return log.InfoLevel
+	}
+
 	l, err := log.ParseLevel(c.cfg().GetString("logLevel"))
 	if err != nil {
 		panic(err)
