@@ -9,6 +9,23 @@ Basically it is just a web site served by marcel and displayed in an iframe.
 
 ## Setup
 
+### With create-marcel-plugin
+
+`create-marcel-plugin` is pacakge allowing to create a basic setup for a marcel plugin.
+
+```sh
+# with yarn
+yarn create marcel-plugin your-plugin-name
+
+# with npm > 6.1.0
+npm init marcel-plugin your-plugin-name
+
+# with npm > 5.2.0
+npx create-marcel-plugin your-plugin-name
+```
+
+### Manually
+
 1. Create a directory for the plugin
 
 ```sh
