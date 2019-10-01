@@ -82,7 +82,11 @@ jobs:
           key: marcel-deps-{{ checksum "go.mod" }}
           paths:
             - /go/pkg/mod
+      - attach_workspace:
+          at: /go/app
       - run: go test .
+      - run: go get -u github.com/gobuffalo/packr/packr
+      - run: packr
       - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -tags 'osusergo netgo' -o marcel
       - persist_to_workspace:
           root: .
@@ -168,6 +172,9 @@ workflows:
           filters: *filters-all
       - build_marcel:
           filters: *filters-all
+          requires:
+            - build_backoffice
+            - build_frontend
       - docker_build_backoffice:
           filters: *filters-all
           requires:
