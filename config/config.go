@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -17,6 +18,10 @@ func SetConfig(newCfg *ConfigType) {
 
 func Config() *ConfigType {
 	return cfg
+}
+
+func (c *ConfigType) cfg() *viper.Viper {
+	return (*viper.Viper)(c)
 }
 
 func New() *ConfigType {
@@ -57,20 +62,25 @@ func (c *ConfigType) Read(configFile string) error {
 }
 
 func (c *ConfigType) Debug() {
-	log.Debug("FIXME")
+	cfgString, err := json.MarshalIndent(c.cfg().AllSettings(), "", "  ")
+	if err != nil {
+		log.Fatalf("failed to marshall config : %s", err)
+	}
+
+	log.Debug(string(cfgString))
 }
 
-// func (c *ConfigType) LogLevel() log.Level {
-// 	l, err := log.ParseLevel(cfg.GetString("logLevel"))
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	return l
-// }
+func (c *ConfigType) LogLevel() log.Level {
+	l, err := log.ParseLevel(c.cfg().GetString("logLevel"))
+	if err != nil {
+		panic(err)
+	}
+	return l
+}
 
-// func (c *ConfigType) SetLogLevel(l log.Level) {
-// 	cfg.Set("logLevel", l.String())
-// }
+func (c *ConfigType) SetLogLevel(l log.Level) {
+	c.cfg().Set("logLevel", l.String())
+}
 
 func (c *ConfigType) API() *API {
 	return (*API)(c)

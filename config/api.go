@@ -10,6 +10,10 @@ import (
 
 type API viper.Viper
 
+func (a *API) cfg() *viper.Viper {
+	return (*viper.Viper)(a)
+}
+
 func (a *API) Port() uint {
 	return a.cfg().GetUint("api.port")
 }
@@ -64,10 +68,6 @@ func (a *API) DataDir() string {
 
 func (a *API) SetDataDir(pd string) {
 	a.cfg().Set("api.dataDir", pd)
-}
-
-func (a *API) cfg() *viper.Viper {
-	return (*viper.Viper)(a)
 }
 
 func (a *API) resolveDataDirPath(pPath string) string {

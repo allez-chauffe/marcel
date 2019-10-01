@@ -24,7 +24,7 @@ func init() {
 			log.SetOutput(os.Stdout)
 			cfg.Read(configFile)
 			config.SetConfig(cfg)
-			setLogLevel()
+			setLogLevel(cfg)
 			cfg.Debug()
 		},
 

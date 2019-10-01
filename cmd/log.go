@@ -2,6 +2,8 @@ package cmd
 
 import (
 	log "github.com/sirupsen/logrus"
+
+	"github.com/Zenika/marcel/config"
 )
 
 type logLevel log.Level
@@ -25,7 +27,7 @@ func (l *logLevel) Type() string {
 	return "log.Level"
 }
 
-func setLogLevel() {
-	log.SetLevel(ll)
+func setLogLevel(cfg *config.ConfigType) {
+	log.SetLevel(cfg.LogLevel())
 	log.Infof("Log level set to %s", ll)
 }
