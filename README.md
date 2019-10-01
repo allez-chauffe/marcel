@@ -1,4 +1,6 @@
-# :desktop_computer: marcel
+# marcel
+
+![Marcel](https://raw.githubusercontent.com/Zenika/marcel/master/marcel_300.png)
 
 marcel is a configurable plugin based dashboard system.
 
