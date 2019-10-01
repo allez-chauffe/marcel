@@ -11,7 +11,7 @@ class Client extends Component {
 
   getClient = () =>
     this.backend
-      .get(`/clients/${this.state.client.id}/`)
+      .get(`clients/${this.state.client.id}/`)
       //Checking if a media ID has specified in query params. If any, overrides the server configuration
       .then(client => {
         const name = window.location.queryParams.name
@@ -22,7 +22,7 @@ class Client extends Component {
         if (name && name !== client.name) newClient = { ...newClient, name }
         if (mediaID && mediaID !== client.mediaID) newClient = { ...newClient, mediaID }
 
-        return newClient === client ? client : this.backend.put(`/clients/`, newClient)
+        return newClient === client ? client : this.backend.put(`clients/`, newClient)
       })
       .then(client => {
         console.log('Client loaded', client)
@@ -40,7 +40,7 @@ class Client extends Component {
     console.log('Creating client id...')
 
     return this.backend
-      .post('/clients/', {
+      .post('clients/', {
         name: window.location.queryParams.name,
         mediaID: parseInt(window.location.queryParams.mediaID, 10)
       })
@@ -67,7 +67,7 @@ class Client extends Component {
       if (this.state.client.mediaID) toast.dismiss()
     }
 
-    this.conn.onclose = event => {
+    this.conn.onclose = () => {
       setTimeout(() => this.openWebsocket(), 5000)
       toast.error('Connection au backend interrompue .\nTentative de reconnexion dans 5s')
     }
@@ -92,8 +92,6 @@ class Client extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.config.urls.plugins)
-      toast.error("L'URL des plugins n'est pas configurée", { autoClose: false })
     this.backend = backendFetcher(this.props.config)
     this.getClientId()
       .then(clientId => this.setState({ client: { id: clientId } }))

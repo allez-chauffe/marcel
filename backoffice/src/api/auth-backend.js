@@ -1,6 +1,6 @@
 import store from '../store'
 
-const baseUrl = () => store.getState().config.authURI
+const baseUrl = () => store.getState().config.apiURI + 'auth/'
 
 const request = (url, options, isJson = true) =>
   fetch(baseUrl() + url, { ...options, credentials: 'include' })
@@ -20,7 +20,7 @@ const post = (url, body) =>
 const put = (url, isJson) => request(url, { method: 'PUT' }, isJson)
 
 const authBackend = {
-  login: (login: ?string, password: ?string) =>
+  login: (login, password) =>
     post('login', login && password ? { login, password } : null),
   logout: () => put('logout', false),
 }

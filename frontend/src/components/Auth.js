@@ -24,7 +24,7 @@ class Auth extends React.Component {
     const { login, password } = this.state.form
     console.log('Logging in...')
     this.authFetcher
-      .post('/login', login && password ? { login, password } : null)
+      .post('login', login && password ? { login, password } : null)
       .then(user => this.setState({ user, loading: false }))
       .catch(res => {
         if (res.status !== 403) toast.error("Impossible de contacter le serveur d'authentification")

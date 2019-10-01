@@ -8,13 +8,12 @@
 
 # production
 /build
-/public/conf/config.json
+*-packr.go
 
 # misc
 .DS_Store
-.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
 .vscode
+.env.local

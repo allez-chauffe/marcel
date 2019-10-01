@@ -10,11 +10,19 @@ class App extends Component {
     loading: true,
   }
 
-  getConfig = () =>
-    localFetcher.get('conf/config.json').then(config => {
+  getConfig = async () => {
+    try {
+      const config = await localFetcher.get('./config')
       console.log('Local config loaded', config)
       return config
-    })
+    } catch (e) {
+      if (e.status === 404) {
+        console.warn('No config found')
+        return { apiURI: '/api/' }
+      }
+      throw e
+    }
+  }
 
   componentDidMount() {
     this.getConfig()

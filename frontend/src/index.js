@@ -4,6 +4,7 @@ import App from './components/App'
 import './css/index.css'
 import * as serviceWorker from './serviceWorker'
 import './queryParams.js'
+import 'react-toastify/dist/ReactToastify.css'
 
 ReactDOM.render(<App />, document.getElementById('root'))
 

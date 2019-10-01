@@ -1,7 +1,13 @@
 const config = {
   loadConfig: () =>
-    fetch('/conf/config.json').then(response => {
-      if (response.status !== 200) throw response
+    fetch('./config').then(response => {
+      if (response.status !== 200) {
+        if (response.status === 404) {
+          console.warn('No config available') // eslint-disable-line no-console
+          return { apiURI: '/api/' }
+        }
+        throw response
+      }
       return response.json()
     }),
 }

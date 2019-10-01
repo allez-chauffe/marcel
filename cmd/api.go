@@ -2,81 +2,84 @@ package cmd
 
 import (
 	"os"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	"github.com/spf13/pflag"
 
 	"github.com/Zenika/marcel/api"
 	"github.com/Zenika/marcel/config"
 )
 
 func init() {
-	apiCmd.Flags().UintP("port", "p", config.Config.Port, "Listening port")
-	viper.BindPFlag("port", apiCmd.Flags().Lookup("port"))
+	var cfg = config.New()
 
-	apiCmd.Flags().String("dbFile", config.Config.DBFile, "Database file name")
-	viper.BindPFlag("dbFile", apiCmd.Flags().Lookup("dbFile"))
+	var cmd = &cobra.Command{
+		Use:   "api",
+		Short: "Starts marcel's api server",
+		Args:  cobra.NoArgs,
 
-	apiCmd.Flags().String("pluginsPath", config.Config.PluginsPath, "Plugins directory")
-	viper.BindPFlag("pluginsPath", apiCmd.Flags().Lookup("pluginsPath"))
+		PreRun: func(_ *cobra.Command, _ []string) {
+			log.SetOutput(os.Stdout)
+			cfg.Read(configFile)
+			config.SetConfig(cfg)
+			setLogLevel(cfg)
+			cfg.Debug()
+		},
 
-	apiCmd.Flags().Bool("secure", config.Config.Auth.Secure, "Use secured cookies")
-	viper.BindPFlag("auth.secure", apiCmd.Flags().Lookup("secure"))
-
-	apiCmd.Flags().Duration("authExpiration", config.Config.Auth.AuthExpiration, "Authentication token expiration")
-	viper.BindPFlag("auth.authExpiration", apiCmd.Flags().Lookup("authExpiration"))
-
-	apiCmd.Flags().Duration("refreshExpiration", config.Config.Auth.RefreshExpiration, "Refresh token expiration")
-	viper.BindPFlag("auth.refreshExpiration", apiCmd.Flags().Lookup("refreshExpiration"))
-
-	Marcel.AddCommand(apiCmd)
-}
-
-var apiCmd = &cobra.Command{
-	Use:   "api",
-	Short: "Starts marcel's api server",
-	Args:  cobra.NoArgs,
-
-	PreRun: func(cmd *cobra.Command, args []string) {
-		log.SetOutput(os.Stdout)
-		config.Init(configFile)
-		setLogLevel()
-		debugConfig()
-	},
-
-	Run: func(cmd *cobra.Command, args []string) {
-		a := new(api.App)
-		a.Initialize()
-		a.Run()
-	},
-}
-
-// LogLevel implements a pflag.Value with logrus.Level
-type LogLevel log.Level
-
-func (l *LogLevel) String() string {
-	return log.Level(*l).String()
-}
-
-func (l *LogLevel) Set(s string) error {
-	v, err := log.ParseLevel(s)
-	if err != nil {
-		return err
+		Run: func(_ *cobra.Command, _ []string) {
+			a := api.New()
+			a.Initialize()
+			a.Start()
+		},
 	}
-	*l = LogLevel(v)
-	return nil
+
+	var flags = cmd.Flags()
+
+	commonAPIFlags(flags, cfg)
+
+	if err := cfg.FlagUintP(flags, "port", "p", 8090, "Listening port", "api.port"); err != nil {
+		panic(err)
+	}
+
+	if err := cfg.FlagString(flags, "basePath", "/api", "Base path", "api.basePath"); err != nil {
+		panic(err)
+	}
+
+	if err := cfg.FlagBool(flags, "cors", false, "Enable CORS (all origins)", "api.cors"); err != nil {
+		panic(err)
+	}
+
+	Marcel.AddCommand(cmd)
 }
 
-func (l *LogLevel) Type() string {
-	return "log.Level"
-}
+func commonAPIFlags(flags *pflag.FlagSet, cfg *config.ConfigType) {
+	if err := cfg.FlagString(flags, "dbFile", "marcel.db", "Database file", "api.dbFile"); err != nil {
+		panic(err)
+	}
 
-func setLogLevel() {
-	log.SetLevel(config.Config.LogLevel)
-	log.Infof("Log level set to %s", config.Config.LogLevel)
-}
+	if err := cfg.FlagString(flags, "pluginsDir", "plugins", "Plugins directory", "api.pluginsDir"); err != nil {
+		panic(err)
+	}
 
-func debugConfig() {
-	log.Debugf("Config: %+v", config.Config)
+	if err := cfg.FlagString(flags, "mediasDir", "medias", "Medias directory", "api.mediasDir"); err != nil {
+		panic(err)
+	}
+
+	if err := cfg.FlagString(flags, "dataDir", "", "Data directory", "api.dataDir"); err != nil {
+		panic(err)
+	}
+
+	if err := cfg.FlagBool(flags, "secure", true, "Enable secure cookies", "api.auth.secure"); err != nil {
+		panic(err)
+	}
+
+	if err := cfg.FlagDuration(flags, "authExpiration", 8*time.Hour, "Authentication token expiration", "api.auth.expiration"); err != nil {
+		panic(err)
+	}
+
+	if err := cfg.FlagDuration(flags, "refreshExpiration", 15*24*time.Hour, "Refresh token expiration", "api.auth.refreshExpiration"); err != nil {
+		panic(err)
+	}
 }

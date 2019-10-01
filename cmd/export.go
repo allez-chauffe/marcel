@@ -9,27 +9,29 @@ import (
 
 func init() {
 
-	// === export command ===
+	var cfg = config.New()
 
 	var exportFile string
 
-	var exportCmd = &cobra.Command{
+	var cmd = &cobra.Command{
 		Use:   "export",
 		Short: "Exports data from marcel's database",
 		Args:  cobra.NoArgs,
 
-		PersistentPreRun: (func(cmd *cobra.Command, args []string) {
+		PersistentPreRun: func(_ *cobra.Command, args []string) {
+			config.SetConfig(cfg)
+
 			if len(args) > 0 && args[0] != "-" {
 				exportFile = args[0]
 			}
-		}),
+		},
 	}
 
-	exportCmd.PersistentFlags().StringVar(&config.Config.DBFile, "dbFile", config.Config.DBFile, "Database file name")
+	var flags = cmd.PersistentFlags()
 
-	Marcel.AddCommand(exportCmd)
+	cfg.FlagString(flags, "dbFile", "marcel.db", "Database file name")
 
-	// === users command ===
+	Marcel.AddCommand(cmd)
 
 	var usersWPassword bool
 
@@ -38,32 +40,26 @@ func init() {
 		Short: "Exports users from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return export.Users(usersWPassword, exportFile)
 		},
 	}
 
 	users.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
 
-	exportCmd.AddCommand(users)
+	cmd.AddCommand(users)
 
-	// === medias command ===
-
-	var medias = &cobra.Command{
+	cmd.AddCommand(&cobra.Command{
 		Use:   "medias [FILE]",
 		Short: "Exports medias from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return export.Medias(exportFile)
 		},
-	}
+	})
 
-	exportCmd.AddCommand(medias)
-
-	// === plugins command ===
-
-	var plugins = &cobra.Command{
+	cmd.AddCommand(&cobra.Command{
 		Use:   "plugins [FILE]",
 		Short: "Exports plugins from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
@@ -71,11 +67,7 @@ func init() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return export.Plugins(exportFile)
 		},
-	}
-
-	exportCmd.AddCommand(plugins)
-
-	// === all command ===
+	})
 
 	var all = &cobra.Command{
 		Use:   "all [FILE]",
@@ -89,5 +81,5 @@ func init() {
 
 	all.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
 
-	exportCmd.AddCommand(all)
+	cmd.AddCommand(all)
 }

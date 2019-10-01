@@ -3,7 +3,7 @@ import semver from 'semver'
 import store from '../store'
 import fetcher from './fetcher'
 
-const { get, post, put, del } = fetcher(() => store.getState().config.backendURI)
+const { get, post, put, del } = fetcher(() => store.getState().config.apiURI)
 
 const adaptPlugin = plugin => ({
   ...plugin,

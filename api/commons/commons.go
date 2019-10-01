@@ -10,9 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// MarcelAPIVersion is the current version of the API
-const MarcelAPIVersion = "1"
-
 func IsInArray(val interface{}, array interface{}) (exists bool, index int) {
 	return FindIndexInArray(
 		func(curr interface{}) bool {
