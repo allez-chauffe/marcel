@@ -1,34 +1,13 @@
 version: '3.0'
 
-services:
-  backoffice:
-    depends_on:
-      - proxy
-    image: zenika/marcel-backoffice:dev
-    labels:
-      traefik.backend: backoffice
-      traefik.frontend.rule: "PathPrefix: /"
-    volumes:
-      - ./backoffice:/www/conf:ro
-
-  frontend:
-    depends_on:
-      - proxy
-    image: zenika/marcel-frontend:dev
-    labels:
-      traefik.backend: frontend
-      traefik.frontend.rule: "PathPrefixStrip: /front/"
-    volumes:
-      - ./frontend:/www/conf:ro
-
-  api:
+  marcel:
     depends_on:
       - proxy
     image: zenika/marcel:dev
-    command: ["api"]
+    command: ["standalone"]
     labels:
-      traefik.backend: api
-      traefik.frontend.rule: "PathPrefix: /api/"
+      traefik.backend: marcel
+      traefik.frontend.rule: "PathPrefix: /"
     volumes:
       - ./config.json:/etc/marcel/config.json:ro
       - ./api/data:/var/lib/marcel
