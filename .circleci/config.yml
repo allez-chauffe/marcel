@@ -82,41 +82,17 @@ jobs:
           key: marcel-deps-{{ checksum "go.mod" }}
           paths:
             - /go/pkg/mod
+      - attach_workspace:
+          at: /go/app
       - run: go test .
+      - run: go get -u github.com/gobuffalo/packr/packr
+      - run: packr
       - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -tags 'osusergo netgo' -o marcel
       - persist_to_workspace:
           root: .
           paths:
             - Dockerfile
             - marcel
-
-  docker_build_backoffice:
-    <<: *defaults
-    docker:
-      - image: circleci/buildpack-deps:stable-curl
-    working_directory: /tmp/app
-    steps:
-      - checkout
-      - setup_remote_docker
-      - attach_workspace:
-          at: /tmp/app
-      - run:
-          command: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel-backoffice
-          working_directory: backoffice
-
-  docker_build_frontend:
-    <<: *defaults
-    docker:
-      - image: circleci/buildpack-deps:stable-curl
-    working_directory: /tmp/app
-    steps:
-      - checkout
-      - setup_remote_docker
-      - attach_workspace:
-          at: /tmp/app
-      - run:
-          command: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel-frontend
-          working_directory: frontend
 
   docker_build_marcel:
     <<: *defaults
@@ -168,13 +144,8 @@ workflows:
           filters: *filters-all
       - build_marcel:
           filters: *filters-all
-      - docker_build_backoffice:
-          filters: *filters-all
           requires:
             - build_backoffice
-      - docker_build_frontend:
-          filters: *filters-all
-          requires:
             - build_frontend
       - docker_build_marcel:
           filters: *filters-all
@@ -184,5 +155,3 @@ workflows:
           filters: *filters-master
           requires:
             - docker_build_marcel
-            - docker_build_backoffice
-            - docker_build_frontend
