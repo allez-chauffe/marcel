@@ -24,6 +24,8 @@ npm init marcel-plugin your-plugin-name
 npx create-marcel-plugin your-plugin-name
 ```
 
+⚠️ Even if you use NPM you will need yarn installed to init the project
+
 ### Manually
 
 1. Create a directory for the plugin
