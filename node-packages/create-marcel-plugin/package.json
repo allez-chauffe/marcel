@@ -9,7 +9,8 @@
   "author": "Valentin Cocaud",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "start": "rm -rf example && node ./src/index.js example"
   },
   "devDependencies": {
     "eslint": "^6.5.1"

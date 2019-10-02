@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
 const toCamelCase = require('to-camel-case')
+const { shouldUseYarn } = require('./utils')
 
 const fatal = (...message) => {
   console.error(...message)
@@ -111,10 +112,20 @@ const files = [
   },
 ]
 
-const commands = [
+const installDepsYarn = [
   { command: () => 'yarn', cwd: 'frontend' },
   { command: () => 'yarn add marcel-plugin', cwd: 'frontend' },
   { command: () => 'yarn add -D serve', cwd: 'frontend' },
+]
+
+const installDepsNpm = [
+  { command: () => 'npm i', cwd: 'frontend' },
+  { command: () => 'npm add marcel-plugin', cwd: 'frontend' },
+  { command: () => 'npm add --save-dev serve', cwd: 'frontend' },
+]
+
+const commands = [
+  ...(shouldUseYarn() ? installDepsYarn : installDepsNpm),
   { command: ({ eltName }) => `if [ -x "$(command -v git)" ] && [ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]; then git init && git add . && git commit -m ":tada: Initialize ${eltName}"; fi` },
 ]
 
@@ -134,7 +145,7 @@ files.forEach((file => {
 }))
 
 // Run commands
-commands.forEach(({ command, cwd })=> {
+commands.forEach(({ command, cwd }) => {
   execSync(
     command(plugin),
     { cwd: cwd ? path.resolve(plugin.path, cwd) : plugin.path }
