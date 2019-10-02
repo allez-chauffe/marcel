@@ -87,7 +87,7 @@ jobs:
       - run: go test .
       - run: go get -u github.com/gobuffalo/packr/packr
       - run: packr
-      - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -tags 'osusergo netgo' -o marcel
+      - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static" -X github.com/Zenika/marcel/version.Version=${CIRCLE_TAG:-$CIRCLE_BRANCH} -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1' -tags 'osusergo netgo' -o marcel
       - persist_to_workspace:
           root: .
           paths:
