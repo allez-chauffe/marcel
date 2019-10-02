@@ -56,7 +56,8 @@ const files = [
   },
   {
     path: 'frontend/.gitignore',
-    content: () => `node_modules`
+    content: () => `node_modules
+`
   },
   {
     path: 'frontend/index.html',
