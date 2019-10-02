@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
@@ -65,7 +64,7 @@ func fileHandler(base string) http.Handler {
 		http.FileServer(
 			httputil.NewNotFoundRewriter(
 				httputil.NewTemplater(
-					packr.NewBox("../backoffice/build/"),
+					fs,
 					[]string{index},
 					map[string]string{"REACT_APP_BASE": base},
 				),
