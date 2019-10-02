@@ -113,9 +113,9 @@ const files = [
 ]
 
 const installDepsYarn = [
-  { command: () => 'yarn', cwd: 'frontend' },
-  { command: () => 'yarn add marcel-plugin', cwd: 'frontend' },
-  { command: () => 'yarn add -D serve', cwd: 'frontend' },
+  { command: () => 'yarnpkg', cwd: 'frontend' },
+  { command: () => 'yarnpkg add marcel-plugin', cwd: 'frontend' },
+  { command: () => 'yarnpkg add -D serve', cwd: 'frontend' },
 ]
 
 const installDepsNpm = [
