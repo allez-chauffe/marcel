@@ -16,13 +16,9 @@ Basically it is just a web site served by marcel and displayed in an iframe.
 ```sh
 # with yarn
 yarn create marcel-plugin your-plugin-name
-
-# with npm > 6.1.0
-npm init marcel-plugin your-plugin-name
-
-# with npm > 5.2.0
-npx create-marcel-plugin your-plugin-name
 ```
+
+⚠️ This only works with yarn at the moment
 
 ### Manually
 
