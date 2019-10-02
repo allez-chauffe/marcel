@@ -2,6 +2,12 @@
 
 package backoffice
 
-import "github.com/gobuffalo/packr"
+import (
+	"net/http"
 
-var fs = packr.NewBox("../backoffice/build/")
+	"github.com/gobuffalo/packr"
+)
+
+func initFs() (http.FileSystem, error) {
+	return packr.NewBox("../backoffice/build/"), nil
+}

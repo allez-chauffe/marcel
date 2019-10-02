@@ -24,13 +24,15 @@ func Start() error {
 	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config().Frontend().Port()), r)
 }
 
-func ConfigureRouter(r *mux.Router) {
+func ConfigureRouter(r *mux.Router) error {
 	var base = httputil.NormalizeBase(config.Config().Frontend().BasePath())
 
 	var b = r.PathPrefix(httputil.TrimTrailingSlash(base)).Subrouter()
 
 	b.HandleFunc("/config", configHandler).Methods("GET")
 	b.PathPrefix("/").Handler(fileHandler(base))
+
+	return nil
 }
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
