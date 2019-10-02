@@ -10,10 +10,10 @@ const name = pkg.name
 console.log(name)
 
 export default {
-	input: 'src/marcel-media-display.svelte',
+	input: pkg.svelte,
 	output: [
-		{ file: `dist/${pkg.module}`, format: 'es' },
-		{ file: `dist/${pkg.main}`, format: 'umd', name }
+		{ file: pkg.module, format: 'es' },
+		{ file: pkg.main, format: 'umd', name }
 	],
 	plugins: [
 		svelte({

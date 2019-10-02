@@ -1,10 +1,10 @@
 {
   "name": "marcel-media-display",
-  "svelte": "src/index.svelte",
-  "module": "dist/index.mjs",
-  "main": "dist/index.js",
+  "svelte": "src/marcel-media-display.svelte",
+  "module": "dist/marcel-media-display.mjs",
+  "main": "dist/marcel-media-display.js",
   "scripts": {
-    "start": "live-server --open=src",
+    "start": "live-server -q --open=src & yarn build -w",
     "build": "rollup -c",
     "prepublishOnly": "yarn build"
   },
@@ -17,7 +17,7 @@
   },
   "files": [
     "src",
-    "dist/index.js",
-    "dist/index.mjs"
+    "dist/marcel-media-display.js",
+    "dist/marcel-media-display.mjs"
   ]
 }
