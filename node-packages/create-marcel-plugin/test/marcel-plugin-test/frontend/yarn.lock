@@ -280,10 +280,15 @@ marcel-plugin@^1.0.0:
   resolved "https://registry.yarnpkg.com/marcel-plugin/-/marcel-plugin-1.0.0.tgz#f9aac295b036286d83c413b12c522b7b1f39085f"
   integrity sha512-2RYhLWsQW+7PiYfPgoi0B2IfQKZnU6fRbLvS8KTO88qvFY/6J/XneYICir96iaAKCRlVymCOr+V0QbwWinEUmA==
 
-mime-db@1.40.0, "mime-db@>= 1.40.0 < 2":
+mime-db@1.40.0:
   version "1.40.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.40.0.tgz#a65057e998db090f732a68f6c276d387d4126c32"
   integrity sha512-jYdeOMPy9vnxEqFRRo6ZvTZ8d9oPb+k18PKoYNYUe2stVEBPPwsln/qWzdbmaIvnhZ9v2P+CuecK+fpUfsV2mA==
+
+"mime-db@>= 1.40.0 < 2":
+  version "1.42.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.42.0.tgz#3e252907b4c7adb906597b4b65636272cf9e7bac"
+  integrity sha512-UbfJCR4UAVRNgMpfImz05smAXK7+c+ZntjaA26ANtkXLlOe947Aag5zdIcKQULAiF9Cq4WxBi9jUs5zkA84bYQ==
 
 mime-db@~1.33.0:
   version "1.33.0"
@@ -403,15 +408,20 @@ registry-url@3.1.0:
   dependencies:
     rc "^1.0.1"
 
-safe-buffer@5.1.2, safe-buffer@^5.0.1:
+safe-buffer@5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
   integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
 
-serve-handler@6.0.2:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/serve-handler/-/serve-handler-6.0.2.tgz#c5afbace1a4aa28645f26483d64725b45f285048"
-  integrity sha512-D1zgDpvx9Rgjip6rzY2QBjlZwfr/oiDSg66HipOWkEw1appHn7/mXdVRL6F8+bd1KD117Wch4+4x78OTXQVwDg==
+safe-buffer@^5.0.1:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.0.tgz#b74daec49b1148f88c64b68d49b1e815c1f2f519"
+  integrity sha512-fZEwUGbVl7kouZs1jCdMLdt95hdIv0ZeHg6L7qPeciMZhZ+/gdesW4wgTARkrFWEpspjEATAzUGPG8N2jJiwbg==
+
+serve-handler@6.1.2:
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/serve-handler/-/serve-handler-6.1.2.tgz#f05b0421a313fff2d257838cba00cbcc512cd2b6"
+  integrity sha512-RFh49wX7zJmmOVDcIjiDSJnMH+ItQEvyuYLYuDBVoA/xmQSCuj+uRmk1cmBB5QQlI3qOiWKp6p4DUGY+Z5AB2A==
   dependencies:
     bytes "3.0.0"
     content-disposition "0.5.2"
@@ -422,10 +432,10 @@ serve-handler@6.0.2:
     path-to-regexp "2.2.1"
     range-parser "1.2.0"
 
-serve@^11.0.2:
-  version "11.0.2"
-  resolved "https://registry.yarnpkg.com/serve/-/serve-11.0.2.tgz#b8ac227d3005238d9aa3946313c191d6c2b16dd9"
-  integrity sha512-TjjjwUdPU+STkUyxvZFtkWOTRXdNDNMfot9Z/f97eEeyjPAV69o1TmJrNAlDbvpPu1JEjCoWiGCjkel7kWNF4A==
+serve@^11.2.0:
+  version "11.2.0"
+  resolved "https://registry.yarnpkg.com/serve/-/serve-11.2.0.tgz#0405ce95c4e4a6abd9cd3d3a04ebaa7d94638627"
+  integrity sha512-THZcLzDGk3vJqjhAbLkLag43tiE3V0B7wVe98Xtl+1KyAsr+4iShg+9hke4pLZmrCJu0pUg0TrbhJmdqn/MKoA==
   dependencies:
     "@zeit/schemas" "2.6.0"
     ajv "6.5.3"
@@ -434,7 +444,7 @@ serve@^11.0.2:
     chalk "2.4.1"
     clipboardy "1.2.3"
     compression "1.7.3"
-    serve-handler "6.0.2"
+    serve-handler "6.1.2"
     update-check "1.5.2"
 
 shebang-command@^1.2.0:
