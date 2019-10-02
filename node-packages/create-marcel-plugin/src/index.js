@@ -112,9 +112,10 @@ const files = [
 ]
 
 const commands = [
-  { command: 'yarn', cwd: 'frontend' },
-  { command: 'yarn add marcel-plugin', cwd: 'frontend' },
-  { command: 'yarn add -D serve', cwd: 'frontend' },
+  { command: () => 'yarn', cwd: 'frontend' },
+  { command: () => 'yarn add marcel-plugin', cwd: 'frontend' },
+  { command: () => 'yarn add -D serve', cwd: 'frontend' },
+  { command: ({ eltName }) => `if [ -x "$(command -v git)" ] && [ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]; then git init && git add . && git commit -m ":tada: Initialize ${eltName}"; fi` },
 ]
 
 if (process.argv.length < 3) fatal('A plugin name should be given : $ yarn create marcel-plugin my-plugin')
@@ -134,9 +135,10 @@ files.forEach((file => {
 
 // Run commands
 commands.forEach(({ command, cwd })=> {
-  execSync(command, {
-    cwd: cwd ? path.resolve(plugin.path, cwd) : plugin.path,
-  })
+  execSync(
+    command(plugin),
+    { cwd: cwd ? path.resolve(plugin.path, cwd) : plugin.path }
+  )
 })
 
 console.info(`The plugin has successfully been generated. You can now go to the ${plugin.eltName} folder and start making awesome things !`)
