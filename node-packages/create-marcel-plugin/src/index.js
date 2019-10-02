@@ -55,6 +55,10 @@ const files = [
 `
   },
   {
+    path: 'frontend/.gitignore',
+    content: () => `node_modules`
+  },
+  {
     path: 'frontend/index.html',
     content: ({ name, eltName }) => `<!DOCTYPE html>
 <html lang="en">
