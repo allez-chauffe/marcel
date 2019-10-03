@@ -86,7 +86,7 @@ jobs:
           paths:
             - /go/pkg/mod
       - attach_workspace:
-          at: /go/app
+          at: .
       - run: go test .
       - run: packr
       - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static" -X github.com/Zenika/marcel/version.Version=${CIRCLE_TAG:-$CIRCLE_BRANCH} -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1' -tags 'osusergo netgo' -o marcel
@@ -102,7 +102,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - attach_workspace:
-          at: /tmp/app
+          at: .
       - run: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel
 
   archive_backoffice:
@@ -140,6 +140,17 @@ filters-master: &filters-master
   branches:
     only:
       - master
+filters-tag: &filters-tag
+  branches:
+    ignore: /.*/
+  tags:
+    only: /.*/
+filters-master-tag: &filters-master-tag
+  branches:
+    only:
+      - master
+  tags:
+    only: /.*/
 
 workflows:
   version: 2
@@ -159,11 +170,11 @@ workflows:
             - build_backoffice
             - build_frontend
       - docker_build_marcel:
-          filters: *filters-all
+          filters: *filters-master-tag
           requires:
             - build_marcel
       - archive_backoffice:
-          filters: *filters-all # FIXME tobe changed
+          filters: *filters-tag
           requires:
             - build_backoffice
       - deploy_integration:
