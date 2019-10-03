@@ -28,8 +28,14 @@ const fatal = (...message) => {
   process.exit(-1)
 }
 
+const toJSON = value => {
+  const json = JSON.stringify(value, null, 2)
+  return json.endsWith('\n') ? json : (json + '\n')
+}
+
 module.exports = {
   shouldUseYarn,
   getPluginInfo,
-  fatal
+  fatal,
+  toJSON
 }

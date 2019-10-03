@@ -1,33 +1,35 @@
+const { toJSON } = require('./utils')
+
 module.exports = [
   {
     path: 'marcel.json',
-    content: ({ name, eltName }) => JSON.stringify({
-      name: name,
-      description: "",
-      eltName: eltName,
-      icon: "picture_in_picture_alt",
+    content: ({ name, eltName }) => toJSON({
+      name,
+      description: '',
+      eltName,
+      icon: 'picture_in_picture_alt',
       frontend: {
         props: [
           {
-            name: "firstName",
-            description: "",
-            type: "string",
-            value: "Marcel"
+            name: 'firstName',
+            description: '',
+            type: 'string',
+            value: 'Marcel'
           }
         ]
       }
-    }, null, 2)
+    })
   },
   {
     path: 'frontend/package.json',
-    content: ({ eltName }) => JSON.stringify({
+    content: ({ eltName }) => toJSON({
       name: eltName,
-      version: "1.0.0",
-      license: "MIT",
+      version: '1.0.0',
+      license: 'MIT',
       scripts: {
-        start: "serve -s"
+        start: 'serve -s'
       }
-    }, null, 2)
+    })
   },
   {
     path: 'frontend/.gitignore',
