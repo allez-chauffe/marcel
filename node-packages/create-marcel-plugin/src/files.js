@@ -28,7 +28,7 @@ module.exports = [
       license: 'Apache-2.0',
       scripts: {
         dev: 'parcel src/index.html -d dev',
-        build: 'parcel build src/index.html -d .',
+        build: 'parcel build src/index.html -d . --public-url ./',
       }
     })
   },
@@ -239,8 +239,9 @@ limitations under the License.
   },
   {
     path: 'frontend/.gitignore',
-    content: () => `node_modules
+    content: () => `.cache
 dev
+node_modules
 `
   },
   {

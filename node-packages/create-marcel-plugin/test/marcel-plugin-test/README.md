@@ -9,4 +9,4 @@ cd frontend
 yarn dev
 ```
 
-Then visit http://localhost:1234/ and start hacking.
+Then visit http://localhost:1234/ and start hacking !
