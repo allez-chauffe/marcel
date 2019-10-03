@@ -77,14 +77,8 @@ jobs:
     executor: go_executor
     steps:
       - checkout
-      - restore_cache:
-          key: marcel-go-deps-{{ checksum "go.mod" }}
       - run: go mod download
       - run: go get -u github.com/gobuffalo/packr/packr
-      - save_cache:
-          key: marcel-go-deps-{{ checksum "go.mod" }}
-          paths:
-            - /go/pkg/mod
       - attach_workspace:
           at: .
       - run: go test .
@@ -100,13 +94,7 @@ jobs:
     executor: go_executor
     steps:
       - checkout
-      - restore_cache:
-          key: marcel-go-deps-{{ checksum "go.mod" }}
       - run: go mod download
-      - save_cache:
-          key: marcel-go-deps-{{ checksum "go.mod" }}
-          paths:
-            - /go/pkg/mod
       - attach_workspace:
           at: .
       - run: go test .
