@@ -213,9 +213,6 @@ workflows:
             - build_frontend
       - build_marcel_nopackr:
           filters: *filters-tag
-          requires:
-            - build_backoffice
-            - build_frontend
       - docker_build_marcel:
           filters: *filters-master-tag
           requires:
