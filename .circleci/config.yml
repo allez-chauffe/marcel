@@ -89,7 +89,28 @@ jobs:
           at: .
       - run: go test .
       - run: packr
-      - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static" -X github.com/Zenika/marcel/version.Version=${CIRCLE_TAG:-$CIRCLE_BRANCH} -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1' -tags 'osusergo netgo' -o marcel
+      - run: "CGO_ENABLED=0 go build -ldflags \"-extldflags \\\"-static\\\" -X github.com/Zenika/marcel/version.Version=$CIRCLE_BRANCH -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1\" -tags \"osusergo netgo\" -o marcel"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - Dockerfile
+            - marcel
+
+  build_marcel_nopackr:
+    executor: go_executor
+    steps:
+      - checkout
+      - restore_cache:
+          key: marcel-go-deps-{{ checksum "go.mod" }}
+      - run: go mod download
+      - save_cache:
+          key: marcel-go-deps-{{ checksum "go.mod" }}
+          paths:
+            - /go/pkg/mod
+      - attach_workspace:
+          at: .
+      - run: go test .
+      - run: "CGO_ENABLED=0 go build -ldflags \"-extldflags \\\"-static\\\" -X github.com/Zenika/marcel/version.Version=$CIRCLE_TAG -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1\" -tags \"osusergo netgo nopackr\" -o marcel"
       - persist_to_workspace:
           root: .
           paths:
@@ -118,6 +139,19 @@ jobs:
           paths:
             - backoffice/marcel-backoffice.tgz
 
+  archive_frontend:
+    executor: std_executor
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          command: tar czf ../marcel-frontend.tgz *
+          working_directory: frontend/build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/marcel-frontend.tgz
+
   deploy_integration:
     executor: gcloud_executor
     steps:
@@ -139,7 +173,8 @@ jobs:
       - attach_workspace:
           at: .
       - run: go get github.com/tcnksm/ghr
-      - run: ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_TAG} backoffice/marcel-backoffice.tgz
+      - run: mkdir assets && mv backoffice/marcel-backoffice.tgz frontend/marcel-frontend.tgz marcel assets
+      - run: ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_TAG} assets
 
 filters-all: &filters-all
   tags:
@@ -173,7 +208,11 @@ workflows:
       - build_frontend:
           filters: *filters-all
       - build_marcel:
-          filters: *filters-all
+          requires:
+            - build_backoffice
+            - build_frontend
+      - build_marcel_nopackr:
+          filters: *filters-tag
           requires:
             - build_backoffice
             - build_frontend
@@ -185,6 +224,10 @@ workflows:
           filters: *filters-tag
           requires:
             - build_backoffice
+      - archive_frontend:
+          filters: *filters-tag
+          requires:
+            - build_frontend
       - deploy_integration:
           filters: *filters-master
           requires:
@@ -192,4 +235,6 @@ workflows:
       - publish_github_release:
           filters: *filters-tag
           requires:
+            - build_marcel_nopackr
             - archive_backoffice
+            - archive_frontend
