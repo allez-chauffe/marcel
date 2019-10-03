@@ -2,7 +2,8 @@
   "name": "marcel-plugin-with-state",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
+  "private": true,
+  "license": "Apache-2.0",
   "dependencies": {
     "marcel-plugin": "^1.0.0"
   },
