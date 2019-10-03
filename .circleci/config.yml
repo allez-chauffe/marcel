@@ -163,7 +163,7 @@ workflows:
           requires:
             - build_marcel
       - archive_backoffice:
-          filters: *filters-master # FIXME tobe changed
+          filters: *filters-all # FIXME tobe changed
           requires:
             - build_backoffice
       - deploy_integration:
