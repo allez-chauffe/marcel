@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "repository": "https://github.com/Zenika/marcel/tree/master/node-packages/marcel-plugin",
   "author": "Valentin Cocaud",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "lint": "eslint src"

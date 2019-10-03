@@ -7,7 +7,7 @@
   },
   "repository": "https://github.com/Zenika/marcel",
   "author": "Valentin Cocaud",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "lint": "eslint src",
     "start": "rm -rf example && node ./src/index.js example"
