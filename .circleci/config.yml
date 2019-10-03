@@ -1,9 +1,5 @@
-defaults: &defaults
-  working_directory: /tmp
-  docker:
-    - image: circleci/buildpack-deps:stable-curl
-
 version: 2
+
 jobs:
   debug_node:
     docker:
@@ -19,7 +15,6 @@ jobs:
       - run: go version
 
   build_backoffice:
-    <<: *defaults
     docker:
       - image: circleci/node:12
     working_directory: /home/circleci/app
@@ -44,7 +39,6 @@ jobs:
             - backoffice/build
 
   build_frontend:
-    <<: *defaults
     docker:
       - image: circleci/node:12
     working_directory: /home/circleci/app
@@ -69,7 +63,6 @@ jobs:
             - frontend/build
 
   build_marcel:
-    <<: *defaults
     working_directory: /go/app
     docker:
       - image: circleci/golang:1.12
@@ -95,7 +88,6 @@ jobs:
             - marcel
 
   docker_build_marcel:
-    <<: *defaults
     docker:
       - image: circleci/buildpack-deps:stable-curl
     working_directory: /tmp/app
