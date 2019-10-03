@@ -82,7 +82,7 @@ func (a *API) waitSignal() {
 	}()
 }
 
-func (a *API) ConfigureRouter(r *mux.Router) {
+func (a *API) ConfigureRouter(r *mux.Router) error {
 	b := r.PathPrefix(config.Config().API().BasePath()).Subrouter()
 
 	b.Use(auth.Middleware)
@@ -133,6 +133,8 @@ func (a *API) ConfigureRouter(r *mux.Router) {
 	user := users.PathPrefix("/{userID}").Subrouter()
 	user.HandleFunc("", deleteUserHandler).Methods("DELETE")
 	user.HandleFunc("", updateUserHandler).Methods("PUT")
+
+	return nil
 }
 
 func (a *API) initializeServices() {

@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
@@ -24,13 +23,19 @@ func Start() error {
 	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config().Frontend().Port()), r)
 }
 
-func ConfigureRouter(r *mux.Router) {
+func ConfigureRouter(r *mux.Router) error {
 	var base = httputil.NormalizeBase(config.Config().Frontend().BasePath())
 
 	var b = r.PathPrefix(httputil.TrimTrailingSlash(base)).Subrouter()
 
 	b.HandleFunc("/config", configHandler).Methods("GET")
-	b.PathPrefix("/").Handler(fileHandler(base))
+	fh, err := fileHandler(base)
+	if err != nil {
+		return err
+	}
+	b.PathPrefix("/").Handler(fh)
+
+	return nil
 }
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
@@ -48,15 +53,19 @@ func configHandler(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func fileHandler(base string) http.Handler {
+func fileHandler(base string) (http.Handler, error) {
+	fs, err := initFs()
+	if err != nil {
+		return nil, err
+	}
 	return http.StripPrefix(
 		base,
 		http.FileServer(
 			httputil.NewTemplater(
-				packr.NewBox("../frontend/build/"),
+				fs,
 				[]string{"/index.html"},
 				map[string]string{"REACT_APP_BASE": base},
 			),
 		),
-	)
+	), nil
 }

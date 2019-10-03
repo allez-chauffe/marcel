@@ -18,7 +18,7 @@ import (
 
 type routerConfigurer struct {
 	base      string
-	configure func(*mux.Router)
+	configure func(*mux.Router) error
 }
 
 type routerConfigurers []routerConfigurer
@@ -37,7 +37,7 @@ func (configurers routerConfigurers) Swap(i, j int) {
 	configurers[i], configurers[j] = configurers[j], configurers[i]
 }
 
-func Start() {
+func Start() error {
 	var a = api.New()
 	a.Initialize()
 
@@ -52,10 +52,12 @@ func Start() {
 	sort.Sort(configurers)
 
 	for _, configurer := range configurers {
-		configurer.configure(r)
+		if err := configurer.configure(r); err != nil {
+			return err
+		}
 	}
 
 	log.Infof("Starting standalone server on port %d...", config.Config().Standalone().Port())
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config().Standalone().Port()), r))
+	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config().Standalone().Port()), r)
 }

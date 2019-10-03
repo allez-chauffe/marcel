@@ -26,8 +26,8 @@ func init() {
 			cfg.Debug()
 		},
 
-		Run: func(_ *cobra.Command, _ []string) {
-			standalone.Start()
+		RunE: func(_ *cobra.Command, _ []string) error {
+			return standalone.Start()
 		},
 	}
 
