@@ -140,6 +140,17 @@ jobs:
           paths:
             - frontend/marcel-frontend.tgz
 
+  archive_marcel:
+    executor: std_executor
+    steps:
+      - attach_workspace:
+          at: .
+      - run: tar czf marcel.tgz marcel
+      - persist_to_workspace:
+          root: .
+          paths:
+            - marcel.tgz
+
   deploy_integration:
     executor: gcloud_executor
     steps:
@@ -161,7 +172,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: go get github.com/tcnksm/ghr
-      - run: mkdir assets && mv backoffice/marcel-backoffice.tgz frontend/marcel-frontend.tgz marcel assets
+      - run: mkdir assets && mv backoffice/marcel-backoffice.tgz frontend/marcel-frontend.tgz marcel.tgz assets
       - run: ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_TAG} assets
 
 filters-all: &filters-all
@@ -213,6 +224,10 @@ workflows:
           filters: *filters-tag
           requires:
             - build_frontend
+      - archive_marcel:
+          filters: *filters-tag
+          requires:
+            - build_marcel_nopackr
       - deploy_integration:
           filters: *filters-master
           requires:
@@ -220,6 +235,6 @@ workflows:
       - publish_github_release:
           filters: *filters-tag
           requires:
-            - build_marcel_nopackr
             - archive_backoffice
             - archive_frontend
+            - archive_marcel
