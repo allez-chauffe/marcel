@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "license": "Apache-2.0",
   "scripts": {
-    "start": "serve -s"
+    "dev": "parcel src/index.html -d dev",
+    "build": "parcel build src/index.html -d ."
   },
   "dependencies": {
     "marcel-plugin": "^1.0.0"
   },
   "devDependencies": {
-    "serve": "^11.2.0"
+    "parcel-bundler": "^1.12.3"
   }
 }

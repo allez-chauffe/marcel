@@ -30,4 +30,11 @@ commands.forEach(({ command, cwd }) => {
   )
 })
 
-console.info(`The plugin has successfully been generated. You can now go to the ${plugin.eltName} folder and start making awesome things !`)
+console.info(`Your plugin has been generated.
+
+Start a development server with:
+
+cd ${plugin.eltName}/frontend
+yarn dev
+
+Then visit http://localhost:1234/ and start hacking !`)
