@@ -3,6 +3,7 @@ package httputil
 import (
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -18,6 +19,10 @@ func DownloadTgzToDir(url, path string) error {
 		return err
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("GET %s returned status %d", url, res.StatusCode)
+	}
 
 	if err := os.RemoveAll(path); err != nil {
 		return err
