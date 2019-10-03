@@ -116,7 +116,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - marcel/marcel-backoffice.tgz
+            - backoffice/marcel-backoffice.tgz
 
   deploy_integration:
     executor: gcloud-executor
