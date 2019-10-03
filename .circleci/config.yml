@@ -1,35 +1,48 @@
-version: 2
+version: 2.1
+
+executors:
+  node-executor:
+    docker:
+      - image: circleci/node:12
+    working_directory: /home/circleci/app
+  go-executor:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/app
+  std-executor:
+    docker:
+      - image: circleci/buildpack-deps:stable-curl
+    working_directory: /tmp/app
+  gcloud-executor:
+    docker:
+      - image: google/cloud-sdk:latest
 
 jobs:
   debug_node:
-    docker:
-      - image: circleci/node:12
+    executor: node-executor
     steps:
       - run: node --version
       - run: yarn --version
 
   debug_go:
-    docker:
-      - image: circleci/golang:1.12
+    executor: go-executor
     steps:
       - run: go version
 
   build_backoffice:
-    docker:
-      - image: circleci/node:12
-    working_directory: /home/circleci/app
+    executor: node-executor
     steps:
       - checkout
       - restore_cache:
           keys:
-            - backoffice-deps-{{ checksum "backoffice/package.json" }}
+            - marcel-backoffice-deps-{{ checksum "backoffice/package.json" }}
       - run:
           command: yarn
           working_directory: backoffice
       - save_cache:
           paths:
             - backoffice/node_modules
-          key: backoffice-deps-{{ checksum "backoffice/package.json" }}
+          key: marcel-backoffice-deps-{{ checksum "backoffice/package.json" }}
       - run:
           command: yarn build
           working_directory: backoffice
@@ -39,21 +52,19 @@ jobs:
             - backoffice/build
 
   build_frontend:
-    docker:
-      - image: circleci/node:12
-    working_directory: /home/circleci/app
+    executor: node-executor
     steps:
       - checkout
       - restore_cache:
           keys:
-            - frontend-deps-{{ checksum "frontend/package.json" }}
+            - marcel-frontend-deps-{{ checksum "frontend/package.json" }}
       - run:
           command: yarn
           working_directory: frontend
       - save_cache:
           paths:
             - frontend/node_modules
-          key: frontend-deps-{{ checksum "frontend/package.json" }}
+          key: marcel-frontend-deps-{{ checksum "frontend/package.json" }}
       - run:
           command: yarn build
           working_directory: frontend
@@ -63,22 +74,20 @@ jobs:
             - frontend/build
 
   build_marcel:
-    working_directory: /go/app
-    docker:
-      - image: circleci/golang:1.12
+    executor: go-executor
     steps:
       - checkout
       - restore_cache:
-          key: marcel-deps-{{ checksum "go.mod" }}
+          key: marcel-go-deps-{{ checksum "go.mod" }}
       - run: go mod download
+      - run: go get -u github.com/gobuffalo/packr/packr
       - save_cache:
-          key: marcel-deps-{{ checksum "go.mod" }}
+          key: marcel-go-deps-{{ checksum "go.mod" }}
           paths:
             - /go/pkg/mod
       - attach_workspace:
           at: /go/app
       - run: go test .
-      - run: go get -u github.com/gobuffalo/packr/packr
       - run: packr
       - run: CGO_ENABLED=0 go build -ldflags '-extldflags "-static" -X github.com/Zenika/marcel/version.Version=${CIRCLE_TAG:-$CIRCLE_BRANCH} -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1' -tags 'osusergo netgo' -o marcel
       - persist_to_workspace:
@@ -88,9 +97,7 @@ jobs:
             - marcel
 
   docker_build_marcel:
-    docker:
-      - image: circleci/buildpack-deps:stable-curl
-    working_directory: /tmp/app
+    executor: std-executor
     steps:
       - checkout
       - setup_remote_docker
@@ -98,9 +105,21 @@ jobs:
           at: /tmp/app
       - run: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel
 
+  archive_backoffice:
+    executor: std-executor
+    steps:
+      - attach_workspace:
+          at: /tmp/app
+      - run:
+          command: tar czf ../marcel-backoffice.tgz
+          working_directory: backoffice/build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - marcel/marcel-backoffice.tgz
+
   deploy_integration:
-    docker:
-      - image: google/cloud-sdk:latest
+    executor: gcloud-executor
     steps:
       - checkout
       - restore_cache:
@@ -143,6 +162,10 @@ workflows:
           filters: *filters-all
           requires:
             - build_marcel
+      - archive_backoffice:
+          filters: *filters-master # FIXME tobe changed
+          requires:
+            - build_backoffice
       - deploy_integration:
           filters: *filters-master
           requires:
