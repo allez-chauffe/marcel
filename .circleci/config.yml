@@ -109,7 +109,7 @@ jobs:
     executor: std-executor
     steps:
       - attach_workspace:
-          at: /tmp/app
+          at: .
       - run:
           command: tar czf ../marcel-backoffice.tgz *
           working_directory: backoffice/build
