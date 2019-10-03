@@ -1,36 +1,36 @@
 version: 2.1
 
 executors:
-  node-executor:
+  node_executor:
     docker:
       - image: circleci/node:12
     working_directory: /home/circleci/app
-  go-executor:
+  go_executor:
     docker:
       - image: circleci/golang:1.13
     working_directory: /go/app
-  std-executor:
+  std_executor:
     docker:
       - image: circleci/buildpack-deps:stable-curl
     working_directory: /tmp/app
-  gcloud-executor:
+  gcloud_executor:
     docker:
       - image: google/cloud-sdk:latest
 
 jobs:
   debug_node:
-    executor: node-executor
+    executor: node_executor
     steps:
       - run: node --version
       - run: yarn --version
 
   debug_go:
-    executor: go-executor
+    executor: go_executor
     steps:
       - run: go version
 
   build_backoffice:
-    executor: node-executor
+    executor: node_executor
     steps:
       - checkout
       - restore_cache:
@@ -52,7 +52,7 @@ jobs:
             - backoffice/build
 
   build_frontend:
-    executor: node-executor
+    executor: node_executor
     steps:
       - checkout
       - restore_cache:
@@ -74,7 +74,7 @@ jobs:
             - frontend/build
 
   build_marcel:
-    executor: go-executor
+    executor: go_executor
     steps:
       - checkout
       - restore_cache:
@@ -97,7 +97,7 @@ jobs:
             - marcel
 
   docker_build_marcel:
-    executor: std-executor
+    executor: std_executor
     steps:
       - checkout
       - setup_remote_docker
@@ -106,7 +106,7 @@ jobs:
       - run: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel
 
   archive_backoffice:
-    executor: std-executor
+    executor: std_executor
     steps:
       - attach_workspace:
           at: .
@@ -119,7 +119,7 @@ jobs:
             - backoffice/marcel-backoffice.tgz
 
   deploy_integration:
-    executor: gcloud-executor
+    executor: gcloud_executor
     steps:
       - checkout
       - restore_cache:
@@ -133,6 +133,14 @@ jobs:
           command: rm -f ${HOME}/gcloud-service-key.json
           when: always
 
+  publish_github_release:
+    executor: go_executor
+    steps:
+      - attach_workspace:
+          at: .
+      - run: go get github.com/tcnksm/ghr
+      - run: ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_TAG} backoffice/marcel-backoffice.tgz
+
 filters-all: &filters-all
   tags:
     only: /.*/
@@ -145,7 +153,7 @@ filters-tag: &filters-tag
     ignore: /.*/
   tags:
     only: /.*/
-filters-master-tag: &filters-master-tag
+filters-master_tag: &filters-master-tag
   branches:
     only:
       - master
@@ -181,3 +189,7 @@ workflows:
           filters: *filters-master
           requires:
             - docker_build_marcel
+      - publish_github_release:
+          filters: *filters-tag
+          requires:
+            - archive_backoffice
