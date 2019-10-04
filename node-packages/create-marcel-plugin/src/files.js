@@ -27,7 +27,8 @@ module.exports = [
       version: '1.0.0',
       license: 'Apache-2.0',
       scripts: {
-        start: 'serve -s'
+        dev: 'parcel src/index.html -d dev',
+        build: 'parcel build src/index.html -d . --public-url ./',
       }
     })
   },
@@ -238,56 +239,80 @@ limitations under the License.
   },
   {
     path: 'frontend/.gitignore',
-    content: () => 'node_modules\n'
+    content: () => `.cache
+dev
+node_modules
+`
   },
   {
-    path: 'frontend/index.html',
-    content: ({ name, eltName }) => `<!DOCTYPE html>
+    path: 'frontend/src/index.html',
+    content: ({ eltName }) => `<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>${eltName}</title>
     <meta charset="utf-8" />
-    <script src="./node_modules/marcel-plugin/dist/index.js"></script>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 100vw;
-        height: 100vh;
-      }
-    </style>
-  </head>
-
+    <link rel="stylesheet" href="./main.css">
+    <script src="../node_modules/marcel-plugin/dist/index.js"></script>
+    </head>
+    
   <body>
     <div id="root"></div>
-
-    <script>
-      class ${name} extends Marcel.Plugin {
-        constructor() {
-          super()
-          this.root = document.getElementById('root')
-        }
-
-        render() {
-          const { firstName, stylesvar = {} } = this.props
-
-          this.root.innerText = \`Hello \${firstName} !\`
-
-          // stylesvar is a special property containing the global media theme.
-          // You should use it to have a consistent style accross all the media.
-          if (stylesvar['primary-color']) this.root.style.color = stylesvar['primary-color']
-          if (stylesvar['font-family']) this.root.style.fontFamily = stylesvar['font-family']
-        }
-      }
-
-      Marcel.init(${name})
-
-      // uncomment this line to try the plugin in a browser :
-      // Marcel.changeProps({ firstName: 'Marcel' })
-    </script>
+    <script src="./main.js"></script>
   </body>
 </html>
 `
   },
+  {
+    path: 'frontend/src/main.js',
+    content: ({ name }) => `class ${name} extends Marcel.Plugin {
+  constructor() {
+    super()
+    this.root = document.getElementById('root')
+  }
+
+  render() {
+    const { firstName, stylesvar = {} } = this.props
+
+    this.root.innerText = \`Hello \${firstName} !\`
+
+    // stylesvar is a special property containing the global media theme.
+    // You should use it to have a consistent style accross all the media.
+    if (stylesvar['primary-color']) this.root.style.color = stylesvar['primary-color']
+    if (stylesvar['font-family']) this.root.style.fontFamily = stylesvar['font-family']
+  }
+}
+
+Marcel.init(${name})
+
+// uncomment this line to try the plugin in a browser :
+// Marcel.changeProps({ firstName: 'Marcel' })
+`
+  },
+  {
+    path: 'frontend/src/main.css',
+    content: () => `body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+`
+  },
+  {
+    path: 'README.md',
+    content: ({ eltName }) => `# ${eltName}
+
+This plugin has been generated with \`create-marcel-plugin\`.
+
+Start a development server with:
+
+\`\`\`sh
+cd frontend
+yarn dev
+\`\`\`
+
+Then visit http://localhost:1234/ and start hacking !
+`
+  }
 ]

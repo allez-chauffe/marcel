@@ -3,13 +3,13 @@ const { shouldUseYarn } = require('./utils')
 const installDepsYarn = [
   { command: () => 'yarnpkg', cwd: 'frontend' },
   { command: () => 'yarnpkg add marcel-plugin', cwd: 'frontend' },
-  { command: () => 'yarnpkg add -D serve', cwd: 'frontend' },
+  { command: () => 'yarnpkg add -D parcel-bundler', cwd: 'frontend' },
 ]
 
 const installDepsNpm = [
   { command: () => 'npm i', cwd: 'frontend' },
   { command: () => 'npm add marcel-plugin', cwd: 'frontend' },
-  { command: () => 'npm add --save-dev serve', cwd: 'frontend' },
+  { command: () => 'npm add --save-dev parcel-bundler', cwd: 'frontend' },
 ]
 
 const commands = [
