@@ -181,7 +181,7 @@ jobs:
           at: .
       - run: go get github.com/tcnksm/ghr
       - run: mkdir assets && mv backoffice/marcel-backoffice.tgz frontend/marcel-frontend.tgz marcel_linux_amd64.tgz marcel_windows_amd64.tgz marcel_darwin_amd64.tgz assets
-      - run: ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_TAG} assets
+      - run: ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -n "marcel ${CIRCLE_TAG}" ${CIRCLE_TAG} assets
 
 filters-all: &filters-all
   tags:
