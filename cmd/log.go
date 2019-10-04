@@ -8,8 +8,6 @@ import (
 
 type logLevel log.Level
 
-var ll = log.InfoLevel
-
 func (l *logLevel) String() string {
 	return log.Level(*l).String()
 }
@@ -29,5 +27,9 @@ func (l *logLevel) Type() string {
 
 func setLogLevel(cfg *config.ConfigType) {
 	log.SetLevel(cfg.LogLevel())
-	log.Infof("Log level set to %s", ll)
+	log.Infof("Log level set to %s", cfg.LogLevel())
+}
+
+func bindLogLevel(cfg *config.ConfigType) {
+	cfg.BindPFlag(Marcel.PersistentFlags(), "logLevel", "logLevel")
 }
