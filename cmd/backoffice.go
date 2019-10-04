@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"os"
-
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/Zenika/marcel/backoffice"
@@ -18,13 +15,7 @@ func init() {
 		Short: "Starts Marcel's backoffice server",
 		Args:  cobra.NoArgs,
 
-		PreRun: func(_ *cobra.Command, _ []string) {
-			log.SetOutput(os.Stdout)
-			cfg.Read(configFile)
-			config.SetConfig(cfg)
-			setLogLevel(cfg)
-			cfg.Debug()
-		},
+		PreRun: preRunForServer(cfg),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
 			return backoffice.Start()

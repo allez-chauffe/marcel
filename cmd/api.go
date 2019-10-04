@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"os"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -20,13 +18,7 @@ func init() {
 		Short: "Starts marcel's api server",
 		Args:  cobra.NoArgs,
 
-		PreRun: func(_ *cobra.Command, _ []string) {
-			log.SetOutput(os.Stdout)
-			cfg.Read(configFile)
-			config.SetConfig(cfg)
-			setLogLevel(cfg)
-			cfg.Debug()
-		},
+		PreRun: preRunForServer(cfg),
 
 		Run: func(_ *cobra.Command, _ []string) {
 			a := api.New()

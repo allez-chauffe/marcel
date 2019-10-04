@@ -64,7 +64,7 @@ func (c *ConfigType) Read(configFile string) error {
 func (c *ConfigType) Debug() {
 	cfgString, err := json.MarshalIndent(c.cfg().AllSettings(), "", "  ")
 	if err != nil {
-		log.Fatalf("failed to marshall config : %s", err)
+		log.Fatalf("Failed to marshall config : %s", err)
 	}
 
 	log.Debugf("Current configuration : %s", string(cfgString))
