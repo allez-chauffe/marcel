@@ -98,12 +98,16 @@ jobs:
           at: .
       - run: go mod download
       - run: go test -mod=readonly .
-      - run: "CGO_ENABLED=0 go build -mod=readonly -ldflags \"-extldflags \\\"-static\\\" -X github.com/Zenika/marcel/version.Version=$CIRCLE_TAG -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1\" -tags \"osusergo netgo nopackr\" -o marcel"
+      - run: "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=readonly -tags \"osusergo netgo nopackr\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/Zenika/marcel/version.Version=$CIRCLE_TAG -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1\" -o marcel_linux_amd64"
+      - run: "CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -mod=readonly -tags \"osusergo netgo nopackr\" -ldflags -H=windowsgui \"-extldflags \\\"-static\\\" -X github.com/Zenika/marcel/version.Version=$CIRCLE_TAG -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1\" -o marcel_windows_amd64.exe"
+      - run: "CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -mod=readonly -tags \"nopackr\" -ldflags \"-s -extldflags \\\"-sectcreate __TEXT __info_plist Info.plist\\\" -X github.com/Zenika/marcel/version.Version=$CIRCLE_TAG -X github.com/Zenika/marcel/version.Revision=$CIRCLE_SHA1\" -o marcel_darwin_amd64"
       - persist_to_workspace:
           root: .
           paths:
-            - Dockerfile
-            - marcel
+            - Docker
+            - marcel_linux_amd64
+            - marcel_windows_amd64.exe
+            - marcel_darwin_amd64
 
   docker_build_marcel:
     executor: std_executor
@@ -145,11 +149,15 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: tar czf marcel.tgz marcel
+      - run: tar czf marcel_linux_amd64.tgz marcel_linux_amd64
+      - run: tar czf marcel_windows_amd64.tgz marcel_windows_amd64.exe
+      - run: tar czf marcel_darwin_amd64.tgz marcel_darwin_amd64
       - persist_to_workspace:
           root: .
           paths:
-            - marcel.tgz
+            - marcel_linux_amd64.tgz
+            - marcel_windows_amd64.tgz
+            - marcel_darwin_amd64.tgz
 
   deploy_integration:
     executor: gcloud_executor
@@ -172,7 +180,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: go get github.com/tcnksm/ghr
-      - run: mkdir assets && mv backoffice/marcel-backoffice.tgz frontend/marcel-frontend.tgz marcel.tgz assets
+      - run: mkdir assets && mv backoffice/marcel-backoffice.tgz frontend/marcel-frontend.tgz marcel_linux_amd64.tgz marcel_windows_amd64.tgz marcel_darwin_amd64.tgz assets
       - run: ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_TAG} assets
 
 filters-all: &filters-all
