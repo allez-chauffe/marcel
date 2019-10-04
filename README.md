@@ -1,6 +1,6 @@
 # marcel
 
-![Marcel](https://raw.githubusercontent.com/Zenika/marcel/master/marcel_300.png)
+![Marcel](https://raw.githubusercontent.com/Zenika/marcel/master/marcel_banner.png)
 
 marcel is a configurable plugin based dashboard system.
 
