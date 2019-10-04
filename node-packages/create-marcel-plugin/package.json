@@ -1,6 +1,6 @@
 {
   "name": "create-marcel-plugin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The marcel-plugin generator",
   "bin": {
     "create-marcel-plugin": "./src/index.js"
@@ -12,6 +12,10 @@
     "lint": "eslint src",
     "start": "rm -rf example && node ./src/index.js example"
   },
+  "files": [
+    "src",
+    "LICENSE"
+  ],
   "devDependencies": {
     "eslint": "^6.5.1"
   },
