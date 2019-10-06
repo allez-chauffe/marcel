@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	uuid "github.com/satori/go.uuid"
 	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
 
@@ -13,10 +14,10 @@ func List() ([]Plugin, error) {
 	return plugins, db.Store.Find(&plugins, nil)
 }
 
-func Get(eltName string) (*Plugin, error) {
+func Get(id string) (*Plugin, error) {
 	var p = new(Plugin)
 
-	if err := db.Store.Get(eltName, p); err != nil {
+	if err := db.Store.Get(id, p); err != nil {
 		if err == bh.ErrNotFound {
 			return nil, nil
 		}
@@ -25,8 +26,9 @@ func Get(eltName string) (*Plugin, error) {
 	return p, nil
 }
 
-func Exists(eltName string) (bool, error) {
-	if err := db.Store.Get(eltName, &Plugin{}); err != nil {
+// FIXME ExistsByURL
+func ExistsByURL(id string) (bool, error) {
+	if err := db.Store.Get(id, &Plugin{}); err != nil {
 		if err == bh.ErrNotFound {
 			return false, nil
 		}
@@ -36,17 +38,21 @@ func Exists(eltName string) (bool, error) {
 }
 
 func Insert(p *Plugin) error {
-	return db.Store.Insert(p.EltName, p)
+	p.ID = uuid.NewV4().String()
+	return db.Store.Insert(p.ID, p)
 }
 
 func Update(p *Plugin) error {
-	return db.Store.Update(p.EltName, p)
+	return db.Store.Update(p.ID, p)
 }
 
 func UpsertAll(plugins []Plugin) error {
 	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
 		for _, p := range plugins {
-			if err := db.Store.TxUpsert(tx, p.EltName, &p); err != nil {
+			if p.ID == "" {
+				p.ID = uuid.NewV4().String()
+			}
+			if err := db.Store.TxUpsert(tx, p.ID, &p); err != nil {
 				return err
 			}
 		}
@@ -55,6 +61,6 @@ func UpsertAll(plugins []Plugin) error {
 	})
 }
 
-func Delete(eltName string) error {
-	return db.Store.Delete(eltName, &Plugin{})
+func Delete(id string) error {
+	return db.Store.Delete(id, &Plugin{})
 }

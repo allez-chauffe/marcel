@@ -85,11 +85,11 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	eltName := vars["eltName"]
+	id := vars["id"]
 
-	log.Debugf("Plugin deletion requested: %s", eltName)
+	log.Debugf("Plugin deletion requested: %s", id)
 
-	plugin, err := plugins.Get(eltName)
+	plugin, err := plugins.Get(id)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -101,23 +101,23 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := os.RemoveAll(plugin.GetDirectory()); err != nil {
 		if os.IsNotExist(err) {
-			log.Warnf("The %s plugin's folder doesn't exists. Ignoring it.", plugin.EltName)
+			log.Warnf("The %s plugin's folder doesn't exists. Ignoring it.", plugin.ID)
 		} else {
-			log.Errorf("Error while removing %s plugin's folder %s: %s", plugin.EltName, plugin.GetDirectory(), err.Error())
+			log.Errorf("Error while removing %s plugin's folder %s: %s", plugin.ID, plugin.GetDirectory(), err.Error())
 			commons.WriteResponse(w, http.StatusInternalServerError, "Error while removing plugin's files")
 			return
 		}
 	}
 
-	if err := plugins.Delete(eltName); err != nil {
-		log.Errorf("Error while removing %s plugin from database: %s", plugin.EltName, err.Error())
+	if err := plugins.Delete(id); err != nil {
+		log.Errorf("Error while removing %s plugin from database: %s", plugin.ID, err.Error())
 		commons.WriteResponse(w, http.StatusInternalServerError, "Error while removing plugin from database")
 		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
 
-	log.Infof("Plugin deleted : %s", plugin.EltName)
+	log.Infof("Plugin deleted : %s", plugin.ID)
 }
 
 type AddPluginBody struct {
@@ -138,23 +138,23 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Infof("Plugin registration requested for %s", body.URL)
 
-	plugin, tempDir, err := FetchFromGit(body.URL)
-	defer os.RemoveAll(tempDir)
-	if err != nil {
-		log.Error(err)
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	exists, err := plugins.Exists(plugin.EltName)
+	exists, err := plugins.ExistsByURL(body.URL)
 	if err != nil {
 		log.Error(err)
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	if exists {
-		log.Errorf("The plugin '%s' already exists", plugin.EltName)
-		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("The plugin '%s' already exists", plugin.EltName))
+		log.Errorf("The plugin '%s' already exists", body.URL)
+		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("The plugin '%s' already exists", body.URL))
+		return
+	}
+
+	plugin, tempDir, err := fetchFromGit(body.URL)
+	defer os.RemoveAll(tempDir)
+	if err != nil {
+		log.Error(err)
+		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -171,7 +171,7 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("Plugin successfuly registered : %s (%s)", plugin.EltName, plugin.Name)
+	log.Infof("Plugin successfuly registered : %s", plugin.URL)
 	commons.WriteJsonResponse(w, plugin)
 }
 
@@ -197,7 +197,7 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Infof("Plugin update requested for %s", eltName)
 
-	plugin, tempDir, err := FetchFromGit(plugin.URL)
+	plugin, tempDir, err := fetchFromGit(plugin.URL)
 	// The temp dir cleanup should be done before handling because it can be created even if an error occured
 	defer os.RemoveAll(tempDir)
 	if err != nil {
@@ -226,6 +226,6 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("Plugin successfuly updated: %s (%s)", plugin.EltName, plugin.Name)
+	log.Infof("Plugin successfuly updated: %s", plugin.URL)
 	commons.WriteJsonResponse(w, plugin)
 }
