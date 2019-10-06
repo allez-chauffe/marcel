@@ -105,7 +105,7 @@ func fetchManifestFromGit(url string, ref plumbing.ReferenceName, fs billy.Files
 // fetchFromGit returns the plugin found in the git repo pointed by url
 // It also returns the fullpath of the temporary directory where the plugin's repo content is stored
 // The caller should take care of the temporary directory removal
-func FetchFromGit(url string) (plugin *plugins.Plugin, tempDir string, err error) {
+func fetchFromGit(url string) (plugin *plugins.Plugin, tempDir string, err error) {
 
 	versions, err := fetchVersionsFromGit(url)
 	if err != nil {
@@ -131,9 +131,6 @@ func FetchFromGit(url string) (plugin *plugins.Plugin, tempDir string, err error
 	}
 
 	plugin.URL = url
-	for _, version := range versions {
-		plugin.Versions = append(plugin.Versions, version.String())
-	}
 
 	return plugin, tempDir, nil
 }

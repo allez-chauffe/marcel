@@ -8,8 +8,13 @@ import (
 
 // Plugin represents a plugin configuration
 type Plugin struct {
-	URL         string   `json:"url"`
-	Versions    []string `json:"versions"`
+	ID       string    `json:"id"`
+	URL      string    `json:"url"`
+	Versions []Version `json:"versions"`
+}
+
+type Version struct {
+	Version     string   `json:"version"`
 	EltName     string   `json:"eltName"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
@@ -31,5 +36,5 @@ type Prop struct {
 
 // GetDirectory returns the plugin's static files directory path
 func (p *Plugin) GetDirectory() string {
-	return filepath.Join(config.Default().API().PluginsDir(), p.EltName)
+	return filepath.Join(config.Default().API().PluginsDir(), p.ID)
 }
