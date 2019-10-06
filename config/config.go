@@ -8,23 +8,19 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ConfigType viper.Viper
+type Config viper.Viper
 
-var cfg *ConfigType
+var _default *Config
 
-func SetConfig(newCfg *ConfigType) {
-	cfg = newCfg
+func SetDefault(cfg *Config) {
+	_default = cfg
 }
 
-func Config() *ConfigType {
-	return cfg
+func Default() *Config {
+	return _default
 }
 
-func (c *ConfigType) cfg() *viper.Viper {
-	return (*viper.Viper)(c)
-}
-
-func New() *ConfigType {
+func New() *Config {
 	var cfg = viper.New()
 
 	cfg.SetEnvPrefix("marcel")
@@ -35,11 +31,15 @@ func New() *ConfigType {
 	cfg.AddConfigPath(".")
 	cfg.SetConfigName("config")
 
-	return (*ConfigType)(cfg)
+	return (*Config)(cfg)
 }
 
-func (c *ConfigType) Read(configFile string) error {
-	var cfg = (*viper.Viper)(c)
+func (c *Config) viper() *viper.Viper {
+	return (*viper.Viper)(c)
+}
+
+func (c *Config) Read(configFile string) error {
+	var cfg = c.viper()
 
 	if configFile != "" {
 		cfg.SetConfigFile(configFile)
@@ -61,8 +61,8 @@ func (c *ConfigType) Read(configFile string) error {
 	return nil
 }
 
-func (c *ConfigType) Debug() {
-	cfgString, err := json.MarshalIndent(c.cfg().AllSettings(), "", "  ")
+func (c *Config) Debug() {
+	cfgString, err := json.MarshalIndent(c.viper().AllSettings(), "", "  ")
 	if err != nil {
 		log.Fatalf("Failed to marshall config : %s", err)
 	}
@@ -70,37 +70,37 @@ func (c *ConfigType) Debug() {
 	log.Debugf("Current configuration : %s", string(cfgString))
 }
 
-func (c *ConfigType) LogLevel() log.Level {
-	logLevelString := c.cfg().GetString("logLevel")
+func (c *Config) LogLevel() log.Level {
+	logLevelString := c.viper().GetString("logLevel")
 
 	// Default to info if no log level is given
 	if logLevelString == "" {
 		return log.InfoLevel
 	}
 
-	l, err := log.ParseLevel(c.cfg().GetString("logLevel"))
+	l, err := log.ParseLevel(logLevelString)
 	if err != nil {
 		panic(err)
 	}
 	return l
 }
 
-func (c *ConfigType) SetLogLevel(l log.Level) {
-	c.cfg().Set("logLevel", l.String())
+func (c *Config) SetLogLevel(l log.Level) {
+	c.viper().Set("logLevel", l.String())
 }
 
-func (c *ConfigType) API() *API {
+func (c *Config) API() *API {
 	return (*API)(c)
 }
 
-func (c *ConfigType) Backoffice() *Backoffice {
+func (c *Config) Backoffice() *Backoffice {
 	return (*Backoffice)(c)
 }
 
-func (c *ConfigType) Frontend() *Frontend {
+func (c *Config) Frontend() *Frontend {
 	return (*Frontend)(c)
 }
 
-func (c *ConfigType) Standalone() *Standalone {
+func (c *Config) Standalone() *Standalone {
 	return (*Standalone)(c)
 }

@@ -20,13 +20,13 @@ func Start() error {
 
 	ConfigureRouter(r)
 
-	log.Infof("Starting backoffice server on port %d...", config.Config().Backoffice().Port())
+	log.Infof("Starting backoffice server on port %d...", config.Default().Backoffice().Port())
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.Config().Backoffice().Port()), r)
+	return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Backoffice().Port()), r)
 }
 
 func ConfigureRouter(r *mux.Router) error {
-	var base = httputil.NormalizeBase(config.Config().Backoffice().BasePath())
+	var base = httputil.NormalizeBase(config.Default().Backoffice().BasePath())
 
 	var b = r.PathPrefix(httputil.TrimTrailingSlash(base)).Subrouter()
 
@@ -43,12 +43,12 @@ func ConfigureRouter(r *mux.Router) error {
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
 	// FIXME utility ?
-	var apiURI = config.Config().Backoffice().APIURI()
+	var apiURI = config.Default().Backoffice().APIURI()
 	if !strings.HasSuffix(apiURI, "/") {
 		apiURI += "/"
 	}
 
-	var frontendURI = config.Config().Backoffice().FrontendURI()
+	var frontendURI = config.Default().Backoffice().FrontendURI()
 	if !strings.HasSuffix(frontendURI, "/") {
 		frontendURI += "/"
 	}

@@ -25,11 +25,11 @@ func (l *logLevel) Type() string {
 	return "log.Level"
 }
 
-func setLogLevel(cfg *config.ConfigType) {
+func setLogLevel(cfg *config.Config) {
 	log.SetLevel(cfg.LogLevel())
 	log.Infof("Log level set to %s", cfg.LogLevel())
 }
 
-func bindLogLevel(cfg *config.ConfigType) {
+func bindLogLevel(cfg *config.Config) {
 	cfg.BindPFlag(Marcel.PersistentFlags(), "logLevel", "logLevel")
 }

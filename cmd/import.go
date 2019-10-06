@@ -19,7 +19,9 @@ func init() {
 		Args:  cobra.NoArgs,
 
 		PersistentPreRun: func(_ *cobra.Command, args []string) {
-			config.SetConfig(cfg)
+			bindLogLevel(cfg)
+			config.SetDefault(cfg)
+			setLogLevel(cfg)
 
 			if len(args) > 0 && args[0] != "-" {
 				importFile = args[0]
@@ -29,7 +31,9 @@ func init() {
 
 	var flags = cmd.PersistentFlags()
 
-	cfg.FlagString(flags, "dbFile", "marcel.db", "Database file name")
+	if _, err := cfg.FlagString(flags, "dbFile", "marcel.db", "Database file name"); err != nil {
+		panic(err)
+	}
 
 	Marcel.AddCommand(cmd)
 

@@ -50,7 +50,7 @@ func (a *API) Start() {
 
 	var h http.Handler = r
 
-	if config.Config().API().CORS() {
+	if config.Default().API().CORS() {
 		h = cors.New(cors.Options{
 			AllowOriginFunc:  func(origin string) bool { return true },
 			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
@@ -60,9 +60,9 @@ func (a *API) Start() {
 		log.Warn("CORS is enabled")
 	}
 
-	log.Infof("Starting API server on port %d...", config.Config().API().Port())
+	log.Infof("Starting API server on port %d...", config.Default().API().Port())
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Config().API().Port()), h))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Default().API().Port()), h))
 }
 
 func (a *API) waitSignal() {
@@ -83,10 +83,10 @@ func (a *API) waitSignal() {
 }
 
 func (a *API) ConfigureRouter(r *mux.Router) error {
-	b := r.PathPrefix(config.Config().API().BasePath()).Subrouter()
+	b := r.PathPrefix(config.Default().API().BasePath()).Subrouter()
 
 	b.Use(auth.Middleware)
-	if !config.Config().API().Auth().Secure() {
+	if !config.Default().API().Auth().Secure() {
 		log.Warnln("Secure mode is disabled")
 	}
 
