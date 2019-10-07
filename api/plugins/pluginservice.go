@@ -182,9 +182,9 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	eltName := vars["eltName"]
+	id := vars["id"]
 
-	plugin, err := plugins.Get(eltName)
+	plugin, err := plugins.Get(id)
 	if err != nil {
 		log.Error(err)
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
@@ -195,7 +195,7 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("Plugin update requested for %s", eltName)
+	log.Infof("Plugin update requested for %s", id)
 
 	plugin, tempDir, err := fetchFromGit(plugin.URL)
 	// The temp dir cleanup should be done before handling because it can be created even if an error occured
