@@ -31,5 +31,5 @@ type Prop struct {
 
 // GetDirectory returns the plugin's static files directory path
 func (p *Plugin) GetDirectory() string {
-	return filepath.Join(config.Config().API().PluginsDir(), p.EltName)
+	return filepath.Join(config.Default().API().PluginsDir(), p.EltName)
 }

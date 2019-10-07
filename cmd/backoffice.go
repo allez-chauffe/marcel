@@ -15,7 +15,7 @@ func init() {
 		Short: "Starts Marcel's backoffice server",
 		Args:  cobra.NoArgs,
 
-		PreRun: preRunForServer(cfg),
+		PreRunE: preRunForServer(cfg),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
 			return backoffice.Start()
@@ -24,19 +24,19 @@ func init() {
 
 	var flags = cmd.Flags()
 
-	if err := cfg.FlagUintP(flags, "port", "p", 8090, "Listening port", "backoffice.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", 8090, "Listening port", "backoffice.port"); err != nil {
 		panic(err)
 	}
 
-	if err := cfg.FlagString(flags, "basePath", "/", "Base path", "backoffice.basePath"); err != nil {
+	if _, err := cfg.FlagString(flags, "basePath", "/", "Base path", "backoffice.basePath"); err != nil {
 		panic(err)
 	}
 
-	if err := cfg.FlagString(flags, "apiURI", "/api", "API URI", "backoffice.apiURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "apiURI", "/api", "API URI", "backoffice.apiURI"); err != nil {
 		panic(err)
 	}
 
-	if err := cfg.FlagString(flags, "frontendURI", "/front", "Frontend URI", "backoffice.frontendURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "frontendURI", "/front", "Frontend URI", "backoffice.frontendURI"); err != nil {
 		panic(err)
 	}
 

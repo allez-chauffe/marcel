@@ -9,13 +9,22 @@ import (
 	"github.com/Zenika/marcel/config"
 )
 
-func preRunForServer(cfg *config.ConfigType) func(*cobra.Command, []string) {
-	return func(_ *cobra.Command, _ []string) {
+func preRunForServer(cfg *config.Config) func(*cobra.Command, []string) error {
+	return func(_ *cobra.Command, _ []string) error {
 		log.SetOutput(os.Stdout)
+
 		bindLogLevel(cfg)
-		cfg.Read(configFile)
-		config.SetConfig(cfg)
+
+		if err := cfg.Read(configFile); err != nil {
+			return err
+		}
+
+		config.SetDefault(cfg)
+
 		setLogLevel(cfg)
+
 		cfg.Debug()
+
+		return nil
 	}
 }

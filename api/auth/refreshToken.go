@@ -28,8 +28,8 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 			},
 		},
 		RefreshCookieName,
-		path.Join(config.Config().API().BasePath(), "auth", "login"),
-		time.Now().Add(config.Config().API().Auth().RefreshExpiration()),
+		path.Join(config.Default().API().BasePath(), "auth", "login"),
+		time.Now().Add(config.Default().API().Auth().RefreshExpiration()),
 	)
 
 	if err != nil {
@@ -41,7 +41,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 }
 
 func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
-	cookie, err := r.Cookie(cookieName(RefreshCookieName, path.Join(config.Config().API().BasePath(), "auth", "login")))
+	cookie, err := r.Cookie(cookieName(RefreshCookieName, path.Join(config.Default().API().BasePath(), "auth", "login")))
 	if err == http.ErrNoCookie {
 		return nil, nil
 	}
@@ -63,6 +63,6 @@ func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
 }
 
 func DeleteRefreshToken(w http.ResponseWriter) {
-	cookie := deleteCookie(RefreshCookieName, path.Join(config.Config().API().BasePath(), "auth", "login"))
+	cookie := deleteCookie(RefreshCookieName, path.Join(config.Default().API().BasePath(), "auth", "login"))
 	http.SetCookie(w, cookie)
 }
