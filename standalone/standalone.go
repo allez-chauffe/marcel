@@ -57,7 +57,11 @@ func Start(done chan<- error) error {
 		}
 	}
 
-	log.Infof("Starting standalone server on port %d...", config.Default().Standalone().Port())
+	log.Infof("Standalone server listening on %d...", config.Default().Standalone().Port())
+
+	if done == nil {
+		return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Standalone().Port()), r)
+	}
 
 	go func() {
 		done <- http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Standalone().Port()), r)
