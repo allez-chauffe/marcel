@@ -38,7 +38,12 @@ var Marcel = &cobra.Command{
 		if isatty.IsTerminal(os.Stdin.Fd()) && isatty.IsTerminal(os.Stdout.Fd()) {
 			return startInteractive(cmd.Usage)
 		}
-		//FIXME use DISPLAY (ok with linux, what of mac and windows ?)
+
+		//FIXME ok with linux, what of mac and windows ?
+		if os.Getenv("DISPLAY") != "" {
+			return startDemoServer()
+		}
+
 		return cmd.Usage()
 	},
 }
