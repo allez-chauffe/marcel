@@ -12,6 +12,7 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
 	github.com/magiconair/properties v1.8.1 // indirect
+	github.com/mattn/go-isatty v0.0.9
 	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/rogpeppe/go-internal v1.4.0 // indirect
 	github.com/rs/cors v1.7.0

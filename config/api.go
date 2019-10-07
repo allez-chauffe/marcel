@@ -58,16 +58,16 @@ func (a *API) MediasDir() string {
 	return a.resolveDataDirPath(a.viper().GetString("api.mediasDir"))
 }
 
-func (a *API) SetMediasDir(pd string) {
-	a.viper().Set("api.mediasDir", pd)
+func (a *API) SetMediasDir(md string) {
+	a.viper().Set("api.mediasDir", md)
 }
 
 func (a *API) DataDir() string {
 	return a.viper().GetString("api.dataDir")
 }
 
-func (a *API) SetDataDir(pd string) {
-	a.viper().Set("api.dataDir", pd)
+func (a *API) SetDataDir(dd string) {
+	a.viper().Set("api.dataDir", dd)
 }
 
 func (a *API) resolveDataDirPath(pPath string) string {
@@ -100,7 +100,7 @@ func (a *Auth) Expiration() time.Duration {
 	return a.viper().GetDuration("api.auth.expiration")
 }
 
-func (a *Auth) SetExpiration(e bool) {
+func (a *Auth) SetExpiration(e time.Duration) {
 	a.viper().Set("api.auth.expiration", e)
 }
 
@@ -108,6 +108,6 @@ func (a *Auth) RefreshExpiration() time.Duration {
 	return a.viper().GetDuration("api.auth.refreshExpiration")
 }
 
-func (a *Auth) SetRefreshExpiration(re bool) {
+func (a *Auth) SetRefreshExpiration(re time.Duration) {
 	a.viper().Set("api.auth.refreshExpiration", re)
 }

@@ -18,7 +18,11 @@ func init() {
 		PreRunE: preRunForServer(cfg),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return standalone.Start()
+			done := make(chan error)
+			if err := standalone.Start(done); err != nil {
+				return err
+			}
+			return <-done
 		},
 	}
 
