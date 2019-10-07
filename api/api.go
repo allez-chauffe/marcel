@@ -116,9 +116,9 @@ func (a *API) ConfigureRouter(r *mux.Router) error {
 	pluginsRouter := b.PathPrefix("/plugins").Subrouter()
 	pluginsRouter.HandleFunc("/", plugins.GetAllHandler).Methods("GET")
 	pluginsRouter.HandleFunc("/", plugins.AddHandler).Methods("POST")
-	pluginsRouter.HandleFunc("/{eltName}", plugins.GetHandler).Methods("GET")
-	pluginsRouter.HandleFunc("/{eltName}", plugins.UpdateHandler).Methods("PUT")
-	pluginsRouter.HandleFunc("/{eltName}", plugins.DeleteHandler).Methods("DELETE")
+	pluginsRouter.HandleFunc("/{id}", plugins.GetHandler).Methods("GET")
+	pluginsRouter.HandleFunc("/{id}", plugins.UpdateHandler).Methods("PUT")
+	pluginsRouter.HandleFunc("/{id}", plugins.DeleteHandler).Methods("DELETE")
 
 	auth := b.PathPrefix("/auth").Subrouter()
 	auth.HandleFunc("/login", loginHandler).Methods("POST")
