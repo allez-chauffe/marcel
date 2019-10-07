@@ -12,6 +12,14 @@ const user = (state = null, action) => {
     case actions.DISCONNECTED: {
       return null
     }
+    case '@@router/LOCATION_CHANGE': {
+      if (!action.payload.isFirstRendering) return state
+      const url = new URL(document.location)
+      if (!url.searchParams.has('token')) return state
+      const token = url.searchParams.get('token')
+      document.cookie=`RefreshAuthentication=${token};path=/`
+      return state
+    }
     default: {
       return state
     }

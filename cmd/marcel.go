@@ -8,6 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Zenika/marcel/api/auth"
+	"github.com/Zenika/marcel/api/db/users"
+
 	"github.com/Zenika/marcel/osutil"
 
 	"github.com/Zenika/marcel/config"
@@ -99,7 +102,18 @@ func startDemoServer() error {
 		return err
 	}
 
-	url := fmt.Sprintf("http://localhost:%d/", config.Default().Standalone().Port())
+	admin, err := users.GetByLogin("admin")
+	if err != nil {
+		return err
+	}
+
+	token, err := auth.GenerateRefreshJWT(admin)
+	if err != nil {
+		return err
+	}
+
+	//FIXME use backoffice basePath
+	url := fmt.Sprintf("http://localhost:%d/?token=%s", config.Default().Standalone().Port(), token)
 
 	fmt.Printf("marcel is running at %s\n", url)
 
