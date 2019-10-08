@@ -10,6 +10,7 @@ import (
 
 	"github.com/Zenika/marcel/api/auth"
 	"github.com/Zenika/marcel/api/db/users"
+	"github.com/Zenika/marcel/httputil"
 
 	"github.com/Zenika/marcel/osutil"
 
@@ -116,8 +117,7 @@ func startDemoServer() error {
 		return err
 	}
 
-	//FIXME use backoffice basePath
-	url := fmt.Sprintf("http://localhost:%d/?token=%s", config.Default().Standalone().Port(), token)
+	url := fmt.Sprintf("http://localhost:%d%s?token=%s", config.Default().Standalone().Port(), httputil.NormalizeBase(cfg.Backoffice().BasePath()), token)
 
 	fmt.Printf("marcel is running at %s\n", url)
 
