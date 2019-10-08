@@ -39,3 +39,10 @@ func (b *Backoffice) FrontendURI() string {
 func (b *Backoffice) SetFrontendURI(fu string) {
 	b.viper().Set("backoffice.frontendURI", fu)
 }
+
+func (b *Backoffice) SetDefaults() {
+	b.viper().SetDefault("backoffice.port", 8090)
+	b.viper().SetDefault("backoffice.basePath", "/")
+	b.viper().SetDefault("backoffice.apiURI", "/api")
+	b.viper().SetDefault("backoffice.frontendURI", "/front")
+}

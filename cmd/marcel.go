@@ -84,25 +84,8 @@ func startDemoServer() error {
 
 	var cfg = config.New()
 
-	// FIXME find a way to reuse default config from standalone cmd
-	cfg.API().SetBasePath("/api")
-	cfg.API().SetDBFile("marcel.db")
 	cfg.API().SetDataDir(dataDir)
-	cfg.API().SetMediasDir("medias")
-	cfg.API().SetPluginsDir("plugins")
-
-	cfg.API().Auth().SetExpiration(8 * time.Hour)
-	cfg.API().Auth().SetRefreshExpiration(15 * 24 * time.Hour)
 	cfg.API().Auth().SetSecure(false)
-
-	cfg.Backoffice().SetAPIURI("/api")
-	cfg.Backoffice().SetBasePath("/")
-	cfg.Backoffice().SetFrontendURI("/front")
-
-	cfg.Frontend().SetAPIURI("/api")
-	cfg.Frontend().SetBasePath("/front")
-
-	cfg.Standalone().SetPort(8090)
 
 	config.SetDefault(cfg)
 

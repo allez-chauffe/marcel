@@ -78,6 +78,17 @@ func (a *API) resolveDataDirPath(pPath string) string {
 	return filepath.Clean(path)
 }
 
+func (a *API) SetDefaults() {
+	a.viper().SetDefault("api.port", 8090)
+	a.viper().SetDefault("api.basePath", "/api")
+	a.viper().SetDefault("api.cors", false)
+	a.viper().SetDefault("api.dbFile", "marcel.db")
+	a.viper().SetDefault("api.pluginsDir", "plugins")
+	a.viper().SetDefault("api.mediasDir", "medias")
+	a.viper().SetDefault("api.dataDir", "")
+	a.Auth().SetDefaults()
+}
+
 func (a *API) Auth() *Auth {
 	return (*Auth)(a)
 }
@@ -110,4 +121,10 @@ func (a *Auth) RefreshExpiration() time.Duration {
 
 func (a *Auth) SetRefreshExpiration(re time.Duration) {
 	a.viper().Set("api.auth.refreshExpiration", re)
+}
+
+func (a *Auth) SetDefaults() {
+	a.viper().SetDefault("api.auth.secure", true)
+	a.viper().SetDefault("api.auth.expiration", 8*time.Hour)
+	a.viper().SetDefault("api.auth.refreshExpiration", 15*24*time.Hour)
 }

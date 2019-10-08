@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"time"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -31,15 +29,15 @@ func init() {
 
 	commonAPIFlags(flags, cfg)
 
-	if _, err := cfg.FlagUintP(flags, "port", "p", 8090, "Listening port", "api.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.API().Port(), "Listening port", "api.port"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "basePath", "/api", "Base path", "api.basePath"); err != nil {
+	if _, err := cfg.FlagString(flags, "basePath", cfg.API().BasePath(), "Base path", "api.basePath"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagBool(flags, "cors", false, "Enable CORS (all origins)", "api.cors"); err != nil {
+	if _, err := cfg.FlagBool(flags, "cors", cfg.API().CORS(), "Enable CORS (all origins)", "api.cors"); err != nil {
 		panic(err)
 	}
 
@@ -47,31 +45,31 @@ func init() {
 }
 
 func commonAPIFlags(flags *pflag.FlagSet, cfg *config.Config) {
-	if _, err := cfg.FlagString(flags, "dbFile", "marcel.db", "Database file", "api.dbFile"); err != nil {
+	if _, err := cfg.FlagString(flags, "dbFile", cfg.API().DBFile(), "Database file", "api.dbFile"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "pluginsDir", "plugins", "Plugins directory", "api.pluginsDir"); err != nil {
+	if _, err := cfg.FlagString(flags, "pluginsDir", cfg.API().PluginsDir(), "Plugins directory", "api.pluginsDir"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "mediasDir", "medias", "Medias directory", "api.mediasDir"); err != nil {
+	if _, err := cfg.FlagString(flags, "mediasDir", cfg.API().MediasDir(), "Medias directory", "api.mediasDir"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "dataDir", "", "Data directory", "api.dataDir"); err != nil {
+	if _, err := cfg.FlagString(flags, "dataDir", cfg.API().DataDir(), "Data directory", "api.dataDir"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagBool(flags, "secure", true, "Enable secure cookies", "api.auth.secure"); err != nil {
+	if _, err := cfg.FlagBool(flags, "secure", cfg.API().Auth().Secure(), "Enable secure cookies", "api.auth.secure"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagDuration(flags, "authExpiration", 8*time.Hour, "Authentication token expiration", "api.auth.expiration"); err != nil {
+	if _, err := cfg.FlagDuration(flags, "authExpiration", cfg.API().Auth().Expiration(), "Authentication token expiration", "api.auth.expiration"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagDuration(flags, "refreshExpiration", 15*24*time.Hour, "Refresh token expiration", "api.auth.refreshExpiration"); err != nil {
+	if _, err := cfg.FlagDuration(flags, "refreshExpiration", cfg.API().Auth().RefreshExpiration(), "Refresh token expiration", "api.auth.refreshExpiration"); err != nil {
 		panic(err)
 	}
 }

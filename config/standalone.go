@@ -15,3 +15,7 @@ func (s *Standalone) Port() uint {
 func (s *Standalone) SetPort(p uint) {
 	s.viper().Set("standalone.port", p)
 }
+
+func (s *Standalone) SetDefaults() {
+	s.viper().SetDefault("standalone.port", 8090)
+}
