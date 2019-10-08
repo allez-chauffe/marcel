@@ -42,24 +42,36 @@ var Marcel = &cobra.Command{
 			return startInteractive(cmd.Usage)
 		}
 
-		//FIXME ok with linux, what of mac and windows ?
-		if os.Getenv("DISPLAY") != "" {
-			return startDemoServer()
-		}
-
 		return cmd.Usage()
 	},
 }
 
 func startInteractive(usage func() error) error {
-	fmt.Print("You haven't specified any command, would you like to start a demonstration server ? [Y/n] ")
-
 	scanner := bufio.NewScanner(os.Stdin)
-	if scanner.Scan() && !strings.HasPrefix(strings.TrimLeft(scanner.Text(), " "), "n") {
-		return startDemoServer()
+
+	for {
+		fmt.Print("You haven't specified any command, would you like to start a demonstration server ? [Y/n/h] ")
+
+		if scanner.Scan() {
+			answer := strings.ToLower(strings.TrimLeft(scanner.Text(), " "))
+
+			switch {
+			case strings.HasPrefix(answer, "y"):
+				return startDemoServer()
+			case strings.HasPrefix(answer, "n"):
+				fallthrough
+			case strings.HasPrefix(answer, "h"):
+				fmt.Println()
+				return usage()
+			default:
+				fmt.Printf("Answer %#v is invalid.\n", scanner.Text())
+			}
+		} else {
+			break
+		}
 	}
 
-	return usage()
+	return nil
 }
 
 func startDemoServer() error {
@@ -92,7 +104,8 @@ func startDemoServer() error {
 
 	config.SetDefault(cfg)
 
-	log.SetLevel(log.PanicLevel)
+	log.SetLevel(log.FatalLevel)
+	// FIXME rather change format
 	log.SetOutput(ioutil.Discard)
 
 	fmt.Println("marcel is starting...")
