@@ -56,6 +56,8 @@ func startInteractive(usage func() error) error {
 			answer := strings.ToLower(strings.TrimLeft(scanner.Text(), " "))
 
 			switch {
+			case answer == "":
+				fallthrough
 			case strings.HasPrefix(answer, "y"):
 				return startDemoServer()
 			case strings.HasPrefix(answer, "n"):
@@ -108,19 +110,25 @@ func startDemoServer() error {
 	// FIXME rather change format
 	log.SetOutput(ioutil.Discard)
 
-	fmt.Println("marcel is starting...")
+	fmt.Println("marcel is warming up...")
 
 	done := make(chan error)
 	if err := standalone.Start(done); err != nil {
 		return err
 	}
 
-	admin, err := users.GetByLogin("admin")
-	if err != nil {
+	user := &users.User{
+		DisplayName: "Demo",
+		Login:       "demo",
+		Role:        "user",
+		CreatedAt:   time.Now(),
+	}
+
+	if err := users.Insert(user); err != nil {
 		return err
 	}
 
-	token, err := auth.GenerateRefreshJWT(admin)
+	token, err := auth.GenerateRefreshJWT(user)
 	if err != nil {
 		return err
 	}
