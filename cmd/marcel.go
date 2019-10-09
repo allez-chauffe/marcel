@@ -3,19 +3,10 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
-	"time"
 
-	"github.com/Zenika/marcel/api/auth"
-	"github.com/Zenika/marcel/api/db/users"
-	"github.com/Zenika/marcel/httputil"
-
-	"github.com/Zenika/marcel/osutil"
-
-	"github.com/Zenika/marcel/config"
-	"github.com/Zenika/marcel/standalone"
+	"github.com/Zenika/marcel/standalone/demo"
 
 	isatty "github.com/mattn/go-isatty"
 	log "github.com/sirupsen/logrus"
@@ -38,6 +29,7 @@ var Marcel = &cobra.Command{
 	Short:         "marcel is a configurable plugin based dashboard system",
 	Args:          cobra.NoArgs,
 	SilenceErrors: true,
+	SilenceUsage:  true,
 	RunE: func(cmd *cobra.Command, _ []string) error {
 		if isatty.IsTerminal(os.Stdin.Fd()) && isatty.IsTerminal(os.Stdout.Fd()) {
 			return startInteractive(cmd.Usage)
@@ -60,14 +52,15 @@ func startInteractive(usage func() error) error {
 			case answer == "":
 				fallthrough
 			case strings.HasPrefix(answer, "y"):
-				return startDemoServer()
+				fmt.Println()
+				return demo.StartServer()
 			case strings.HasPrefix(answer, "n"):
 				fallthrough
 			case strings.HasPrefix(answer, "h"):
 				fmt.Println()
 				return usage()
 			default:
-				fmt.Printf("Answer %#v is invalid.\n", scanner.Text())
+				fmt.Printf("Answer %#v is invalid.\n\n", scanner.Text())
 			}
 		} else {
 			break
@@ -75,53 +68,4 @@ func startInteractive(usage func() error) error {
 	}
 
 	return nil
-}
-
-func startDemoServer() error {
-	dataDir, err := ioutil.TempDir("", "marcel")
-	if err != nil {
-		return err
-	}
-
-	var cfg = config.New()
-
-	cfg.API().SetDataDir(dataDir)
-	cfg.API().Auth().SetSecure(false)
-
-	config.SetDefault(cfg)
-
-	log.SetLevel(log.FatalLevel)
-	// FIXME rather change format
-	log.SetOutput(ioutil.Discard)
-
-	fmt.Println("marcel is warming up...")
-
-	done := make(chan error)
-	if err := standalone.Start(done); err != nil {
-		return err
-	}
-
-	user := &users.User{
-		DisplayName: "Demo",
-		Login:       "demo",
-		Role:        "user",
-		CreatedAt:   time.Now(),
-	}
-
-	if err := users.Insert(user); err != nil {
-		return err
-	}
-
-	token, err := auth.GenerateRefreshJWT(user)
-	if err != nil {
-		return err
-	}
-
-	url := fmt.Sprintf("http://localhost:%d%s?token=%s", config.Default().Standalone().Port(), httputil.NormalizeBase(cfg.Backoffice().BasePath()), token)
-
-	fmt.Printf("marcel is running at %s\n", url)
-
-	osutil.Open(url) // Discard error on purpose
-
-	return <-done
 }
