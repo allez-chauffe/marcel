@@ -17,7 +17,7 @@ const user = (state = null, action) => {
       const url = new URL(document.location)
       if (!url.searchParams.has('token')) return state
       const token = url.searchParams.get('token')
-      document.cookie=`RefreshAuthentication=${token};path=/`
+      document.cookie = `RefreshAuthentication=${token};path=/`
       return state
     }
     default: {
