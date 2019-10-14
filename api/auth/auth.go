@@ -28,8 +28,12 @@ func getVerifiedClaims(tokenString string, sampleClaims jwt.Claims) (jwt.Claims,
 	return token.Claims, nil
 }
 
+func createToken(claims jwt.Claims) (string, error) {
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(key)
+}
+
 func createTokenCookie(claims jwt.Claims, name string, path string, expiration time.Time) (*http.Cookie, error) {
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(key)
+	token, err := createToken(claims)
 	if err != nil {
 		return nil, err
 	}

@@ -18,7 +18,7 @@ func Start() error {
 
 	ConfigureRouter(r)
 
-	log.Infof("Starting frontend server on port %d...", config.Default().Frontend().Port())
+	log.Infof("Frontend server listening on %d...", config.Default().Frontend().Port())
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Frontend().Port()), r)
 }

@@ -37,7 +37,7 @@ func (configurers routerConfigurers) Swap(i, j int) {
 	configurers[i], configurers[j] = configurers[j], configurers[i]
 }
 
-func Start() error {
+func Start(done chan<- error) error {
 	var a = api.New()
 	a.Initialize()
 
@@ -57,7 +57,15 @@ func Start() error {
 		}
 	}
 
-	log.Infof("Starting standalone server on port %d...", config.Default().Standalone().Port())
+	log.Infof("Standalone server listening on %d...", config.Default().Standalone().Port())
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Standalone().Port()), r)
+	if done == nil {
+		return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Standalone().Port()), r)
+	}
+
+	go func() {
+		done <- http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Standalone().Port()), r)
+	}()
+
+	return nil
 }

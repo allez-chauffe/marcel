@@ -31,7 +31,7 @@ func init() {
 
 	var flags = cmd.PersistentFlags()
 
-	if _, err := cfg.FlagString(flags, "dbFile", "marcel.db", "Database file name", "api.dbFile"); err != nil {
+	if _, err := cfg.FlagString(flags, "dbFile", cfg.API().DBFile(), "Database file name", "api.dbFile"); err != nil {
 		panic(err)
 	}
 

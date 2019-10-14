@@ -1,9 +1,14 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 
+	"github.com/Zenika/marcel/standalone/demo"
+
+	isatty "github.com/mattn/go-isatty"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -24,4 +29,43 @@ var Marcel = &cobra.Command{
 	Short:         "marcel is a configurable plugin based dashboard system",
 	Args:          cobra.NoArgs,
 	SilenceErrors: true,
+	SilenceUsage:  true,
+	RunE: func(cmd *cobra.Command, _ []string) error {
+		if isatty.IsTerminal(os.Stdin.Fd()) && isatty.IsTerminal(os.Stdout.Fd()) {
+			return startInteractive(cmd.Usage)
+		}
+
+		return cmd.Usage()
+	},
+}
+
+func startInteractive(usage func() error) error {
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for {
+		fmt.Print("You haven't specified any command, would you like to start a demonstration server ? [Y/n/h] ")
+
+		if scanner.Scan() {
+			answer := strings.ToLower(strings.TrimLeft(scanner.Text(), " "))
+
+			switch {
+			case answer == "":
+				fallthrough
+			case strings.HasPrefix(answer, "y"):
+				fmt.Println()
+				return demo.StartServer()
+			case strings.HasPrefix(answer, "n"):
+				fallthrough
+			case strings.HasPrefix(answer, "h"):
+				fmt.Println()
+				return usage()
+			default:
+				fmt.Printf("Answer %#v is invalid.\n\n", scanner.Text())
+			}
+		} else {
+			break
+		}
+	}
+
+	return nil
 }

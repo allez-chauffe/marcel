@@ -60,7 +60,7 @@ func (a *API) Start() {
 		log.Warn("CORS is enabled")
 	}
 
-	log.Infof("Starting API server on port %d...", config.Default().API().Port())
+	log.Infof("API server listening on %d...", config.Default().API().Port())
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Default().API().Port()), h))
 }

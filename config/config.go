@@ -31,7 +31,14 @@ func New() *Config {
 	cfg.AddConfigPath(".")
 	cfg.SetConfigName("config")
 
-	return (*Config)(cfg)
+	c := (*Config)(cfg)
+
+	c.API().SetDefaults()
+	c.Backoffice().SetDefaults()
+	c.Frontend().SetDefaults()
+	c.Standalone().SetDefaults()
+
+	return c
 }
 
 func (c *Config) viper() *viper.Viper {

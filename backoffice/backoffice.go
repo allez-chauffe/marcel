@@ -20,7 +20,7 @@ func Start() error {
 
 	ConfigureRouter(r)
 
-	log.Infof("Starting backoffice server on port %d...", config.Default().Backoffice().Port())
+	log.Infof("Backoffice server listening on %d...", config.Default().Backoffice().Port())
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Backoffice().Port()), r)
 }

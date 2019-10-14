@@ -24,19 +24,19 @@ func init() {
 
 	var flags = cmd.Flags()
 
-	if _, err := cfg.FlagUintP(flags, "port", "p", 8090, "Listening port", "backoffice.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.Backoffice().Port(), "Listening port", "backoffice.port"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "basePath", "/", "Base path", "backoffice.basePath"); err != nil {
+	if _, err := cfg.FlagString(flags, "basePath", cfg.Backoffice().BasePath(), "Base path", "backoffice.basePath"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "apiURI", "/api", "API URI", "backoffice.apiURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "apiURI", cfg.Backoffice().APIURI(), "API URI", "backoffice.apiURI"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "frontendURI", "/front", "Frontend URI", "backoffice.frontendURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "frontendURI", cfg.Backoffice().FrontendURI(), "Frontend URI", "backoffice.frontendURI"); err != nil {
 		panic(err)
 	}
 

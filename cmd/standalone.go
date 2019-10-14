@@ -18,7 +18,7 @@ func init() {
 		PreRunE: preRunForServer(cfg),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return standalone.Start()
+			return standalone.Start(nil)
 		},
 	}
 
@@ -26,19 +26,19 @@ func init() {
 
 	commonAPIFlags(flags, cfg)
 
-	if _, err := cfg.FlagUintP(flags, "port", "p", 8090, "Listening port", "standalone.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.Standalone().Port(), "Listening port", "standalone.port"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "apiBasePath", "/api", "Base path", "api.basePath", "backoffice.apiURI", "frontend.apiURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "apiBasePath", cfg.API().BasePath(), "Base path", "api.basePath", "backoffice.apiURI", "frontend.apiURI"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "backofficeBasePath", "/", "Backoffice base path", "backoffice.basePath"); err != nil {
+	if _, err := cfg.FlagString(flags, "backofficeBasePath", cfg.Backoffice().BasePath(), "Backoffice base path", "backoffice.basePath"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "frontendBasePath", "/front", "Frontend base path", "frontend.basePath", "backoffice.frontendURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "frontendBasePath", cfg.Frontend().BasePath(), "Frontend base path", "frontend.basePath", "backoffice.frontendURI"); err != nil {
 		panic(err)
 	}
 

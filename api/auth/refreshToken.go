@@ -21,12 +21,7 @@ type RefreshClaims struct {
 
 func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 	cookie, err := createTokenCookie(
-		&RefreshClaims{
-			StandardClaims: jwt.StandardClaims{
-				Subject:  user.ID,
-				IssuedAt: time.Now().Unix(),
-			},
-		},
+		getRefreshClaims(user),
 		RefreshCookieName,
 		path.Join(config.Default().API().BasePath(), "auth", "login"),
 		time.Now().Add(config.Default().API().Auth().RefreshExpiration()),
@@ -62,7 +57,20 @@ func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
 	return refreshClaims, nil
 }
 
+func GenerateRefreshJWT(user *users.User) (string, error) {
+	return createToken(getRefreshClaims(user))
+}
+
 func DeleteRefreshToken(w http.ResponseWriter) {
 	cookie := deleteCookie(RefreshCookieName, path.Join(config.Default().API().BasePath(), "auth", "login"))
 	http.SetCookie(w, cookie)
+}
+
+func getRefreshClaims(user *users.User) *RefreshClaims {
+	return &RefreshClaims{
+		StandardClaims: jwt.StandardClaims{
+			Subject:  user.ID,
+			IssuedAt: time.Now().Unix(),
+		},
+	}
 }

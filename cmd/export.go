@@ -29,7 +29,7 @@ func init() {
 		},
 	}
 
-	if _, err := cfg.FlagString(cmd.PersistentFlags(), "dbFile", "marcel.db", "Database file name", "api.dbFile"); err != nil {
+	if _, err := cfg.FlagString(cmd.PersistentFlags(), "dbFile", cfg.API().DBFile(), "Database file name", "api.dbFile"); err != nil {
 		panic(err)
 	}
 

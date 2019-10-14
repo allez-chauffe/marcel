@@ -31,3 +31,9 @@ func (f *Frontend) APIURI() string {
 func (f *Frontend) SetAPIURI(au string) {
 	f.viper().Set("frontend.apiURI", au)
 }
+
+func (f *Frontend) SetDefaults() {
+	f.viper().SetDefault("frontend.port", 8090)
+	f.viper().SetDefault("frontend.basePath", "/front")
+	f.viper().SetDefault("frontend.apiURI", "/api")
+}

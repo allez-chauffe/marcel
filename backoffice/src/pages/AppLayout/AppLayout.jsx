@@ -21,7 +21,7 @@ const AppLayout = () => (
       <Header />
 
       <main>
-        <Redirect from="/" to="/medias" />
+        <Redirect from="/" to="/medias" exact />
         <Auth>
           <Route path="/medias" exact component={MediaListPage} />
           <Route path="/medias/:mediaId" component={MediaEditPage} />
