@@ -25,6 +25,11 @@ const pluginUpdateSuccess = plugin => ({
   payload: { plugin },
 })
 
+const pluginUpdateLoaded = eltName => ({
+  type: actions.UPDATE_PLUGIN_LOADED,
+  payload: { eltName }
+})
+
 export const updatePlugin = pluginEltName => async dispatch => {
   dispatch(pluginUpdateRequested(pluginEltName))
   try {
@@ -34,17 +39,27 @@ export const updatePlugin = pluginEltName => async dispatch => {
     console.error(err)
     toastr.error('Mise à jour du plugin', 'Erreur durant la mise à jour')
   } finally {
-    dispatch({ type: actions.UPDATE_PLUGIN_LOADED })
+    dispatch(pluginUpdateLoaded(pluginEltName))
   }
 }
+
+const addPluginRequested = pluginUrl => ({
+  type: actions.ADD_PLUGIN_REQUESTED,
+  payload: { pluginUrl }
+})
 
 const addPluginSuccess = plugin => ({
   type: actions.ADD_PLUGIN_SUCCESS,
   payload: { plugin },
 })
 
+const addPluginLoaded = pluginUrl => ({
+  type: actions.ADD_PLUGIN_LOADED,
+  payload: { pluginUrl }
+})
+
 export const addPlugin = pluginUrl => async dispatch => {
-  dispatch({ type: actions.ADD_PLUGIN_REQUESTED })
+  dispatch(addPluginRequested(pluginUrl))
   try {
     const addedPlugin = await backend.addPlugin(pluginUrl)
     dispatch(addPluginSuccess(addedPlugin))
@@ -54,7 +69,7 @@ export const addPlugin = pluginUrl => async dispatch => {
     if (err.text) message += `: ${await err.text()}`
     toastr.error('Ajout du plugin', message)
   } finally {
-    dispatch({ type: actions.ADD_PLUGIN_LOADED })
+    dispatch(addPluginLoaded(pluginUrl))
   }
 }
 
@@ -68,6 +83,11 @@ const pluginDeletionSuccess = eltName => ({
   payload: { eltName },
 })
 
+const pluginDeletionLoaded = eltName => ({
+  type: actions.PLUGIN_DELETION_LOADED,
+  payload: { eltName }
+})
+
 export const deletePlugin = pluginEltName => async dispatch => {
   dispatch(pluginDeletionRequested(pluginEltName))
 
@@ -78,6 +98,6 @@ export const deletePlugin = pluginEltName => async dispatch => {
     console.error(err)
     toastr.error('Suppression du plugin', 'Erreur lors de la suppression')
   } finally {
-    dispatch({ type: actions.PLUGIN_DELETION_LOADED })
+    dispatch(pluginDeletionLoaded(pluginEltName))
   }
 }
