@@ -2,13 +2,13 @@
 
 ![Marcel](https://raw.githubusercontent.com/Zenika/marcel/master/marcel_banner.png)
 
-marcel is a configurable plugin based dashboard system.
+Marcel is a configurable plugin based dashboard system.
 
 :construction: This README is still a work in progress...
 
 ## Create a plugin
 
-Marcel is based on plugins, and we need you to complete the collection !
+Marcel is based on plugins, and we need you to complete the collection!
 
 By convention, a plugin should have a name begin with `marcel-plugin-*` (`marcel-plugin-text` for example).
 This ways, you can find a list of all available plugins by [searching them on github](https://github.com/search?utf8=%E2%9C%93&q=marcel%2Dplugin)
@@ -20,7 +20,7 @@ This ways, you can find a list of all available plugins by [searching them on gi
 `marcel` is composed of 3 parts:
   - `api` is the backend written in go.
   - `backoffice` is the single page app used to configure `marcel` and create medias.
-  - `frontend` is the simgle page app actually displaying a media.
+  - `frontend` is the single page app actually displaying a media.
 
 ### Requirements
 
@@ -28,9 +28,9 @@ This ways, you can find a list of all available plugins by [searching them on gi
  - node > 9.0.0
  - npm > 5.0.0
   
-### Bakcend
+### Backend
  
-Buliding the backend is simple, you can just install the main go package :
+Building the backend is simple, you can just install the main go package :
 
 ```bash
 $ go install
@@ -65,7 +65,7 @@ You should then serve `api`, `backoffice` and `frontend` behind reverse proxy an
   
 ## Developpement
  
-To have a working developpement environement, you have to run this 3 commands in seperated terminals :
+To have a working development environment, you have to run this 3 commands in separated terminals :
 
 ```bash
 $ cd backoffice && yarn && yarn start
@@ -73,7 +73,7 @@ $ cd frontend && yarn && yarn start
 $ go build && ./marcel api --secure=false
 ```
 
-You can then begin to modify sources. The backend is not compiled in watch mode, so you have to restart it manually. The backoffice and the frontend are liverloaded.
+You can then begin to modify sources. The backend is not compiled in watch mode, so you have to restart it manually. The backoffice and the frontend are live-reloaded.
 
 ## License
 
