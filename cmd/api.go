@@ -18,10 +18,13 @@ func init() {
 
 		PreRunE: preRunForServer(cfg),
 
-		Run: func(_ *cobra.Command, _ []string) {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			a := api.New()
-			a.Initialize()
+			if err := a.Init(); err != nil {
+				return err
+			}
 			a.Start()
+			return nil
 		},
 	}
 

@@ -29,18 +29,20 @@ func New() *API {
 	return new(API)
 }
 
-func (a *API) Initialize() {
+func (a *API) Init() error {
 	if err := db.Open(); err != nil {
-		log.Fatalln(err)
+		return err
 	}
 
 	a.waitSignal()
 
 	if err := users.EnsureOneUser(); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	a.initializeServices()
+	a.initServices()
+
+	return nil
 }
 
 func (a *API) Start() {
@@ -137,7 +139,7 @@ func (a *API) ConfigureRouter(r *mux.Router) error {
 	return nil
 }
 
-func (a *API) initializeServices() {
+func (a *API) initServices() {
 	//load clients list from DB
 	a.clientsService = clients.NewService()
 
