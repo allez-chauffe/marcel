@@ -12,6 +12,7 @@ import (
 
 	"github.com/Zenika/marcel/config"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -202,21 +203,20 @@ func (m *Module) startHTTP() (*http.Server, error) {
 		return nil, err // FIXME wrap
 	}
 
-	// FIXME put back cors from api.Start...
-	// var h http.Handler = r
+	var handler http.Handler = router
 
-	// if config.Default().API().CORS() {
-	// 	h = cors.New(cors.Options{
-	// 		AllowOriginFunc:  func(origin string) bool { return true },
-	// 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-	// 		AllowedHeaders:   []string{"*"},
-	// 		AllowCredentials: true,
-	// 	}).Handler(h)
-	// 	log.Warn("CORS is enabled")
-	// }
+	if config.Default().HTTP().CORS() {
+		handler = cors.New(cors.Options{
+			AllowOriginFunc:  func(origin string) bool { return true },
+			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+			AllowedHeaders:   []string{"*"},
+			AllowCredentials: true,
+		}).Handler(handler)
+		log.Warn("CORS is enabled")
+	}
 
 	var srv = &http.Server{
-		Handler: router,
+		Handler: handler,
 	}
 
 	log.Infof("%s's HTTP server listening on %s", m.Name, listener.Addr())
