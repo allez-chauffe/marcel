@@ -237,15 +237,17 @@ func (m *Module) setupRouter(parentRouter *mux.Router) bool {
 	if m.Http != nil {
 		if m.Http.BasePath != "" {
 			router = parentRouter.PathPrefix(m.Http.BasePath).Subrouter()
+			log.Debugf("Created subrouter for %s at %s", m.Name, m.Http.BasePath)
 		}
 		if m.Http.Setup != nil {
 			hasHTTP = true
 			m.Http.Setup(router)
+			log.Debugf("Configured subrouter for %s", m.Name)
 		}
 	}
 
 	for _, subM := range m.SubModules {
-		hasHTTP = hasHTTP || subM.setupRouter(router)
+		hasHTTP = subM.setupRouter(router) || hasHTTP
 	}
 
 	return hasHTTP

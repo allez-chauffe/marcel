@@ -14,7 +14,19 @@ import (
 	"github.com/Zenika/marcel/config"
 	"github.com/Zenika/marcel/frontend"
 	"github.com/Zenika/marcel/httputil"
+	"github.com/Zenika/marcel/module"
 )
+
+func Module() module.Module {
+	return module.Module{
+		Name: "Standalone",
+		SubModules: []module.Module{
+			api.Module(),
+			backoffice.Module(),
+			frontend.Module(),
+		},
+	}
+}
 
 type routerConfigurer struct {
 	base      string
