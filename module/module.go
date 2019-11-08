@@ -29,7 +29,7 @@ type Module struct {
 	Name       string
 	Start      StartFunc
 	SubModules []Module
-	*Http
+	Http
 }
 
 type Http struct {
@@ -240,19 +240,18 @@ func (m *Module) setupRouter(parentRouter *mux.Router) bool {
 	var hasHTTP = false
 	var router = parentRouter
 
-	if m.Http != nil {
-		if m.Http.BasePath != "" {
-			router = parentRouter.PathPrefix(m.Http.BasePath).Subrouter()
-			log.Debugf("Created subrouter for %s at %s", m.Name, m.Http.BasePath)
-		}
-		if m.Http.Setup != nil {
-			hasHTTP = true
-			m.Http.Setup(router)
-			log.Debugf("Configured subrouter for %s", m.Name)
-		}
+	if m.BasePath != "" {
+		router = parentRouter.PathPrefix(m.BasePath).Subrouter()
+		log.Debugf("Created subrouter for %s at %s", m.Name, m.BasePath)
 	}
 
-	//FIXME sort
+	if m.Setup != nil {
+		hasHTTP = true
+		m.Setup(router)
+		log.Debugf("Configured subrouter for %s", m.Name)
+	}
+
+	sort.Sort(byBasePath(m.SubModules))
 
 	for _, subM := range m.SubModules {
 		hasHTTP = subM.setupRouter(router) || hasHTTP
@@ -262,8 +261,8 @@ func (m *Module) setupRouter(parentRouter *mux.Router) bool {
 }
 
 func (m *Module) notifyOnServe(listener net.Listener, srv *http.Server) {
-	if m.Http != nil && m.Http.OnListen != nil {
-		m.Http.OnListen(listener, srv)
+	if m.OnListen != nil {
+		m.OnListen(listener, srv)
 	}
 
 	for _, subM := range m.SubModules {
@@ -271,23 +270,18 @@ func (m *Module) notifyOnServe(listener net.Listener, srv *http.Server) {
 	}
 }
 
-type routerConfigurer struct {
-	base      string
-	configure func(*mux.Router) error
+type byBasePath []Module
+
+var _ sort.Interface = byBasePath(nil)
+
+func (modules byBasePath) Len() int {
+	return len(modules)
 }
 
-type routerConfigurers []routerConfigurer
-
-var _ sort.Interface = routerConfigurers(nil)
-
-func (configurers routerConfigurers) Len() int {
-	return len(configurers)
+func (modules byBasePath) Less(i, j int) bool {
+	return strings.Count(modules[i].BasePath, "/") > strings.Count(modules[j].BasePath, "/")
 }
 
-func (configurers routerConfigurers) Less(i, j int) bool {
-	return strings.Count(configurers[i].base, "/") > strings.Count(configurers[j].base, "/")
-}
-
-func (configurers routerConfigurers) Swap(i, j int) {
-	configurers[i], configurers[j] = configurers[j], configurers[i]
+func (modules byBasePath) Swap(i, j int) {
+	modules[i], modules[j] = modules[j], modules[i]
 }

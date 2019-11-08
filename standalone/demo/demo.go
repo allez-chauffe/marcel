@@ -69,7 +69,7 @@ func Run() int {
 		SubModules: []module.Module{
 			standalone.Module(),
 		},
-		Http: &module.Http{
+		Http: module.Http{
 			OnListen: func(listener net.Listener, srv *http.Server) {
 				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), httputil.NormalizeBase(cfg.Backoffice().BasePath()), token)
 

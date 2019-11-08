@@ -46,7 +46,7 @@ func Module() module.Module {
 
 			return stop, next()
 		},
-		Http: &module.Http{
+		Http: module.Http{
 			BasePath: config.Default().API().BasePath(),
 			Setup: func(r *mux.Router) {
 				r.Use(auth.Middleware)

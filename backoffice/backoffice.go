@@ -29,7 +29,7 @@ func Module() module.Module {
 
 			return nil, next()
 		},
-		Http: &module.Http{
+		Http: module.Http{
 			BasePath: httputil.TrimTrailingSlash(base),
 			Setup: func(r *mux.Router) {
 				r.Handle("", http.RedirectHandler(base, http.StatusMovedPermanently))
