@@ -15,7 +15,7 @@ func init() {
 
 	var cmd = &cobra.Command{
 		Use:   "api",
-		Short: "Starts marcel's api server",
+		Short: "Starts Marcel's API server",
 		Args:  cobra.NoArgs,
 
 		PreRunE: preRunForServer(cfg),

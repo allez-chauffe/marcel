@@ -14,7 +14,7 @@ func init() {
 
 	var cmd = &cobra.Command{
 		Use:   "backoffice",
-		Short: "Starts Marcel's backoffice server",
+		Short: "Starts Marcel's Backoffice server",
 		Args:  cobra.NoArgs,
 
 		PreRunE: preRunForServer(cfg),
