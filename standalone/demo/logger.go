@@ -36,7 +36,7 @@ var demoFormatter formatterFunc = func(entry *log.Entry) ([]byte, error) {
 		return nil, nil
 	}
 
-	s := fmt.Sprintf("\t%s\t%s", levelIcon(entry.Level), entry.Message)
+	s := fmt.Sprintf("%s  %s", levelIcon(entry.Level), entry.Message)
 	if !strings.HasSuffix(s, "\n") {
 		s += "\n"
 	}

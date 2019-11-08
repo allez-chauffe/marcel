@@ -18,7 +18,36 @@ import (
 	"github.com/Zenika/marcel/api/medias"
 	"github.com/Zenika/marcel/api/plugins"
 	"github.com/Zenika/marcel/config"
+	"github.com/Zenika/marcel/module"
 )
+
+func Module() module.Module {
+	var a = New()
+
+	return module.Module{
+		Name: "API",
+		Start: func(next module.StartNextFunc) (module.StopFunc, error) {
+			if err := db.Open(); err != nil {
+				return nil, err //FIXME wrap
+			}
+
+			var stop = func() error {
+				if err := db.Close(); err != nil {
+					return err // FIXME wrap
+				}
+				return nil
+			}
+
+			if err := users.EnsureOneUser(); err != nil {
+				return stop, err
+			}
+
+			a.initServices() // FIXME manage errors ?!
+
+			return stop, next()
+		},
+	}
+}
 
 type API struct {
 	mediaService   *medias.Service
@@ -65,23 +94,6 @@ func (a *API) Start() {
 	log.Infof("API server listening on %d...", config.Default().API().Port())
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Default().API().Port()), h))
-}
-
-func (a *API) waitSignal() {
-	ch := make(chan os.Signal, 1)
-
-	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		<-ch
-
-		err := db.Close()
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		os.Exit(0)
-	}()
 }
 
 func (a *API) ConfigureRouter(r *mux.Router) error {
@@ -137,6 +149,23 @@ func (a *API) ConfigureRouter(r *mux.Router) error {
 	user.HandleFunc("", updateUserHandler).Methods("PUT")
 
 	return nil
+}
+
+func (a *API) waitSignal() {
+	ch := make(chan os.Signal, 1)
+
+	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-ch
+
+		err := db.Close()
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		os.Exit(0)
+	}()
 }
 
 func (a *API) initServices() {

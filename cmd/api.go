@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -18,13 +20,8 @@ func init() {
 
 		PreRunE: preRunForServer(cfg),
 
-		RunE: func(_ *cobra.Command, _ []string) error {
-			a := api.New()
-			if err := a.Init(); err != nil {
-				return err
-			}
-			a.Start()
-			return nil
+		Run: func(_ *cobra.Command, _ []string) {
+			os.Exit(api.Module().Run())
 		},
 	}
 
