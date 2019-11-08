@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 
 	"github.com/Zenika/marcel/backoffice"
@@ -17,8 +19,8 @@ func init() {
 
 		PreRunE: preRunForServer(cfg),
 
-		RunE: func(_ *cobra.Command, _ []string) error {
-			return backoffice.Start()
+		Run: func(_ *cobra.Command, _ []string) {
+			os.Exit(backoffice.Module().Run())
 		},
 	}
 

@@ -1,14 +1,11 @@
 package api
 
 import (
-	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/marcel/api/auth"
@@ -76,28 +73,6 @@ func (a *API) Init() error {
 	a.initServices()
 
 	return nil
-}
-
-func (a *API) Start() {
-	r := mux.NewRouter()
-
-	a.ConfigureRouter(r)
-
-	var h http.Handler = r
-
-	if config.Default().API().CORS() {
-		h = cors.New(cors.Options{
-			AllowOriginFunc:  func(origin string) bool { return true },
-			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-			AllowedHeaders:   []string{"*"},
-			AllowCredentials: true,
-		}).Handler(h)
-		log.Warn("CORS is enabled")
-	}
-
-	log.Infof("API server listening on %d...", config.Default().API().Port())
-
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Default().API().Port()), h))
 }
 
 func (a *API) ConfigureRouter(r *mux.Router) error {

@@ -69,7 +69,7 @@ func (m Module) Run() (exitCode int) {
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	var signal = <-ch
 
-	fmt.Print("\r")
+	fmt.Print("\r") // FIXME only in tty
 	log.Infof("Caught signal %s", signal)
 
 	return
@@ -201,6 +201,19 @@ func (m *Module) startHTTP() (*http.Server, error) {
 	if err != nil {
 		return nil, err // FIXME wrap
 	}
+
+	// FIXME put back cors from api.Start...
+	// var h http.Handler = r
+
+	// if config.Default().API().CORS() {
+	// 	h = cors.New(cors.Options{
+	// 		AllowOriginFunc:  func(origin string) bool { return true },
+	// 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+	// 		AllowedHeaders:   []string{"*"},
+	// 		AllowCredentials: true,
+	// 	}).Handler(h)
+	// 	log.Warn("CORS is enabled")
+	// }
 
 	var srv = &http.Server{
 		Handler: router,

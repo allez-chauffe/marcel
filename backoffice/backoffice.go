@@ -2,27 +2,42 @@ package backoffice
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/marcel/config"
 	"github.com/Zenika/marcel/httputil"
+	"github.com/Zenika/marcel/module"
 )
 
 const index = "/index.html"
 
-func Start() error {
-	var r = mux.NewRouter()
+func Module() module.Module {
+	var base = httputil.NormalizeBase(config.Default().Backoffice().BasePath())
+	var fs http.FileSystem
 
-	ConfigureRouter(r)
+	return module.Module{
+		Name: "Backoffice",
+		Start: func(next module.StartNextFunc) (module.StopFunc, error) {
+			var err error
+			fs, err = initFs()
+			if err != nil {
+				return nil, err
+			}
 
-	log.Infof("Backoffice server listening on %d...", config.Default().Backoffice().Port())
-
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Backoffice().Port()), r)
+			return nil, next()
+		},
+		Http: &module.Http{
+			BasePath: httputil.TrimTrailingSlash(base),
+			Setup: func(r *mux.Router) {
+				r.Handle("", http.RedirectHandler(base, http.StatusMovedPermanently))
+				r.HandleFunc("/config", configHandler).Methods("GET")
+				r.PathPrefix("/").Handler(fileHandler(base, fs))
+			},
+		},
+	}
 }
 
 func ConfigureRouter(r *mux.Router) error {
@@ -32,7 +47,7 @@ func ConfigureRouter(r *mux.Router) error {
 
 	b.Handle("", http.RedirectHandler(base, http.StatusMovedPermanently))
 	b.HandleFunc("/config", configHandler).Methods("GET")
-	fh, err := fileHandler(base)
+	fh, err := fileHandlerOld(base)
 	if err != nil {
 		return err
 	}
@@ -64,7 +79,24 @@ func configHandler(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func fileHandler(base string) (http.Handler, error) {
+func fileHandler(base string, fs http.FileSystem) http.Handler {
+	return http.StripPrefix(
+		base,
+		http.FileServer(
+			httputil.NewNotFoundRewriter(
+				httputil.NewTemplater(
+					fs,
+					[]string{index},
+					map[string]string{"REACT_APP_BASE": base},
+				),
+				index,
+			),
+		),
+	)
+}
+
+// FIXME remove
+func fileHandlerOld(base string) (http.Handler, error) {
 	fs, err := initFs()
 	if err != nil {
 		return nil, err
