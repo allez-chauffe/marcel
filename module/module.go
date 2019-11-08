@@ -3,9 +3,11 @@ package module
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -28,12 +30,10 @@ type Module struct {
 
 type Http struct {
 	BasePath string
-	Setup    func(*mux.Router) error
+	Setup    func(*mux.Router)
 }
 
 func (m Module) Run() (exitCode int) {
-	log.Infof("Starting module %s...", m.Name)
-
 	var startRes = m.start()
 	if startRes.err != nil {
 		log.Errorln(startRes.err)
@@ -81,7 +81,7 @@ type startResult struct {
 }
 
 func (m Module) start() startResult {
-	log.Debugf("Starting module %s...", m.Name)
+	log.Infof("Starting module %s...", m.Name)
 
 	var stopFuncs = make([]StopFunc, 0, len(m.SubModules))
 
@@ -126,6 +126,8 @@ func (m Module) start() startResult {
 	}
 
 	var stop, err = m.callStart(next)
+
+	log.Infof("Module %s started", m.Name)
 
 	return startResult{
 		func() error {
@@ -184,24 +186,30 @@ func (m Module) callStart(next StartNextFunc) (StopFunc, error) {
 }
 
 func (m *Module) startHTTP() (*http.Server, error) {
+	log.Infof("Starting %s's HTTP server...", m.Name)
+
 	var router = mux.NewRouter()
 
-	var hasHTTP, err = m.setupRouter(router)
-	if err != nil {
-		return nil, err
-	}
+	var hasHTTP = m.setupRouter(router)
 
 	if !hasHTTP {
 		return nil, nil
 	}
 
+	var port = 8090
+	var listener, err = net.Listen("tcp", ":"+strconv.Itoa(port))
+	if err != nil {
+		return nil, err // FIXME wrap
+	}
+
 	var srv = &http.Server{
-		Addr:    ":8090", // FIXME Addr
 		Handler: router,
 	}
 
+	log.Infof("%s's HTTP server listening on %s", m.Name, listener.Addr())
+
 	go func() {
-		if err := srv.ListenAndServe(); err != nil {
+		if err := srv.Serve(listener); err != nil {
 			// FIXME
 		}
 	}()
@@ -209,7 +217,7 @@ func (m *Module) startHTTP() (*http.Server, error) {
 	return srv, nil
 }
 
-func (m *Module) setupRouter(parentRouter *mux.Router) (bool, error) {
+func (m *Module) setupRouter(parentRouter *mux.Router) bool {
 	var hasHTTP = false
 	var router = parentRouter
 
@@ -219,19 +227,13 @@ func (m *Module) setupRouter(parentRouter *mux.Router) (bool, error) {
 		}
 		if m.Http.Setup != nil {
 			hasHTTP = true
-			if err := m.Http.Setup(router); err != nil {
-				return false, err // FIXME wrap
-			}
+			m.Http.Setup(router)
 		}
 	}
 
 	for _, subM := range m.SubModules {
-		var hasSubHTTP, err = subM.setupRouter(router)
-		if err != nil {
-			return false, err
-		}
-		hasHTTP = hasHTTP || hasSubHTTP
+		hasHTTP = hasHTTP || subM.setupRouter(router)
 	}
 
-	return hasHTTP, nil
+	return hasHTTP
 }

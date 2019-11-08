@@ -101,10 +101,11 @@ func (a *API) Start() {
 }
 
 func (a *API) ConfigureRouter(r *mux.Router) error {
-	return a.configureSubRouter(r.PathPrefix(config.Default().API().BasePath()).Subrouter())
+	a.configureSubRouter(r.PathPrefix(config.Default().API().BasePath()).Subrouter())
+	return nil
 }
 
-func (a *API) configureSubRouter(r *mux.Router) error {
+func (a *API) configureSubRouter(r *mux.Router) {
 	r.Use(auth.Middleware)
 	if !config.Default().API().Auth().Secure() {
 		log.Warnln("Secure mode is disabled")
@@ -153,8 +154,6 @@ func (a *API) configureSubRouter(r *mux.Router) error {
 	user := users.PathPrefix("/{userID}").Subrouter()
 	user.HandleFunc("", deleteUserHandler).Methods("DELETE")
 	user.HandleFunc("", updateUserHandler).Methods("PUT")
-
-	return nil
 }
 
 func (a *API) waitSignal() {
