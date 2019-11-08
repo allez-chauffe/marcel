@@ -29,7 +29,7 @@ func init() {
 
 	commonAPIFlags(flags, cfg)
 
-	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.API().Port(), "Listening port", "api.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.HTTP().Port(), "Listening port", "http.port"); err != nil {
 		panic(err)
 	}
 
@@ -37,7 +37,7 @@ func init() {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagBool(flags, "cors", cfg.API().CORS(), "Enable CORS (all origins)", "api.cors"); err != nil {
+	if _, err := cfg.FlagBool(flags, "cors", cfg.HTTP().CORS(), "Enable CORS (all origins)", "http.cors"); err != nil {
 		panic(err)
 	}
 

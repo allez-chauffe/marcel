@@ -26,7 +26,7 @@ func init() {
 
 	commonAPIFlags(flags, cfg)
 
-	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.Standalone().Port(), "Listening port", "standalone.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.HTTP().Port(), "Listening port", "http.port"); err != nil {
 		panic(err)
 	}
 

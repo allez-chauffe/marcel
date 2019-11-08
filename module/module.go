@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
+	"github.com/Zenika/marcel/config"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
@@ -196,8 +196,8 @@ func (m *Module) startHTTP() (*http.Server, error) {
 		return nil, nil
 	}
 
-	var port = 8090
-	var listener, err = net.Listen("tcp", ":"+strconv.Itoa(port))
+	var addr = fmt.Sprintf(":%d", config.Default().HTTP().Port())
+	var listener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return nil, err // FIXME wrap
 	}

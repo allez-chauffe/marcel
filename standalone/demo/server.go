@@ -61,7 +61,7 @@ func StartServer() error {
 	case <-time.After(50 * time.Millisecond):
 	}
 
-	url := fmt.Sprintf("http://localhost:%d%s?token=%s", config.Default().Standalone().Port(), httputil.NormalizeBase(cfg.Backoffice().BasePath()), token)
+	url := fmt.Sprintf("http://localhost:%d%s?token=%s", config.Default().HTTP().Port(), httputil.NormalizeBase(cfg.Backoffice().BasePath()), token)
 
 	log.Infof("marcel is running at %s\n", url)
 

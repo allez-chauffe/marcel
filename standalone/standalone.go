@@ -59,14 +59,14 @@ func Start(done chan<- error) error {
 		}
 	}
 
-	log.Infof("Standalone server listening on %d...", config.Default().Standalone().Port())
+	log.Infof("Standalone server listening on %d...", config.Default().HTTP().Port())
 
 	if done == nil {
-		return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Standalone().Port()), r)
+		return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().HTTP().Port()), r)
 	}
 
 	go func() {
-		done <- http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Standalone().Port()), r)
+		done <- http.ListenAndServe(fmt.Sprintf(":%d", config.Default().HTTP().Port()), r)
 	}()
 
 	return nil

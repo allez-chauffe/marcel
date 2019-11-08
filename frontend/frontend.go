@@ -18,9 +18,9 @@ func Start() error {
 
 	ConfigureRouter(r)
 
-	log.Infof("Frontend server listening on %d...", config.Default().Frontend().Port())
+	log.Infof("Frontend server listening on %d...", config.Default().HTTP().Port())
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Frontend().Port()), r)
+	return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().HTTP().Port()), r)
 }
 
 func ConfigureRouter(r *mux.Router) error {
