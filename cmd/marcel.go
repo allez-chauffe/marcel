@@ -53,7 +53,7 @@ func startInteractive(usage func() error) error {
 				fallthrough
 			case strings.HasPrefix(answer, "y"):
 				fmt.Println()
-				return demo.StartServer()
+				os.Exit(demo.Run())
 			case strings.HasPrefix(answer, "n"):
 				fallthrough
 			case strings.HasPrefix(answer, "h"):

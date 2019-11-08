@@ -7,13 +7,16 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sort"
+	"strings"
 	"syscall"
 	"time"
 
-	"github.com/Zenika/marcel/config"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/Zenika/marcel/config"
 )
 
 type StartNextFunc func() error
@@ -32,6 +35,7 @@ type Module struct {
 type Http struct {
 	BasePath string
 	Setup    func(*mux.Router)
+	OnListen func(net.Listener, *http.Server)
 }
 
 func (m Module) Run() (exitCode int) {
@@ -227,6 +231,8 @@ func (m *Module) startHTTP() (*http.Server, error) {
 		}
 	}()
 
+	m.notifyOnServe(listener, srv)
+
 	return srv, nil
 }
 
@@ -246,9 +252,42 @@ func (m *Module) setupRouter(parentRouter *mux.Router) bool {
 		}
 	}
 
+	//FIXME sort
+
 	for _, subM := range m.SubModules {
 		hasHTTP = subM.setupRouter(router) || hasHTTP
 	}
 
 	return hasHTTP
+}
+
+func (m *Module) notifyOnServe(listener net.Listener, srv *http.Server) {
+	if m.Http != nil && m.Http.OnListen != nil {
+		m.Http.OnListen(listener, srv)
+	}
+
+	for _, subM := range m.SubModules {
+		subM.notifyOnServe(listener, srv)
+	}
+}
+
+type routerConfigurer struct {
+	base      string
+	configure func(*mux.Router) error
+}
+
+type routerConfigurers []routerConfigurer
+
+var _ sort.Interface = routerConfigurers(nil)
+
+func (configurers routerConfigurers) Len() int {
+	return len(configurers)
+}
+
+func (configurers routerConfigurers) Less(i, j int) bool {
+	return strings.Count(configurers[i].base, "/") > strings.Count(configurers[j].base, "/")
+}
+
+func (configurers routerConfigurers) Swap(i, j int) {
+	configurers[i], configurers[j] = configurers[j], configurers[i]
 }
