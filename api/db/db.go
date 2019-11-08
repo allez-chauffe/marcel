@@ -2,6 +2,7 @@ package db
 
 import (
 	"os"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	bh "github.com/timshannon/bolthold"
@@ -22,6 +23,7 @@ func OpenRO() error {
 func open(readOnly bool) error {
 	var options = *bolt.DefaultOptions
 	options.ReadOnly = readOnly
+	options.Timeout = 100 * time.Millisecond
 
 	var err error
 	if db.Store, err = bh.Open(os.ExpandEnv(config.Default().API().DBFile()), 0644, &bh.Options{

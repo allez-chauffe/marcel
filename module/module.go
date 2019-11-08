@@ -1,10 +1,13 @@
 package module
 
 import (
+	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -44,11 +47,30 @@ func (m Module) Run() (exitCode int) {
 		}
 	}()
 
-	// FIXME HTTP
+	var httpSrv, err = m.startHTTP()
+	if err != nil {
+		// FIXME log
+		exitCode = 1
+		return
+	}
+	defer func() {
+		log.Infof("Shutting down %s's HTTP server...", m.Name)
+
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Millisecond)
+		defer cancel()
+
+		// FIXME manage websockets
+		if err := httpSrv.Shutdown(ctx); err != nil {
+			// FIXME log
+		}
+	}()
 
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-	<-ch
+	var signal = <-ch
+
+	fmt.Print("\r")
+	log.Infof("Caught signal %s", signal)
 
 	return
 }
@@ -159,4 +181,57 @@ func (m Module) callStart(next StartNextFunc) (StopFunc, error) {
 	}
 
 	return stop, nil
+}
+
+func (m *Module) startHTTP() (*http.Server, error) {
+	var router = mux.NewRouter()
+
+	var hasHTTP, err = m.setupRouter(router)
+	if err != nil {
+		return nil, err
+	}
+
+	if !hasHTTP {
+		return nil, nil
+	}
+
+	var srv = &http.Server{
+		Addr:    ":8090", // FIXME Addr
+		Handler: router,
+	}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			// FIXME
+		}
+	}()
+
+	return srv, nil
+}
+
+func (m *Module) setupRouter(parentRouter *mux.Router) (bool, error) {
+	var hasHTTP = false
+	var router = parentRouter
+
+	if m.Http != nil {
+		if m.Http.BasePath != "" {
+			router = parentRouter.PathPrefix(m.Http.BasePath).Subrouter()
+		}
+		if m.Http.Setup != nil {
+			hasHTTP = true
+			if err := m.Http.Setup(router); err != nil {
+				return false, err // FIXME wrap
+			}
+		}
+	}
+
+	for _, subM := range m.SubModules {
+		var hasSubHTTP, err = subM.setupRouter(router)
+		if err != nil {
+			return false, err
+		}
+		hasHTTP = hasHTTP || hasSubHTTP
+	}
+
+	return hasHTTP, nil
 }

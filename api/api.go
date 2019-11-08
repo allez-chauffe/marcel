@@ -46,6 +46,10 @@ func Module() module.Module {
 
 			return stop, next()
 		},
+		Http: &module.Http{
+			BasePath: config.Default().API().BasePath(),
+			Setup:    a.configureSubRouter,
+		},
 	}
 }
 
@@ -97,14 +101,16 @@ func (a *API) Start() {
 }
 
 func (a *API) ConfigureRouter(r *mux.Router) error {
-	b := r.PathPrefix(config.Default().API().BasePath()).Subrouter()
+	return a.configureSubRouter(r.PathPrefix(config.Default().API().BasePath()).Subrouter())
+}
 
-	b.Use(auth.Middleware)
+func (a *API) configureSubRouter(r *mux.Router) error {
+	r.Use(auth.Middleware)
 	if !config.Default().API().Auth().Secure() {
 		log.Warnln("Secure mode is disabled")
 	}
 
-	medias := b.PathPrefix("/medias").Subrouter()
+	medias := r.PathPrefix("/medias").Subrouter()
 	medias.HandleFunc("/", a.mediaService.GetAllHandler).Methods("GET")
 	medias.HandleFunc("/", a.mediaService.CreateHandler).Methods("POST")
 	medias.HandleFunc("/", a.mediaService.SaveHandler).Methods("PUT")
@@ -116,7 +122,7 @@ func (a *API) ConfigureRouter(r *mux.Router) error {
 	media.HandleFunc("/deactivate", a.mediaService.DeactivateHandler).Methods("GET")
 	media.HandleFunc("/plugins/{eltName}/{instanceId}/{filePath:.*}", a.mediaService.GetPluginFilesHandler).Methods("GET")
 
-	clients := b.PathPrefix("/clients").Subrouter()
+	clients := r.PathPrefix("/clients").Subrouter()
 	clients.HandleFunc("/", a.clientsService.GetAllHandler).Methods("GET")
 	clients.HandleFunc("/", a.clientsService.CreateHandler).Methods("POST")
 	clients.HandleFunc("/", a.clientsService.UpdateHandler).Methods("PUT")
@@ -127,14 +133,14 @@ func (a *API) ConfigureRouter(r *mux.Router) error {
 	client.HandleFunc("/", a.clientsService.DeleteHandler).Methods("DELETE")
 	client.HandleFunc("/ws", a.clientsService.WSConnectionHandler)
 
-	pluginsRouter := b.PathPrefix("/plugins").Subrouter()
+	pluginsRouter := r.PathPrefix("/plugins").Subrouter()
 	pluginsRouter.HandleFunc("/", plugins.GetAllHandler).Methods("GET")
 	pluginsRouter.HandleFunc("/", plugins.AddHandler).Methods("POST")
 	pluginsRouter.HandleFunc("/{eltName}", plugins.GetHandler).Methods("GET")
 	pluginsRouter.HandleFunc("/{eltName}", plugins.UpdateHandler).Methods("PUT")
 	pluginsRouter.HandleFunc("/{eltName}", plugins.DeleteHandler).Methods("DELETE")
 
-	auth := b.PathPrefix("/auth").Subrouter()
+	auth := r.PathPrefix("/auth").Subrouter()
 	auth.HandleFunc("/login", loginHandler).Methods("POST")
 	auth.HandleFunc("/logout", logoutHandler).Methods("PUT")
 	auth.HandleFunc("/validate", validateHandler).Methods("GET")
