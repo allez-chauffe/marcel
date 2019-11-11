@@ -8,6 +8,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Zenika/marcel/osutil"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -17,7 +19,7 @@ import (
 type StartFunc func(next NextFunc) (StopFunc, error)
 
 // StopFunc is a module's stop function.
-type StopFunc func() error
+type StopFunc func() error // FIXME use a NextFunc
 
 // NextFunc starts the submodules of the current module.
 type NextFunc func() error
@@ -69,7 +71,9 @@ func (m Module) Run() (exitCode int) {
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	var signal = <-ch
 
-	fmt.Print("\r") // FIXME only in tty
+	if osutil.IsInteractive() {
+		fmt.Print("\r")
+	}
 	log.Infof("Caught signal %s", signal)
 
 	return
@@ -143,7 +147,6 @@ func (m Module) start() startResult {
 			}
 
 			for _, subStop := range stopFuncs {
-				// FIXME concurrent subStops
 				if err := subStop(); err != nil {
 					log.Errorf("Error while stopping %s's submodules: %s", m.Name, err)
 					hasError = true
