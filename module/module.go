@@ -47,7 +47,7 @@ func (m Module) Run() (exitCode int) {
 
 	var httpSrv, err = m.startHTTP()
 	if err != nil {
-		// FIXME log
+		log.Errorf("Error while starting %s's HTTP: %s", m.Name, err)
 		exitCode = 1
 		return
 	}
@@ -59,7 +59,7 @@ func (m Module) Run() (exitCode int) {
 
 		// FIXME manage websockets
 		if err := httpSrv.Shutdown(ctx); err != nil {
-			// FIXME log
+			log.Errorf("Error while shutting down %s's HTTP: %s", m.Name, err)
 		}
 
 		log.Infof("%s's HTTP server stopped", m.Name)

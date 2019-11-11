@@ -33,10 +33,6 @@ func (m *Module) startHTTP() (*http.Server, error) {
 	}
 
 	var addr = fmt.Sprintf(":%d", config.Default().HTTP().Port())
-	var listener, err = net.Listen("tcp", addr)
-	if err != nil {
-		return nil, err // FIXME wrap
-	}
 
 	var handler http.Handler = router
 
@@ -54,11 +50,17 @@ func (m *Module) startHTTP() (*http.Server, error) {
 		Handler: handler,
 	}
 
+	var listener, err = net.Listen("tcp", addr)
+	if err != nil {
+		return nil, fmt.Errorf("Could not listen for %s's HTTP: %w", m.Name, err)
+	}
+
 	log.Infof("%s's HTTP server listening on %s", m.Name, listener.Addr())
 
 	go func() {
 		if err := srv.Serve(listener); err != nil {
-			// FIXME
+			log.Errorf("Error while serving HTTP for %s module: %s", m.Name, err)
+			// TODO maybe stop the module ?
 		}
 	}()
 
