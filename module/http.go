@@ -59,8 +59,10 @@ func (m *Module) startHTTP() (*http.Server, error) {
 
 	go func() {
 		if err := srv.Serve(listener); err != nil {
-			log.Errorf("Error while serving HTTP for %s module: %s", m.Name, err)
-			// TODO maybe stop the module ?
+			if err != http.ErrServerClosed {
+				log.Errorf("Error while serving HTTP for %s module: %s", m.Name, err)
+				// TODO maybe stop the module ?
+			}
 		}
 	}()
 
