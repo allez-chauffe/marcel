@@ -1,4 +1,4 @@
-// +build nopackr
+// +build nopkger
 
 package frontend
 

@@ -1,11 +1,15 @@
 .DS_Store
+.env.local
 .idea/
 .vscode/
 *.db
 *.iml
 *.log
+build/
 marcel
 marcel.exe
 node_modules
+pkged.go
 test_env
+yarn-debug.log
 yarn-error.log
