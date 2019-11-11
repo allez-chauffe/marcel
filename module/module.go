@@ -19,7 +19,7 @@ import (
 type StartFunc func(next NextFunc) (StopFunc, error)
 
 // StopFunc is a module's stop function.
-type StopFunc func() error // FIXME use a NextFunc
+type StopFunc func() error
 
 // NextFunc starts the submodules of the current module.
 type NextFunc func() error
