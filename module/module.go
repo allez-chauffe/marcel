@@ -3,41 +3,34 @@ package module
 import (
 	"context"
 	"fmt"
-	"net"
-	"net/http"
 	"os"
 	"os/signal"
-	"sort"
-	"strings"
 	"syscall"
 	"time"
 
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/Zenika/marcel/config"
 )
 
-type StartNextFunc func() error
+// StartFunc is a module's start function.
+// It must call next.
+// It may return a StopFunc if necessary.
+type StartFunc func(next NextFunc) (StopFunc, error)
 
+// StopFunc is a module's stop function.
 type StopFunc func() error
 
-type StartFunc func(StartNextFunc) (StopFunc, error)
+// NextFunc starts the submodules of the current module.
+type NextFunc func() error
 
+// Module describes how a module should run.
 type Module struct {
 	Name       string
 	Start      StartFunc
 	SubModules []Module
-	Http
+	HTTP
 }
 
-type Http struct {
-	BasePath string
-	Setup    func(*mux.Router)
-	OnListen func(net.Listener, *http.Server)
-}
-
+// Run run's a module tree.
 func (m Module) Run() (exitCode int) {
 	var startRes = m.start()
 	if startRes.err != nil {
@@ -68,6 +61,8 @@ func (m Module) Run() (exitCode int) {
 		if err := httpSrv.Shutdown(ctx); err != nil {
 			// FIXME log
 		}
+
+		log.Infof("%s's HTTP server stopped", m.Name)
 	}()
 
 	ch := make(chan os.Signal, 1)
@@ -163,13 +158,13 @@ func (m Module) start() startResult {
 	}
 }
 
-func (m Module) callStart(next StartNextFunc) (StopFunc, error) {
+func (m Module) callStart(next NextFunc) (StopFunc, error) {
 	if m.Start == nil {
 		return nil, next()
 	}
 
 	var nextCalled = false
-	var callNext StartNextFunc = func() error {
+	var callNext NextFunc = func() error {
 		if nextCalled {
 			return fmt.Errorf("next already called while starting module %s", m.Name)
 		}
@@ -188,100 +183,4 @@ func (m Module) callStart(next StartNextFunc) (StopFunc, error) {
 	}
 
 	return stop, nil
-}
-
-func (m *Module) startHTTP() (*http.Server, error) {
-	log.Infof("Starting %s's HTTP server...", m.Name)
-
-	var router = mux.NewRouter()
-
-	var hasHTTP = m.setupRouter(router)
-
-	if !hasHTTP {
-		return nil, nil
-	}
-
-	var addr = fmt.Sprintf(":%d", config.Default().HTTP().Port())
-	var listener, err = net.Listen("tcp", addr)
-	if err != nil {
-		return nil, err // FIXME wrap
-	}
-
-	var handler http.Handler = router
-
-	if config.Default().HTTP().CORS() {
-		handler = cors.New(cors.Options{
-			AllowOriginFunc:  func(origin string) bool { return true },
-			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-			AllowedHeaders:   []string{"*"},
-			AllowCredentials: true,
-		}).Handler(handler)
-		log.Warn("CORS is enabled")
-	}
-
-	var srv = &http.Server{
-		Handler: handler,
-	}
-
-	log.Infof("%s's HTTP server listening on %s", m.Name, listener.Addr())
-
-	go func() {
-		if err := srv.Serve(listener); err != nil {
-			// FIXME
-		}
-	}()
-
-	m.notifyOnServe(listener, srv)
-
-	return srv, nil
-}
-
-func (m *Module) setupRouter(parentRouter *mux.Router) bool {
-	var hasHTTP = false
-	var router = parentRouter
-
-	if m.BasePath != "" {
-		router = parentRouter.PathPrefix(m.BasePath).Subrouter()
-		log.Debugf("Created subrouter for %s at %s", m.Name, m.BasePath)
-	}
-
-	if m.Setup != nil {
-		hasHTTP = true
-		m.Setup(router)
-		log.Debugf("Configured subrouter for %s", m.Name)
-	}
-
-	sort.Sort(byBasePath(m.SubModules))
-
-	for _, subM := range m.SubModules {
-		hasHTTP = subM.setupRouter(router) || hasHTTP
-	}
-
-	return hasHTTP
-}
-
-func (m *Module) notifyOnServe(listener net.Listener, srv *http.Server) {
-	if m.OnListen != nil {
-		m.OnListen(listener, srv)
-	}
-
-	for _, subM := range m.SubModules {
-		subM.notifyOnServe(listener, srv)
-	}
-}
-
-type byBasePath []Module
-
-var _ sort.Interface = byBasePath(nil)
-
-func (modules byBasePath) Len() int {
-	return len(modules)
-}
-
-func (modules byBasePath) Less(i, j int) bool {
-	return strings.Count(modules[i].BasePath, "/") > strings.Count(modules[j].BasePath, "/")
-}
-
-func (modules byBasePath) Swap(i, j int) {
-	modules[i], modules[j] = modules[j], modules[i]
 }

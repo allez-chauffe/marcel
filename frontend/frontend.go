@@ -18,7 +18,7 @@ func Module() module.Module {
 
 	return module.Module{
 		Name: "Frontend",
-		Start: func(next module.StartNextFunc) (module.StopFunc, error) {
+		Start: func(next module.NextFunc) (module.StopFunc, error) {
 			var err error
 			fs, err = initFs()
 			if err != nil {
@@ -27,7 +27,7 @@ func Module() module.Module {
 
 			return nil, next()
 		},
-		Http: module.Http{
+		HTTP: module.HTTP{
 			BasePath: httputil.TrimTrailingSlash(base),
 			Setup: func(r *mux.Router) {
 				r.HandleFunc("/config", configHandler).Methods("GET")

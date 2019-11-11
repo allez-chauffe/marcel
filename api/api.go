@@ -21,7 +21,7 @@ func Module() module.Module {
 
 	return module.Module{
 		Name: "API",
-		Start: func(next module.StartNextFunc) (module.StopFunc, error) {
+		Start: func(next module.NextFunc) (module.StopFunc, error) {
 			if err := db.Open(); err != nil {
 				return nil, err
 			}
@@ -42,7 +42,7 @@ func Module() module.Module {
 
 			return stop, next()
 		},
-		Http: module.Http{
+		HTTP: module.HTTP{
 			BasePath: config.Default().API().BasePath(),
 			Setup: func(r *mux.Router) {
 				r.Use(auth.Middleware)

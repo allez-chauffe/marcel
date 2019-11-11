@@ -19,6 +19,7 @@ import (
 	"github.com/Zenika/marcel/module"
 )
 
+// Run runs a demonstration standalone server.
 func Run() int {
 	dataDir, err := ioutil.TempDir("", "marcel")
 	if err != nil {
@@ -40,7 +41,7 @@ func Run() int {
 
 	var demo = module.Module{
 		Name: "Demo",
-		Start: func(next module.StartNextFunc) (module.StopFunc, error) {
+		Start: func(next module.NextFunc) (module.StopFunc, error) {
 			log.Infoln("marcel is warming up...")
 
 			if err := next(); err != nil {
@@ -69,15 +70,15 @@ func Run() int {
 		SubModules: []module.Module{
 			standalone.Module(),
 		},
-		Http: module.Http{
+		HTTP: module.HTTP{
 			OnListen: func(listener net.Listener, srv *http.Server) {
 				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), httputil.NormalizeBase(cfg.Backoffice().BasePath()), token)
 
 				log.Infof("marcel is running at %s\n", url)
 
-				time.AfterFunc(100*time.Millisecond, func() {
-					osutil.Open(url) // Discard error on purpose
-				})
+				if err := osutil.Open(url); err != nil {
+					log.Errorf("Error while opening browser: %s", err)
+				}
 			},
 		},
 	}
