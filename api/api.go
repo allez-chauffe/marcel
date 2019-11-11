@@ -14,6 +14,7 @@ import (
 	"github.com/Zenika/marcel/module"
 )
 
+// Module creates API module
 func Module() module.Module {
 	var clientsService *clients.Service
 	var mediasService *medias.Service
@@ -22,24 +23,19 @@ func Module() module.Module {
 		Name: "API",
 		Start: func(next module.StartNextFunc) (module.StopFunc, error) {
 			if err := db.Open(); err != nil {
-				return nil, err //FIXME wrap
+				return nil, err
 			}
 
 			var stop = func() error {
-				if err := db.Close(); err != nil {
-					return err // FIXME wrap
-				}
-				return nil
+				return db.Close()
 			}
 
 			if err := users.EnsureOneUser(); err != nil {
 				return stop, err
 			}
 
-			//load clients list from DB
 			clientsService = clients.NewService()
 
-			//Load Medias configuration from DB
 			mediasService = medias.NewService(clientsService)
 
 			plugins.Initialize()
