@@ -34,11 +34,10 @@ func open(readOnly bool) error {
 	if db.Store, err = bh.Open(os.ExpandEnv(config.Default().API().DBFile()), 0644, &bh.Options{
 		Options: &options,
 	}); err != nil {
-		log.Errorf("Error while opening bbolt database: %s", err)
 		return fmt.Errorf("Error while opening bbolt database: %w", err)
 	}
 
-	log.Info("bbolt database closed")
+	log.Info("bbolt database opened")
 
 	return nil
 }
@@ -49,7 +48,6 @@ func Close() error {
 
 	err := db.Store.Close()
 	if err != nil {
-		log.Errorf("Error while closing bbolt database: %s", err)
 		return fmt.Errorf("Error while closing bbolt database: %w", err)
 	}
 

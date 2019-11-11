@@ -127,7 +127,9 @@ func (m Module) start() startResult {
 
 	var stop, err = m.callStart(next)
 
-	log.Infof("Module %s started", m.Name)
+	if err == nil {
+		log.Infof("Module %s started", m.Name)
+	}
 
 	return startResult{
 		func() error {
