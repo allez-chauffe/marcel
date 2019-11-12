@@ -36,7 +36,7 @@ func New() *Config {
 	c.API().SetDefaults()
 	c.Backoffice().SetDefaults()
 	c.Frontend().SetDefaults()
-	c.Standalone().SetDefaults()
+	c.HTTP().SetDefaults()
 
 	return c
 }
@@ -108,6 +108,6 @@ func (c *Config) Frontend() *Frontend {
 	return (*Frontend)(c)
 }
 
-func (c *Config) Standalone() *Standalone {
-	return (*Standalone)(c)
+func (c *Config) HTTP() *HTTP {
+	return (*HTTP)(c)
 }

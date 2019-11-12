@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -13,15 +15,13 @@ func init() {
 
 	var cmd = &cobra.Command{
 		Use:   "api",
-		Short: "Starts marcel's api server",
+		Short: "Starts Marcel's API server",
 		Args:  cobra.NoArgs,
 
 		PreRunE: preRunForServer(cfg),
 
 		Run: func(_ *cobra.Command, _ []string) {
-			a := api.New()
-			a.Initialize()
-			a.Start()
+			os.Exit(api.Module().Run())
 		},
 	}
 
@@ -29,7 +29,7 @@ func init() {
 
 	commonAPIFlags(flags, cfg)
 
-	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.API().Port(), "Listening port", "api.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.HTTP().Port(), "Listening port", "http.port"); err != nil {
 		panic(err)
 	}
 
@@ -37,7 +37,7 @@ func init() {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagBool(flags, "cors", cfg.API().CORS(), "Enable CORS (all origins)", "api.cors"); err != nil {
+	if _, err := cfg.FlagBool(flags, "cors", cfg.HTTP().CORS(), "Enable CORS (all origins)", "http.cors"); err != nil {
 		panic(err)
 	}
 

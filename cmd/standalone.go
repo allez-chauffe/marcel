@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 
 	"github.com/Zenika/marcel/config"
@@ -17,8 +19,8 @@ func init() {
 
 		PreRunE: preRunForServer(cfg),
 
-		RunE: func(_ *cobra.Command, _ []string) error {
-			return standalone.Start(nil)
+		Run: func(_ *cobra.Command, _ []string) {
+			os.Exit(standalone.Module().Run())
 		},
 	}
 
@@ -26,7 +28,7 @@ func init() {
 
 	commonAPIFlags(flags, cfg)
 
-	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.Standalone().Port(), "Listening port", "standalone.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.HTTP().Port(), "Listening port", "http.port"); err != nil {
 		panic(err)
 	}
 

@@ -14,28 +14,12 @@ func (a *API) viper() *viper.Viper {
 	return (*viper.Viper)(a)
 }
 
-func (a *API) Port() uint {
-	return a.viper().GetUint("api.port")
-}
-
-func (a *API) SetPort(p uint) {
-	a.viper().Set("api.port", p)
-}
-
 func (a *API) BasePath() string {
 	return a.viper().GetString("api.basePath")
 }
 
 func (a *API) SetBasePath(bp string) {
 	a.viper().Set("api.basePath", bp)
-}
-
-func (a *API) CORS() bool {
-	return a.viper().GetBool("api.cors")
-}
-
-func (a *API) SetCORS(c bool) {
-	a.viper().Set("api.cors", c)
 }
 
 func (a *API) DBFile() string {
@@ -79,9 +63,7 @@ func (a *API) resolveDataDirPath(pPath string) string {
 }
 
 func (a *API) SetDefaults() {
-	a.viper().SetDefault("api.port", 8090)
 	a.viper().SetDefault("api.basePath", "/api")
-	a.viper().SetDefault("api.cors", false)
 	a.viper().SetDefault("api.dbFile", "marcel.db")
 	a.viper().SetDefault("api.pluginsDir", "plugins")
 	a.viper().SetDefault("api.mediasDir", "medias")

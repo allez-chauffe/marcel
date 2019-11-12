@@ -2,43 +2,42 @@ package backoffice
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/marcel/config"
 	"github.com/Zenika/marcel/httputil"
+	"github.com/Zenika/marcel/module"
 )
 
 const index = "/index.html"
 
-func Start() error {
-	var r = mux.NewRouter()
-
-	ConfigureRouter(r)
-
-	log.Infof("Backoffice server listening on %d...", config.Default().Backoffice().Port())
-
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.Default().Backoffice().Port()), r)
-}
-
-func ConfigureRouter(r *mux.Router) error {
+func Module() module.Module {
 	var base = httputil.NormalizeBase(config.Default().Backoffice().BasePath())
+	var fs http.FileSystem
 
-	var b = r.PathPrefix(httputil.TrimTrailingSlash(base)).Subrouter()
+	return module.Module{
+		Name: "Backoffice",
+		Start: func(next module.NextFunc) (module.StopFunc, error) {
+			var err error
+			fs, err = initFs()
+			if err != nil {
+				return nil, err
+			}
 
-	b.Handle("", http.RedirectHandler(base, http.StatusMovedPermanently))
-	b.HandleFunc("/config", configHandler).Methods("GET")
-	fh, err := fileHandler(base)
-	if err != nil {
-		return err
+			return nil, next()
+		},
+		HTTP: module.HTTP{
+			BasePath: httputil.TrimTrailingSlash(base),
+			Setup: func(r *mux.Router) {
+				r.Handle("", http.RedirectHandler(base, http.StatusMovedPermanently))
+				r.HandleFunc("/config", configHandler).Methods("GET")
+				r.PathPrefix("/").Handler(fileHandler(base, fs))
+			},
+		},
 	}
-	b.PathPrefix("/").Handler(fh)
-
-	return nil
 }
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
@@ -64,11 +63,7 @@ func configHandler(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func fileHandler(base string) (http.Handler, error) {
-	fs, err := initFs()
-	if err != nil {
-		return nil, err
-	}
+func fileHandler(base string, fs http.FileSystem) http.Handler {
 	return http.StripPrefix(
 		base,
 		http.FileServer(
@@ -81,5 +76,5 @@ func fileHandler(base string) (http.Handler, error) {
 				index,
 			),
 		),
-	), nil
+	)
 }

@@ -8,14 +8,6 @@ func (f *Frontend) viper() *viper.Viper {
 	return (*viper.Viper)(f)
 }
 
-func (f *Frontend) Port() uint {
-	return f.viper().GetUint("frontend.port")
-}
-
-func (f *Frontend) SetPort(p uint) {
-	f.viper().Set("frontend.port", p)
-}
-
 func (f *Frontend) BasePath() string {
 	return f.viper().GetString("frontend.basePath")
 }
@@ -33,7 +25,6 @@ func (f *Frontend) SetAPIURI(au string) {
 }
 
 func (f *Frontend) SetDefaults() {
-	f.viper().SetDefault("frontend.port", 8090)
 	f.viper().SetDefault("frontend.basePath", "/front")
 	f.viper().SetDefault("frontend.apiURI", "/api")
 }

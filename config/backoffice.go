@@ -8,14 +8,6 @@ func (b *Backoffice) viper() *viper.Viper {
 	return (*viper.Viper)(b)
 }
 
-func (b *Backoffice) Port() uint {
-	return b.viper().GetUint("backoffice.port")
-}
-
-func (b *Backoffice) SetPort(p uint) {
-	b.viper().Set("backoffice.port", p)
-}
-
 func (b *Backoffice) BasePath() string {
 	return b.viper().GetString("backoffice.basePath")
 }
@@ -41,7 +33,6 @@ func (b *Backoffice) SetFrontendURI(fu string) {
 }
 
 func (b *Backoffice) SetDefaults() {
-	b.viper().SetDefault("backoffice.port", 8090)
 	b.viper().SetDefault("backoffice.basePath", "/")
 	b.viper().SetDefault("backoffice.apiURI", "/api")
 	b.viper().SetDefault("backoffice.frontendURI", "/front")

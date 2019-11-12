@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 
 	"github.com/Zenika/marcel/backoffice"
@@ -12,19 +14,19 @@ func init() {
 
 	var cmd = &cobra.Command{
 		Use:   "backoffice",
-		Short: "Starts Marcel's backoffice server",
+		Short: "Starts Marcel's Backoffice server",
 		Args:  cobra.NoArgs,
 
 		PreRunE: preRunForServer(cfg),
 
-		RunE: func(_ *cobra.Command, _ []string) error {
-			return backoffice.Start()
+		Run: func(_ *cobra.Command, _ []string) {
+			os.Exit(backoffice.Module().Run())
 		},
 	}
 
 	var flags = cmd.Flags()
 
-	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.Backoffice().Port(), "Listening port", "backoffice.port"); err != nil {
+	if _, err := cfg.FlagUintP(flags, "port", "p", cfg.HTTP().Port(), "Listening port", "http.port"); err != nil {
 		panic(err)
 	}
 

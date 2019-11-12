@@ -6,9 +6,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Zenika/marcel/osutil"
+
 	"github.com/Zenika/marcel/standalone/demo"
 
-	isatty "github.com/mattn/go-isatty"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -31,7 +32,7 @@ var Marcel = &cobra.Command{
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		if isatty.IsTerminal(os.Stdin.Fd()) && isatty.IsTerminal(os.Stdout.Fd()) {
+		if osutil.IsInteractive() {
 			return startInteractive(cmd.Usage)
 		}
 
@@ -53,7 +54,12 @@ func startInteractive(usage func() error) error {
 				fallthrough
 			case strings.HasPrefix(answer, "y"):
 				fmt.Println()
-				return demo.StartServer()
+				var demo, err = demo.Module()
+				if err != nil {
+					log.Errorf("Error while running demo module: %s", err)
+					os.Exit(1)
+				}
+				os.Exit(demo.Run())
 			case strings.HasPrefix(answer, "n"):
 				fallthrough
 			case strings.HasPrefix(answer, "h"):
