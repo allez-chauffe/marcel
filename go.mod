@@ -31,3 +31,5 @@ require (
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gopkg.in/yaml.v2 v2.2.5 // indirect
 )
+
+replace github.com/markbates/pkger => github.com/nlepage/pkger v0.11.1-0.20191112135447-b8fe39c319fb
