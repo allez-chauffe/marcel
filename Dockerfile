@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/static
+FROM golang:1.13
 
 COPY marcel /usr/bin/
 
