@@ -13,7 +13,7 @@ import (
 )
 
 func initFs() (http.FileSystem, error) {
-	url := fmt.Sprintf("https://github.com/Zenika/marcel/releases/download/%s/marcel-frontend.tgz", version.Version)
+	url := fmt.Sprintf("https://github.com/Zenika/marcel/releases/download/%s/marcel-frontend.tgz", version.Version())
 	path := filepath.Join(config.Default().API().DataDir(), "frontend", version.Version())
 
 	if err := httputil.DownloadTgzToDir(url, path); err != nil {
