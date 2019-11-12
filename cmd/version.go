@@ -15,7 +15,7 @@ func init() {
 		Args:  cobra.NoArgs,
 
 		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Printf("%s rev: %s\n", version.Version, version.Revision)
+			fmt.Printf("%s rev: %s\n", version.Version(), version.Revision())
 		},
 	})
 }

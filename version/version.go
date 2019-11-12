@@ -1,6 +1,14 @@
 package version
 
 var (
-	Version  = "dev"
-	Revision string
+	version  = "dev"
+	revision string
 )
+
+func Version() string {
+	return version
+}
+
+func Revision() string {
+	return revision
+}
