@@ -68,7 +68,7 @@ func (m *Module) startHTTP() (*http.Server, error) {
 		}
 	}()
 
-	m.notifyOnServe(listener, srv)
+	m.notifyOnListen(listener, srv)
 
 	return srv, nil
 }
@@ -111,13 +111,13 @@ func (m *Module) setupRouter(parentRouter *mux.Router) bool {
 	return hasHTTP
 }
 
-func (m *Module) notifyOnServe(listener net.Listener, srv *http.Server) {
+func (m *Module) notifyOnListen(listener net.Listener, srv *http.Server) {
 	if m.OnListen != nil {
 		m.OnListen(listener, srv)
 	}
 
 	for _, subM := range m.SubModules {
-		subM.notifyOnServe(listener, srv)
+		subM.notifyOnListen(listener, srv)
 	}
 }
 
