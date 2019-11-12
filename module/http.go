@@ -1,11 +1,13 @@
 package module
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -69,6 +71,20 @@ func (m *Module) startHTTP() (*http.Server, error) {
 	m.notifyOnServe(listener, srv)
 
 	return srv, nil
+}
+
+func (m *Module) stopHTTP(srv *http.Server) {
+	log.Infof("Shutting down %s's HTTP server...", m.Name)
+
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	// FIXME manage websockets
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Errorf("Error while shutting down %s's HTTP: %s", m.Name, err)
+	}
+
+	log.Infof("%s's HTTP server stopped", m.Name)
 }
 
 func (m *Module) setupRouter(parentRouter *mux.Router) bool {

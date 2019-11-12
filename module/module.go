@@ -1,12 +1,10 @@
 package module
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/Zenika/marcel/osutil"
 
@@ -53,19 +51,7 @@ func (m Module) Run() (exitCode int) {
 		exitCode = 1
 		return
 	}
-	defer func() {
-		log.Infof("Shutting down %s's HTTP server...", m.Name)
-
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Millisecond)
-		defer cancel()
-
-		// FIXME manage websockets
-		if err := httpSrv.Shutdown(ctx); err != nil {
-			log.Errorf("Error while shutting down %s's HTTP: %s", m.Name, err)
-		}
-
-		log.Infof("%s's HTTP server stopped", m.Name)
-	}()
+	defer m.stopHTTP(httpSrv)
 
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
