@@ -54,6 +54,11 @@ func startInteractive(usage func() error) error {
 				fallthrough
 			case strings.HasPrefix(answer, "y"):
 				fmt.Println()
+				var demo, err = demo.Module()
+				if err != nil {
+					log.Errorf("Error while running demo module: %s", err)
+					os.Exit(1)
+				}
 				os.Exit(demo.Run())
 			case strings.HasPrefix(answer, "n"):
 				fallthrough

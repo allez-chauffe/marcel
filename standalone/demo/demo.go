@@ -19,11 +19,11 @@ import (
 	"github.com/Zenika/marcel/module"
 )
 
-// Run runs a demonstration standalone server.
-func Run() int {
+// Module creates a demonstration standalone server module.
+func Module() (module.Module, error) {
 	dataDir, err := ioutil.TempDir("", "marcel")
 	if err != nil {
-		return 1
+		return module.Module{}, fmt.Errorf("Could not create temporary directory: %w", err)
 	}
 
 	var cfg = config.New()
@@ -83,5 +83,5 @@ func Run() int {
 		},
 	}
 
-	return demo.Run()
+	return demo, nil
 }
