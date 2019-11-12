@@ -34,11 +34,11 @@ func init() {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "apiURI", cfg.Backoffice().APIURI(), "API URI", "backoffice.apiURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "apiURI", cfg.API().BasePath(), "API URI", "api.basePath"); err != nil {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "frontendURI", cfg.Backoffice().FrontendURI(), "Frontend URI", "backoffice.frontendURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "frontendURI", cfg.Frontend().BasePath(), "Frontend URI", "frontend.basePath"); err != nil {
 		panic(err)
 	}
 

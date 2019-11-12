@@ -72,7 +72,7 @@ func Module() (module.Module, error) {
 		},
 		HTTP: module.HTTP{
 			OnListen: func(listener net.Listener, srv *http.Server) {
-				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), httputil.NormalizeBase(cfg.Backoffice().BasePath()), token)
+				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), httputil.NormalizeBase(cfg.Backoffice().AbsoluteBasePath()), token)
 
 				log.Infof("marcel is running at %s\n", url)
 

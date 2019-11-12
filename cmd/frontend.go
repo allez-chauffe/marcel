@@ -34,7 +34,7 @@ func init() {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "apiURI", cfg.Frontend().APIURI(), "API URI", "frontend.apiURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "apiURI", cfg.API().BasePath(), "API URI", "api.basePath"); err != nil {
 		panic(err)
 	}
 

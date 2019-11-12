@@ -14,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/marcel/config"
+	"github.com/Zenika/marcel/httputil"
 )
 
 // HTTP describes a module's HTTP setup.
@@ -92,7 +93,7 @@ func (m *Module) setupRouter(parentRouter *mux.Router) bool {
 	var router = parentRouter
 
 	if m.BasePath != "" {
-		router = parentRouter.PathPrefix(m.BasePath).Subrouter()
+		router = parentRouter.PathPrefix(httputil.TrimTrailingSlash(m.BasePath)).Subrouter()
 		log.Debugf("Created subrouter for %s at %s", m.Name, m.BasePath)
 	}
 

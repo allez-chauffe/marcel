@@ -16,6 +16,7 @@ const index = "/index.html"
 
 func Module() module.Module {
 	var base = httputil.NormalizeBase(config.Default().Backoffice().BasePath())
+	var absoluteBase = httputil.NormalizeBase(config.Default().Backoffice().AbsoluteBasePath())
 	var fs http.FileSystem
 
 	return module.Module{
@@ -30,11 +31,11 @@ func Module() module.Module {
 			return nil, next()
 		},
 		HTTP: module.HTTP{
-			BasePath: httputil.TrimTrailingSlash(base),
+			BasePath: base,
 			Setup: func(r *mux.Router) {
-				r.Handle("", http.RedirectHandler(base, http.StatusMovedPermanently))
+				r.Handle("", http.RedirectHandler(absoluteBase, http.StatusMovedPermanently))
 				r.HandleFunc("/config", configHandler).Methods("GET")
-				r.PathPrefix("/").Handler(fileHandler(base, fs))
+				r.PathPrefix("/").Handler(fileHandler(absoluteBase, fs))
 			},
 		},
 	}
@@ -42,12 +43,12 @@ func Module() module.Module {
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
 	// FIXME utility ?
-	var apiURI = config.Default().Backoffice().APIURI()
+	var apiURI = config.Default().API().AbsoluteBasePath()
 	if !strings.HasSuffix(apiURI, "/") {
 		apiURI += "/"
 	}
 
-	var frontendURI = config.Default().Backoffice().FrontendURI()
+	var frontendURI = config.Default().Frontend().AbsoluteBasePath()
 	if !strings.HasSuffix(frontendURI, "/") {
 		frontendURI += "/"
 	}

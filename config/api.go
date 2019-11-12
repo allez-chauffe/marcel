@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"path"
 	"path/filepath"
 	"time"
 
@@ -16,6 +17,10 @@ func (a *API) viper() *viper.Viper {
 
 func (a *API) BasePath() string {
 	return a.viper().GetString("api.basePath")
+}
+
+func (a *API) AbsoluteBasePath() string {
+	return path.Join((*HTTP)(a.viper()).BasePath(), a.BasePath())
 }
 
 func (a *API) SetBasePath(bp string) {

@@ -14,6 +14,7 @@ import (
 
 func Module() module.Module {
 	var base = httputil.NormalizeBase(config.Default().Frontend().BasePath())
+	var absoluteBase = httputil.NormalizeBase(config.Default().Frontend().AbsoluteBasePath())
 	var fs http.FileSystem
 
 	return module.Module{
@@ -28,17 +29,17 @@ func Module() module.Module {
 			return nil, next()
 		},
 		HTTP: module.HTTP{
-			BasePath: httputil.TrimTrailingSlash(base),
+			BasePath: base,
 			Setup: func(r *mux.Router) {
 				r.HandleFunc("/config", configHandler).Methods("GET")
-				r.PathPrefix("/").Handler(fileHandler(base, fs))
+				r.PathPrefix("/").Handler(fileHandler(absoluteBase, fs))
 			},
 		},
 	}
 }
 
 func configHandler(res http.ResponseWriter, req *http.Request) {
-	var apiURI = config.Default().Frontend().APIURI()
+	var apiURI = config.Default().API().AbsoluteBasePath()
 	if !strings.HasSuffix(apiURI, "/") {
 		apiURI += "/"
 	}
