@@ -10,7 +10,7 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
-	github.com/markbates/pkger v0.12.2
+	github.com/markbates/pkger v0.12.8
 	github.com/mattn/go-isatty v0.0.10
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/rs/cors v1.7.0
@@ -29,5 +29,4 @@ require (
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
-	gopkg.in/yaml.v2 v2.2.5 // indirect
 )

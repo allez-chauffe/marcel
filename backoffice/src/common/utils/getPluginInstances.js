@@ -7,7 +7,7 @@ export const extractPluginInstances = plugins => {
 
   const pluginsWithoutSubs = plugins.map(plugin =>
     mapValues(plugin, 'props', prop =>
-      prop.type === 'pluginList' ? { ...prop, value: map(prop.value, 'instanceId') } : prop,
+      prop.type === 'pluginList' ? { ...prop, value: map('instanceId', prop.value) } : prop,
     ),
   )
 

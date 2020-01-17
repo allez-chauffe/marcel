@@ -98,8 +98,8 @@ github.com/magiconair/properties v1.8.0 h1:LLgXmsheXeRoUOBOjtwPQCWIYqM/LU1ayDtDe
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.1 h1:ZC2Vc7/ZFkGmsVC9KvOjumD+G5lXy2RtTKyzRKO2BQ4=
 github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
-github.com/markbates/pkger v0.12.2 h1:GTsbY4BNonNLxrsAfU5A2cWHjzpxNNEGzktEfbgO3FA=
-github.com/markbates/pkger v0.12.2/go.mod h1:so/QD8FeTM0IilC3nRArkwOvUT+tsJsaXLFUAKmjzJk=
+github.com/markbates/pkger v0.12.8 h1:4mEUzWb1HzRnxPwUevBX8g8ntsQ4rWw2R8CRB2QdZVI=
+github.com/markbates/pkger v0.12.8/go.mod h1:C7e5A6bnWZT+nXkUwkvysGW7sxl/IGd63HEa6N/JY8s=
 github.com/mattn/go-isatty v0.0.10 h1:qxFzApOv4WsAL965uUPIsXzAKCZxN2p9UqdhFS4ZW10=
 github.com/mattn/go-isatty v0.0.10/go.mod h1:qgIWMr58cqv1PHHyhnkY9lrL7etaEgOFcMEpPG5Rm84=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
