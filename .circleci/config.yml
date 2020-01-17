@@ -76,12 +76,12 @@ jobs:
   build_marcel:
     executor: go_executor
     steps:
-      - run: go get github.com/markbates/pkger/cmd/pkger
       - checkout
       - attach_workspace:
           at: .
       - run: go mod download
-      - run: pkger -o pkged
+      - run: go install github.com/markbates/pkger/cmd/pkger
+      - run: go generate
       - run: go test -mod=readonly .
       - run: "CGO_ENABLED=0 go build -mod=readonly -tags \"osusergo netgo\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/Zenika/marcel/version.version=$CIRCLE_BRANCH -X github.com/Zenika/marcel/version.revision=$CIRCLE_SHA1\" -o marcel"
       - persist_to_workspace:
