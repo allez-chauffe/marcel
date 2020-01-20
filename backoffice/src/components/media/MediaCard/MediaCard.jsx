@@ -18,8 +18,8 @@ class DashboardListItem extends Component {
   selectDashboard = this.onClickWithoutPropagation(this.props.selectDashboard)
   deleteDashboard = this.onClickWithoutPropagation(this.props.deleteDashboard)
   openDashboard = this.onClickWithoutPropagation(() => {
-    const { frontendURI, dashboard } = this.props
-    window.open(frontendURI + dashboard.id)
+    const { Frontend, dashboard } = this.props
+    window.open(Frontend + dashboard.id)
     window.focus()
   })
 

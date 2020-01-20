@@ -1,8 +1,6 @@
 package config
 
 import (
-	"path"
-
 	"github.com/spf13/viper"
 )
 
@@ -14,10 +12,6 @@ func (f *Frontend) viper() *viper.Viper {
 
 func (f *Frontend) BasePath() string {
 	return f.viper().GetString("frontend.basePath")
-}
-
-func (f *Frontend) AbsoluteBasePath() string {
-	return path.Join((*HTTP)(f.viper()).BasePath(), f.BasePath())
 }
 
 func (f *Frontend) SetBasePath(bp string) {

@@ -18,7 +18,7 @@ class App extends Component {
     } catch (e) {
       if (e.status === 404) {
         console.warn('No config found')
-        return { apiURI: '/api/' }
+        return { API: '/api/' }
       }
       throw e
     }

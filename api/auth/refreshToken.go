@@ -11,6 +11,7 @@ import (
 	"github.com/Zenika/marcel/api/commons"
 	"github.com/Zenika/marcel/api/db/users"
 	"github.com/Zenika/marcel/config"
+	"github.com/Zenika/marcel/module"
 )
 
 const RefreshCookieName = "RefreshAuthentication"
@@ -23,7 +24,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 	cookie, err := createTokenCookie(
 		getRefreshClaims(user),
 		RefreshCookieName,
-		path.Join(config.Default().API().AbsoluteBasePath(), "auth", "login"),
+		path.Join(module.URI("API"), "auth", "login"),
 		time.Now().Add(config.Default().API().Auth().RefreshExpiration()),
 	)
 
@@ -36,7 +37,7 @@ func GenerateRefreshToken(w http.ResponseWriter, user *users.User) {
 }
 
 func GetRefreshToken(r *http.Request) (*RefreshClaims, error) {
-	cookie, err := r.Cookie(cookieName(RefreshCookieName, path.Join(config.Default().API().AbsoluteBasePath(), "auth", "login")))
+	cookie, err := r.Cookie(cookieName(RefreshCookieName, path.Join(module.URI("API"), "auth", "login")))
 	if err == http.ErrNoCookie {
 		return nil, nil
 	}
@@ -62,7 +63,7 @@ func GenerateRefreshJWT(user *users.User) (string, error) {
 }
 
 func DeleteRefreshToken(w http.ResponseWriter) {
-	cookie := deleteCookie(RefreshCookieName, path.Join(config.Default().API().AbsoluteBasePath(), "auth", "login"))
+	cookie := deleteCookie(RefreshCookieName, path.Join(module.URI("API"), "auth", "login"))
 	http.SetCookie(w, cookie)
 }
 

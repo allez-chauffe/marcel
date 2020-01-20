@@ -20,10 +20,10 @@ import (
 )
 
 // Module creates a demonstration standalone server module.
-func Module() (module.Module, error) {
+func Module() (*module.Module, error) {
 	dataDir, err := ioutil.TempDir("", "marcel")
 	if err != nil {
-		return module.Module{}, fmt.Errorf("Could not create temporary directory: %w", err)
+		return nil, fmt.Errorf("Could not create temporary directory: %w", err)
 	}
 
 	var cfg = config.New()
@@ -39,7 +39,7 @@ func Module() (module.Module, error) {
 
 	var token string
 
-	var demo = module.Module{
+	return &module.Module{
 		Name: "Demo",
 		Start: func(next module.NextFunc) (module.StopFunc, error) {
 			log.Infoln("marcel is warming up...")
@@ -51,7 +51,7 @@ func Module() (module.Module, error) {
 			user := &users.User{
 				DisplayName: "Demo",
 				Login:       "demo",
-				Role:        "user",
+				Role:        "admin",
 				CreatedAt:   time.Now(),
 			}
 
@@ -67,21 +67,19 @@ func Module() (module.Module, error) {
 
 			return nil, nil
 		},
-		SubModules: []module.Module{
+		SubModules: []*module.Module{
 			standalone.Module(),
 		},
 		HTTP: module.HTTP{
 			OnListen: func(listener net.Listener, srv *http.Server) {
-				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), httputil.NormalizeBase(cfg.Backoffice().AbsoluteBasePath()), token)
+				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), httputil.NormalizeBase(module.URI("Backoffice")), token)
 
-				log.Infof("marcel is running at %s\n", url)
+				log.Infof("marcel is running at %s", url)
 
 				if err := osutil.Open(url); err != nil {
 					log.Errorf("Error while opening browser: %s", err)
 				}
 			},
 		},
-	}
-
-	return demo, nil
+	}, nil
 }

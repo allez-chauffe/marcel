@@ -1,10 +1,10 @@
 const config = {
   loadConfig: () =>
-    fetch('./config').then(response => {
+    fetch('/uris').then(response => {
       if (response.status !== 200) {
         if (response.status === 404) {
           console.warn('No config available') // eslint-disable-line no-console
-          return { apiURI: '/api/' }
+          return { API: '/api/' }
         }
         throw response
       }

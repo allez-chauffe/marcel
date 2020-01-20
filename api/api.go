@@ -15,11 +15,11 @@ import (
 )
 
 // Module creates API module
-func Module() module.Module {
+func Module() *module.Module {
 	var clientsService *clients.Service
 	var mediasService *medias.Service
 
-	return module.Module{
+	return &module.Module{
 		Name: "API",
 		Start: func(next module.NextFunc) (module.StopFunc, error) {
 			if err := db.Open(); err != nil {
@@ -44,7 +44,7 @@ func Module() module.Module {
 		},
 		HTTP: module.HTTP{
 			BasePath: config.Default().API().BasePath(),
-			Setup: func(r *mux.Router) {
+			Setup: func(_ string, r *mux.Router) {
 				r.Use(auth.Middleware)
 				if !config.Default().API().Auth().Secure() {
 					log.Warnln("Secure mode is disabled")

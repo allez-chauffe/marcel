@@ -1,9 +1,7 @@
 package backoffice
 
 import (
-	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -14,12 +12,11 @@ import (
 
 const index = "/index.html"
 
-func Module() module.Module {
-	var base = httputil.NormalizeBase(config.Default().Backoffice().BasePath())
-	var absoluteBase = httputil.NormalizeBase(config.Default().Backoffice().AbsoluteBasePath())
+// Module creates backoffice module
+func Module() *module.Module {
 	var fs http.FileSystem
 
-	return module.Module{
+	return &module.Module{
 		Name: "Backoffice",
 		Start: func(next module.NextFunc) (module.StopFunc, error) {
 			var err error
@@ -31,48 +28,24 @@ func Module() module.Module {
 			return nil, next()
 		},
 		HTTP: module.HTTP{
-			BasePath: base,
-			Setup: func(r *mux.Router) {
-				r.Handle("", http.RedirectHandler(absoluteBase, http.StatusMovedPermanently))
-				r.HandleFunc("/config", configHandler).Methods("GET")
-				r.PathPrefix("/").Handler(fileHandler(absoluteBase, fs))
+			BasePath:      config.Default().Backoffice().BasePath(),
+			RedirectSlash: true,
+			Setup: func(basePath string, r *mux.Router) {
+				r.PathPrefix("/").Handler(fileHandler(basePath, fs))
 			},
 		},
 	}
 }
 
-func configHandler(res http.ResponseWriter, req *http.Request) {
-	// FIXME utility ?
-	var apiURI = config.Default().API().AbsoluteBasePath()
-	if !strings.HasSuffix(apiURI, "/") {
-		apiURI += "/"
-	}
-
-	var frontendURI = config.Default().Frontend().AbsoluteBasePath()
-	if !strings.HasSuffix(frontendURI, "/") {
-		frontendURI += "/"
-	}
-
-	if err := json.NewEncoder(res).Encode(struct {
-		APIURI      string `json:"apiURI"`
-		FrontendURI string `json:"frontendURI"`
-	}{
-		APIURI:      apiURI,
-		FrontendURI: frontendURI,
-	}); err != nil {
-		panic(err)
-	}
-}
-
-func fileHandler(base string, fs http.FileSystem) http.Handler {
+func fileHandler(basePath string, fs http.FileSystem) http.Handler {
 	return http.StripPrefix(
-		base,
+		basePath,
 		http.FileServer(
 			httputil.NewNotFoundRewriter(
 				httputil.NewTemplater(
 					fs,
 					[]string{index},
-					map[string]string{"REACT_APP_BASE": base},
+					map[string]string{"REACT_APP_BASE": basePath},
 				),
 				index,
 			),

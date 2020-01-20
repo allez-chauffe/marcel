@@ -1,9 +1,7 @@
 package frontend
 
 import (
-	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -12,12 +10,11 @@ import (
 	"github.com/Zenika/marcel/module"
 )
 
-func Module() module.Module {
-	var base = httputil.NormalizeBase(config.Default().Frontend().BasePath())
-	var absoluteBase = httputil.NormalizeBase(config.Default().Frontend().AbsoluteBasePath())
+// Module creates the frontend module
+func Module() *module.Module {
 	var fs http.FileSystem
 
-	return module.Module{
+	return &module.Module{
 		Name: "Frontend",
 		Start: func(next module.NextFunc) (module.StopFunc, error) {
 			var err error
@@ -29,27 +26,11 @@ func Module() module.Module {
 			return nil, next()
 		},
 		HTTP: module.HTTP{
-			BasePath: base,
-			Setup: func(r *mux.Router) {
-				r.HandleFunc("/config", configHandler).Methods("GET")
-				r.PathPrefix("/").Handler(fileHandler(absoluteBase, fs))
+			BasePath: config.Default().Frontend().BasePath(),
+			Setup: func(basePath string, r *mux.Router) {
+				r.PathPrefix("/").Handler(fileHandler(basePath, fs))
 			},
 		},
-	}
-}
-
-func configHandler(res http.ResponseWriter, req *http.Request) {
-	var apiURI = config.Default().API().AbsoluteBasePath()
-	if !strings.HasSuffix(apiURI, "/") {
-		apiURI += "/"
-	}
-
-	if err := json.NewEncoder(res).Encode(struct {
-		APIURI string `json:"apiURI"`
-	}{
-		APIURI: apiURI,
-	}); err != nil {
-		panic(err)
 	}
 }
 

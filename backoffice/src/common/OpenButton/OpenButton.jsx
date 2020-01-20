@@ -5,9 +5,9 @@ import './OpenButton.css'
 
 class OpenButton extends React.Component {
   open = event => {
-    const { frontendURI, dashboard } = this.props
+    const { Frontend, dashboard } = this.props
     event.stopPropagation()
-    window.open(`${frontendURI}?mediaID=${dashboard.id}`)
+    window.open(`${Frontend}?mediaID=${dashboard.id}`)
     window.focus()
   }
 

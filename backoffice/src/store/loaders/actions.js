@@ -58,7 +58,7 @@ export const loadInitData = () => (dispatch, getState) => {
     .then(() => load('dashboards', getDashboards(pluginsSelector(getState()))))
     .then(() => load('clients', backend.getClients()))
     .then(() => dispatch({ type: actions.LOAD_INITIAL_FINISHED }))
-    .catch((error: Error) => toastr.error('Erreur lors du chargement', error.message))
+    .catch(error => toastr.error('Erreur lors du chargement', error.message))
 }
 
 export const loadDashboards = () => (dispatch, getState) => {
