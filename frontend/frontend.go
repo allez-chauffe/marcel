@@ -14,6 +14,9 @@ import (
 func Module() *module.Module {
 	var fs http.FileSystem
 
+	// Set default URIs for API in case Frontend is the root module
+	module.SetURI("API", config.Default().API().BasePath())
+
 	return &module.Module{
 		Name: "Frontend",
 		Start: func(next module.NextFunc) (module.StopFunc, error) {

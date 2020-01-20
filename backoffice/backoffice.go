@@ -16,6 +16,11 @@ const index = "/index.html"
 func Module() *module.Module {
 	var fs http.FileSystem
 
+	// Set default URIs for API and Frontend
+	// in case Backoffice is the root module
+	module.SetURI("API", config.Default().API().BasePath())
+	module.SetURI("Frontend", config.Default().Frontend().BasePath())
+
 	return &module.Module{
 		Name: "Backoffice",
 		Start: func(next module.NextFunc) (module.StopFunc, error) {
