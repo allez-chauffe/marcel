@@ -23,7 +23,7 @@ class Media extends Component {
 
   componentDidMount() {
     console.log('media mount')
-    this.backend = backendFetcher()
+    this.backend = backendFetcher(this.props.uris)
     this.getMedia(this.props.mediaId)
       .then(this.setMedia)
       .catch(error => {
@@ -49,7 +49,7 @@ class Media extends Component {
 
     const {
       mediaId,
-      config: { API },
+      uris: { API },
     } = this.props
 
     const col = 100 / media.cols

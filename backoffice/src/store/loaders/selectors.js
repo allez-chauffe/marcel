@@ -1,6 +1,6 @@
 const isLoading = ressource => state => state.loaders[ressource]
 
-export const isConfigLoading = isLoading('config')
+export const isURIsLoading = isLoading('uris')
 
 export const isPluginsLoading = isLoading('plugins')
 

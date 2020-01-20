@@ -1,7 +1,7 @@
 import store from '../store'
 import fetcher from './fetcher'
 
-const { get, post, put, del } = fetcher(() => store.getState().config.API + 'auth/')
+const { get, post, put, del } = fetcher(() => store.getState().uris.API + 'auth/')
 
 const userBackend = {
   getAllUsers: () => get('users/').then(res => res.json()),

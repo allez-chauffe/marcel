@@ -10,10 +10,10 @@ import { reducer as clients } from '../clients'
 import { reducer as loaders, actions as loadersActions } from './loaders'
 import { reducer as users } from '../user'
 
-const config = (state = { API: '/api/' }, action) => {
+const uris = (state = { API: '/api/' }, action) => {
   switch (action.type) {
-    case loadersActions.LOAD_CONFIG_SUCCESSED: {
-      return action.payload.config
+    case loadersActions.LOAD_URIS_SUCCESSED: {
+      return action.payload.uris
     }
     default:
       return state
@@ -29,7 +29,7 @@ const createRootReducer = history => combineReducers({
   toastr,
   auth,
   loaders,
-  config,
+  uris,
   users,
 })
 

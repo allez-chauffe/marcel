@@ -1,7 +1,7 @@
 import { actions } from './actions'
 
 const initialState = {
-  config: true,
+  uris: true,
   plugins: false,
   dashboards: false,
   clients: false,
@@ -15,11 +15,11 @@ const loaders = (state = initialState, action) => {
       return { ...state, initial: true }
     case actions.LOAD_INITIAL_FINISHED:
       return { ...state, initial: false }
-    case actions.LOAD_CONFIG_STARTED:
-      return { ...state, config: true }
-    case actions.LOAD_CONFIG_SUCCESSED:
-    case actions.LOAD_CONFIG_FAILED:
-      return { ...state, config: false }
+    case actions.LOAD_URIS_STARTED:
+      return { ...state, uris: true }
+    case actions.LOAD_URIS_SUCCESSED:
+    case actions.LOAD_URIS_FAILED:
+      return { ...state, uris: false }
     case actions.LOAD_DASHBOARDS_STARTED:
       return { ...state, dashboards: true }
     case actions.LOAD_DASHBOARDS_SUCCESSED:

@@ -25,32 +25,34 @@ export const fetcher = baseUrl => {
 }
 
 let backendFetcherInstance
-export const backendFetcher = config => {
+export const backendFetcher = ({ API }) => {
   if (!backendFetcherInstance) {
-    if (!config.API) {
+    if (!API) {
       toast.error("L'URL du serveur n'est pas configurée", { autoClose: false })
       return
     }
 
-    backendFetcherInstance = fetcher(config.API)
+    backendFetcherInstance = fetcher(API)
     // FIXME assuming webSocket is on same domain
     const baseURI = new URL(document.baseURI)
-    backendFetcherInstance.ws = clientId => new WebSocket(`${baseURI.protocol.endsWith('s:') ? 'wss' : 'ws'}://${baseURI.host}${config.API}clients/${clientId}/ws`)
+    backendFetcherInstance.ws = clientId => new WebSocket(`${baseURI.protocol.endsWith('s:') ? 'wss' : 'ws'}://${baseURI.host}${API}clients/${clientId}/ws`)
   }
   return backendFetcherInstance
 }
 
 let authFetcherInstance
-export const authFetcher = config => {
+export const authFetcher = ({ API }) => {
   if (!authFetcherInstance) {
-    if (!config.API) {
+    if (!API) {
       toast.error("L'URL du serveur n'est pas configurée", { autoClose: false })
       return
     }
 
-    authFetcherInstance = fetcher(config.API + 'auth/')
+    authFetcherInstance = fetcher(API + 'auth/')
   }
   return authFetcherInstance
 }
+
+export const rootFetcher = fetcher('')
 
 export const localFetcher = fetcher('./')
