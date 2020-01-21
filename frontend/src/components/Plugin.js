@@ -34,7 +34,7 @@ class Plugin extends Component {
         className={className}
         src={`${pluginsURL}/${eltName}/${instanceId}/`}
         title={name}
-        // sandbox="allow-scripts allow-forms"
+        allow="autoplay"
       />
     )
   }
