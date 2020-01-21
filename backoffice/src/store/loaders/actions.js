@@ -1,16 +1,16 @@
 import { toastr } from 'react-redux-toastr'
 import { map } from 'lodash/fp'
 import { mapPluginsToDashboard } from '../../common/utils'
-import { config, backend, userBackend } from '../../api'
+import { uris, backend, userBackend } from '../../api'
 import { pluginsSelector } from '../../plugins'
 import { userSelector } from '../../auth'
 
 export const actions = {
   LOAD_INITIAL_STARTED: 'LOADERS/LOAD_INITIAL_STARTED',
   LOAD_INITIAL_FINISHED: 'LOADERS/LOAD_INITIAL_FINISHED',
-  LOAD_CONFIG_STARTED: 'LOADERS/LOAD_CONFIG',
-  LOAD_CONFIG_SUCCESSED: 'LOADERS/LOAD_CONFIG_SUCCESSED',
-  LOAD_CONFIG_FAILED: 'LOADERS/LOAD_CONFIG_FAILED',
+  LOAD_URIS_STARTED: 'LOADERS/LOAD_URIS',
+  LOAD_URIS_SUCCESSED: 'LOADERS/LOAD_URIS_SUCCESSED',
+  LOAD_URIS_FAILED: 'LOADERS/LOAD_URIS_FAILED',
   LOAD_PLUGINS_STARTED: 'LOADERS/LOAD_PLUGINS_STARTED',
   LOAD_PLUGINS_SUCCESSED: 'LOADERS/LOAD_PLUGINS_SUCESSED',
   LOAD_PLUGINS_FAILED: 'LOADERS/LOAD_PLUGINS_FAILED',
@@ -58,7 +58,7 @@ export const loadInitData = () => (dispatch, getState) => {
     .then(() => load('dashboards', getDashboards(pluginsSelector(getState()))))
     .then(() => load('clients', backend.getClients()))
     .then(() => dispatch({ type: actions.LOAD_INITIAL_FINISHED }))
-    .catch((error: Error) => toastr.error('Erreur lors du chargement', error.message))
+    .catch(error => toastr.error('Erreur lors du chargement', error.message))
 }
 
 export const loadDashboards = () => (dispatch, getState) => {
@@ -71,9 +71,9 @@ export const loadPlugins = () => (dispatch, getState) => {
   load('plugins', backend.getAvailablePlugins())
 }
 
-export const loadConfig = () => (dispatch, getState) => {
+export const loadURIs = () => (dispatch, getState) => {
   const load = loadDispatcher(dispatch, getState)
-  load('config', config.loadConfig())
+  load('uris', uris.load())
 }
 
 export const loadClients = () => (dispatch, getState) => {

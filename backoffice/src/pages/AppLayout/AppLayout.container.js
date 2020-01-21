@@ -2,18 +2,18 @@ import { connect } from 'react-redux'
 import { compose } from 'redux'
 import loader from 'hoc-react-loader'
 
-import { loadConfig, isConfigLoading } from '../../store/loaders'
+import { loadURIs, isURIsLoading } from '../../store/loaders'
 import { LoadingIndicator } from '../../components/commons'
 
 import AppLayout from './AppLayout'
 
 const mapStateToProps = state => ({
-  loaded: !isConfigLoading(state),
+  loaded: !isURIsLoading(state),
 })
 
 const mapDispatchToProps = dispatch => ({
   load() {
-    dispatch(loadConfig())
+    dispatch(loadURIs())
   },
 })
 

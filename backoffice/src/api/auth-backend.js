@@ -1,6 +1,6 @@
 import store from '../store'
 
-const baseUrl = () => store.getState().config.apiURI + 'auth/'
+const baseUrl = () => store.getState().uris.API + 'auth/'
 
 const request = (url, options, isJson = true) =>
   fetch(baseUrl() + url, { ...options, credentials: 'include' })

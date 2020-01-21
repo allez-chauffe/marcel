@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
-import { localFetcher } from '../utils/fetcher'
+import { rootFetcher } from '../utils/fetcher'
 import Client from './Client'
 import Loader from './Loader'
 import Auth from './Auth'
@@ -10,23 +10,21 @@ class App extends Component {
     loading: true,
   }
 
-  getConfig = async () => {
+  getURIs = async () => {
     try {
-      const config = await localFetcher.get('./config')
-      console.log('Local config loaded', config)
-      return config
+      return await rootFetcher.get('/uris')
     } catch (e) {
       if (e.status === 404) {
-        console.warn('No config found')
-        return { apiURI: '/api/' }
+        console.warn('No URIs config found')
+        return { API: '/api/' }
       }
       throw e
     }
   }
 
   componentDidMount() {
-    this.getConfig()
-      .then(config => this.setState({ config, loading: false }))
+    this.getURIs()
+      .then(uris => this.setState({ uris, loading: false }))
       .catch(error => {
         toast.error('Erreur lors du chargement de la configuration', { autoClose: false })
         throw error
@@ -38,7 +36,7 @@ class App extends Component {
       <div className="fullSize">
         {this.state.loading && <Loader />}
         {this.state.loading || (
-          <Auth config={this.state.config}>
+          <Auth uris={this.state.uris}>
             <Client />
           </Auth>
         )}

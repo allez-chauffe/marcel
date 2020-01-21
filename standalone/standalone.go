@@ -7,10 +7,11 @@ import (
 	"github.com/Zenika/marcel/module"
 )
 
-func Module() module.Module {
-	return module.Module{
+// Module creates the standalone module.
+func Module() *module.Module {
+	return &module.Module{
 		Name: "Standalone",
-		SubModules: []module.Module{
+		SubModules: []*module.Module{
 			api.Module(),
 			backoffice.Module(),
 			frontend.Module(),

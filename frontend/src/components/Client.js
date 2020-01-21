@@ -92,7 +92,7 @@ class Client extends Component {
   }
 
   componentDidMount() {
-    this.backend = backendFetcher(this.props.config)
+    this.backend = backendFetcher(this.props.uris)
     this.getClientId()
       .then(clientId => this.setState({ client: { id: clientId } }))
       .then(this.getClient)
@@ -115,12 +115,12 @@ class Client extends Component {
 
   render() {
     const { loading, client, lastUpdate } = this.state
-    const { config } = this.props
+    const { uris } = this.props
 
     if (loading) return <Loader />
 
     if (client && client.mediaID)
-      return <Media config={config} mediaId={client.mediaID} lastUpdate={lastUpdate} />
+      return <Media uris={uris} mediaId={client.mediaID} lastUpdate={lastUpdate} />
 
     return null
   }

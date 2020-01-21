@@ -15,7 +15,7 @@ class Auth extends React.Component {
   }
 
   componentDidMount() {
-    this.authFetcher = authFetcher(this.props.config)
+    this.authFetcher = authFetcher(this.props.uris)
     this.login()
   }
 
@@ -48,13 +48,14 @@ class Auth extends React.Component {
   }
 
   render() {
+    const { uris } = this.props
     const { user, loading, form } = this.state
 
     if (loading) return <Loader />
 
     if (user)
       return Children.map(this.props.children, child =>
-        React.cloneElement(child, { config: { ...this.props.config, user } }),
+        React.cloneElement(child, { uris, user }),
       )
 
     return (

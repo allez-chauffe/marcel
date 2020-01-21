@@ -26,7 +26,7 @@ type NextFunc func() error
 type Module struct {
 	Name       string
 	Start      StartFunc
-	SubModules []Module
+	SubModules []*Module
 	HTTP
 }
 
@@ -47,7 +47,7 @@ func (m Module) Run() (exitCode int) {
 
 	var httpSrv, err = m.startHTTP()
 	if err != nil {
-		log.Errorf("Error while starting %s's HTTP: %s", m.Name, err)
+		log.Errorf("Error while starting %s's HTTP: %w", m.Name, err)
 		exitCode = 1
 		return
 	}
@@ -82,7 +82,7 @@ func (m Module) start() startResult {
 
 		startResCh := make(chan startResult)
 		for _, subM := range m.SubModules {
-			go func(subM Module) {
+			go func(subM *Module) {
 				defer func() {
 					if r := recover(); r != nil {
 						if err, ok := r.(error); ok {

@@ -32,7 +32,11 @@ func init() {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "apiBasePath", cfg.API().BasePath(), "Base path", "api.basePath", "backoffice.apiURI", "frontend.apiURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "basePath", cfg.HTTP().BasePath(), "Base path", "http.basePath"); err != nil {
+		panic(err)
+	}
+
+	if _, err := cfg.FlagString(flags, "apiBasePath", cfg.API().BasePath(), "API base path", "api.basePath"); err != nil {
 		panic(err)
 	}
 
@@ -40,7 +44,7 @@ func init() {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "frontendBasePath", cfg.Frontend().BasePath(), "Frontend base path", "frontend.basePath", "backoffice.frontendURI"); err != nil {
+	if _, err := cfg.FlagString(flags, "frontendBasePath", cfg.Frontend().BasePath(), "Frontend base path", "frontend.basePath"); err != nil {
 		panic(err)
 	}
 

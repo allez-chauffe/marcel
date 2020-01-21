@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"path"
 	"sort"
 	"strings"
 	"time"
@@ -14,21 +15,29 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Zenika/marcel/config"
+	"github.com/Zenika/marcel/httputil"
 )
 
 // HTTP describes a module's HTTP setup.
 type HTTP struct {
-	BasePath string
-	Setup    func(*mux.Router)
-	OnListen func(net.Listener, *http.Server)
+	BasePath      string
+	RedirectSlash bool
+	Setup         func(basePath string, r *mux.Router)
+	OnListen      func(net.Listener, *http.Server)
 }
 
 func (m *Module) startHTTP() (*http.Server, error) {
 	log.Infof("Starting %s's HTTP server...", m.Name)
 
-	var router = mux.NewRouter()
+	var rootRouter = mux.NewRouter()
 
-	var hasHTTP = m.setupRouter(router)
+	rootRouter.HandleFunc("/uris", urisHandler)
+
+	var basePath, router = mountSubrouter("", rootRouter, httputil.NormalizeBase(config.Default().HTTP().BasePath()), false)
+
+	m.normalizeBasePaths()
+
+	var hasHTTP = m.setupRouter(basePath, router)
 
 	if !hasHTTP {
 		return nil, nil
@@ -36,7 +45,7 @@ func (m *Module) startHTTP() (*http.Server, error) {
 
 	var addr = fmt.Sprintf(":%d", config.Default().HTTP().Port())
 
-	var handler http.Handler = router
+	var handler http.Handler = rootRouter
 
 	if config.Default().HTTP().CORS() {
 		handler = cors.New(cors.Options{
@@ -87,25 +96,56 @@ func (m *Module) stopHTTP(srv *http.Server) {
 	log.Infof("%s's HTTP server stopped", m.Name)
 }
 
-func (m *Module) setupRouter(parentRouter *mux.Router) bool {
-	var hasHTTP = false
-	var router = parentRouter
+func (m *Module) normalizeBasePaths() {
+	m.BasePath = httputil.NormalizeBase(m.BasePath)
 
-	if m.BasePath != "" {
-		router = parentRouter.PathPrefix(m.BasePath).Subrouter()
-		log.Debugf("Created subrouter for %s at %s", m.Name, m.BasePath)
+	for _, subM := range m.SubModules {
+		subM.normalizeBasePaths()
 	}
+}
+
+func (m *Module) mountSubrouter(parentBasePath string, parentRouter *mux.Router) (string, *mux.Router) {
+	var basePath, r = mountSubrouter(parentBasePath, parentRouter, m.BasePath, m.RedirectSlash)
+
+	if basePath != parentBasePath {
+		uris[m.Name] = basePath
+
+		log.Debugf("Mounted subrouter for %s at %s", m.Name, basePath)
+	}
+
+	return basePath, r
+}
+
+func mountSubrouter(parentBasePath string, parentRouter *mux.Router, basePath string, redirectSlash bool) (string, *mux.Router) {
+	if basePath == "" {
+		return parentBasePath, parentRouter
+	}
+
+	var r = parentRouter.PathPrefix(httputil.TrimTrailingSlash(basePath)).Subrouter()
+
+	var absoluteBasePath = httputil.NormalizeBase(path.Join(parentBasePath, basePath))
+	if redirectSlash {
+		r.Handle("", http.RedirectHandler(absoluteBasePath, http.StatusMovedPermanently))
+	}
+
+	return absoluteBasePath, r
+}
+
+func (m *Module) setupRouter(parentBasePath string, parentRouter *mux.Router) bool {
+	var hasHTTP = false
+
+	var basePath, router = m.mountSubrouter(parentBasePath, parentRouter)
 
 	if m.Setup != nil {
 		hasHTTP = true
-		m.Setup(router)
+		m.Setup(basePath, router)
 		log.Debugf("Configured subrouter for %s", m.Name)
 	}
 
 	sort.Sort(byBasePath(m.SubModules))
 
 	for _, subM := range m.SubModules {
-		hasHTTP = subM.setupRouter(router) || hasHTTP
+		hasHTTP = subM.setupRouter(basePath, router) || hasHTTP
 	}
 
 	return hasHTTP
@@ -121,7 +161,7 @@ func (m *Module) notifyOnListen(listener net.Listener, srv *http.Server) {
 	}
 }
 
-type byBasePath []Module
+type byBasePath []*Module
 
 var _ sort.Interface = byBasePath(nil)
 
