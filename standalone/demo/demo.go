@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Zenika/marcel/httputil"
 	"github.com/Zenika/marcel/osutil"
 	"github.com/Zenika/marcel/standalone"
 
@@ -72,7 +71,7 @@ func Module() (*module.Module, error) {
 		},
 		HTTP: module.HTTP{
 			OnListen: func(listener net.Listener, srv *http.Server) {
-				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), httputil.NormalizeBase(module.URI("Backoffice")), token)
+				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), module.URI("Backoffice"), token)
 
 				log.Infof("marcel is running at %s", url)
 
