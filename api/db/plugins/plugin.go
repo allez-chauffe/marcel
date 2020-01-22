@@ -1,55 +1,43 @@
 package plugins
 
 import (
-	"fmt"
-	"net/url"
 	"path/filepath"
 
 	"github.com/Zenika/marcel/config"
 )
 
 type Plugin struct {
-	ID       string    `json:"id"`
-	URL      string    `json:"url"`
-	EltName  string    `json:"eltName"`
-	Versions []Version `json:"versions"`
+	ID       string             `json:"id"`
+	Path     string             `json:"path" boltholdIndex:"Path"`
+	URL      string             `json:"url"`
+	Versions map[string]Version `json:"versions"`
 }
 
 type Version struct {
-	Version     string   `json:"version"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Frontend    Frontend `json:"frontend"`
+	Short   string   `json:"short"`
+	Long    string   `json:"long"`
+	Widgets []Widget `json:"widgets"`
 }
 
-type Frontend struct {
-	Cols  int    `json:"cols"`
+type Widget struct {
+	Name  string `json:"name"`
+	Short string `json:"short"`
+	Long  string `json:"long"`
+	Cols  int    `json:"cols"` // FIXME Are these defaults cols/rows? min? max?
 	Rows  int    `json:"rows"`
 	Props []Prop `json:"props"`
 }
 
 type Prop struct {
-	Name        string `json:"name"`
-	Type        string `json:"type"`
-	Description string `json:"description"`
-	Value       string `json:"value"`
-}
-
-// Path returns plugin's URL without scheme
-func (p *Plugin) Path() (string, error) {
-	if p.URL == "" {
-		return p.EltName, nil
-	}
-
-	u, err := url.Parse(p.URL)
-	if err != nil {
-		return "", fmt.Errorf("Invalid plugin URL %s: %w", p.URL, err)
-	}
-
-	return u.Host + u.Path, nil
+	Name  string `json:"name"`
+	Short string `json:"short"`
+	Long  string `json:"long"`
+	Type  string `json:"type"`
+	Value string `json:"value"` // FIXME is this the default value?
 }
 
 // GetDirectory returns the plugin's static files directory path
 func (p *Plugin) GetDirectory() string {
-	return filepath.Join(config.Default().API().PluginsDir(), p.ID) // FIXME wrong
+	// FIXME not sure this is a good idea to use config here
+	return filepath.Join(config.Default().API().PluginsDir(), p.Path)
 }
