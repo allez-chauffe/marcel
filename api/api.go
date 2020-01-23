@@ -38,7 +38,9 @@ func Module() *module.Module {
 
 			mediasService = medias.NewService(clientsService)
 
-			plugins.Initialize()
+			if err := plugins.Initialize(); err != nil {
+				return nil, err
+			}
 
 			return stop, next()
 		},

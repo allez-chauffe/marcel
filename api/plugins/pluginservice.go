@@ -16,27 +16,31 @@ import (
 	"github.com/Zenika/marcel/config"
 )
 
-// Initialize unsures that the plugins directory exists
-func Initialize() {
-	pluginsPath, err := filepath.Abs(config.Default().API().PluginsDir())
+func Initialize() error {
+	return initializePluginsDir()
+}
+
+func initializePluginsDir() error {
+	path, err := filepath.Abs(config.Default().API().PluginsDir())
 	if err != nil {
-		log.Fatalf("Error while parsing plugins directory path: %s", err)
+		return fmt.Errorf("Parse plugins directory path %#v: %w", path, err)
 	}
 
-	if stat, err := os.Stat(pluginsPath); err != nil {
+	if stat, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
 			if err := os.MkdirAll(config.Default().API().PluginsDir(), os.ModePerm); err != nil {
-				log.Fatalf("Error while trying to create plugins directory '%s': %s", pluginsPath, err)
+				return fmt.Errorf("Create plugins directory %#v: %w", path, err)
 			}
-
-			log.Debugf("Plugins directory '%s' created", pluginsPath)
-			return
+		} else {
+			return fmt.Errorf("Stat plugins directory %#v: %w", path, err)
 		}
 	} else if !stat.IsDir() {
-		log.Fatalf("The plugins path '%s' is not a directory", pluginsPath)
+		return fmt.Errorf("%#v is not a directory", path)
 	}
 
-	log.Debugf("Using plugins directory %s", pluginsPath)
+	log.Debugf("Using plugins directory %s", path)
+
+	return nil
 }
 
 // GetAllHandler gets information of all plugins
@@ -136,19 +140,7 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("Plugin registration requested for %s", body.URL)
-
-	exists, err := plugins.ExistsByURL(body.URL)
-	if err != nil {
-		log.Error(err)
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if exists {
-		log.Errorf("The plugin '%s' already exists", body.URL)
-		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("The plugin '%s' already exists", body.URL))
-		return
-	}
+	log.Infof("Adding plugin %#v", body.URL)
 
 	plugin, tempDir, err := fetchFromGit(body.URL)
 	defer os.RemoveAll(tempDir)
@@ -171,7 +163,7 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("Plugin successfuly registered : %s", plugin.URL)
+	log.Infof("Added plugin %#v", plugin.URL)
 	commons.WriteJsonResponse(w, plugin)
 }
 
