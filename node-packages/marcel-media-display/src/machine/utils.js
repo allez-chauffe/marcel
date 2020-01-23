@@ -4,7 +4,10 @@ export const isEmpty = (ctx, event) => !event.data
 
 export const storeData = (key) => (ctx, { data }) => ({ ...ctx, [key]: data })
 
-export const storeError = message => (ctx, { error }) => ({ ...ctx, error: message || error && error.message })
+export const storeError = message => (ctx, { error }) => {
+  console.error(message, error)
+  return { ...ctx, error: message || error && error.message }
+}
 
 // eslint-disable-next-line no-unused-vars
 export const storeDataWithoutError = (key) => ({ error, ...ctx }, { data }) => ({ ...ctx, [key]: data })

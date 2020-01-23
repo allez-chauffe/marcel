@@ -1,20 +1,18 @@
 import { invoke } from 'robot3'
-import * as http from '../../utils/http'
+import * as http from '../utils/http'
 
 const makeUrl = ({ config: { apiURI } }, url) => {
   const base = apiURI.endsWith('/') ? apiURI.slice(0, apiURI.length - 1) : apiURI
   return `${base}${url}`
 }
 
-const makeRequest = (method) => (url, options) => ctx => {
-  console.debug('http', method, url, ctx)
-  return http.request(makeUrl(ctx, url), { ...method, options })
-}
+const makeRequest = (method) => (url, options) => ctx => (
+  http.request(makeUrl(ctx, url), { ...method, options })
+)
 
-const makeRequestWithBody = (method) => (url, body, options) => ctx => {
-  console.debug('http', method, url, body, ctx)
-  return http.requestWithBody(makeUrl(ctx, url), body, { method, ...options })
-}
+const makeRequestWithBody = (method) => (url, body, options) => ctx => (
+  http.requestWithBody(makeUrl(ctx, url), body, { method, ...options })
+)
 
 export const get = makeRequest('GET')
 export const post = makeRequestWithBody('POST')

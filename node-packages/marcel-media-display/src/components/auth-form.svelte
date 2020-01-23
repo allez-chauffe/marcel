@@ -1,5 +1,5 @@
 <script>
-  import machine from "../stores/machine";
+  import machine from "../machine";
   let login, password;
 
   function handleLoginClick() {
