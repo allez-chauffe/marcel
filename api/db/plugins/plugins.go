@@ -26,15 +26,18 @@ func Get(id string) (*Plugin, error) {
 	return p, nil
 }
 
-// FIXME ExistsByURL
-func ExistsByURL(id string) (bool, error) {
-	if err := db.Store.Get(id, &Plugin{}); err != nil {
-		if err == bh.ErrNotFound {
-			return false, nil
-		}
-		return false, err
+func GetByPath(path string) (*Plugin, error) {
+	var plugins []Plugin
+
+	if err := db.Store.Find(&plugins, bh.Where("Path").Eq(path).Index("Path")); err != nil {
+		return nil, err
 	}
-	return true, nil
+
+	if len(plugins) == 0 {
+		return nil, nil
+	}
+
+	return &plugins[0], nil
 }
 
 func Insert(p *Plugin) error {

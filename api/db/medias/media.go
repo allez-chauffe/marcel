@@ -1,8 +1,7 @@
 package medias
 
-// Media represents a media configuration
 type Media struct {
-	ID       int               `json:"id"`
+	ID       string            `json:"id"`
 	Short    string            `json:"short"`
 	Long     string            `json:"long"`
 	Owner    string            `json:"owner"`

@@ -1,8 +1,7 @@
 package medias
 
 import (
-	"fmt"
-
+	uuid "github.com/satori/go.uuid"
 	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
 
@@ -15,7 +14,7 @@ func List() ([]Media, error) {
 	return medias, db.Store.Find(&medias, nil)
 }
 
-func Get(id int) (*Media, error) {
+func Get(id string) (*Media, error) {
 	var m = new(Media)
 
 	if err := db.Store.Get(id, m); err != nil {
@@ -27,41 +26,16 @@ func Get(id int) (*Media, error) {
 	return m, nil
 }
 
-func nextID(tx *bolt.Tx) (int, error) {
-	agg, err := db.Store.TxFindAggregate(tx, &Media{}, nil)
-	if err != nil {
-		return 0, err
-	}
-
-	// We find the new ID by adding 1 to the ID of the last created media
-	if len(agg) != 0 && agg[0].Count() != 0 {
-		lastMedia := new(Media)
-		agg[0].Max("ID", lastMedia)
-		return lastMedia.ID + 1, nil
-	}
-
-	return 1, nil
-}
-
 func Insert(m *Media) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
-		ID, err := nextID(tx)
-		if err != nil {
-			return err
-		}
-
-		m.ID = ID
-		m.Name = fmt.Sprintf("Media %d", m.ID)
-
-		return db.Store.TxInsert(tx, m.ID, m)
-	})
+	m.ID = uuid.NewV4().String()
+	return db.Store.Insert(m.ID, m)
 }
 
 func Update(m *Media) error {
 	return db.Store.Update(m.ID, m)
 }
 
-func Delete(id int) error {
+func Delete(id string) error {
 	return db.Store.Delete(id, &Media{})
 }
 
