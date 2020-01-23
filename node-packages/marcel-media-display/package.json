@@ -49,6 +49,7 @@
   "dependencies": {
     "bulma": "^0.7.5",
     "lodash": "^4.17.15",
+    "robot3": "^0.2.9",
     "svelma": "^0.3.0"
   }
 }

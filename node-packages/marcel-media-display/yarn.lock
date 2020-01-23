@@ -2849,6 +2849,11 @@ rimraf@^2.6.1:
   dependencies:
     glob "^7.1.3"
 
+robot3@^0.2.9:
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/robot3/-/robot3-0.2.9.tgz#81b0f0f8ea2afe1723577d622f0dec4e97415bf9"
+  integrity sha512-rzF8mh5ohWxkRCQvoCFzNRH3u5AYENTsIN1qmIEhTUrOEHubdizgnXOuZEFhWAo61abpZ2OHAxMGUGOHhGSM8w==
+
 rollup-plugin-node-resolve@^4.0.0:
   version "4.2.4"
   resolved "https://registry.yarnpkg.com/rollup-plugin-node-resolve/-/rollup-plugin-node-resolve-4.2.4.tgz#7d370f8d6fd3031006a0032c38262dd9be3c6250"

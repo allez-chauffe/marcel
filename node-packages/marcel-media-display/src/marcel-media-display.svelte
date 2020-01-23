@@ -1,39 +1,24 @@
 <script>
   import "bulma/css/bulma.css";
-  import { setContext } from "svelte";
-  import {
-    config,
-    api,
-    user,
-    client,
-    media,
-    connection,
-    loadConfig
-  } from "./stores";
+  import machine from "./stores/machine";
+  import { debounce } from "./utils/function";
   import AuthForm from "./components/auth-form.svelte";
-  import * as toast from "./utils/toast";
 
   // Props //
   export let apiuri, websocketuri;
   // Props //
 
-  $: loadConfig({ apiURI: apiuri, websocketURI: websocketuri });
-  $: if ($user) $api.loadClient();
-  $: if ($client) $api.loadMedia($client.mediaID);
+  const configChanged = debounce(config =>
+    machine.send({ type: "configChanged", data: config })
+  );
+
+  $: configChanged({ apiURI: apiuri, websocketURI: websocketuri });
 </script>
 
 <svelte:options tag="marcel-media-display" />
 
-{#if !$user}
-  <AuthForm />
-{:else if $client && !$client.mediaID}
-  <p>Aucun média n'est associé à ce client</p>
-{:else if $media}
-  <p>Media</p>
-{:else}
-  <p>loading...</p>
-{/if}
+<pre>{$machine.state} {JSON.stringify($machine.context, 0, 2)}</pre>
 
-{#if $connection}
-  <p>Client connected</p>
+{#if $machine.state === 'loggedOut'}
+  <AuthForm />
 {/if}

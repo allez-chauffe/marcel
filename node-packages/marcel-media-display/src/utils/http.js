@@ -2,7 +2,7 @@ const isRequestError = status => error => (error.status || error.response && err
 export const isUnauthorized = isRequestError(401)
 export const isNotFound = isRequestError(404)
 
-export const isJson = response => response.headers.get('Content-Type') === 'application/json'
+export const isJson = response => response.headers.get('Content-Type').includes('application/json')
 
 export const queryParams = () => {
   const params = new URL(location.href).searchParams
@@ -17,7 +17,7 @@ export const request = async (url, options) => {
     credentials: 'include',
   })
 
-  if (response.status.toString()[0] !== '2') {
+  if (!response.status.toString().startsWith('2')) {
     const error = new Error('Fetch error')
     error.response = response
     throw error
