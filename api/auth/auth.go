@@ -64,7 +64,7 @@ func deleteCookie(name, path string) *http.Cookie {
 		Path:     path,
 		Secure:   config.Default().API().Auth().Secure(),
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	// Workaround: In a context of cors with the api beeing on different domain

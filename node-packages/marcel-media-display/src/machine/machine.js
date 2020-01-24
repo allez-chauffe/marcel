@@ -81,7 +81,7 @@ const machine = createMachine(
       ),
       immediate('connectingClient')
     ),
-    updatingClient: invokeHttp(
+    updatingClient: invokeHttpWithError(
       updateClient,
       transitionWithData('done', 'connectingClient', 'client')
     ),

@@ -40,7 +40,7 @@
     {#if $machine.state === 'loggedOut'}
       <AuthForm />
     {:else if $machine.state === 'noMedia'}
-      <p>Aucun media n'est actulement associé</p>
+      <p>Aucun media n'est actuellement associé</p>
     {:else if $machine.state === 'mediaLoaded'}
       <p>Le media !</p>
     {:else if $machine.state === 'fatalError'}

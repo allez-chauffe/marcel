@@ -10,7 +10,7 @@ export const storeError = message => (ctx, { error }) => {
 }
 
 // eslint-disable-next-line no-unused-vars
-export const storeDataWithoutError = (key) => ({ error, ...ctx }, { data }) => ({ ...ctx, [key]: data })
+export const storeDataWithoutError = (key) => reduce(({ error, ...ctx }, { data }) => ({ ...ctx, [key]: data }))
 
 // eslint-disable-next-line no-unused-vars
 export const removeError = () => ({ error, ...ctx }) => ctx
