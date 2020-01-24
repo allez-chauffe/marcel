@@ -41,8 +41,7 @@ func GetByPath(path string) (*Plugin, error) {
 }
 
 func Insert(p *Plugin) error {
-	p.ID = uuid.NewV4().String()
-	return db.Store.Insert(p.ID, p)
+	return db.Store.Insert(p.Path, p)
 }
 
 func Update(p *Plugin) error {

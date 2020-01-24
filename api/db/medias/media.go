@@ -20,23 +20,27 @@ func New(owner string) *Media {
 		Rows:    10,
 		Cols:    10,
 		Ratio:   16.0 / 9.0,
-		Style:   make(map[string]string),
+		Style:   map[string]string{},
 		Widgets: []Widget{},
 	}
 }
 
+type Plugin struct {
+	Path      string `json:"path"`
+	VersionID string `json:"versionId"`
+}
+
 type Widget struct {
-	ID            string                 `json:"id"`
-	PluginID      string                 `json:"pluginId"`
-	PluginVersion string                 `json:"pluginVersion"`
-	WidgetName    string                 `json:"widgetName"`
-	Short         string                 `json:"short"`
-	Long          string                 `json:"long"`
-	Props         map[string]interface{} `json:"props"`
+	ID         string                 `json:"id"`
+	Plugin     Plugin                 `json:"plugin"`
+	WidgetName string                 `json:"widgetName"`
+	Short      string                 `json:"short"`
+	Long       string                 `json:"long"`
+	Props      map[string]interface{} `json:"props"`
 }
 
 type GridItem struct {
-	WidgetID string `widgetId`
+	WidgetID string `json:"widgetId"`
 	X        int    `json:"x"`
 	Y        int    `json:"y"`
 	Rows     int    `json:"rows"`

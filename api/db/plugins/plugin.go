@@ -7,17 +7,20 @@ import (
 )
 
 type Plugin struct {
-	ID       string    `json:"id"`
-	Path     string    `json:"path" boltholdIndex:"Path"`
-	URL      string    `json:"url"`
-	Versions []Version `json:"versions"`
+	Path         string       `json:"path"`
+	Repositories []Repository `json:"versions"`
+	Versions     []Version    `json:"versions"`
 }
 
+type Repository string
+
 type Version struct {
-	Version string   `json:"version"`
-	Short   string   `json:"short"`
-	Long    string   `json:"long"`
-	Widgets []Widget `json:"widgets"`
+	ID         string     `json:"id"`
+	Repository Repository `json:"repository"`
+	Version    string     `json:"version"`
+	Short      string     `json:"short"`
+	Long       string     `json:"long"`
+	Widgets    []Widget   `json:"widgets"`
 }
 
 type Widget struct {
