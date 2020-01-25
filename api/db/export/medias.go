@@ -4,8 +4,8 @@ import (
 	"github.com/Zenika/marcel/api/db/medias"
 )
 
-func Medias(outputFile string) error {
+func Medias(pretty bool, outputFile string) error {
 	return export(func() (interface{}, error) {
 		return medias.List()
-	}, outputFile)
+	}, pretty, outputFile)
 }

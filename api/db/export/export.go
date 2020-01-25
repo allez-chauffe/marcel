@@ -8,7 +8,7 @@ import (
 	"github.com/Zenika/marcel/api/db"
 )
 
-func export(fetch func() (interface{}, error), outputFile string) error {
+func export(fetch func() (interface{}, error), pretty bool, outputFile string) error {
 	if err := db.OpenRO(); err != nil {
 		return err
 	}
@@ -30,5 +30,9 @@ func export(fetch func() (interface{}, error), outputFile string) error {
 		return err
 	}
 
-	return json.NewEncoder(w).Encode(data)
+	encoder := json.NewEncoder(w)
+	if pretty {
+		encoder.SetIndent("", "  ")
+	}
+	return encoder.Encode(data)
 }

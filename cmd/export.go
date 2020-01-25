@@ -36,6 +36,7 @@ func init() {
 	Marcel.AddCommand(cmd)
 
 	var usersWPassword bool
+	var pretty bool
 
 	var users = &cobra.Command{
 		Use:   "users [FILE]",
@@ -43,33 +44,40 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return export.Users(usersWPassword, exportFile)
+			return export.Users(pretty, usersWPassword, exportFile)
 		},
 	}
 
 	users.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
+	users.Flags().BoolVar(&pretty, "pretty", false, "Indent json export")
 
 	cmd.AddCommand(users)
 
-	cmd.AddCommand(&cobra.Command{
+	var medias = &cobra.Command{
 		Use:   "medias [FILE]",
 		Short: "Exports medias from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return export.Medias(exportFile)
+			return export.Medias(pretty, exportFile)
 		},
-	})
+	}
 
-	cmd.AddCommand(&cobra.Command{
+	medias.Flags().BoolVar(&pretty, "pretty", false, "Indent json export")
+	cmd.AddCommand(medias)
+
+	var plugins = &cobra.Command{
 		Use:   "plugins [FILE]",
 		Short: "Exports plugins from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return export.Plugins(exportFile)
+			return export.Plugins(pretty, exportFile)
 		},
-	})
+	}
+
+	plugins.Flags().BoolVar(&pretty, "pretty", false, "Indent json export")
+	cmd.AddCommand(plugins)
 
 	var all = &cobra.Command{
 		Use:   "all [FILE]",
@@ -77,11 +85,12 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return export.All(usersWPassword, exportFile)
+			return export.All(pretty, usersWPassword, exportFile)
 		},
 	}
 
 	all.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
+	all.Flags().BoolVar(&pretty, "pretty", false, "Indent json export")
 
 	cmd.AddCommand(all)
 }

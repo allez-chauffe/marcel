@@ -11,7 +11,7 @@ type all struct {
 	Plugins []plugins.Plugin `json:"plugins"`
 }
 
-func All(usersWPassword bool, outputFile string) error {
+func All(pretty bool, usersWPassword bool, outputFile string) error {
 	return export(func() (interface{}, error) {
 		users, err := listUsers(usersWPassword)
 		if err != nil {
@@ -33,5 +33,5 @@ func All(usersWPassword bool, outputFile string) error {
 			Medias:  medias,
 			Plugins: plugins,
 		}, nil
-	}, outputFile)
+	}, pretty, outputFile)
 }
