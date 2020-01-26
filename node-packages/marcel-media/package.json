@@ -1,19 +1,21 @@
 {
 	"name": "marcel-media",
 	"version": "0.1.0",
-	"module": "public/dist/marcel-media.mjs",
-	"main": "public/dist/marcel-media.js",
+	"module": "dist/marcel-media.mjs",
+	"main": "dist/marcel-media.js",
 	"scripts": {
 		"start": "live-server public -q --cors --mount=/config:marcel-config.json --proxy=/api/:http://localhost:8090/api/",
 		"dev": "yarn start & yarn build -w",
 		"build": "rollup -c",
 		"prepublishOnly": "yarn build"
 	},
+	"dependencies": {
+		"marcel-widget": "^0.1.0"
+	},
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^11.0.0",
 		"@rollup/plugin-node-resolve": "^7.0.0",
 		"eslint": "^6.5.1",
-		"immutadot": "^1.0.0",
 		"live-server": "^1.2.1",
 		"rollup": "^1.11.0",
 		"rollup-plugin-node-resolve": "^4.0.0",
@@ -21,11 +23,7 @@
 		"rollup-plugin-svelte": "^5.0.0",
 		"svelte": "^3.0.0"
 	},
-	"files": [
-		"src",
-		"public/dist/marcel-media.js",
-		"public/dist/marcel-media.mjs"
-	],
+	"files": [ "src", "dist/marcel-media.js", "dist/marcel-media.mjs" ],
 	"eslintConfig": {
 		"extends": "eslint:recommended",
 		"env": {
@@ -41,14 +39,9 @@
 			"no-console": [
 				"error",
 				{
-					"allow": [
-						"info",
-						"warn",
-						"error"
-					]
+					"allow": [ "info", "warn", "error" ]
 				}
 			]
 		}
-	},
-	"dependencies": {}
+	}
 }

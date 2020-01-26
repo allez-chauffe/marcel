@@ -1,6 +1,5 @@
 <script>
   import "marcel-widget";
-  import _ from "immutadot";
 
   export let media, uri;
 
@@ -11,17 +10,6 @@
   const pluginStyle = ({ frontend: { x, y, rows, cols } }) =>
     `left: ${x * col}%; top: ${y * row}%; width: ${cols *
       col}%; height: ${rows * row}%;`;
-
-  window.setPluginPosition = position => {
-    media = _.update(media, "plugins[0].frontend", frontend => ({
-      ...frontend,
-      ...position
-    }));
-  };
-
-  window.setPluginProp = (prop, value) => {
-    media = _.set(media, `plugins[0].frontend.props.${prop}`, value);
-  };
 </script>
 
 <style>

@@ -1,8 +1,8 @@
 {
 	"name": "marcel-widget",
 	"version": "0.1.0",
-	"module": "public/dist/marcel-widget.mjs",
-	"main": "public/dist/marcel-widget.js",
+	"module": "dist/marcel-widget.mjs",
+	"main": "dist/marcel-widget.js",
 	"scripts": {
 		"start": "live-server public -q --cors --mount=/config:marcel-config.json --proxy=/api/:http://localhost:8090/api/",
 		"dev": "yarn start & yarn build -w",
@@ -21,7 +21,7 @@
 		"rollup-plugin-svelte": "^5.0.0",
 		"svelte": "^3.0.0"
 	},
-	"files": [ "src", "public/dist/marcel-widget.js", "public/dist/marcel-widget.mjs" ],
+	"files": [ "src", "dist/marcel-widget.js", "dist/marcel-widget.mjs" ],
 	"eslintConfig": {
 		"extends": "eslint:recommended",
 		"env": {
@@ -41,6 +41,5 @@
 				}
 			]
 		}
-	},
-	"dependencies": {}
+	}
 }
