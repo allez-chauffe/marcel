@@ -10,11 +10,10 @@ export const storeError = message => (ctx, { error }) => {
 }
 
 // eslint-disable-next-line no-unused-vars
-export const storeDataWithoutError = (key) => reduce(({ error, ...ctx }, { data }) => ({ ...ctx, [key]: data }))
+export const storeDataWithoutError = (key) => reduce(({ error, ...ctx }, { data }) => {
+  return ({ ...ctx, [key]: data })
+})
 
 // eslint-disable-next-line no-unused-vars
 export const removeError = () => ({ error, ...ctx }) => ctx
 
-export const transitionWithData = (type, state, contextKey, ...args) => (
-  transition(type, state, reduce(storeDataWithoutError(contextKey)), ...args)
-)

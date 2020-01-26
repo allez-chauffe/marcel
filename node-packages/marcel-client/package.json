@@ -1,0 +1,49 @@
+{
+	"name": "marcel-client",
+	"version": "1.0.0",
+	"scripts": {
+		"build": "rollup -c",
+		"dev": "rollup -c -w",
+		"start": "live-server public -q --cors --mount=/config:marcel-config.json --proxy=/api/:http://localhost:8090/api/"
+	},
+	"devDependencies": {
+		"@rollup/plugin-commonjs": "^11.0.0",
+		"@rollup/plugin-node-resolve": "^7.0.0",
+		"rollup": "^1.20.0",
+		"rollup-plugin-postcss": "^2.0.3",
+		"rollup-plugin-svelte": "^5.0.3",
+		"rollup-plugin-terser": "^5.1.2",
+		"svelte": "^3.0.0"
+	},
+	"eslintConfig": {
+		"extends": "eslint:recommended",
+		"env": {
+			"browser": true,
+			"es6": true
+		},
+		"parserOptions": {
+			"sourceType": "module",
+			"ecmaVersion": 2019
+		},
+		"rules": {
+			"require-atomic-updates": "off",
+			"no-console": [
+				"error",
+				{
+					"allow": [
+						"info",
+						"warn",
+						"error"
+					]
+				}
+			]
+		}
+	},
+	"dependencies": {
+		"eslint": "^6.8.0",
+		"live-server": "^1.2.1",
+		"robot3": "^0.2.9",
+		"rollup-plugin-livereload": "^1.0.4",
+		"svelma": "^0.3.0"
+	}
+}

@@ -7,8 +7,6 @@
   }
 </script>
 
-<svelte:options tag="marcel-media-diplay-auth" />
-
 {#if $machine.context.error}
   <p>{$machine.context.error}</p>
 {/if}
