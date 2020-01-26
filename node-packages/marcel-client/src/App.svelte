@@ -20,7 +20,9 @@
     Aucun media n'est actuellement associé
   </Message>
 {:else if $machine.state === 'mediaLoaded'}
-  <marcel-media media={$machine.context.media} />
+  <marcel-media
+    media={$machine.context.media}
+    uri="{$machine.context.config.apiURI}medias/{$machine.context.media.id}" />
 {:else if $machine.state === 'fatalError'}
   <Message active title="Error !">{$machine.context.error}</Message>
 {/if}
