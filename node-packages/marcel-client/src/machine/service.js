@@ -1,4 +1,3 @@
-
 import { interpret } from 'robot3'
 import { writable } from 'svelte/store'
 import machine, { initialContext } from './machine'

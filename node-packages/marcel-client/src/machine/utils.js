@@ -1,4 +1,4 @@
-import { transition, reduce } from 'robot3'
+import { reduce } from 'robot3'
 
 export const isEmpty = (ctx, event) => !event.data
 
@@ -16,4 +16,3 @@ export const storeDataWithoutError = (key) => reduce(({ error, ...ctx }, { data 
 
 // eslint-disable-next-line no-unused-vars
 export const removeError = () => ({ error, ...ctx }) => ctx
-
