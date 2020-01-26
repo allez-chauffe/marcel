@@ -6,10 +6,6 @@
   $: col = media && 100 / media.cols;
   $: row = media && 100 / media.rows;
   $: pluginsURI = `${uri}/plugins`;
-
-  const pluginStyle = ({ frontend: { x, y, rows, cols } }) =>
-    `left: ${x * col}%; top: ${y * row}%; width: ${cols *
-      col}%; height: ${rows * row}%;`;
 </script>
 
 <style>
@@ -24,7 +20,6 @@
   }
   .widget {
     position: absolute;
-    border: 1px solid red;
     transition: width 1s ease-in-out, height 1s ease-in-out, left 1s ease-in-out,
       top 1s ease-in-out;
   }
@@ -33,10 +28,21 @@
 <svelte:options tag="marcel-media" />
 
 {#if media}
-  <div class="media">
+  <div
+    class="media"
+    style={`
+      background-color: ${media.stylesvar['background-color']};
+      color: ${media.stylesvar['primary-color']};
+      font-family: ${media.stylesvar['font-family']};
+    `}>
     {#each media.plugins as plugin}
       <marcel-widget
-        style={pluginStyle(plugin)}
+        style={`
+          left: ${plugin.frontend.x * col}%;
+          top: ${plugin.frontend.y * row}%;
+          width: ${plugin.frontend.cols * col}%;
+          height: ${plugin.frontend.rows * row}%;
+        `}
         class="widget"
         {plugin}
         stylesvar={media.stylesvar}
