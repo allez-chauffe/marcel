@@ -1,7 +1,6 @@
 {
 	"name": "marcel-media",
 	"version": "0.1.0",
-	"svelte": "src/marcel-media.svelte",
 	"module": "public/dist/marcel-media.mjs",
 	"main": "public/dist/marcel-media.js",
 	"scripts": {

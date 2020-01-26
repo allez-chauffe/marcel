@@ -1,30 +1,20 @@
 <script>
   export let media;
+
+  $: console.log(media);
 </script>
 
 <style>
-  .container {
-    display: flex;
-  }
-  .content {
-    flex: 1;
-  }
-  .debugger {
-    font-size: 10px;
-    width: 40em;
+  * {
+    box-sizing: border-box;
   }
 </style>
 
 <svelte:options tag="marcel-media" />
-
 <div class="container">
-  <div class="content">
-    {#if media}
-      <p>Here is the media !</p>
-    {:else}
-      <p>No media</p>
-    {/if}
-  </div>
-
-  <pre class="debugger">{media}</pre>
+  {#if media}
+    {#each media.plugins as plugin}
+      <div>plugin {plugin.eltName}</div>
+    {/each}
+  {/if}
 </div>
