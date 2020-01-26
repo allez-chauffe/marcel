@@ -1,0 +1,46 @@
+{
+	"name": "marcel-widget",
+	"version": "0.1.0",
+	"module": "public/dist/marcel-widget.mjs",
+	"main": "public/dist/marcel-widget.js",
+	"scripts": {
+		"start": "live-server public -q --cors --mount=/config:marcel-config.json --proxy=/api/:http://localhost:8090/api/",
+		"dev": "yarn start & yarn build -w",
+		"build": "rollup -c",
+		"prepublishOnly": "yarn build"
+	},
+	"devDependencies": {
+		"@rollup/plugin-commonjs": "^11.0.0",
+		"@rollup/plugin-node-resolve": "^7.0.0",
+		"eslint": "^6.5.1",
+		"immutadot": "^1.0.0",
+		"live-server": "^1.2.1",
+		"rollup": "^1.11.0",
+		"rollup-plugin-node-resolve": "^4.0.0",
+		"rollup-plugin-postcss": "^2.0.3",
+		"rollup-plugin-svelte": "^5.0.0",
+		"svelte": "^3.0.0"
+	},
+	"files": [ "src", "public/dist/marcel-widget.js", "public/dist/marcel-widget.mjs" ],
+	"eslintConfig": {
+		"extends": "eslint:recommended",
+		"env": {
+			"browser": true,
+			"es6": true
+		},
+		"parserOptions": {
+			"sourceType": "module",
+			"ecmaVersion": 2020
+		},
+		"rules": {
+			"require-atomic-updates": "off",
+			"no-console": [
+				"error",
+				{
+					"allow": [ "info", "warn", "error" ]
+				}
+			]
+		}
+	},
+	"dependencies": {}
+}
