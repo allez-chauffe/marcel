@@ -2,6 +2,5 @@
 	"private": true,
 	"scripts": {
 		"api": "mkdir -p test_env && cd test_env && pwd && gow  -v run .. api --logLevel=debug --secure=false"
-	},
-	"workspaces": [ "node-packages/*" ]
+	}
 }
