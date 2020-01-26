@@ -7,12 +7,6 @@
   import AuthForm from "./components/auth-form.svelte";
 </script>
 
-<style>
-  * {
-    box-sizing: border-box;
-  }
-</style>
-
 {#if $machine.state === 'loggedOut'}
   <AuthForm />
 {:else if $machine.state === 'noMedia'}
