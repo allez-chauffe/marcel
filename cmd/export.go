@@ -33,7 +33,7 @@ func init() {
 	if _, err := cfg.FlagString(cmd.PersistentFlags(), "dbFile", cfg.API().DBFile(), "Database file name", "api.dbFile"); err != nil {
 		panic(err)
 	}
-	cmd.PersistentFlags().BoolVar(&pretty, "pretty", false, "Indent json export")
+	cmd.PersistentFlags().BoolVar(&pretty, "pretty", false, "Indent export file")
 
 	Marcel.AddCommand(cmd)
 
