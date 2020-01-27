@@ -53,7 +53,7 @@ func init() {
 
 	cmd.AddCommand(users)
 
-	var medias = &cobra.Command{
+	cmd.AddCommand(&cobra.Command{
 		Use:   "medias [FILE]",
 		Short: "Exports medias from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
@@ -61,11 +61,9 @@ func init() {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			return export.Medias(exportFile, pretty)
 		},
-	}
+	})
 
-	cmd.AddCommand(medias)
-
-	var plugins = &cobra.Command{
+	cmd.AddCommand(&cobra.Command{
 		Use:   "plugins [FILE]",
 		Short: "Exports plugins from marcel's database",
 		Args:  cobra.MaximumNArgs(1),
@@ -73,9 +71,7 @@ func init() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return export.Plugins(exportFile, pretty)
 		},
-	}
-
-	cmd.AddCommand(plugins)
+	})
 
 	var all = &cobra.Command{
 		Use:   "all [FILE]",
