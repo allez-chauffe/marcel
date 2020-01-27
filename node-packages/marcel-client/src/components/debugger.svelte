@@ -8,17 +8,22 @@
 
 <style>
   .debugger {
+    display: flex;
+    flex-direction: column;
     position: absolute;
     top: 0;
     right: 0;
+    height: 100vh;
+    width: 40em;
   }
   pre {
     font-size: 10px;
-    width: 40em;
-    height: 100vh;
+    height: 100%;
   }
   button {
     width: 100%;
+    border: 2px black solid;
+    padding: 0.5em;
   }
 </style>
 
@@ -26,7 +31,7 @@
   <div class="debugger">
     <button on:click={window.toggleMarcelDebugger}>Hide debugguer</button>
     <pre>
-      State: {$machine.state} {'\n'}Context: {JSON.stringify($machine.context, 0, 2)}
+      State: {$machine.state} {'\n\n'}Context: {JSON.stringify($machine.context, 0, 2)}
     </pre>
   </div>
 {/if}

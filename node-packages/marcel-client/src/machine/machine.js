@@ -6,6 +6,9 @@ import { login, refreshLogin, loadConfig, createClient, loadClient, updateClient
 import 'robot3/debug'
 import { queryParams } from '../utils/http'
 
+const loadingStep = (step) => reduce((ctx) => ({ ...ctx, loadingStep: step }))
+export const maxLoadingStep = 6
+
 const fatalErrorTransition = (...args) => transition('error', 'fatalError', reduce(storeError()), ...args)
 
 const invokeWithError = (...args) => invoke(
@@ -20,7 +23,7 @@ const invokeHttpWithError = (...args) => invokeHttp(
 
 const loginState = (loginFunction, unauthorizedReducer) => invokeHttpWithError(
   loginFunction,
-  transition('done', 'loggedIn', storeDataWithoutError('user')),
+  transition('done', 'loggedIn', storeDataWithoutError('user'), loadingStep(3)),
   transition('error', 'loggedOut', guard(isUnauthorized), unauthorizedReducer),
 )
 
@@ -31,14 +34,14 @@ const connectedState = (errorState, ...transitions) => state(
   ...transitions,
 )
 
-export const initialContext = {}
+export const initialContext = { loadingStep: 0 }
 
 const machine = createMachine(
   {
     // Config
     loadingConfig: invoke(loadConfig,
-      transition('done', 'refreshingLogin', storeDataWithoutError('config')),
-      transition('error', 'refreshingLogin', reduce((ctx, { error }) => {
+      transition('done', 'refreshingLogin', storeDataWithoutError('config'), loadingStep(1)),
+      transition('error', 'refreshingLogin', loadingStep(1), reduce((ctx, { error }) => {
         console.error('enable to fetch config, using default', error.stack)
         return { config: { apiURI: '/api/' } }
       })),
@@ -60,12 +63,13 @@ const machine = createMachine(
       createClient,
       transition('done', 'connectingClient',
         storeDataWithoutError('client'),
+        loadingStep(3),
         action(({ client }) => localStorage.clientID = client.id)
       ),
     ),
     loadingClient: invokeHttpWithError(
       loadClient,
-      transition('done', 'clientLoaded', storeDataWithoutError('client')),
+      transition('done', 'clientLoaded', storeDataWithoutError('client'), loadingStep(3)),
     ),
     clientLoaded: state(
       immediate('updatingClient',
@@ -74,11 +78,11 @@ const machine = createMachine(
           return name && client.name !== name || mediaID && mediaID !== client.mediaID.toString()
         })
       ),
-      immediate('connectingClient')
+      immediate('connectingClient', loadingStep(4))
     ),
     updatingClient: invokeHttpWithError(
       updateClient,
-      transition('done', 'connectingClient', storeDataWithoutError('client'))
+      transition('done', 'connectingClient', storeDataWithoutError('client'), loadingStep(4))
     ),
     reloadClient: invokeHttpWithError(
       loadClient,
@@ -86,7 +90,7 @@ const machine = createMachine(
     ),
     connectingClient: invokeWithError(
       connectClient,
-      transition('done', 'loadMedia', storeDataWithoutError('connection'))
+      transition('done', 'loadMedia', storeDataWithoutError('connection'), loadingStep(5))
     ),
 
 
@@ -97,7 +101,7 @@ const machine = createMachine(
     ),
     loadingMedia: invokeHttpWithError(
       loadMedia,
-      transition('done', 'mediaLoaded', storeDataWithoutError('media'))
+      transition('done', 'mediaLoaded', storeDataWithoutError('media'), loadingStep(6))
     ),
     mediaLoaded: connectedState('mediaLoaded'),
     noMedia: connectedState('noMedia'),
