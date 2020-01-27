@@ -12,6 +12,7 @@ func init() {
 	var cfg = config.New()
 
 	var exportFile string
+	var pretty bool
 
 	var cmd = &cobra.Command{
 		Use:   "export",
@@ -32,6 +33,7 @@ func init() {
 	if _, err := cfg.FlagString(cmd.PersistentFlags(), "dbFile", cfg.API().DBFile(), "Database file name", "api.dbFile"); err != nil {
 		panic(err)
 	}
+	cmd.PersistentFlags().BoolVar(&pretty, "pretty", false, "Indent export file")
 
 	Marcel.AddCommand(cmd)
 
@@ -43,7 +45,7 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return export.Users(usersWPassword, exportFile)
+			return export.Users(usersWPassword, exportFile, pretty)
 		},
 	}
 
@@ -57,7 +59,7 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return export.Medias(exportFile)
+			return export.Medias(exportFile, pretty)
 		},
 	})
 
@@ -67,7 +69,7 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return export.Plugins(exportFile)
+			return export.Plugins(exportFile, pretty)
 		},
 	})
 
@@ -77,7 +79,7 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return export.All(usersWPassword, exportFile)
+			return export.All(usersWPassword, exportFile, pretty)
 		},
 	}
 
