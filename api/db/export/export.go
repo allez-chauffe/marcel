@@ -8,7 +8,7 @@ import (
 	"github.com/Zenika/marcel/api/db"
 )
 
-func export(fetch func() (interface{}, error), pretty bool, outputFile string) error {
+func export(fetch func() (interface{}, error), outputFile string, pretty bool) error {
 	if err := db.OpenRO(); err != nil {
 		return err
 	}

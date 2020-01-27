@@ -33,8 +33,8 @@ func listUsers(withPassword bool) (interface{}, error) {
 	return users, nil
 }
 
-func Users(pretty, withPassword bool, outputFile string) error {
+func Users(withPassword bool, outputFile string, pretty bool) error {
 	return export(func() (interface{}, error) {
 		return listUsers(withPassword)
-	}, pretty, outputFile)
+	}, outputFile, pretty)
 }

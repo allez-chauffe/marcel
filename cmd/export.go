@@ -12,6 +12,7 @@ func init() {
 	var cfg = config.New()
 
 	var exportFile string
+	var pretty bool
 
 	var cmd = &cobra.Command{
 		Use:   "export",
@@ -32,11 +33,11 @@ func init() {
 	if _, err := cfg.FlagString(cmd.PersistentFlags(), "dbFile", cfg.API().DBFile(), "Database file name", "api.dbFile"); err != nil {
 		panic(err)
 	}
+	cmd.PersistentFlags().BoolVar(&pretty, "pretty", false, "Indent json export")
 
 	Marcel.AddCommand(cmd)
 
 	var usersWPassword bool
-	var pretty bool
 
 	var users = &cobra.Command{
 		Use:   "users [FILE]",
@@ -44,12 +45,11 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return export.Users(pretty, usersWPassword, exportFile)
+			return export.Users(usersWPassword, exportFile, pretty)
 		},
 	}
 
 	users.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
-	users.Flags().BoolVar(&pretty, "pretty", false, "Indent json export")
 
 	cmd.AddCommand(users)
 
@@ -59,11 +59,10 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return export.Medias(pretty, exportFile)
+			return export.Medias(exportFile, pretty)
 		},
 	}
 
-	medias.Flags().BoolVar(&pretty, "pretty", false, "Indent json export")
 	cmd.AddCommand(medias)
 
 	var plugins = &cobra.Command{
@@ -72,11 +71,10 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return export.Plugins(pretty, exportFile)
+			return export.Plugins(exportFile, pretty)
 		},
 	}
 
-	plugins.Flags().BoolVar(&pretty, "pretty", false, "Indent json export")
 	cmd.AddCommand(plugins)
 
 	var all = &cobra.Command{
@@ -85,12 +83,11 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return export.All(pretty, usersWPassword, exportFile)
+			return export.All(usersWPassword, exportFile, pretty)
 		},
 	}
 
 	all.Flags().BoolVar(&usersWPassword, "withPassword", false, "Include each user's password")
-	all.Flags().BoolVar(&pretty, "pretty", false, "Indent json export")
 
 	cmd.AddCommand(all)
 }
