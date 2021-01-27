@@ -31,8 +31,6 @@ func (m *Module) startHTTP() (*http.Server, error) {
 
 	var rootRouter = mux.NewRouter()
 
-	rootRouter.HandleFunc("/uris", urisHandler)
-
 	var basePath, router = mountSubrouter("", rootRouter, httputil.NormalizeBase(config.Default().HTTP().BasePath()), false)
 
 	m.normalizeBasePaths()
@@ -138,6 +136,7 @@ func (m *Module) setupRouter(parentBasePath string, parentRouter *mux.Router) bo
 
 	if m.Setup != nil {
 		hasHTTP = true
+		router.HandleFunc("/uris", urisHandler)
 		m.Setup(basePath, router)
 		log.Debugf("Configured subrouter for %s", m.Name)
 	}

@@ -12,7 +12,7 @@ class App extends Component {
 
   getURIs = async () => {
     try {
-      return await rootFetcher.get('/uris')
+      return await rootFetcher.get('uris')
     } catch (e) {
       if (e.status === 404) {
         console.warn('No URIs config found')
