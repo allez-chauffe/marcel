@@ -18,17 +18,6 @@ executors:
       - image: google/cloud-sdk:latest
 
 jobs:
-  debug_node:
-    executor: node_executor
-    steps:
-      - run: node --version
-      - run: yarn --version
-
-  debug_go:
-    executor: go_executor
-    steps:
-      - run: go version
-
   build_backoffice:
     executor: node_executor
     steps:
@@ -211,10 +200,6 @@ workflows:
   version: 2
   build:
     jobs:
-      - debug_node:
-          filters: *filters-all
-      - debug_go:
-          filters: *filters-all
       - build_backoffice:
           filters: *filters-all
       - build_frontend:
