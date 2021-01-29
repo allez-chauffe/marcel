@@ -110,13 +110,13 @@ jobs:
             - marcel_darwin_amd64
 
   docker_build_marcel:
-    executor: std_executor
+    executor: gcloud_executor
     steps:
       - checkout
       - setup_remote_docker
       - attach_workspace:
           at: .
-      - run: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh zenika/marcel
+      - run: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh eu.gcr.io/zen-dashboard/marcel
 
   archive_backoffice:
     executor: std_executor

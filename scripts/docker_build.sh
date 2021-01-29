@@ -27,6 +27,12 @@ docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .
 
 # Push image to docker hub.
 if [ "${PUSH}" == "true" ] ; then
-  docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PASSWORD}
+  echo "authenticate to google cloud"
+  echo ${GCLOUD_SERVICE_KEY} | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
+  gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+  gcloud config set project ${GCLOUD_PROJECT_ID}
+  gcloud auth configure-docker
+
+  echo "push docker image"
   docker push ${IMAGE_NAME}:${IMAGE_VERSION}
 fi
