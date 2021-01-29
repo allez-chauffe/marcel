@@ -31,7 +31,7 @@ if [ "${PUSH}" == "true" ] ; then
   echo ${GCLOUD_SERVICE_KEY} | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
   gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
   gcloud config set project ${GCLOUD_PROJECT_ID}
-  gcloud auth configure-docker
+  gcloud auth configure-docker eu.gcr.io
 
   echo "push docker image"
   docker push ${IMAGE_NAME}:${IMAGE_VERSION}
