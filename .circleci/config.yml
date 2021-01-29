@@ -105,7 +105,7 @@ jobs:
       - setup_remote_docker
       - attach_workspace:
           at: .
-      - run: ${CIRCLE_WORKING_DIRECTORY}/scripts/docker_build.sh eu.gcr.io/zen-dashboard/marcel
+      - run: ./scripts/docker_build.sh eu.gcr.io/zen-dashboard/marcel
 
   archive_backoffice:
     executor: std_executor
