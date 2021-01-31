@@ -35,7 +35,7 @@ type Prop struct {
 	Short        string `json:"short"`
 	Long         string `json:"long"`
 	Type         string `json:"type"`
-	DefaultValue string `json:"value"`
+	DefaultValue string `json:"defaultValue"`
 }
 
 // GetDirectory returns the plugin's static files directory path
