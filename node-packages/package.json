@@ -1,4 +1,12 @@
 {
 	"private": true,
-	"workspaces": [ "*" ]
+	"workspaces": {
+		"packages": [
+			"*"
+		],
+		"nohoist": [
+			"**/bulma",
+			"**/svelma"
+		]
+	}
 }

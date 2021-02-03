@@ -3,6 +3,8 @@ import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import postcss from 'rollup-plugin-postcss'
+import preprocess from 'svelte-preprocess';
+import css from 'rollup-plugin-css-only';
 import { terser } from 'rollup-plugin-terser';
 import livereload from 'rollup-plugin-livereload';
 
@@ -17,13 +19,13 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
-		postcss(),
 		svelte({
-			dev: !production,
-			css: css => {
-				css.write('public/build/bundle.css');
-			}
+			compilerOptions: { dev: !production },
+			preprocess: preprocess()
 		}),
+
+		css({ output: 'bundle.css' }),
+		postcss(),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins.
