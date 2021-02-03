@@ -7,7 +7,7 @@ executors:
     working_directory: /home/circleci/app
   go_executor:
     docker:
-      - image: circleci/golang:1.13
+      - image: circleci/golang:1.16
     working_directory: /go/app
   std_executor:
     docker:
