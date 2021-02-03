@@ -1,6 +1,6 @@
 package imp0rt
 
-import "github.com/Zenika/marcel/api/db/plugins"
+import "github.com/allez-chauffe/marcel/api/db/plugins"
 
 func Plugins(inputFile string) error {
 	var pluginsList []plugins.Plugin

@@ -3,7 +3,7 @@ package cmd
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/marcel/config"
+	"github.com/allez-chauffe/marcel/config"
 )
 
 type logLevel log.Level

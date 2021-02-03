@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/Zenika/marcel/backoffice"
-	"github.com/Zenika/marcel/config"
+	"github.com/allez-chauffe/marcel/backoffice"
+	"github.com/allez-chauffe/marcel/config"
 )
 
 func init() {

@@ -15,8 +15,8 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 
-	"github.com/Zenika/marcel/api/db/plugins"
-	"github.com/Zenika/marcel/config"
+	"github.com/allez-chauffe/marcel/api/db/plugins"
+	"github.com/allez-chauffe/marcel/config"
 	gitConfig "gopkg.in/src-d/go-git.v4/config"
 )
 

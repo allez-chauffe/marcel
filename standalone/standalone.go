@@ -1,10 +1,10 @@
 package standalone
 
 import (
-	"github.com/Zenika/marcel/api"
-	"github.com/Zenika/marcel/backoffice"
-	"github.com/Zenika/marcel/frontend"
-	"github.com/Zenika/marcel/module"
+	"github.com/allez-chauffe/marcel/api"
+	"github.com/allez-chauffe/marcel/backoffice"
+	"github.com/allez-chauffe/marcel/frontend"
+	"github.com/allez-chauffe/marcel/module"
 )
 
 // Module creates the standalone module.

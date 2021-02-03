@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/Zenika/marcel/version"
+	"github.com/allez-chauffe/marcel/version"
 )
 
 func init() {

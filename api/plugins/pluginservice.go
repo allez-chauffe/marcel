@@ -10,10 +10,10 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/marcel/api/auth"
-	"github.com/Zenika/marcel/api/commons"
-	"github.com/Zenika/marcel/api/db/plugins"
-	"github.com/Zenika/marcel/config"
+	"github.com/allez-chauffe/marcel/api/auth"
+	"github.com/allez-chauffe/marcel/api/commons"
+	"github.com/allez-chauffe/marcel/api/db/plugins"
+	"github.com/allez-chauffe/marcel/config"
 )
 
 // Initialize unsures that the plugins directory exists

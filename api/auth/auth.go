@@ -7,7 +7,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 
-	"github.com/Zenika/marcel/config"
+	"github.com/allez-chauffe/marcel/config"
 )
 
 var (

@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Zenika/marcel/osutil"
-	"github.com/Zenika/marcel/standalone"
+	"github.com/allez-chauffe/marcel/osutil"
+	"github.com/allez-chauffe/marcel/standalone"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/marcel/api/auth"
-	"github.com/Zenika/marcel/api/db/users"
-	"github.com/Zenika/marcel/config"
-	"github.com/Zenika/marcel/module"
+	"github.com/allez-chauffe/marcel/api/auth"
+	"github.com/allez-chauffe/marcel/api/db/users"
+	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/module"
 )
 
 // Module creates a demonstration standalone server module.

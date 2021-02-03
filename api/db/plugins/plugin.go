@@ -3,7 +3,7 @@ package plugins
 import (
 	"path/filepath"
 
-	"github.com/Zenika/marcel/config"
+	"github.com/allez-chauffe/marcel/config"
 )
 
 // Plugin represents a plugin configuration

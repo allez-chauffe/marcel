@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Zenika/marcel/osutil"
+	"github.com/allez-chauffe/marcel/osutil"
 
 	log "github.com/sirupsen/logrus"
 )

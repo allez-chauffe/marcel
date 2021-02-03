@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/Zenika/marcel/api/db"
+	"github.com/allez-chauffe/marcel/api/db"
 )
 
 func export(fetch func() (interface{}, error), outputFile string, pretty bool) error {

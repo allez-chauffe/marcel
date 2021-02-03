@@ -3,6 +3,7 @@ package httputil
 import (
 	"bytes"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"text/template"
@@ -10,14 +11,14 @@ import (
 )
 
 type templater struct {
-	fs       http.FileSystem
+	fs       fs.FS
 	includes map[string]bool
 	data     interface{}
 }
 
-var _ http.FileSystem = (*templater)(nil)
+var _ fs.FS = (*templater)(nil)
 
-func (t *templater) Open(path string) (http.File, error) {
+func (t *templater) Open(path string) (fs.File, error) {
 	if !t.includes[path] {
 		return t.fs.Open(path)
 	}
@@ -54,7 +55,7 @@ func (t *templater) Open(path string) (http.File, error) {
 	return newBfile(buf.Bytes(), info), nil
 }
 
-func NewTemplater(fs http.FileSystem, includes []string, data interface{}) http.FileSystem {
+func NewTemplater(fs fs.FS, includes []string, data interface{}) fs.FS {
 	t := &templater{fs, make(map[string]bool, len(includes)), data}
 
 	for _, path := range includes {

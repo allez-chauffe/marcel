@@ -3,8 +3,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/Zenika/marcel/api/auth"
-	"github.com/Zenika/marcel/api/commons"
+	"github.com/allez-chauffe/marcel/api/auth"
+	"github.com/allez-chauffe/marcel/api/commons"
 )
 
 func validateHandler(w http.ResponseWriter, r *http.Request) {
