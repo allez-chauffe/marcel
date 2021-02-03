@@ -77,9 +77,9 @@ func (ws *WSClient) writeMessageWithType(msgType int, msg []byte, logMsg string,
 	return err == nil
 }
 
-func (s *Service) getClientPayload(client *clients.Client) *ClientPayload {
+func (s *Service) getClientPayload(client clients.Client) *ClientPayload {
 	_, isConnected := s.wsclients[client.ID]
-	return &ClientPayload{client, isConnected}
+	return &ClientPayload{&client, isConnected}
 }
 
 func (s *Service) getClientsPayload() (map[string]*ClientPayload, error) {
@@ -90,7 +90,7 @@ func (s *Service) getClientsPayload() (map[string]*ClientPayload, error) {
 
 	clientsPayload := map[string]*ClientPayload{}
 	for _, client := range clients {
-		clientsPayload[client.ID] = s.getClientPayload(&client)
+		clientsPayload[client.ID] = s.getClientPayload(client)
 	}
 
 	return clientsPayload, nil
