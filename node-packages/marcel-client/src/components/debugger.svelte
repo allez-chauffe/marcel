@@ -1,7 +1,8 @@
 <script>
   import machine from "../machine";
 
-  let show = true;
+  let show = false;
+  if(IS_DEV_MODE) show = true;
 
   window.toggleMarcelDebugger = () => (show = !show);
 </script>

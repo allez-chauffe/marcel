@@ -13,14 +13,11 @@
 
 <style>
  form {
-   display: flex;
-   flex-direction: column;
+   display: grid;
+   gap: 1em;
    align-items: center;
  }
 
-.input {
-  margin: 0.2em;
-}
 </style>
 
 {#if $machine.context.error}
@@ -28,9 +25,9 @@
 {/if}
 
 <form on:submit|preventDefault={handleLogin}>
-  <Input class="input" bind:value={login} />
-  <Input class="input" type="password" bind:value={password} />
-  <Button nativeType="submit" disabled={$machine.state !== 'loggedOut'}>
+  <Input bind:value={login} />
+  <Input type="password" bind:value={password} />
+  <Button nativeType="submit" disabled={$machine.state !== 'loggedOut'} type="is-primary">
     Loggin
   </Button>
 </form>

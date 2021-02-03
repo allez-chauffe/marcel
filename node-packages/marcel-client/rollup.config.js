@@ -7,6 +7,7 @@ import preprocess from 'svelte-preprocess';
 import css from 'rollup-plugin-css-only';
 import { terser } from 'rollup-plugin-terser';
 import livereload from 'rollup-plugin-livereload';
+import replace from '@rollup/plugin-replace'
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -19,6 +20,9 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
+		replace({
+			IS_DEV_MODE: !production
+		}),
 		svelte({
 			compilerOptions: { dev: !production },
 			preprocess: preprocess()
