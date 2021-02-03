@@ -5,7 +5,7 @@
   "bin": {
     "create-marcel-plugin": "./src/index.js"
   },
-  "repository": "https://github.com/Zenika/marcel",
+  "repository": "https://github.com/allez-chauffe/marcel",
   "author": "Valentin Cocaud",
   "license": "Apache-2.0",
   "scripts": {

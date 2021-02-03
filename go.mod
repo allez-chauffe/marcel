@@ -1,6 +1,6 @@
-module github.com/Zenika/marcel
+module github.com/allez-chauffe/marcel
 
-go 1.12
+go 1.16
 
 require (
 	github.com/Pallinder/go-randomdata v1.2.0
@@ -10,7 +10,6 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
-	github.com/markbates/pkger v0.12.8
 	github.com/mattn/go-isatty v0.0.10
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/rs/cors v1.7.0

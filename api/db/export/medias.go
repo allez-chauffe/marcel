@@ -1,7 +1,7 @@
 package export
 
 import (
-	"github.com/Zenika/marcel/api/db/medias"
+	"github.com/allez-chauffe/marcel/api/db/medias"
 )
 
 func Medias(outputFile string, pretty bool) error {

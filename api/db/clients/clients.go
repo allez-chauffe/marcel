@@ -4,7 +4,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	bh "github.com/timshannon/bolthold"
 
-	"github.com/Zenika/marcel/api/db/internal/db"
+	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
 func Get(id string) (*Client, error) {

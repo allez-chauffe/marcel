@@ -1,18 +1,19 @@
 package frontend
 
 import (
+	"io/fs"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
-	"github.com/Zenika/marcel/config"
-	"github.com/Zenika/marcel/httputil"
-	"github.com/Zenika/marcel/module"
+	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/httputil"
+	"github.com/allez-chauffe/marcel/module"
 )
 
 // Module creates the frontend module
 func Module() *module.Module {
-	var fs http.FileSystem
+	var fs fs.FS
 
 	// Set default URIs for API in case Frontend is the root module
 	module.SetURI("API", config.Default().API().BasePath())
@@ -37,15 +38,15 @@ func Module() *module.Module {
 	}
 }
 
-func fileHandler(base string, fs http.FileSystem) http.Handler {
+func fileHandler(base string, fs fs.FS) http.Handler {
 	return http.StripPrefix(
 		base,
-		http.FileServer(
+		http.FileServer(http.FS(
 			httputil.NewTemplater(
 				fs,
 				[]string{"/index.html"},
 				map[string]string{"REACT_APP_BASE": base},
 			),
-		),
+		)),
 	)
 }

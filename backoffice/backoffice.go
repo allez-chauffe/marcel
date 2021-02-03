@@ -1,20 +1,21 @@
 package backoffice
 
 import (
+	"io/fs"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
-	"github.com/Zenika/marcel/config"
-	"github.com/Zenika/marcel/httputil"
-	"github.com/Zenika/marcel/module"
+	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/httputil"
+	"github.com/allez-chauffe/marcel/module"
 )
 
 const index = "/index.html"
 
 // Module creates backoffice module
 func Module() *module.Module {
-	var fs http.FileSystem
+	var fs fs.FS
 
 	// Set default URIs for API and Frontend
 	// in case Backoffice is the root module
@@ -42,10 +43,10 @@ func Module() *module.Module {
 	}
 }
 
-func fileHandler(basePath string, fs http.FileSystem) http.Handler {
+func fileHandler(basePath string, fs fs.FS) http.Handler {
 	return http.StripPrefix(
 		basePath,
-		http.FileServer(
+		http.FileServer(http.FS(
 			httputil.NewNotFoundRewriter(
 				httputil.NewTemplater(
 					fs,
@@ -54,6 +55,6 @@ func fileHandler(basePath string, fs http.FileSystem) http.Handler {
 				),
 				index,
 			),
-		),
+		)),
 	)
 }

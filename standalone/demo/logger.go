@@ -32,7 +32,7 @@ func (l levelIcon) String() string {
 }
 
 var demoFormatter formatterFunc = func(entry *log.Entry) ([]byte, error) {
-	if entry.Level > log.FatalLevel && !strings.HasPrefix(entry.Caller.Func.Name(), "github.com/Zenika/marcel/standalone/demo") {
+	if entry.Level > log.FatalLevel && !strings.HasPrefix(entry.Caller.Func.Name(), "github.com/allez-chauffe/marcel/standalone/demo") {
 		return nil, nil
 	}
 

@@ -4,14 +4,14 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/marcel/api/auth"
-	"github.com/Zenika/marcel/api/clients"
-	"github.com/Zenika/marcel/api/db"
-	"github.com/Zenika/marcel/api/db/users"
-	"github.com/Zenika/marcel/api/medias"
-	"github.com/Zenika/marcel/api/plugins"
-	"github.com/Zenika/marcel/config"
-	"github.com/Zenika/marcel/module"
+	"github.com/allez-chauffe/marcel/api/auth"
+	"github.com/allez-chauffe/marcel/api/clients"
+	"github.com/allez-chauffe/marcel/api/db"
+	"github.com/allez-chauffe/marcel/api/db/users"
+	"github.com/allez-chauffe/marcel/api/medias"
+	"github.com/allez-chauffe/marcel/api/plugins"
+	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/module"
 )
 
 // Module creates API module

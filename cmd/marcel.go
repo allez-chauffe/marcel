@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Zenika/marcel/osutil"
+	"github.com/allez-chauffe/marcel/osutil"
 
-	"github.com/Zenika/marcel/standalone/demo"
+	"github.com/allez-chauffe/marcel/standalone/demo"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

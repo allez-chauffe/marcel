@@ -14,8 +14,8 @@ import (
 	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Zenika/marcel/config"
-	"github.com/Zenika/marcel/httputil"
+	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/httputil"
 )
 
 // HTTP describes a module's HTTP setup.

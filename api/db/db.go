@@ -9,8 +9,8 @@ import (
 	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
 
-	"github.com/Zenika/marcel/api/db/internal/db"
-	"github.com/Zenika/marcel/config"
+	"github.com/allez-chauffe/marcel/api/db/internal/db"
+	"github.com/allez-chauffe/marcel/config"
 )
 
 // Open opens bbolt database in read/write mode

@@ -1,6 +1,6 @@
 package imp0rt
 
-import "github.com/Zenika/marcel/api/db/users"
+import "github.com/allez-chauffe/marcel/api/db/users"
 
 type userPassword struct {
 	users.User

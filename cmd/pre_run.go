@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/Zenika/marcel/config"
+	"github.com/allez-chauffe/marcel/config"
 )
 
 func preRunForServer(cfg *config.Config) func(*cobra.Command, []string) error {
