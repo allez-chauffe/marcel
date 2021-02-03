@@ -69,8 +69,6 @@ jobs:
       - attach_workspace:
           at: .
       - run: go mod download
-      - run: go install github.com/markbates/pkger/cmd/pkger
-      - run: go generate
       - run: go test -mod=readonly .
       - run: "CGO_ENABLED=0 go build -mod=readonly -trimpath -tags \"osusergo netgo\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/version.version=$CIRCLE_BRANCH -X github.com/allez-chauffe/marcel/version.revision=$CIRCLE_SHA1\" -o marcel"
       - persist_to_workspace:
