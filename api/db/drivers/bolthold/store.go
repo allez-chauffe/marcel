@@ -1,7 +1,7 @@
 package bolt
 
 import (
-	"github.com/Zenika/marcel/api/db/internal/db"
+	"github.com/allez-chauffe/marcel/api/db/internal/db"
 	bh "github.com/timshannon/bolthold"
 )
 
