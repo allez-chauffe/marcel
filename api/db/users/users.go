@@ -6,21 +6,24 @@ import (
 	rand "github.com/Pallinder/go-randomdata"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
-	bh "github.com/timshannon/bolthold"
-	bolt "go.etcd.io/bbolt"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
-func EnsureOneUser() error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
-		res, err := db.Store.TxFindAggregate(tx, &User{}, nil)
-		if err != nil {
-			return err
-		}
+var store db.Store
 
-		if res[0].Count() != 0 {
-			return nil
+func CreateStore(database db.Databse) {
+	store = database.CreateStore(func() db.Entity {
+		return new(User)
+	})
+}
+
+func EnsureOneUser() error {
+	return db.Transactional(store, func(tx db.Transaction) error {
+		users := &[]User{}
+
+		if err := tx.List(users); err != nil || len(*users) != 0 {
+			return err
 		}
 
 		log.Info("No users in database, creating admin...")
@@ -48,45 +51,37 @@ func EnsureOneUser() error {
 }
 
 func Insert(u *User) error {
-	return insert(nil, u)
+	return insert(store, u)
 }
 
-func insert(tx *bolt.Tx, u *User) error {
+func insert(store db.Store, u *User) error {
 	u.ID = uuid.NewV4().String()
 	if u.Role == "" {
 		u.Role = "user"
 	}
 	u.CreatedAt = time.Now()
 
-	if tx == nil {
-		return db.Store.Insert(u.ID, u)
-	}
-	return db.Store.TxInsert(tx, u.ID, u)
+	return store.Insert(u)
 }
 
 func List() ([]User, error) {
 	var users []User
-
-	return users, db.Store.Find(&users, nil)
+	return users, store.List(&users)
 }
 
 func Get(id string) (*User, error) {
 	u := new(User)
-
-	if err := db.Store.Get(id, u); err != nil {
-		if err == bh.ErrNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return u, nil
+	return u, store.Get(id, u)
 }
 
 func GetByLogin(login string) (*User, error) {
 	var users []User
 
-	err := db.Store.Find(&users, bh.Where("Login").Eq(login).Index("Login"))
-	if err != nil {
+	filters := map[string]interface{}{
+		"Login": login,
+	}
+
+	if err := store.Find(&users, filters); err != nil {
 		return nil, err
 	}
 
@@ -98,34 +93,29 @@ func GetByLogin(login string) (*User, error) {
 }
 
 func Delete(id string) error {
-	return db.Store.Delete(id, &User{})
+	return store.Delete(id)
 }
 
 func Disconnect(id string) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
-		u := new(User)
-
-		if err := db.Store.TxGet(tx, id, u); err != nil {
-			if err == bh.ErrNotFound {
-				return nil
-			}
+	return db.Transactional(store, func(tx db.Transaction) error {
+		u := &User{}
+		if err := tx.Get(id, u);  u == nil || err != nil {
 			return err
 		}
 
 		u.LastDisconnection = time.Now()
-
-		return db.Store.TxUpdate(tx, id, u)
+		return tx.Update(u)
 	})
 }
 
 func Update(user *User) error {
-	return db.Store.Update(user.ID, user)
+	return store.Update(user)
 }
 
 func UpsertAll(users []User) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+	return db.Transactional(store, func(tx db.Transaction) error {
 		for _, u := range users {
-			if err := db.Store.TxUpsert(tx, u.ID, &u); err != nil {
+			if err := tx.Upsert(&u); err != nil {
 				return err
 			}
 		}

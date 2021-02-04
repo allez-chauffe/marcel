@@ -1,52 +1,43 @@
 package plugins
 
 import (
-	bh "github.com/timshannon/bolthold"
-	bolt "go.etcd.io/bbolt"
-
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
+var store db.Store
+
+func CreateStore(database db.Databse) {
+	store = database.CreateStore(func() db.Entity {
+		return new(Plugin)
+	})
+}
+
 func List() ([]Plugin, error) {
 	var plugins = []Plugin{}
-
-	return plugins, db.Store.Find(&plugins, nil)
+	return plugins, store.List(&plugins)
 }
 
 func Get(eltName string) (*Plugin, error) {
 	var p = new(Plugin)
-
-	if err := db.Store.Get(eltName, p); err != nil {
-		if err == bh.ErrNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return p, nil
+	return p, store.Get(eltName, p)
 }
 
 func Exists(eltName string) (bool, error) {
-	if err := db.Store.Get(eltName, &Plugin{}); err != nil {
-		if err == bh.ErrNotFound {
-			return false, nil
-		}
-		return false, err
-	}
-	return true, nil
+	return store.Exists(eltName)
 }
 
 func Insert(p *Plugin) error {
-	return db.Store.Insert(p.EltName, p)
+	return store.Insert(p)
 }
 
 func Update(p *Plugin) error {
-	return db.Store.Update(p.EltName, p)
+	return store.Update(p)
 }
 
 func UpsertAll(plugins []Plugin) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+	return db.Transactional(store, func(tx db.Transaction) error {
 		for _, p := range plugins {
-			if err := db.Store.TxUpsert(tx, p.EltName, &p); err != nil {
+			if err := tx.Upsert(&p); err != nil {
 				return err
 			}
 		}
@@ -56,5 +47,5 @@ func UpsertAll(plugins []Plugin) error {
 }
 
 func Delete(eltName string) error {
-	return db.Store.Delete(eltName, &Plugin{})
+	return store.Delete(eltName)
 }

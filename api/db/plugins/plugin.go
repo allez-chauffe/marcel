@@ -33,3 +33,7 @@ type Prop struct {
 func (p *Plugin) GetDirectory() string {
 	return filepath.Join(config.Default().API().PluginsDir(), p.EltName)
 }
+
+func (p *Plugin) GetID() interface{} {
+	return p.EltName
+}

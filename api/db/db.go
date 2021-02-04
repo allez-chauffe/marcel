@@ -1,57 +1,45 @@
 package db
 
 import (
-	"fmt"
-	"os"
-	"time"
-
-	log "github.com/sirupsen/logrus"
-	bh "github.com/timshannon/bolthold"
-	bolt "go.etcd.io/bbolt"
-
+	"github.com/allez-chauffe/marcel/api/db/clients"
+	bhDriver "github.com/allez-chauffe/marcel/api/db/drivers/bolthold"
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/api/db/medias"
+	"github.com/allez-chauffe/marcel/api/db/plugins"
+	"github.com/allez-chauffe/marcel/api/db/users"
 )
 
-// Open opens bbolt database in read/write mode
+var DB db.Databse
+
 func Open() error {
 	return open(false)
 }
 
-// OpenRO opens bbolt database in read only mode
 func OpenRO() error {
 	return open(true)
 }
 
-func open(readOnly bool) error {
-	log.Info("Opening bbolt database...")
+func open(readonly bool) error {
+	DB = getDatabaseDriver()
 
-	var options = *bolt.DefaultOptions
-	options.ReadOnly = readOnly
-	options.Timeout = 100 * time.Millisecond
-
-	var err error
-	if db.Store, err = bh.Open(os.ExpandEnv(config.Default().API().DBFile()), 0644, &bh.Options{
-		Options: &options,
-	}); err != nil {
-		return fmt.Errorf("Error while opening bbolt database: %w", err)
+	if err := DB.Open(readonly); err != nil {
+		return err
 	}
 
-	log.Info("bbolt database opened")
+	// Initialise every stores
+	clients.CreateStore(DB)
+	medias.CreateStore(DB)
+	plugins.CreateStore(DB)
+	users.CreateStore(DB)
 
 	return nil
 }
 
-// Close closes bbolt database connection
 func Close() error {
-	log.Info("Closing bbolt database...")
+	return DB.Close()
+}
 
-	err := db.Store.Close()
-	if err != nil {
-		return fmt.Errorf("Error while closing bbolt database: %w", err)
-	}
-
-	log.Info("bbolt database closed")
-
-	return nil
+func getDatabaseDriver() db.Databse {
+	// TODO: Select the driver in config
+	return bhDriver.New()
 }

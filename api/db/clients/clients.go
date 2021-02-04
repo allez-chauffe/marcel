@@ -1,44 +1,39 @@
 package clients
 
 import (
-	uuid "github.com/satori/go.uuid"
-	bh "github.com/timshannon/bolthold"
-
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
-func Get(id string) (*Client, error) {
-	var c = new(Client)
+var store db.Store
 
-	if err := db.Store.Get(id, c); err != nil {
-		if err == bh.ErrNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return c, nil
+func CreateStore(database db.Databse) {
+	store = database.CreateStore(func() db.Entity {
+		return new(Client)
+	})
+}
+
+func Get(id string) (*Client, error) {
+	var result = &Client{}
+	return result, store.Get(id, &result)
 }
 
 func List() ([]Client, error) {
 	var clients = []Client{}
-
-	return clients, db.Store.Find(&clients, nil)
+	return clients, store.List(&clients)
 }
 
 func Insert(c *Client) error {
-	c.ID = uuid.NewV4().String()
-
-	return db.Store.Insert(c.ID, c)
+	return store.Insert(c)
 }
 
 func Update(c *Client) error {
-	return db.Store.Update(c.ID, c)
+	return store.Update(c)
 }
 
 func Delete(id string) error {
-	return db.Store.Delete(id, &Client{})
+	return store.Delete(id)
 }
 
 func DeleteAll() error {
-	return db.Store.DeleteMatching(&Client{}, nil)
+	return store.DeleteAll()
 }

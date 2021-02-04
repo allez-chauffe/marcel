@@ -27,6 +27,10 @@ func New(owner string) *Media {
 	}
 }
 
+func (m *Media) GetID() interface{} {
+	return m.ID
+}
+
 // MediaPlugin represents a plugin configuration for the media
 type MediaPlugin struct {
 	InstanceID string               `json:"instanceId"`

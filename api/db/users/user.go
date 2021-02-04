@@ -67,3 +67,7 @@ func hash(password, salt string) (string, error) {
 
 	return base64.StdEncoding.EncodeToString(h.Sum(nil)), nil
 }
+
+func (u *User) GetID() interface{} {
+	return u.ID
+}

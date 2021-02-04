@@ -17,3 +17,7 @@ func New() *Client {
 		Type: "Unkown",
 	}
 }
+
+func (c *Client) GetID() interface{} {
+	return c.ID
+}
