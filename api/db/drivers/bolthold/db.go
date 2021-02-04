@@ -17,7 +17,7 @@ type boltDatabase struct {
 	bh *bh.Store
 }
 
-func New() db.Databse {
+func New() db.Database {
 	return &boltDatabase{
 		new(bh.Store),
 	}

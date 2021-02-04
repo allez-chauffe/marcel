@@ -25,7 +25,7 @@ type Store interface {
 	Begin() (Transaction, error)
 }
 
-type Databse interface {
+type Database interface {
 	CreateStore(newItem func() Entity) Store
 	Open(readOnly bool) error
 	Close() error
