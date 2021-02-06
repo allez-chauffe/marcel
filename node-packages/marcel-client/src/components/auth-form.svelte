@@ -1,5 +1,5 @@
 <script>
-  import { Input, Button } from 'svelma';
+  import { Input, Button, Message } from 'svelma';
   import machine from "../machine";
   let login, password;
 
@@ -17,7 +17,7 @@
 </style>
 
 {#if $machine.context.error}
-  <p>{$machine.context.error}</p>
+  <Message active title="Error!" type="is-danger">{$machine.context.error}</Message>
 {/if}
 
 <form on:submit|preventDefault={handleLogin}>

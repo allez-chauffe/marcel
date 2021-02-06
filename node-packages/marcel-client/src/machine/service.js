@@ -8,14 +8,14 @@ const service = interpret(
   machine,
   ({ machine, context }) => {
     // eslint-disable-next-line no-console
-    console.debug('changed state', machine.current, context)
+    if (IS_DEV_MODE) console.debug('changed state', machine.current, context)
     set({ state: machine.current, context, machine })
   }
 )
 
 const send = (...args) => {
   // eslint-disable-next-line no-console
-  console.debug('event sent', ...args)
+  if (IS_DEV_MODE) console.debug('event sent', ...args)
   return service.send(...args)
 }
 

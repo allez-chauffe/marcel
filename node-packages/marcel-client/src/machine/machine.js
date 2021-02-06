@@ -28,7 +28,7 @@ const loginState = (loginFunction, unauthorizedReducer) => invokeHttpWithError(
 )
 
 const connectedState = (errorState, ...transitions) => state(
-  transition('clientUpdated', 'reloadClient'),
+  transition('clientUpdated', 'reloadingClient'),
   transition('clientConnectionError', errorState, action(() => toast.error('Une erreur de connection avec le serveur est survenue !'))),
   transition('clientConnectionClosed', 'connectingClient', action(() => toast.warning('La connection au serveur est interrompue'))),
   ...transitions,
@@ -84,7 +84,7 @@ const machine = createMachine(
       updateClient,
       transition('done', 'connectingClient', storeDataWithoutError('client'), loadingStep(4))
     ),
-    reloadClient: invokeHttpWithError(
+    reloadingClient: invokeHttpWithError(
       loadClient,
       transition('done', 'loadMedia', storeDataWithoutError('client')),
     ),

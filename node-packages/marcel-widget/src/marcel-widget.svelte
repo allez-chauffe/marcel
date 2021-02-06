@@ -22,7 +22,7 @@
 
   $: if (iframe) {
     iframe.addMessageListener(message => {
-      console.log(`Message from ${plugin.instanceId}`, message);
+      console.debug(`Message from ${plugin.instanceId}`, message);
       if (message.type === "loaded") sendProps(props);
     });
   }

@@ -2,7 +2,7 @@
   import machine from "../machine";
 
   let show = false;
-  if(IS_DEV_MODE) show = true;
+  if (IS_DEV_MODE) show = true;
 
   window.toggleMarcelDebugger = () => (show = !show);
 </script>
