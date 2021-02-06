@@ -6,13 +6,15 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // FIXME something ?
 var secret = []byte("This is the password secret key !")
 
 type User struct {
-	ID                string    `json:"id"`
+	ID                string    `json:"id" boltholdKey:"ID"`
 	DisplayName       string    `json:"displayName"`
 	Login             string    `json:"login" boltholdIndex:"Login"`
 	Role              string    `json:"role"`
@@ -20,6 +22,14 @@ type User struct {
 	LastDisconnection time.Time `json:"lastDisconnection"`
 	PasswordHash      string    `json:"-"`
 	PasswordSalt      string    `json:"-"`
+}
+
+func New() *User {
+	return &User{
+		ID:        uuid.NewV4().String(),
+		Role:      "user",
+		CreatedAt: time.Now(),
+	}
 }
 
 func (u *User) CheckPassword(password string) (bool, error) {
@@ -70,4 +80,8 @@ func hash(password, salt string) (string, error) {
 
 func (u *User) GetID() interface{} {
 	return u.ID
+}
+
+func (u *User) SetID(id interface{}) {
+	u.ID = id.(string)
 }

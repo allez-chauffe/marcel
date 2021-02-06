@@ -1,23 +1,70 @@
 package bolt
 
 import (
+	"reflect"
+
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
+	log "github.com/sirupsen/logrus"
 	bh "github.com/timshannon/bolthold"
+	bolt "go.etcd.io/bbolt"
 )
 
-type boltStore struct {
+type boltStoreConfig struct {
 	*boltDatabase
 	newEntity func() db.Entity
+	typeName  string
+}
+
+type boltStore struct {
+	*boltStoreConfig
+	tx *bolt.Tx
 }
 
 func (database *boltDatabase) CreateStore(newEntity func() db.Entity) db.Store {
-	return &boltStore{ database, newEntity }
+	return &boltStore{
+		&boltStoreConfig{database, newEntity, reflect.TypeOf(newEntity()).Elem().Name()},
+		nil,
+	}
+}
+
+func (store *boltStore) Transactional(tx db.Transaction) db.Store {
+	if tx == nil {
+		return store
+	}
+
+	boltTx, ok := tx.(*bolt.Tx)
+
+	if !ok {
+		panic("Bolt driver received non bolt transaction (*bbolt.Tx required)")
+	}
+
+	return &boltStore{store.boltStoreConfig, boltTx}
+}
+
+func (store *boltStore) IsTransactional() bool {
+	return store.tx != nil
 }
 
 func (store *boltStore) Get(id interface{}, result interface{}) error {
-	err := store.bh.Get(id, result)
+	var err error
+
+	resultType := reflect.TypeOf(result)
+	if resultType.Kind() != reflect.Ptr ||
+		resultType.Elem().Kind() != reflect.Ptr &&
+			resultType.Elem().Kind() != reflect.Interface {
+		panic("result should be a pointer of pointer of the targeted entity (**Client by example)")
+	}
+
+	resultPointer := reflect.ValueOf(result).Elem()
+
+	if store.IsTransactional() {
+		err = store.bh.TxGet(store.tx, id, resultPointer.Interface())
+	} else {
+		err = store.bh.Get(id, resultPointer.Interface())
+	}
+
 	if err != nil {
-		result = nil
+		resultPointer.Set(reflect.Zero(resultType.Elem()))
 		if err == bh.ErrNotFound {
 			return nil
 		}
@@ -28,39 +75,66 @@ func (store *boltStore) Get(id interface{}, result interface{}) error {
 }
 
 func (store *boltStore) List(result interface{}) error {
+	if store.IsTransactional() {
+		return store.bh.TxFind(store.tx, result, nil)
+	}
 	return store.bh.Find(result, nil)
 }
 
 func (store *boltStore) Insert(item db.Entity) error {
-	if db.ShouldAutoIncrement(item) {
-		return store.bh.Insert(bh.NextSequence(), item)
-	}
+	log.Debugf("before ensure")
+	return store.ensureTransaction(func(store *boltStore) error {
+		log.Debug("inside ensure")
+		if db.ShouldAutoIncrement(item) {
+			id, err := store.nextSequence()
+			if err != nil {
+				return err
+			}
+			item.SetID(id)
+		}
 
-	return store.bh.Insert(item.GetID(), item)
+		return store.bh.TxInsert(store.tx, item.GetID(), item)
+	})
 }
 
 func (store *boltStore) Update(item db.Entity) error {
+	if store.IsTransactional() {
+		return store.bh.TxUpdate(store.tx, item.GetID(), item)
+	}
 	return store.bh.Update(item.GetID(), item)
 }
 
 func (store *boltStore) Delete(id interface{}) error {
+	if store.IsTransactional() {
+		return store.bh.TxDelete(store.tx, id, store.newEntity())
+	}
 	return store.bh.Delete(id, store.newEntity())
 }
 
 func (store *boltStore) DeleteAll() error {
+	if store.IsTransactional() {
+		return store.bh.TxDeleteMatching(store.tx, store.newEntity(), nil)
+	}
 	return store.bh.DeleteMatching(store.newEntity(), nil)
 }
 
 func (store *boltStore) Upsert(item db.Entity) error {
-	if db.ShouldAutoIncrement(item) {
-		return store.Insert(item)
-	}
-	return store.bh.Upsert(item.GetID(), item)
+	return store.ensureTransaction(func(bs *boltStore) error {
+		if db.ShouldAutoIncrement(item) {
+			id, err := store.nextSequence()
+			if err != nil {
+				return err
+			}
+			item.SetID(id)
+		}
+
+		return store.bh.TxUpsert(store.tx, item.GetID(), item)
+	})
 }
 
 func (store *boltStore) Exists(id interface{}) (bool, error) {
 	entity := store.newEntity()
-	if err := store.Get(id, entity); err != nil {
+	if err := store.Get(id, &entity); err != nil {
 		return false, err
 	}
 
@@ -68,7 +142,9 @@ func (store *boltStore) Exists(id interface{}) (bool, error) {
 }
 
 func (store *boltStore) Find(result interface{}, filters map[string]interface{}) error {
-
-
-	return store.bh.Find(result, queryFromFilters(filters))
+	query := queryFromFilters(filters)
+	if store.IsTransactional() {
+		return store.bh.TxFind(store.tx, result, query)
+	}
+	return store.bh.Find(result, query)
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/allez-chauffe/marcel/api/auth"
 	"github.com/allez-chauffe/marcel/api/clients"
 	"github.com/allez-chauffe/marcel/api/db"
-	"github.com/allez-chauffe/marcel/api/db/users"
 	"github.com/allez-chauffe/marcel/api/medias"
 	"github.com/allez-chauffe/marcel/api/plugins"
 	"github.com/allez-chauffe/marcel/config"
@@ -30,7 +29,7 @@ func Module() *module.Module {
 				return db.Close()
 			}
 
-			if err := users.EnsureOneUser(); err != nil {
+			if err := db.Users().EnsureOneUser(); err != nil {
 				return stop, err
 			}
 

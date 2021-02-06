@@ -4,25 +4,34 @@ import (
 	"time"
 
 	rand "github.com/Pallinder/go-randomdata"
-	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
-var store db.Store
+var DefaultBucket *Bucket
 
-func CreateStore(database db.Databse) {
-	store = database.CreateStore(func() db.Entity {
-		return new(User)
-	})
+type Bucket struct {
+	store db.Store
 }
 
-func EnsureOneUser() error {
-	return db.Transactional(store, func(tx db.Transaction) error {
+func CreateDefaultBucket() {
+	DefaultBucket = &Bucket{
+		db.DB.CreateStore(func() db.Entity {
+			return new(User)
+		}),
+	}
+}
+
+func Transactional(tx db.Transaction) *Bucket {
+	return &Bucket{DefaultBucket.store.Transactional(tx)}
+}
+
+func (b *Bucket) EnsureOneUser() error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		users := &[]User{}
 
-		if err := tx.List(users); err != nil || len(*users) != 0 {
+		if err := store.List(users); err != nil || len(*users) != 0 {
 			return err
 		}
 
@@ -40,7 +49,7 @@ func EnsureOneUser() error {
 			return err
 		}
 
-		if err := insert(tx, u); err != nil {
+		if err := store.Insert(u); err != nil {
 			return err
 		}
 
@@ -50,38 +59,28 @@ func EnsureOneUser() error {
 	})
 }
 
-func Insert(u *User) error {
-	return insert(store, u)
+func (b *Bucket) Insert(u *User) error {
+	return b.store.Insert(u)
 }
 
-func insert(store db.Store, u *User) error {
-	u.ID = uuid.NewV4().String()
-	if u.Role == "" {
-		u.Role = "user"
-	}
-	u.CreatedAt = time.Now()
-
-	return store.Insert(u)
-}
-
-func List() ([]User, error) {
+func (b *Bucket) List() ([]User, error) {
 	var users []User
-	return users, store.List(&users)
+	return users, b.store.List(&users)
 }
 
-func Get(id string) (*User, error) {
+func (b *Bucket) Get(id string) (*User, error) {
 	u := new(User)
-	return u, store.Get(id, u)
+	return u, b.store.Get(id, &u)
 }
 
-func GetByLogin(login string) (*User, error) {
+func (b *Bucket) GetByLogin(login string) (*User, error) {
 	var users []User
 
 	filters := map[string]interface{}{
 		"Login": login,
 	}
 
-	if err := store.Find(&users, filters); err != nil {
+	if err := b.store.Find(&users, filters); err != nil {
 		return nil, err
 	}
 
@@ -92,34 +91,38 @@ func GetByLogin(login string) (*User, error) {
 	return &users[0], nil
 }
 
-func Delete(id string) error {
-	return store.Delete(id)
+func (b *Bucket) Delete(id string) error {
+	return b.store.Delete(id)
 }
 
-func Disconnect(id string) error {
-	return db.Transactional(store, func(tx db.Transaction) error {
+func (b *Bucket) Disconnect(id string) error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		u := &User{}
-		if err := tx.Get(id, u);  u == nil || err != nil {
+		if err := store.Get(id, &u); u == nil || err != nil {
 			return err
 		}
 
 		u.LastDisconnection = time.Now()
-		return tx.Update(u)
+		return store.Update(u)
 	})
 }
 
-func Update(user *User) error {
-	return store.Update(user)
+func (b *Bucket) Update(user *User) error {
+	return b.store.Update(user)
 }
 
-func UpsertAll(users []User) error {
-	return db.Transactional(store, func(tx db.Transaction) error {
+func (b *Bucket) UpsertAll(users []User) error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		for _, u := range users {
-			if err := tx.Upsert(&u); err != nil {
+			if err := store.Upsert(&u); err != nil {
 				return err
 			}
 		}
 
 		return nil
 	})
+}
+
+func (b *Bucket) Exists(id string) (bool, error) {
+	return b.store.Exists(id)
 }

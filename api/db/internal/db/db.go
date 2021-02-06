@@ -2,6 +2,7 @@ package db
 
 import "errors"
 
+var DB Database
 
 type Store interface {
 	Get(id interface{}, result interface{}) error
@@ -22,17 +23,21 @@ type Store interface {
 
 	DeleteAll() error
 
-	Begin() (Transaction, error)
+	Transactional(tx Transaction) Store
+
+	IsTransactional() bool
 }
 
 type Database interface {
 	CreateStore(newItem func() Entity) Store
 	Open(readOnly bool) error
 	Close() error
+	Begin() (Transaction, error)
 }
 
 type Entity interface {
 	GetID() interface{}
+	SetID(id interface{})
 }
 
 var EntityNotFound = errors.New("Entity not found")

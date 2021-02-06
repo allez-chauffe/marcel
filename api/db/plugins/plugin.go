@@ -10,7 +10,7 @@ import (
 type Plugin struct {
 	URL         string   `json:"url"`
 	Versions    []string `json:"versions"`
-	EltName     string   `json:"eltName"`
+	EltName     string   `json:"eltName" boltholdKey:"EltName"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Frontend    Frontend `json:"frontend"`
@@ -29,6 +29,10 @@ type Prop struct {
 	Value       string `json:"value"`
 }
 
+func New(eltName string) *Plugin {
+	return &Plugin{EltName: eltName}
+}
+
 // GetDirectory returns the plugin's static files directory path
 func (p *Plugin) GetDirectory() string {
 	return filepath.Join(config.Default().API().PluginsDir(), p.EltName)
@@ -36,4 +40,8 @@ func (p *Plugin) GetDirectory() string {
 
 func (p *Plugin) GetID() interface{} {
 	return p.EltName
+}
+
+func (p *Plugin) SetID(id interface{}) {
+	p.EltName = id.(string)
 }

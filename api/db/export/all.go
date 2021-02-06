@@ -1,6 +1,7 @@
 package export
 
 import (
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/api/db/medias"
 	"github.com/allez-chauffe/marcel/api/db/plugins"
 )
@@ -13,25 +14,31 @@ type all struct {
 
 func All(usersWPassword bool, outputFile string, pretty bool) error {
 	return export(func() (interface{}, error) {
-		users, err := listUsers(usersWPassword)
-		if err != nil {
-			return nil, err
-		}
+		var result *all
 
-		medias, err := medias.List()
-		if err != nil {
-			return nil, err
-		}
+		return result, db.Transactional(func(tx *db.Tx) error {
+			users, err := listUsers(usersWPassword)
+			if err != nil {
+				return err
+			}
 
-		plugins, err := plugins.List()
-		if err != nil {
-			return nil, err
-		}
+			medias, err := tx.Medias().List()
+			if err != nil {
+				return err
+			}
 
-		return &all{
-			Users:   users,
-			Medias:  medias,
-			Plugins: plugins,
-		}, nil
+			plugins, err := tx.Plugins().List()
+			if err != nil {
+				return err
+			}
+
+			result = &all{
+				Users:   users,
+				Medias:  medias,
+				Plugins: plugins,
+			}
+
+			return nil
+		})
 	}, outputFile, pretty)
 }

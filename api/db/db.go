@@ -9,8 +9,6 @@ import (
 	"github.com/allez-chauffe/marcel/api/db/users"
 )
 
-var DB db.Databse
-
 func Open() error {
 	return open(false)
 }
@@ -20,26 +18,41 @@ func OpenRO() error {
 }
 
 func open(readonly bool) error {
-	DB = getDatabaseDriver()
+	db.DB = getDatabaseDriver()
 
-	if err := DB.Open(readonly); err != nil {
+	if err := db.DB.Open(readonly); err != nil {
 		return err
 	}
 
 	// Initialise every stores
-	clients.CreateStore(DB)
-	medias.CreateStore(DB)
-	plugins.CreateStore(DB)
-	users.CreateStore(DB)
+	clients.CreateDefaultBucket()
+	medias.CreateDefaultBucket()
+	plugins.CreateDefaultBucket()
+	users.CreateDefaultBucket()
 
 	return nil
 }
 
 func Close() error {
-	return DB.Close()
+	return db.DB.Close()
 }
 
-func getDatabaseDriver() db.Databse {
+func Begin() (*Tx, error) {
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Tx{tx}, nil
+}
+
+func Transactional(task func(*Tx) error) (err error) {
+	return db.Transactional(func(tx db.Transaction) error {
+		return task(&Tx{tx})
+	})
+}
+
+func getDatabaseDriver() db.Database {
 	// TODO: Select the driver in config
 	return bhDriver.New()
 }

@@ -1,30 +1,51 @@
 package db
 
+import (
+	log "github.com/sirupsen/logrus"
+)
+
 type Transaction interface {
-	Store
 	Commit() error
 	Rollback() error
 }
 
-func Transactional(store Store, task func(Transaction) error) (err error){
-	tx, err := store.Begin()
+func Transactional(task func(Transaction) error) (err error) {
+	tx, err := DB.Begin()
 	if err != nil {
 		return err
 	}
+	log.Debugf("begin transaction")
 
-	defer func() {
-		if recoverd := recover(); err != nil && recoverd != nil {
-			tx.Rollback()
+	defer FinishTransaction(tx, &err)
 
-			if recoverd != nil {
-				panic(recoverd)
-			}
-		}
-	}()
+	return task(tx)
+}
 
-	if err = task(tx); err != nil {
+func FinishTransaction(tx Transaction, err *error) {
+	r := recover()
+
+	if *err == nil && r == nil {
+		*err = tx.Commit()
+		log.Debugf("commit transaction")
 		return
 	}
 
-	return tx.Commit()
+	if err := tx.Rollback(); err != nil {
+		log.Errorf("Error while rolling back: %s", err)
+	}
+	log.Debugf("rollback transaction")
+
+	if r != nil {
+		panic(r)
+	}
+}
+
+func EnsureTransaction(store Store, task func(Store) error) (err error) {
+	if store.IsTransactional() {
+		return task(store)
+	}
+
+	return Transactional(func(tx Transaction) error {
+		return task(store.Transactional(tx))
+	})
 }

@@ -23,6 +23,10 @@ func New() db.Database {
 	}
 }
 
+func (database *boltDatabase) Begin() (db.Transaction, error) {
+	return database.bh.Bolt().Begin(true)
+}
+
 func (database *boltDatabase) Open(readOnly bool) error {
 	log.Info("Opening bbolt database...")
 

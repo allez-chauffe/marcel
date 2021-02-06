@@ -10,6 +10,7 @@ import (
 
 	"github.com/allez-chauffe/marcel/api/auth"
 	"github.com/allez-chauffe/marcel/api/commons"
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/api/db/clients"
 )
 
@@ -122,7 +123,7 @@ func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		client.MediaID = 0
 	}
 
-	if err := clients.Insert(client); err != nil {
+	if err := db.Clients().Insert(client); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -144,7 +145,7 @@ func (s *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := clients.Delete(client.ID); err != nil {
+	if err := db.Clients().Delete(client.ID); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -162,7 +163,7 @@ func (s *Service) DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := clients.DeleteAll(); err != nil {
+	if err := db.Clients().DeleteAll(); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -187,7 +188,7 @@ func (s *Service) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := clients.Update(client); err != nil {
+	if err := db.Clients().Update(client); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}

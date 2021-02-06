@@ -6,57 +6,72 @@ import (
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
-var store db.Store
+var DefaultBucket *Bucket
 
-func CreateStore(database db.Databse) {
-	store = database.CreateStore(func() db.Entity{
-		return new(Media)
-	})
+type Bucket struct {
+	store db.Store
 }
 
-func List() ([]Media, error) {
+func Transactional(tx db.Transaction) *Bucket {
+	return &Bucket{DefaultBucket.store.Transactional(tx)}
+}
+
+func CreateDefaultBucket() {
+	DefaultBucket = &Bucket{
+		db.DB.CreateStore(func() db.Entity {
+			return new(Media)
+		}),
+	}
+}
+
+func (b *Bucket) List() ([]Media, error) {
 	var medias = []Media{}
-	return medias, store.List(&medias)
+	return medias, b.store.List(&medias)
 }
 
-func Get(id int) (*Media, error) {
+func (b *Bucket) Get(id int) (*Media, error) {
 	var result = new(Media)
-	return result, store.Get(id, &result)
+	return result, b.store.Get(id, &result)
 }
 
-func Insert(m *Media) error {
-	return db.Transactional(store, func(tx db.Transaction) error {
-		m.ID = -1 // Let auto increment set the id
-		if err := tx.Insert(m); err != nil {
+func (b *Bucket) Insert(m *Media) (err error) {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
+		if err = store.Insert(m); err != nil {
 			return err
 		}
 
-		// Set new media name with inserted ID
-		m.Name = fmt.Sprintf("Media %d", m.ID)
-		if err := tx.Update(m); err != nil {
-			return err
-		}
-
-		return nil
-	})
-}
-
-func Update(m *Media) error {
-	return store.Update(m)
-}
-
-func Delete(id int) error {
-	return store.Delete(id)
-}
-
-func UpsertAll(medias []Media) error {
-	return db.Transactional(store, func(tx db.Transaction) error {
-		for _, m := range medias {
-			if err := tx.Upsert(&m); err != nil {
+		// Set new media name if not given
+		if m.Name == "" {
+			m.Name = fmt.Sprintf("Media %d", m.ID)
+			if err := store.Update(m); err != nil {
 				return err
 			}
 		}
 
 		return nil
 	})
+}
+
+func (b *Bucket) Update(m *Media) error {
+	return b.store.Update(m)
+}
+
+func (b *Bucket) Delete(id int) error {
+	return b.store.Delete(id)
+}
+
+func (b *Bucket) UpsertAll(medias []Media) error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
+		for _, m := range medias {
+			if err := store.Upsert(&m); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
+
+func (b *Bucket) Exists(id int) (bool, error) {
+	return b.store.Exists(id)
 }

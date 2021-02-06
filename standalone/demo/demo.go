@@ -13,6 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/allez-chauffe/marcel/api/auth"
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/api/db/users"
 	"github.com/allez-chauffe/marcel/config"
 	"github.com/allez-chauffe/marcel/module"
@@ -54,7 +55,7 @@ func Module() (*module.Module, error) {
 				CreatedAt:   time.Now(),
 			}
 
-			if err := users.Insert(user); err != nil {
+			if err := db.Users().Insert(user); err != nil {
 				return nil, err
 			}
 

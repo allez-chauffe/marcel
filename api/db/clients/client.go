@@ -5,7 +5,7 @@ import (
 )
 
 type Client struct {
-	ID      string `json:"id"`
+	ID      string `json:"id" boltholdKey:"ID"`
 	Name    string `json:"name"`
 	Type    string `json:"type"`
 	MediaID int    `json:"mediaID"`
@@ -20,4 +20,8 @@ func New() *Client {
 
 func (c *Client) GetID() interface{} {
 	return c.ID
+}
+
+func (c *Client) SetID(id interface{}) {
+	c.ID = id.(string)
 }

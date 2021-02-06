@@ -1,39 +1,51 @@
 package clients
 
-import (
-	"github.com/allez-chauffe/marcel/api/db/internal/db"
-)
+import "github.com/allez-chauffe/marcel/api/db/internal/db"
 
-var store db.Store
+var DefaultBucket *Bucket
 
-func CreateStore(database db.Databse) {
-	store = database.CreateStore(func() db.Entity {
-		return new(Client)
-	})
+type Bucket struct {
+	store db.Store
 }
 
-func Get(id string) (*Client, error) {
-	var result = &Client{}
-	return result, store.Get(id, &result)
+func CreateDefaultBucket() {
+	DefaultBucket = &Bucket{
+		db.DB.CreateStore(func() db.Entity {
+			return new(Client)
+		}),
+	}
 }
 
-func List() ([]Client, error) {
+func Transactional(tx db.Transaction) *Bucket {
+	return &Bucket{DefaultBucket.store.Transactional(tx)}
+}
+
+func (b *Bucket) Get(id string) (*Client, error) {
+	c := &Client{}
+	return c, b.store.Get(id, &c)
+}
+
+func (b *Bucket) Exists(id string) (bool, error) {
+	return b.store.Exists(id)
+}
+
+func (b *Bucket) List() ([]Client, error) {
 	var clients = []Client{}
-	return clients, store.List(&clients)
+	return clients, b.store.List(&clients)
 }
 
-func Insert(c *Client) error {
-	return store.Insert(c)
+func (b *Bucket) Insert(c *Client) error {
+	return b.store.Insert(c)
 }
 
-func Update(c *Client) error {
-	return store.Update(c)
+func (b *Bucket) Update(c *Client) error {
+	return b.store.Update(c)
 }
 
-func Delete(id string) error {
-	return store.Delete(id)
+func (b *Bucket) Delete(id string) error {
+	return b.store.Delete(id)
 }
 
-func DeleteAll() error {
-	return store.DeleteAll()
+func (b *Bucket) DeleteAll() error {
+	return b.store.DeleteAll()
 }
