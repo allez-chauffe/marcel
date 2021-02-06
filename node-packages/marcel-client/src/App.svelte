@@ -34,13 +34,12 @@
         You can associate the client in the backoffice.<br>
       </Message>
     {:else if $machine.state === 'fatalError'}
-      <Message active title="Error !" type="is-danger">{$machine.context.error}</Message>
+      <Message active title="Error!" type="is-danger">{$machine.context.error}</Message>
     {:else}
       <Progress type="is-info" value={$machine.context.loadingStep} max={maxLoadingStep} />
     {/if}
   </div>
 
 {/if}
-
 
 <Debugger />

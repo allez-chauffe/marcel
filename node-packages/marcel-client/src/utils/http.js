@@ -17,7 +17,7 @@ export const request = async (url, options) => {
     credentials: 'include',
   })
 
-  if (!response.status.toString().startsWith('2')) {
+  if (!response.ok) {
     const error = new Error('Fetch error')
     error.response = response
     throw error

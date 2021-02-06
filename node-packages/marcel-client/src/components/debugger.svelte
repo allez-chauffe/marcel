@@ -17,10 +17,12 @@
     height: 100vh;
     width: 40em;
   }
+
   pre {
     font-size: 10px;
     height: 100%;
   }
+
   button {
     width: 100%;
     border: 2px black solid;

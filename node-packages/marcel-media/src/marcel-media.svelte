@@ -15,9 +15,11 @@
     width: 100%;
     height: 100%;
   }
+
   * {
     box-sizing: border-box;
   }
+
   .widget {
     position: absolute;
     transition: width 1s ease-in-out, height 1s ease-in-out, left 1s ease-in-out,

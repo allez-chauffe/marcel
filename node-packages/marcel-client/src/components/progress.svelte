@@ -1,9 +1,9 @@
 <script>
-  import { afterUpdate } from 'svelte';
-  import { tweened } from 'svelte/motion';
-  import { Progress } from "svelma";
+  import { afterUpdate } from 'svelte'
+  import { tweened } from 'svelte/motion'
+  import { Progress } from "svelma"
 
-  export let value, max, duration = 400, type;
+  export let value, max, type, duration = 400
 
   let progressBar, container
   let loadingProgression = tweened(value, duration)
@@ -12,7 +12,7 @@
     if(container) progressBar = container.querySelector('progress')
   })
 
-  $: if(progressBar) loadingProgression.set(value);
+  $: if(progressBar) loadingProgression.set(value)
 
   $: if(progressBar) progressBar.value = $loadingProgression || 0
 </script>

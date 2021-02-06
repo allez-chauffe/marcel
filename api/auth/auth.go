@@ -49,7 +49,7 @@ func createTokenCookie(claims jwt.Claims, name string, path string, expiration t
 	}
 
 	// Workaround: In a context of cors with the api beeing on different domain
-	// 						 than front, we can't have a strict same site cookie.
+	// than front, we can't have a strict same site cookie.
 	if config.Default().HTTP().CORS() {
 		cookie.SameSite = http.SameSiteNoneMode
 	}
@@ -68,7 +68,7 @@ func deleteCookie(name, path string) *http.Cookie {
 	}
 
 	// Workaround: In a context of cors with the api beeing on different domain
-	// 						 than front, we can't have a strict same site cookie.
+	// than front, we can't have a strict same site cookie.
 	if config.Default().HTTP().CORS() {
 		cookie.SameSite = http.SameSiteNoneMode
 	}
