@@ -44,7 +44,7 @@ func fileHandler(base string, fs fs.FS) http.Handler {
 		http.FileServer(http.FS(
 			httputil.NewTemplater(
 				fs,
-				[]string{"/index.html"},
+				[]string{"index.html"},
 				map[string]string{"REACT_APP_BASE": base},
 			),
 		)),
