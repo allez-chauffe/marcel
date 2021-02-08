@@ -7,21 +7,47 @@ import (
 	"reflect"
 	"strings"
 
+	// Import of postgres driver
+	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 	"github.com/allez-chauffe/marcel/config"
-
-	// Import of postgres driver
-	_ "github.com/lib/pq"
 )
+
+type postgresDriver struct{}
+
+var Driver db.Driver = new(postgresDriver)
+
+func (driver *postgresDriver) Open() (db.Database, error) {
+	pgConf := config.Default().API().DB().Postgres()
+
+	log.Infof("Connecting to postgres database (%s:%s/%s) ...", pgConf.Host(), pgConf.Port(), pgConf.DBName())
+
+	pg, err := sql.Open("postgres", getConnectionString(""))
+	if err != nil {
+		return nil, err
+	}
+
+	if err := pg.Ping(); err != nil {
+		if strings.Contains(err.Error(), "database") && strings.Contains(err.Error(), "does not exist") {
+			pg.Close()
+			var creationError error
+			if pg, creationError = createDatabase(); creationError != nil {
+				return nil, fmt.Errorf("%w (failed to create it: %s", err, creationError)
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	log.Info("Postgres database connected")
+
+	return &postgresDatabase{pg}, nil
+}
 
 type postgresDatabase struct {
 	pg *sql.DB
-}
-
-func New() db.Database {
-	return &postgresDatabase{}
 }
 
 func (database *postgresDatabase) Begin() (db.Transaction, error) {
@@ -55,34 +81,6 @@ func (database *postgresDatabase) CreateStore(newEntity func() db.Entity) (db.St
 	}
 
 	return &postgresStore{&postgresStoreConfig{table, postgresIDType, newEntity, database.pg}, nil}, nil
-}
-
-func (database *postgresDatabase) Open() error {
-	pgConf := config.Default().API().DB().Postgres()
-
-	log.Infof("Connecting to postgres database (%s:%s/%s) ...", pgConf.Host(), pgConf.Port(), pgConf.DBName())
-
-	pg, err := sql.Open("postgres", getConnectionString(""))
-	if err != nil {
-		return err
-	}
-
-	if err := pg.Ping(); err != nil {
-		if strings.Contains(err.Error(), "database") && strings.Contains(err.Error(), "does not exist") {
-			pg.Close()
-			var creationError error
-			if pg, creationError = createDatabase(); creationError != nil {
-				return fmt.Errorf("%w (failed to create it: %s", err, creationError)
-			}
-		} else {
-			return err
-		}
-	}
-
-	database.pg = pg
-	log.Info("Postgres database connected")
-
-	return nil
 }
 
 func (database *postgresDatabase) Close() error {

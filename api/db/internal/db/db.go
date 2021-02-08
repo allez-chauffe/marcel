@@ -4,6 +4,15 @@ import "errors"
 
 var DB Database
 
+type Driver interface {
+	Open() (Database, error)
+}
+
+type Database interface {
+	CreateStore(newItem func() Entity) (Store, error)
+	Begin() (Transaction, error)
+	Close() error
+}
 type Store interface {
 	Get(id interface{}, result interface{}) error
 
@@ -26,13 +35,6 @@ type Store interface {
 	Transactional(tx Transaction) Store
 
 	IsTransactional() bool
-}
-
-type Database interface {
-	CreateStore(newItem func() Entity) (Store, error)
-	Open() error
-	Close() error
-	Begin() (Transaction, error)
 }
 
 type Entity interface {

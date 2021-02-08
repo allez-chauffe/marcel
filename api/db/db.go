@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/allez-chauffe/marcel/api/db/clients"
-	bhDriver "github.com/allez-chauffe/marcel/api/db/drivers/bolthold"
-	pgDriver "github.com/allez-chauffe/marcel/api/db/drivers/postgres"
+	bolt "github.com/allez-chauffe/marcel/api/db/drivers/bolthold"
+	"github.com/allez-chauffe/marcel/api/db/drivers/postgres"
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 	"github.com/allez-chauffe/marcel/api/db/medias"
 	"github.com/allez-chauffe/marcel/api/db/plugins"
@@ -14,11 +14,12 @@ import (
 )
 
 func Open() error {
-	db.DB = getDatabaseDriver()
-
-	if err := db.DB.Open(); err != nil {
+	database, err := driver().Open()
+	if err != nil {
 		return err
 	}
+
+	db.DB = database
 
 	// Initialise every stores
 	if err := clients.CreateDefaultBucket(); err != nil {
@@ -56,13 +57,13 @@ func Transactional(task func(*Tx) error) (err error) {
 	})
 }
 
-func getDatabaseDriver() db.Database {
+func driver() db.Driver {
 	driver := config.Default().API().DB().Driver()
 	switch driver {
 	case "bolt":
-		return bhDriver.New()
+		return bolt.Driver
 	case "postgres":
-		return pgDriver.New()
+		return postgres.Driver
 	default:
 		panic(fmt.Errorf("Unknown database driver %s", driver))
 	}

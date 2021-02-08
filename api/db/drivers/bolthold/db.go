@@ -13,36 +13,34 @@ import (
 	"github.com/allez-chauffe/marcel/config"
 )
 
-type boltDatabase struct {
-	bh *bh.Store
-}
+type boltDriver struct{}
 
-func New() db.Database {
-	return &boltDatabase{
-		new(bh.Store),
-	}
-}
+var Driver db.Driver = new(boltDriver)
 
-func (database *boltDatabase) Begin() (db.Transaction, error) {
-	return database.bh.Bolt().Begin(true)
-}
-
-func (database *boltDatabase) Open() error {
+func (driver *boltDriver) Open() (db.Database, error) {
 	log.Info("Opening bbolt database...")
 
 	var options = *bolt.DefaultOptions
 	options.Timeout = 100 * time.Millisecond
 
-	var err error
-	if database.bh, err = bh.Open(os.ExpandEnv(config.Default().API().DB().Bolt().File()), 0644, &bh.Options{
+	database, err := bh.Open(os.ExpandEnv(config.Default().API().DB().Bolt().File()), 0644, &bh.Options{
 		Options: &options,
-	}); err != nil {
-		return fmt.Errorf("Error while opening bbolt database: %w", err)
+	})
+	if err != nil {
+		return nil, fmt.Errorf("Error while opening bbolt database: %w", err)
 	}
 
 	log.Info("bbolt database opened")
 
-	return nil
+	return &boltDatabase{database}, nil
+}
+
+type boltDatabase struct {
+	bh *bh.Store
+}
+
+func (database *boltDatabase) Begin() (db.Transaction, error) {
+	return database.bh.Bolt().Begin(true)
 }
 
 func (database *boltDatabase) Close() error {
