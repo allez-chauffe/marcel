@@ -5,7 +5,7 @@ import (
 )
 
 type Client struct {
-	ID      string `json:"id" boltholdKey:"ID" structs:"id"`
+	ID      string `json:"id" boltholdKey:"ID"`
 	Name    string `json:"name"`
 	Type    string `json:"type"`
 	MediaID int    `json:"mediaID"`

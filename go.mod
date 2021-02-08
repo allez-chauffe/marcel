@@ -13,7 +13,8 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/lib/pq v1.9.0 // indirect
 	github.com/mattn/go-isatty v0.0.10
-	github.com/nlepage/go-tarfs v1.0.4
+	github.com/mitchellh/mapstructure v1.4.1 // indirect
+	github.com/nlepage/go-tarfs v1.0.2
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/rs/cors v1.7.0
 	github.com/satori/go.uuid v1.2.0

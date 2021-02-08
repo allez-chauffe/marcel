@@ -14,7 +14,7 @@ import (
 var secret = []byte("This is the password secret key !")
 
 type User struct {
-	ID                string    `json:"id" boltholdKey:"ID" structs:"id"`
+	ID                string    `json:"id" boltholdKey:"ID"`
 	DisplayName       string    `json:"displayName"`
 	Login             string    `json:"login" boltholdIndex:"Login"`
 	Role              string    `json:"role"`

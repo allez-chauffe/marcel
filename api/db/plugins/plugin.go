@@ -11,7 +11,7 @@ type Plugin struct {
 	URL      string   `json:"url"`
 	Versions []string `json:"versions"`
 	// FIXME: Do better to handle differnent primary key names
-	EltName     string   `json:"eltName" boltholdKey:"EltName" structs:"id"`
+	EltName     string   `json:"eltName" boltholdKey:"EltName"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Frontend    Frontend `json:"frontend"`

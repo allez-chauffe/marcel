@@ -7,8 +7,10 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/fatih/structs"
+	"github.com/mitchellh/mapstructure"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 	"github.com/allez-chauffe/marcel/config"
@@ -51,11 +53,23 @@ func unmarshallRow(row scanable, id interface{}, result interface{}) error {
 		return err
 	}
 
-	if err := json.Unmarshal([]byte(data), result); err != nil {
+	var resultMap map[string]interface{}
+	if err := json.Unmarshal([]byte(data), &resultMap); err != nil {
 		return err
 	}
 
 	entity := resultPtr.Interface().(db.Entity)
+
+	decoder, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		DecodeHook: mapstructure.StringToTimeHookFunc(time.RFC3339),
+		Result:     entity,
+	})
+	if err != nil {
+		return err
+	}
+	if err := decoder.Decode(resultMap); err != nil {
+		return err
+	}
 	entity.SetID(id)
 
 	return nil
@@ -63,9 +77,6 @@ func unmarshallRow(row scanable, id interface{}, result interface{}) error {
 
 func prepare(item db.Entity) (interface{}, []byte) {
 	data := structs.Map(item)
-	// FIXME handle other primary key name
-	delete(data, "id")
-
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		panic(fmt.Errorf("Failed to prepare value fo postgres jsonb: %w", err))

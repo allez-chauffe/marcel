@@ -2,7 +2,7 @@ package medias
 
 // Media represents a media configuration
 type Media struct {
-	ID          int                    `json:"id" boltholdKey:"ID" structs:"id"`
+	ID          int                    `json:"id" boltholdKey:"ID"`
 	Name        string                 `json:"name"`
 	IsActive    bool                   `json:"isactive"`
 	Description string                 `json:"description"`
