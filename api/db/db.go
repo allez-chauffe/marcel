@@ -14,17 +14,9 @@ import (
 )
 
 func Open() error {
-	return open(false)
-}
-
-func OpenRO() error {
-	return open(true)
-}
-
-func open(readonly bool) error {
 	db.DB = getDatabaseDriver()
 
-	if err := db.DB.Open(readonly); err != nil {
+	if err := db.DB.Open(); err != nil {
 		return err
 	}
 

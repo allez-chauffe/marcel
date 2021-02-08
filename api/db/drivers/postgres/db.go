@@ -57,11 +57,7 @@ func (database *postgresDatabase) CreateStore(newEntity func() db.Entity) (db.St
 	return &postgresStore{&postgresStoreConfig{table, postgresIDType, newEntity, database.pg}, nil}, nil
 }
 
-func (database *postgresDatabase) Open(readOnly bool) error {
-	if readOnly {
-		log.Warn("Database provider for postgres doesn't support readonly connections")
-	}
-
+func (database *postgresDatabase) Open() error {
 	pgConf := config.Default().API().DB().Postgres()
 
 	log.Infof("Connecting to postgres database (%s:%s/%s) ...", pgConf.Host(), pgConf.Port(), pgConf.DBName())

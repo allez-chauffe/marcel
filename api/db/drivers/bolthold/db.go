@@ -27,11 +27,10 @@ func (database *boltDatabase) Begin() (db.Transaction, error) {
 	return database.bh.Bolt().Begin(true)
 }
 
-func (database *boltDatabase) Open(readOnly bool) error {
+func (database *boltDatabase) Open() error {
 	log.Info("Opening bbolt database...")
 
 	var options = *bolt.DefaultOptions
-	options.ReadOnly = readOnly
 	options.Timeout = 100 * time.Millisecond
 
 	var err error
