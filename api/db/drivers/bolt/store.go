@@ -3,9 +3,10 @@ package bolt
 import (
 	"reflect"
 
-	"github.com/allez-chauffe/marcel/api/db/internal/db"
 	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
+
+	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
 type boltStoreConfig struct {

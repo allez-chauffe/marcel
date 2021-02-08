@@ -8,9 +8,10 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/fatih/structs"
+
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 	"github.com/allez-chauffe/marcel/config"
-	"github.com/fatih/structs"
 )
 
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")

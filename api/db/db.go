@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/allez-chauffe/marcel/api/db/clients"
-	bolt "github.com/allez-chauffe/marcel/api/db/drivers/bolthold"
+	"github.com/allez-chauffe/marcel/api/db/drivers/bolt"
 	"github.com/allez-chauffe/marcel/api/db/drivers/postgres"
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 	"github.com/allez-chauffe/marcel/api/db/medias"
@@ -58,8 +58,7 @@ func Transactional(task func(*Tx) error) (err error) {
 }
 
 func driver() db.Driver {
-	driver := config.Default().API().DB().Driver()
-	switch driver {
+	switch config.Default().API().DB().Driver() {
 	case "bolt":
 		return bolt.Driver
 	case "postgres":
