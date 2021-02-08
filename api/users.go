@@ -140,7 +140,9 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUserPayload(w http.ResponseWriter, r *http.Request) *UserPayload {
-	user := new(UserPayload)
+	user := &UserPayload{
+		User: users.New(),
+	}
 
 	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while parsing JSON (%s)", err.Error()))

@@ -109,7 +109,7 @@ func (s *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := new(clients.Client)
+	client := clients.New()
 	if err := json.NewDecoder(r.Body).Decode(client); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
 		return
