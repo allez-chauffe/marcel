@@ -11,7 +11,7 @@ import (
 	"github.com/allez-chauffe/marcel/module"
 )
 
-const index = "/index.html"
+const index = "index.html"
 
 // Module creates backoffice module
 func Module() *module.Module {
