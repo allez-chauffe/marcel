@@ -7,17 +7,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var DefaultBucket *Bucket
+var DefaultStore *Store
 
-type Bucket struct {
+type Store struct {
 	store db.Store
 }
 
-func Transactional(tx db.Transaction) *Bucket {
-	return &Bucket{DefaultBucket.store.Transactional(tx)}
+func Transactional(tx db.Transaction) *Store {
+	return &Store{DefaultStore.store.Transactional(tx)}
 }
 
-func CreateDefaultBucket() error {
+func CreateStore() error {
 	store, err := db.DB.CreateStore(func() db.Entity {
 		return new(Media)
 	})
@@ -26,21 +26,21 @@ func CreateDefaultBucket() error {
 		return err
 	}
 
-	DefaultBucket = &Bucket{store}
+	DefaultStore = &Store{store}
 	return nil
 }
 
-func (b *Bucket) List() ([]Media, error) {
+func (b *Store) List() ([]Media, error) {
 	var medias = []Media{}
 	return medias, b.store.List(&medias)
 }
 
-func (b *Bucket) Get(id int) (*Media, error) {
+func (b *Store) Get(id int) (*Media, error) {
 	var result = new(Media)
 	return result, b.store.Get(id, &result)
 }
 
-func (b *Bucket) Insert(m *Media) (err error) {
+func (b *Store) Insert(m *Media) (err error) {
 	logrus.Debugf("Before ensure")
 	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		if err = store.Insert(m); err != nil {
@@ -60,15 +60,15 @@ func (b *Bucket) Insert(m *Media) (err error) {
 	})
 }
 
-func (b *Bucket) Update(m *Media) error {
+func (b *Store) Update(m *Media) error {
 	return b.store.Update(m)
 }
 
-func (b *Bucket) Delete(id int) error {
+func (b *Store) Delete(id int) error {
 	return b.store.Delete(id)
 }
 
-func (b *Bucket) UpsertAll(medias []Media) error {
+func (b *Store) UpsertAll(medias []Media) error {
 	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		for _, m := range medias {
 			if err := store.Upsert(&m); err != nil {
@@ -80,6 +80,6 @@ func (b *Bucket) UpsertAll(medias []Media) error {
 	})
 }
 
-func (b *Bucket) Exists(id int) (bool, error) {
+func (b *Store) Exists(id int) (bool, error) {
 	return b.store.Exists(id)
 }

@@ -21,17 +21,17 @@ func Open() error {
 
 	db.DB = database
 
-	// Initialise every stores
-	if err := clients.CreateDefaultBucket(); err != nil {
+	// Initialize every stores
+	if err := clients.CreateStore(); err != nil {
 		return err
 	}
-	if err := medias.CreateDefaultBucket(); err != nil {
+	if err := medias.CreateStore(); err != nil {
 		return err
 	}
-	if err := plugins.CreateDefaultBucket(); err != nil {
+	if err := plugins.CreateStore(); err != nil {
 		return err
 	}
-	if err := users.CreateDefaultBucket(); err != nil {
+	if err := users.CreateStore(); err != nil {
 		return err
 	}
 

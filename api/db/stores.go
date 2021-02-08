@@ -8,38 +8,38 @@ import (
 	"github.com/allez-chauffe/marcel/api/db/users"
 )
 
-func Clients() *clients.Bucket {
-	return clients.DefaultBucket
+func Clients() *clients.Store {
+	return clients.DefaultStore
 }
 
-func Medias() *medias.Bucket {
-	return medias.DefaultBucket
+func Medias() *medias.Store {
+	return medias.DefaultStore
 }
 
-func Plugins() *plugins.Bucket {
-	return plugins.DefaultBucket
+func Plugins() *plugins.Store {
+	return plugins.DefaultStore
 }
 
-func Users() *users.Bucket {
-	return users.DefaultBucket
+func Users() *users.Store {
+	return users.DefaultStore
 }
 
 type Tx struct {
 	db.Transaction
 }
 
-func (tx *Tx) Clients() *clients.Bucket {
+func (tx *Tx) Clients() *clients.Store {
 	return clients.Transactional(tx.Transaction)
 }
 
-func (tx *Tx) Medias() *medias.Bucket {
+func (tx *Tx) Medias() *medias.Store {
 	return medias.Transactional(tx.Transaction)
 }
 
-func (tx *Tx) Plugins() *plugins.Bucket {
+func (tx *Tx) Plugins() *plugins.Store {
 	return plugins.Transactional(tx.Transaction)
 }
 
-func (tx *Tx) Users() *users.Bucket {
+func (tx *Tx) Users() *users.Store {
 	return users.Transactional(tx.Transaction)
 }

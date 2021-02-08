@@ -4,13 +4,13 @@ import (
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
-var DefaultBucket *Bucket
+var DefaultStore *Store
 
-type Bucket struct {
+type Store struct {
 	store db.Store
 }
 
-func CreateDefaultBucket() error {
+func CreateStore() error {
 	store, err := db.DB.CreateStore(func() db.Entity {
 		return new(Plugin)
 	})
@@ -19,37 +19,37 @@ func CreateDefaultBucket() error {
 		return err
 	}
 
-	DefaultBucket = &Bucket{store}
+	DefaultStore = &Store{store}
 	return nil
 }
 
-func Transactional(tx db.Transaction) *Bucket {
-	return &Bucket{DefaultBucket.store.Transactional(tx)}
+func Transactional(tx db.Transaction) *Store {
+	return &Store{DefaultStore.store.Transactional(tx)}
 }
 
-func (b *Bucket) List() ([]Plugin, error) {
+func (b *Store) List() ([]Plugin, error) {
 	var plugins = []Plugin{}
 	return plugins, b.store.List(&plugins)
 }
 
-func (b *Bucket) Get(eltName string) (*Plugin, error) {
+func (b *Store) Get(eltName string) (*Plugin, error) {
 	var p = new(Plugin)
 	return p, b.store.Get(eltName, &p)
 }
 
-func (b *Bucket) Exists(eltName string) (bool, error) {
+func (b *Store) Exists(eltName string) (bool, error) {
 	return b.store.Exists(eltName)
 }
 
-func (b *Bucket) Insert(p *Plugin) error {
+func (b *Store) Insert(p *Plugin) error {
 	return b.store.Insert(p)
 }
 
-func (b *Bucket) Update(p *Plugin) error {
+func (b *Store) Update(p *Plugin) error {
 	return b.store.Update(p)
 }
 
-func (b *Bucket) UpsertAll(plugins []Plugin) error {
+func (b *Store) UpsertAll(plugins []Plugin) error {
 	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		for _, p := range plugins {
 			if err := store.Upsert(&p); err != nil {
@@ -61,6 +61,6 @@ func (b *Bucket) UpsertAll(plugins []Plugin) error {
 	})
 }
 
-func (b *Bucket) Delete(eltName string) error {
+func (b *Store) Delete(eltName string) error {
 	return b.store.Delete(eltName)
 }

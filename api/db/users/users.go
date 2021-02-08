@@ -10,13 +10,13 @@ import (
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
-var DefaultBucket *Bucket
+var DefaultStore *Store
 
-type Bucket struct {
+type Store struct {
 	store db.Store
 }
 
-func CreateDefaultBucket() error {
+func CreateStore() error {
 	store, err := db.DB.CreateStore(func() db.Entity {
 		return new(User)
 	})
@@ -25,15 +25,15 @@ func CreateDefaultBucket() error {
 		return err
 	}
 
-	DefaultBucket = &Bucket{store}
+	DefaultStore = &Store{store}
 	return nil
 }
 
-func Transactional(tx db.Transaction) *Bucket {
-	return &Bucket{DefaultBucket.store.Transactional(tx)}
+func Transactional(tx db.Transaction) *Store {
+	return &Store{DefaultStore.store.Transactional(tx)}
 }
 
-func (b *Bucket) EnsureOneUser() error {
+func (b *Store) EnsureOneUser() error {
 	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		users := &[]User{}
 
@@ -66,21 +66,21 @@ func (b *Bucket) EnsureOneUser() error {
 	})
 }
 
-func (b *Bucket) Insert(u *User) error {
+func (b *Store) Insert(u *User) error {
 	return b.store.Insert(u)
 }
 
-func (b *Bucket) List() ([]User, error) {
+func (b *Store) List() ([]User, error) {
 	var users []User
 	return users, b.store.List(&users)
 }
 
-func (b *Bucket) Get(id string) (*User, error) {
+func (b *Store) Get(id string) (*User, error) {
 	u := new(User)
 	return u, b.store.Get(id, &u)
 }
 
-func (b *Bucket) GetByLogin(login string) (*User, error) {
+func (b *Store) GetByLogin(login string) (*User, error) {
 	var users []User
 
 	filters := map[string]interface{}{
@@ -98,11 +98,11 @@ func (b *Bucket) GetByLogin(login string) (*User, error) {
 	return &users[0], nil
 }
 
-func (b *Bucket) Delete(id string) error {
+func (b *Store) Delete(id string) error {
 	return b.store.Delete(id)
 }
 
-func (b *Bucket) Disconnect(id string) error {
+func (b *Store) Disconnect(id string) error {
 	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		u := &User{}
 		if err := store.Get(id, &u); u == nil || err != nil {
@@ -114,11 +114,11 @@ func (b *Bucket) Disconnect(id string) error {
 	})
 }
 
-func (b *Bucket) Update(user *User) error {
+func (b *Store) Update(user *User) error {
 	return b.store.Update(user)
 }
 
-func (b *Bucket) UpsertAll(users []User) error {
+func (b *Store) UpsertAll(users []User) error {
 	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		for _, u := range users {
 			if err := store.Upsert(&u); err != nil {
@@ -130,6 +130,6 @@ func (b *Bucket) UpsertAll(users []User) error {
 	})
 }
 
-func (b *Bucket) Exists(id string) (bool, error) {
+func (b *Store) Exists(id string) (bool, error) {
 	return b.store.Exists(id)
 }
