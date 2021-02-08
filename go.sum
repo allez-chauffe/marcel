@@ -101,6 +101,8 @@ github.com/mitchellh/mapstructure v1.1.2/go.mod h1:FVVH3fgwuzCH5S8UJGiWEs2h04kUh
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/nlepage/go-tarfs v1.0.2 h1:v5QzaOEZFKnSaSvKfpUoMEPXDvj5ADJr5m0ElKsLElQ=
 github.com/nlepage/go-tarfs v1.0.2/go.mod h1:h+q8dM/c7jfnZitetCTclu/D0LGoT6T5DcTe6bmNyt8=
+github.com/nlepage/go-tarfs v1.0.4 h1:LMLWjAdG56QSfTcJV9pgtfSna38g5z2MwbuUSrsYFRc=
+github.com/nlepage/go-tarfs v1.0.4/go.mod h1:guZJ15k0DRG0niLSTgPAJOI/fc006UU+qcpS0AS21Pg=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
 github.com/pelletier/go-buffruneio v0.2.0/go.mod h1:JkE26KsDizTr40EUHkXVtNPvgGtbSNq5BcowyYOWdKo=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
