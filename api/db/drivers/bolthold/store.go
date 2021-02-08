@@ -4,7 +4,6 @@ import (
 	"reflect"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
-	log "github.com/sirupsen/logrus"
 	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
 )
@@ -20,11 +19,11 @@ type boltStore struct {
 	tx *bolt.Tx
 }
 
-func (database *boltDatabase) CreateStore(newEntity func() db.Entity) db.Store {
+func (database *boltDatabase) CreateStore(newEntity func() db.Entity) (db.Store, error) {
 	return &boltStore{
 		&boltStoreConfig{database, newEntity, reflect.TypeOf(newEntity()).Elem().Name()},
 		nil,
-	}
+	}, nil
 }
 
 func (store *boltStore) Transactional(tx db.Transaction) db.Store {
@@ -64,7 +63,7 @@ func (store *boltStore) Get(id interface{}, result interface{}) error {
 	}
 
 	if err != nil {
-		resultPointer.Set(reflect.Zero(resultType.Elem()))
+		resultPointer.Set(reflect.Zero(resultPointer.Type()))
 		if err == bh.ErrNotFound {
 			return nil
 		}
@@ -82,9 +81,7 @@ func (store *boltStore) List(result interface{}) error {
 }
 
 func (store *boltStore) Insert(item db.Entity) error {
-	log.Debugf("before ensure")
 	return store.ensureTransaction(func(store *boltStore) error {
-		log.Debug("inside ensure")
 		if db.ShouldAutoIncrement(item) {
 			id, err := store.nextSequence()
 			if err != nil {

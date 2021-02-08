@@ -35,7 +35,7 @@ func (database *boltDatabase) Open(readOnly bool) error {
 	options.Timeout = 100 * time.Millisecond
 
 	var err error
-	if database.bh, err = bh.Open(os.ExpandEnv(config.Default().API().DBFile()), 0644, &bh.Options{
+	if database.bh, err = bh.Open(os.ExpandEnv(config.Default().API().DB().Bolt().File()), 0644, &bh.Options{
 		Options: &options,
 	}); err != nil {
 		return fmt.Errorf("Error while opening bbolt database: %w", err)

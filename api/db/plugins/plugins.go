@@ -10,12 +10,17 @@ type Bucket struct {
 	store db.Store
 }
 
-func CreateDefaultBucket() {
-	DefaultBucket = &Bucket{
-		db.DB.CreateStore(func() db.Entity {
-			return new(Plugin)
-		}),
+func CreateDefaultBucket() error {
+	store, err := db.DB.CreateStore(func() db.Entity {
+		return new(Plugin)
+	})
+
+	if err != nil {
+		return err
 	}
+
+	DefaultBucket = &Bucket{store}
+	return nil
 }
 
 func Transactional(tx db.Transaction) *Bucket {

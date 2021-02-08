@@ -2,7 +2,7 @@ package medias
 
 // Media represents a media configuration
 type Media struct {
-	ID          int                    `json:"id" boltholdKey:"ID"`
+	ID          int                    `json:"id" boltholdKey:"ID" structs:"id"`
 	Name        string                 `json:"name"`
 	IsActive    bool                   `json:"isactive"`
 	Description string                 `json:"description"`
@@ -33,7 +33,20 @@ func (m *Media) GetID() interface{} {
 }
 
 func (m *Media) SetID(id interface{}) {
-	m.ID = id.(int)
+	switch cleanedID := id.(type) {
+	case int:
+		m.ID = cleanedID
+	case int8:
+		m.ID = int(cleanedID)
+	case int16:
+		m.ID = int(cleanedID)
+	case int32:
+		m.ID = int(cleanedID)
+	case int64:
+		m.ID = int(cleanedID)
+	default:
+		panic("Incompatible id type")
+	}
 }
 
 // MediaPlugin represents a plugin configuration for the media

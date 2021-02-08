@@ -5,7 +5,7 @@ import (
 )
 
 type Client struct {
-	ID      string `json:"id" boltholdKey:"ID"`
+	ID      string `json:"id" boltholdKey:"ID" structs:"id"`
 	Name    string `json:"name"`
 	Type    string `json:"type"`
 	MediaID int    `json:"mediaID"`
@@ -23,5 +23,12 @@ func (c *Client) GetID() interface{} {
 }
 
 func (c *Client) SetID(id interface{}) {
-	c.ID = id.(string)
+	switch cleanID := id.(type) {
+	case string:
+		c.ID = cleanID
+	case []byte:
+		c.ID = string(cleanID)
+	default:
+		panic("Unsuported id type")
+	}
 }

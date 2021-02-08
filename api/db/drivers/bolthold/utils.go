@@ -1,7 +1,6 @@
 package bolt
 
 import (
-	log "github.com/sirupsen/logrus"
 	bh "github.com/timshannon/bolthold"
 	bolt "go.etcd.io/bbolt"
 )
@@ -21,13 +20,9 @@ func queryFromFilters(filters map[string]interface{}) *bh.Query {
 }
 
 func (store *boltStore) ensureTransaction(task func(*boltStore) error) error {
-	log.Debug("ensure start")
 	if store.IsTransactional() {
-		log.Debug("is transactional")
 		return task(store)
 	}
-
-	log.Debug("is not transactional")
 
 	return store.bh.Bolt().Update(func(tx *bolt.Tx) error {
 		return task(&boltStore{store.boltStoreConfig, tx})

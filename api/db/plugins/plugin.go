@@ -8,9 +8,10 @@ import (
 
 // Plugin represents a plugin configuration
 type Plugin struct {
-	URL         string   `json:"url"`
-	Versions    []string `json:"versions"`
-	EltName     string   `json:"eltName" boltholdKey:"EltName"`
+	URL      string   `json:"url"`
+	Versions []string `json:"versions"`
+	// FIXME: Do better to handle differnent primary key names
+	EltName     string   `json:"eltName" boltholdKey:"EltName" structs:"id"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Frontend    Frontend `json:"frontend"`

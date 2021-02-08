@@ -29,7 +29,7 @@ type Store interface {
 }
 
 type Database interface {
-	CreateStore(newItem func() Entity) Store
+	CreateStore(newItem func() Entity) (Store, error)
 	Open(readOnly bool) error
 	Close() error
 	Begin() (Transaction, error)

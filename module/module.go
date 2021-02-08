@@ -47,7 +47,7 @@ func (m Module) Run() (exitCode int) {
 
 	var httpSrv, err = m.startHTTP()
 	if err != nil {
-		log.Errorf("Error while starting %s's HTTP: %w", m.Name, err)
+		log.Errorf("Error while starting %s's HTTP: %s", m.Name, err)
 		exitCode = 1
 		return
 	}

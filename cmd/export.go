@@ -30,7 +30,7 @@ func init() {
 		},
 	}
 
-	if _, err := cfg.FlagString(cmd.PersistentFlags(), "dbFile", cfg.API().DBFile(), "Database file name", "api.dbFile"); err != nil {
+	if _, err := cfg.FlagString(cmd.PersistentFlags(), "dbFile", cfg.API().DB().Bolt().File(), "Database file name", "api.db.bolt.file"); err != nil {
 		panic(err)
 	}
 	cmd.PersistentFlags().BoolVar(&pretty, "pretty", false, "Indent export file")

@@ -16,12 +16,17 @@ func Transactional(tx db.Transaction) *Bucket {
 	return &Bucket{DefaultBucket.store.Transactional(tx)}
 }
 
-func CreateDefaultBucket() {
-	DefaultBucket = &Bucket{
-		db.DB.CreateStore(func() db.Entity {
-			return new(Media)
-		}),
+func CreateDefaultBucket() error {
+	store, err := db.DB.CreateStore(func() db.Entity {
+		return new(Media)
+	})
+
+	if err != nil {
+		return err
 	}
+
+	DefaultBucket = &Bucket{store}
+	return nil
 }
 
 func (b *Bucket) List() ([]Media, error) {
