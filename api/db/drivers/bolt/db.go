@@ -3,6 +3,7 @@ package bolt
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -37,6 +38,13 @@ func (driver *boltDriver) Open() (db.Database, error) {
 
 type boltDatabase struct {
 	bh *bh.Store
+}
+
+func (database *boltDatabase) CreateStore(newEntity func() db.Entity) (db.Store, error) {
+	return &boltStore{
+		&boltStoreConfig{database, newEntity, reflect.TypeOf(newEntity()).Elem().Name()},
+		nil,
+	}, nil
 }
 
 func (database *boltDatabase) Begin() (db.Transaction, error) {

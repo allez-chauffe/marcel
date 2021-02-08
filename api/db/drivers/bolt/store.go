@@ -20,13 +20,6 @@ type boltStore struct {
 	tx *bolt.Tx
 }
 
-func (database *boltDatabase) CreateStore(newEntity func() db.Entity) (db.Store, error) {
-	return &boltStore{
-		&boltStoreConfig{database, newEntity, reflect.TypeOf(newEntity()).Elem().Name()},
-		nil,
-	}, nil
-}
-
 func (store *boltStore) Transactional(tx db.Transaction) db.Store {
 	if tx == nil {
 		return store
