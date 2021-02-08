@@ -4,6 +4,7 @@ import (
 	"time"
 
 	rand "github.com/Pallinder/go-randomdata"
+	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
@@ -43,6 +44,7 @@ func (b *Bucket) EnsureOneUser() error {
 		log.Info("No users in database, creating admin...")
 
 		u := &User{
+			ID:          uuid.NewV4().String(),
 			DisplayName: "Admin",
 			Login:       "admin",
 			Role:        "admin",

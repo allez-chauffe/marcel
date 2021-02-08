@@ -30,15 +30,15 @@ func (store *boltStore) ensureTransaction(task func(*boltStore) error) error {
 }
 
 func (store *boltStore) nextSequence() (int, error) {
-	bucket := store.tx.Bucket([]byte(store.typeName))
-	// If it is the first time we save this type of entity, the bucket doesn't exists
-	if bucket == nil {
-		return 0, nil
+	bucket, err := store.tx.CreateBucketIfNotExists([]byte(store.typeName))
+	if err != nil {
+		return 0, err
 	}
 
 	id, err := bucket.NextSequence()
 	if err != nil {
 		return 0, err
 	}
+
 	return int(id), nil
 }

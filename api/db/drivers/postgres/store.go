@@ -40,7 +40,7 @@ func (store *postgresStore) IsTransactional() bool {
 }
 
 func (store *postgresStore) selectQuery(query string) string {
-	return fmt.Sprintf("SELECT id, data FROM %s %s", store.table, query)
+	return fmt.Sprintf(`SELECT id, data FROM "%s" %s`, store.table, query)
 }
 
 func (store *postgresStore) Get(id interface{}, result interface{}) error {
@@ -104,13 +104,13 @@ func (store *postgresStore) Insert(item db.Entity) error {
 	id, data := prepare(item)
 
 	if db.ShouldAutoIncrement(item) {
-		row := store.client().QueryRow(fmt.Sprintf("INSERT INTO %s (data) VALUES ($1) RETURNING id", store.table), data)
+		row := store.client().QueryRow(fmt.Sprintf(`INSERT INTO "%s" (data) VALUES ($1) RETURNING id`, store.table), data)
 		if err := row.Scan(&id); err != nil {
 			return err
 		}
 		item.SetID(id)
 	} else {
-		if _, err := store.client().Exec(fmt.Sprintf("INSERT INTO %s (id, data) VALUES ($1, $2)", store.table), id, data); err != nil {
+		if _, err := store.client().Exec(fmt.Sprintf(`INSERT INTO "%s" (id, data) VALUES ($1, $2)`, store.table), id, data); err != nil {
 			return err
 		}
 	}
@@ -121,7 +121,7 @@ func (store *postgresStore) Insert(item db.Entity) error {
 func (store *postgresStore) Update(item db.Entity) error {
 	id, data := prepare(item)
 
-	result, err := store.client().Exec(fmt.Sprintf("UPDATE %s SET data = $1 WHERE id = $2", store.table), data, id)
+	result, err := store.client().Exec(fmt.Sprintf(`UPDATE "%s" SET data = $1 WHERE id = $2`, store.table), data, id)
 	if err != nil {
 		return err
 	}
@@ -142,14 +142,14 @@ func (store *postgresStore) Upsert(item db.Entity) error {
 	id, data := prepare(item)
 
 	if db.ShouldAutoIncrement(item) {
-		row := store.client().QueryRow(fmt.Sprintf("INSERT INTO %s (data) VALUES ($1) RETURNING id", store.table), data)
+		row := store.client().QueryRow(fmt.Sprintf(`INSERT INTO "%s" (data) VALUES ($1) RETURNING id`, store.table), data)
 		if err := row.Scan(&id); err != nil {
 			return err
 		}
 		item.SetID(id)
 	} else {
 		if _, err := store.client().Exec(fmt.Sprintf(`
-				INSERT INTO %s (id, data) VALUES ($1, $2)
+				INSERT INTO "%s" (id, data) VALUES ($1, $2)
 				ON CONFLICT (id) DO UPDATE SET data = $2
 			`, store.table), id, data); err != nil {
 			return err
@@ -160,11 +160,11 @@ func (store *postgresStore) Upsert(item db.Entity) error {
 }
 
 func (store *postgresStore) Delete(id interface{}) error {
-	_, err := store.client().Exec(fmt.Sprintf("DELETE FROM %s WHERE id = $1", store.table), id)
+	_, err := store.client().Exec(fmt.Sprintf(`DELETE FROM "%s" WHERE id = $1`, store.table), id)
 	return err
 }
 
 func (store *postgresStore) DeleteAll() error {
-	_, err := store.client().Exec(fmt.Sprintf("DELETE FROM %s", store.table))
+	_, err := store.client().Exec(fmt.Sprintf(`DELETE FROM "%s"`, store.table))
 	return err
 }

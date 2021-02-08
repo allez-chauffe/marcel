@@ -1,6 +1,7 @@
 package medias_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/allez-chauffe/marcel/api/db"
@@ -116,6 +117,7 @@ func testExists(tx *db.Tx, t *testing.T) {
 		t.Fatalf("Exists failed: %s", err)
 	}
 
+	fmt.Println(exists)
 	if !exists {
 		t.Fatal("Media should have been created")
 	}

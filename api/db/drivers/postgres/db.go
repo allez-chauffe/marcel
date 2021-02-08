@@ -37,7 +37,7 @@ func (database *postgresDatabase) CreateStore(newEntity func() db.Entity) (db.St
 	if strings.HasPrefix(idType, "int") {
 		postgresIDType = "serial"
 	} else if idType == "string" {
-		postgresIDType = "uuid"
+		postgresIDType = "text"
 	} else {
 		return nil, errors.New("Postgres database driver only supports uuid and int ID types")
 	}
@@ -103,7 +103,7 @@ func createDatabase() (*sql.DB, error) {
 	}
 	defer tempDB.Close()
 
-	if _, err = tempDB.Exec(fmt.Sprintf("CREATE DATABASE %s", dbName)); err != nil {
+	if _, err = tempDB.Exec(fmt.Sprintf(`CREATE DATABASE "%s"`, dbName)); err != nil {
 		return nil, err
 	}
 

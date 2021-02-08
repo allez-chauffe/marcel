@@ -179,7 +179,12 @@ func testEnsureOneUser(tx *db.Tx, t *testing.T) {
 		t.Fatalf("EnsureOneUser failed: %s", err)
 	}
 
-	if list, _ := tx.Users().List(); len(list) != 1 {
+	list, _ := tx.Users().List()
+	if len(list) != 1 {
 		t.Fatalf("Expected 1 user, %d found", len(list))
+	}
+
+	if list[0].ID == "" {
+		t.Fatalf("Expected a generated uuid, got empty string")
 	}
 }

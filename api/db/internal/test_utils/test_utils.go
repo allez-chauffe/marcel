@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"path"
-	"strings"
 	"testing"
 
 	"github.com/allez-chauffe/marcel/api/db"
@@ -90,7 +89,7 @@ func boltTester(name string) func(*testing.T, func()) {
 func postgresTester(name string) func(*testing.T, func()) {
 	return func(t *testing.T, test func()) {
 		// WORKAROUND: Generate uniq db name for each test package to allow concurent runs
-		dbName := fmt.Sprintf("marce_test_%s", strings.ToLower(name))
+		dbName := fmt.Sprintf("marce_test_%s", name)
 		t.Helper()
 		config.Default().API().DB().SetDriver("postgres")
 		pgConfig := config.Default().API().DB().Postgres()
@@ -117,7 +116,7 @@ func postgresCleanup(t *testing.T, dbName string) {
 	}
 	defer db.Close()
 
-	if _, err = db.Exec(fmt.Sprintf("DROP DATABASE %s", dbName)); err != nil {
+	if _, err = db.Exec(fmt.Sprintf(`DROP DATABASE "%s"`, dbName)); err != nil {
 		panic(err)
 	}
 }

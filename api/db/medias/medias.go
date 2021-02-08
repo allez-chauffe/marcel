@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
+	"github.com/sirupsen/logrus"
 )
 
 var DefaultBucket *Bucket
@@ -40,10 +41,12 @@ func (b *Bucket) Get(id int) (*Media, error) {
 }
 
 func (b *Bucket) Insert(m *Media) (err error) {
+	logrus.Debugf("Before ensure")
 	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		if err = store.Insert(m); err != nil {
 			return err
 		}
+		logrus.Debugf("After insert %v", m)
 
 		// Set new media name if not given
 		if m.Name == "" {
