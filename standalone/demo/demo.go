@@ -41,7 +41,7 @@ func Module() (*module.Module, error) {
 
 	return &module.Module{
 		Name: "Demo",
-		Start: func(next module.NextFunc) (module.StopFunc, error) {
+		Start: func(_ module.Context, next module.NextFunc) (module.StopFunc, error) {
 			log.Infoln("marcel is warming up...")
 
 			if err := next(); err != nil {
@@ -71,8 +71,8 @@ func Module() (*module.Module, error) {
 			standalone.Module(),
 		},
 		HTTP: module.HTTP{
-			OnListen: func(listener net.Listener, srv *http.Server) {
-				url := fmt.Sprintf("http://%s%s?token=%s", listener.Addr(), module.URI("Backoffice"), token)
+			OnListen: func(_ module.Context, l net.Listener, srv *http.Server) {
+				url := fmt.Sprintf("http://%s%s?token=%s", l.Addr(), module.URI("Backoffice"), token)
 
 				log.Infof("marcel is running at %s", url)
 

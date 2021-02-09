@@ -23,7 +23,7 @@ func Module() *module.Module {
 
 	return &module.Module{
 		Name: "API",
-		Start: func(next module.NextFunc) (module.StopFunc, error) {
+		Start: func(_ module.Context, next module.NextFunc) (module.StopFunc, error) {
 			if err := db.Open(); err != nil {
 				return nil, err
 			}
@@ -47,7 +47,7 @@ func Module() *module.Module {
 		},
 		HTTP: module.HTTP{
 			BasePath: config.Default().API().BasePath(),
-			Setup: func(_ string, r *mux.Router) {
+			Setup: func(_ module.Context, _ string, r *mux.Router) {
 				r.Use(auth.Middleware)
 				if !config.Default().API().Auth().Secure() {
 					log.Warnln("Secure mode is disabled")
