@@ -1,4 +1,4 @@
-package api
+package users
 
 import (
 	"encoding/json"
@@ -15,6 +15,12 @@ import (
 	"github.com/allez-chauffe/marcel/api/db/users"
 )
 
+type Service struct{}
+
+func NewService() *Service {
+	return new(Service)
+}
+
 type UserPayload struct {
 	*users.User
 	Password string `json:"password"`
@@ -22,13 +28,13 @@ type UserPayload struct {
 
 var UserNotFoundErr = errors.New("User not found")
 
-func createUserHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Service) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
 	}
 
-	payload := getUserPayload(w, r)
+	payload := s.getUserPayload(w, r)
 
 	if payload.Login == "" || payload.DisplayName == "" || payload.Password == "" {
 		commons.WriteResponse(w, http.StatusBadRequest, "Malformed request, missing required fields")
@@ -50,7 +56,7 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteJsonResponse(w, u)
 }
 
-func updateUserHandler(w http.ResponseWriter, r *http.Request) {
+func (s Service) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["userID"]
 
@@ -59,7 +65,7 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload := getUserPayload(w, r)
+	payload := s.getUserPayload(w, r)
 
 	db.Transactional(func(tx *db.Tx) error {
 		savedUser, err := tx.Users().Get(userID)
@@ -106,7 +112,7 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func getUsersHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Service) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil, "admin") {
 		commons.WriteResponse(w, http.StatusForbidden, "")
 		return
@@ -121,7 +127,7 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteJsonResponse(w, users)
 }
 
-func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Service) DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["userID"]
 
@@ -139,7 +145,7 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	commons.WriteResponse(w, http.StatusNoContent, "")
 }
 
-func getUserPayload(w http.ResponseWriter, r *http.Request) *UserPayload {
+func (s *Service) getUserPayload(w http.ResponseWriter, r *http.Request) *UserPayload {
 	user := &UserPayload{
 		User: users.New(),
 	}
