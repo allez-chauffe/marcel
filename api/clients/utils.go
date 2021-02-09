@@ -11,6 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/allez-chauffe/marcel/api/commons"
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/api/db/clients"
 )
 
@@ -25,7 +26,7 @@ func (s *Service) getClientFromRequest(w http.ResponseWriter, r *http.Request) (
 		return nil, errors.New("Malformed URL (missing client id)")
 	}
 
-	client, err := clients.Get(clientID)
+	client, err := db.Clients().Get(clientID)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return nil, err
@@ -83,7 +84,7 @@ func (s *Service) getClientPayload(client *clients.Client) *ClientPayload {
 }
 
 func (s *Service) getClientsPayload() (map[string]*ClientPayload, error) {
-	clients, err := clients.List()
+	clients, err := db.Clients().List()
 	if err != nil {
 		return nil, err
 	}

@@ -2,56 +2,68 @@ package db
 
 import (
 	"fmt"
-	"os"
-	"time"
 
-	log "github.com/sirupsen/logrus"
-	bh "github.com/timshannon/bolthold"
-	bolt "go.etcd.io/bbolt"
-
+	"github.com/allez-chauffe/marcel/api/db/clients"
+	"github.com/allez-chauffe/marcel/api/db/drivers/bolt"
+	"github.com/allez-chauffe/marcel/api/db/drivers/postgres"
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
+	"github.com/allez-chauffe/marcel/api/db/medias"
+	"github.com/allez-chauffe/marcel/api/db/plugins"
+	"github.com/allez-chauffe/marcel/api/db/users"
 	"github.com/allez-chauffe/marcel/config"
 )
 
-// Open opens bbolt database in read/write mode
 func Open() error {
-	return open(false)
-}
-
-// OpenRO opens bbolt database in read only mode
-func OpenRO() error {
-	return open(true)
-}
-
-func open(readOnly bool) error {
-	log.Info("Opening bbolt database...")
-
-	var options = *bolt.DefaultOptions
-	options.ReadOnly = readOnly
-	options.Timeout = 100 * time.Millisecond
-
-	var err error
-	if db.Store, err = bh.Open(os.ExpandEnv(config.Default().API().DBFile()), 0644, &bh.Options{
-		Options: &options,
-	}); err != nil {
-		return fmt.Errorf("Error while opening bbolt database: %w", err)
-	}
-
-	log.Info("bbolt database opened")
-
-	return nil
-}
-
-// Close closes bbolt database connection
-func Close() error {
-	log.Info("Closing bbolt database...")
-
-	err := db.Store.Close()
+	database, err := driver().Open()
 	if err != nil {
-		return fmt.Errorf("Error while closing bbolt database: %w", err)
+		return err
 	}
 
-	log.Info("bbolt database closed")
+	db.DB = database
+
+	// Initialize every stores
+	if err := clients.CreateStore(); err != nil {
+		return err
+	}
+	if err := medias.CreateStore(); err != nil {
+		return err
+	}
+	if err := plugins.CreateStore(); err != nil {
+		return err
+	}
+	if err := users.CreateStore(); err != nil {
+		return err
+	}
 
 	return nil
+}
+
+func Close() error {
+	return db.DB.Close()
+}
+
+func Begin() (*Tx, error) {
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Tx{tx}, nil
+}
+
+func Transactional(task func(*Tx) error) (err error) {
+	return db.Transactional(func(tx db.Transaction) error {
+		return task(&Tx{tx})
+	})
+}
+
+func driver() db.Driver {
+	switch config.Default().API().DB().Driver() {
+	case "bolt":
+		return bolt.Driver
+	case "postgres":
+		return postgres.Driver
+	default:
+		panic(fmt.Errorf("Unknown database driver %s", driver))
+	}
 }

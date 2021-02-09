@@ -6,26 +6,45 @@ import (
 	rand "github.com/Pallinder/go-randomdata"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
-	bh "github.com/timshannon/bolthold"
-	bolt "go.etcd.io/bbolt"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
-func EnsureOneUser() error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
-		res, err := db.Store.TxFindAggregate(tx, &User{}, nil)
-		if err != nil {
-			return err
-		}
+var DefaultStore *Store
 
-		if res[0].Count() != 0 {
-			return nil
+type Store struct {
+	store db.Store
+}
+
+func CreateStore() error {
+	store, err := db.DB.CreateStore(func() db.Entity {
+		return new(User)
+	})
+
+	if err != nil {
+		return err
+	}
+
+	DefaultStore = &Store{store}
+	return nil
+}
+
+func Transactional(tx db.Transaction) *Store {
+	return &Store{DefaultStore.store.Transactional(tx)}
+}
+
+func (b *Store) EnsureOneUser() error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
+		users := &[]User{}
+
+		if err := store.List(users); err != nil || len(*users) != 0 {
+			return err
 		}
 
 		log.Info("No users in database, creating admin...")
 
 		u := &User{
+			ID:          uuid.NewV4().String(),
 			DisplayName: "Admin",
 			Login:       "admin",
 			Role:        "admin",
@@ -37,7 +56,7 @@ func EnsureOneUser() error {
 			return err
 		}
 
-		if err := insert(tx, u); err != nil {
+		if err := store.Insert(u); err != nil {
 			return err
 		}
 
@@ -47,46 +66,28 @@ func EnsureOneUser() error {
 	})
 }
 
-func Insert(u *User) error {
-	return insert(nil, u)
+func (b *Store) Insert(u *User) error {
+	return b.store.Insert(u)
 }
 
-func insert(tx *bolt.Tx, u *User) error {
-	u.ID = uuid.NewV4().String()
-	if u.Role == "" {
-		u.Role = "user"
-	}
-	u.CreatedAt = time.Now()
-
-	if tx == nil {
-		return db.Store.Insert(u.ID, u)
-	}
-	return db.Store.TxInsert(tx, u.ID, u)
-}
-
-func List() ([]User, error) {
+func (b *Store) List() ([]User, error) {
 	var users []User
-
-	return users, db.Store.Find(&users, nil)
+	return users, b.store.List(&users)
 }
 
-func Get(id string) (*User, error) {
+func (b *Store) Get(id string) (*User, error) {
 	u := new(User)
-
-	if err := db.Store.Get(id, u); err != nil {
-		if err == bh.ErrNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return u, nil
+	return u, b.store.Get(id, &u)
 }
 
-func GetByLogin(login string) (*User, error) {
+func (b *Store) GetByLogin(login string) (*User, error) {
 	var users []User
 
-	err := db.Store.Find(&users, bh.Where("Login").Eq(login).Index("Login"))
-	if err != nil {
+	filters := map[string]interface{}{
+		"Login": login,
+	}
+
+	if err := b.store.Find(&users, filters); err != nil {
 		return nil, err
 	}
 
@@ -97,39 +98,38 @@ func GetByLogin(login string) (*User, error) {
 	return &users[0], nil
 }
 
-func Delete(id string) error {
-	return db.Store.Delete(id, &User{})
+func (b *Store) Delete(id string) error {
+	return b.store.Delete(id)
 }
 
-func Disconnect(id string) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
-		u := new(User)
-
-		if err := db.Store.TxGet(tx, id, u); err != nil {
-			if err == bh.ErrNotFound {
-				return nil
-			}
+func (b *Store) Disconnect(id string) error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
+		u := &User{}
+		if err := store.Get(id, &u); u == nil || err != nil {
 			return err
 		}
 
 		u.LastDisconnection = time.Now()
-
-		return db.Store.TxUpdate(tx, id, u)
+		return store.Update(u)
 	})
 }
 
-func Update(user *User) error {
-	return db.Store.Update(user.ID, user)
+func (b *Store) Update(user *User) error {
+	return b.store.Update(user)
 }
 
-func UpsertAll(users []User) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+func (b *Store) UpsertAll(users []User) error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		for _, u := range users {
-			if err := db.Store.TxUpsert(tx, u.ID, &u); err != nil {
+			if err := store.Upsert(&u); err != nil {
 				return err
 			}
 		}
 
 		return nil
 	})
+}
+
+func (b *Store) Exists(id string) (bool, error) {
+	return b.store.Exists(id)
 }

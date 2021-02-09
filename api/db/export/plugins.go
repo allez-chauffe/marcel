@@ -1,11 +1,9 @@
 package export
 
-import (
-	"github.com/allez-chauffe/marcel/api/db/plugins"
-)
+import "github.com/allez-chauffe/marcel/api/db"
 
 func Plugins(outputFile string, pretty bool) error {
 	return export(func() (interface{}, error) {
-		return plugins.List()
+		return db.Plugins().List()
 	}, outputFile, pretty)
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func export(fetch func() (interface{}, error), outputFile string, pretty bool) error {
-	if err := db.OpenRO(); err != nil {
+	if err := db.Open(); err != nil {
 		return err
 	}
 	defer db.Close()

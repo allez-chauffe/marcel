@@ -2,6 +2,7 @@ package plugins
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -12,9 +13,12 @@ import (
 
 	"github.com/allez-chauffe/marcel/api/auth"
 	"github.com/allez-chauffe/marcel/api/commons"
-	"github.com/allez-chauffe/marcel/api/db/plugins"
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/config"
 )
+
+var PluginExistErr = errors.New("Plugin already exists")
+var PluginNotFound = errors.New("Plugin not found")
 
 // Initialize unsures that the plugins directory exists
 func Initialize() {
@@ -46,7 +50,7 @@ func GetAllHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plugins, err := plugins.List()
+	plugins, err := db.Plugins().List()
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -65,11 +69,12 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]
 
-	plugin, err := plugins.Get(eltName)
+	plugin, err := db.Plugins().Get(eltName)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	if plugin == nil {
 		commons.WriteResponse(w, http.StatusNotFound, "")
 		return
@@ -89,35 +94,38 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Debugf("Plugin deletion requested: %s", eltName)
 
-	plugin, err := plugins.Get(eltName)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if plugin == nil {
-		commons.WriteResponse(w, http.StatusNotFound, "")
-		return
-	}
-
-	if err := os.RemoveAll(plugin.GetDirectory()); err != nil {
-		if os.IsNotExist(err) {
-			log.Warnf("The %s plugin's folder doesn't exists. Ignoring it.", plugin.EltName)
-		} else {
-			log.Errorf("Error while removing %s plugin's folder %s: %s", plugin.EltName, plugin.GetDirectory(), err.Error())
-			commons.WriteResponse(w, http.StatusInternalServerError, "Error while removing plugin's files")
-			return
+	db.Transactional(func(tx *db.Tx) error {
+		plugin, err := tx.Plugins().Get(eltName)
+		if err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
 		}
-	}
+		if plugin == nil {
+			commons.WriteResponse(w, http.StatusNotFound, "")
+			return nil
+		}
 
-	if err := plugins.Delete(eltName); err != nil {
-		log.Errorf("Error while removing %s plugin from database: %s", plugin.EltName, err.Error())
-		commons.WriteResponse(w, http.StatusInternalServerError, "Error while removing plugin from database")
-		return
-	}
+		if err := os.RemoveAll(plugin.GetDirectory()); err != nil {
+			if os.IsNotExist(err) {
+				log.Warnf("The %s plugin's folder doesn't exists. Ignoring it.", plugin.EltName)
+			} else {
+				log.Errorf("Error while removing %s plugin's folder %s: %s", plugin.EltName, plugin.GetDirectory(), err.Error())
+				commons.WriteResponse(w, http.StatusInternalServerError, "Error while removing plugin's files")
+				return err
+			}
+		}
 
-	w.WriteHeader(http.StatusNoContent)
+		if err := tx.Plugins().Delete(eltName); err != nil {
+			log.Errorf("Error while removing %s plugin from database: %s", plugin.EltName, err.Error())
+			commons.WriteResponse(w, http.StatusInternalServerError, "Error while removing plugin from database")
+			return err
+		}
 
-	log.Infof("Plugin deleted : %s", plugin.EltName)
+		w.WriteHeader(http.StatusNoContent)
+
+		log.Infof("Plugin deleted : %s", plugin.EltName)
+		return nil
+	})
 }
 
 type AddPluginBody struct {
@@ -138,41 +146,44 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Infof("Plugin registration requested for %s", body.URL)
 
-	plugin, tempDir, err := FetchFromGit(body.URL)
-	defer os.RemoveAll(tempDir)
-	if err != nil {
-		log.Error(err)
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	db.Transactional(func(tx *db.Tx) error {
+		plugin, tempDir, err := FetchFromGit(body.URL)
+		defer os.RemoveAll(tempDir)
+		if err != nil {
+			log.Error(err)
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	exists, err := plugins.Exists(plugin.EltName)
-	if err != nil {
-		log.Error(err)
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if exists {
-		log.Errorf("The plugin '%s' already exists", plugin.EltName)
-		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("The plugin '%s' already exists", plugin.EltName))
-		return
-	}
+		exists, err := tx.Plugins().Exists(plugin.EltName)
+		if err != nil {
+			log.Error(err)
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	log.Debugf("Moving temporary directory (%s) to plugin's folder (%s)", tempDir, plugin.GetDirectory())
-	if err := os.Rename(tempDir, plugin.GetDirectory()); err != nil {
-		log.Errorf("Error while moving temporary directory (%s) to plugin's folder (%s) : %s", tempDir, plugin.GetDirectory(), err)
-		commons.WriteResponse(w, http.StatusInternalServerError, "Error while saving plugin's files")
-		return
-	}
+		if exists {
+			log.Errorf("The plugin '%s' already exists", plugin.EltName)
+			commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("The plugin '%s' already exists", plugin.EltName))
+			return PluginExistErr
+		}
 
-	if err := plugins.Insert(plugin); err != nil {
-		log.Error(err)
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+		log.Debugf("Moving temporary directory (%s) to plugin's folder (%s)", tempDir, plugin.GetDirectory())
+		if err := os.Rename(tempDir, plugin.GetDirectory()); err != nil {
+			log.Errorf("Error while moving temporary directory (%s) to plugin's folder (%s) : %s", tempDir, plugin.GetDirectory(), err)
+			commons.WriteResponse(w, http.StatusInternalServerError, "Error while saving plugin's files")
+			return err
+		}
 
-	log.Infof("Plugin successfuly registered : %s (%s)", plugin.EltName, plugin.Name)
-	commons.WriteJsonResponse(w, plugin)
+		if err := tx.Plugins().Insert(plugin); err != nil {
+			log.Error(err)
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
+
+		log.Infof("Plugin successfuly registered : %s (%s)", plugin.EltName, plugin.Name)
+		return commons.WriteJsonResponse(w, plugin)
+	})
 }
 
 func UpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -184,48 +195,51 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	eltName := vars["eltName"]
 
-	plugin, err := plugins.Get(eltName)
-	if err != nil {
-		log.Error(err)
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if plugin == nil {
-		commons.WriteResponse(w, http.StatusNotFound, "")
-		return
-	}
+	db.Transactional(func(tx *db.Tx) error {
+		plugin, err := tx.Plugins().Get(eltName)
+		if err != nil {
+			log.Error(err)
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	log.Infof("Plugin update requested for %s", eltName)
+		if plugin == nil {
+			commons.WriteResponse(w, http.StatusNotFound, "")
+			return PluginNotFound
+		}
 
-	plugin, tempDir, err := FetchFromGit(plugin.URL)
-	// The temp dir cleanup should be done before handling because it can be created even if an error occured
-	defer os.RemoveAll(tempDir)
-	if err != nil {
-		log.Error(err)
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+		log.Infof("Plugin update requested for %s", eltName)
 
-	log.Debugf("Removing old plugin's directory (%s)", plugin.GetDirectory())
-	if err := os.RemoveAll(plugin.GetDirectory()); err != nil {
-		log.Errorf("Error while removing old plugin directory : %s", err)
-		commons.WriteResponse(w, http.StatusInternalServerError, "Error while updating plugin's files")
-		return
-	}
+		plugin, tempDir, err := FetchFromGit(plugin.URL)
+		// The temp dir cleanup should be done before handling because it can be created even if an error occured
+		defer os.RemoveAll(tempDir)
+		if err != nil {
+			log.Error(err)
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	log.Debugf("Moving temporary directory (%s) to plugin's directory (%s)", tempDir, plugin.GetDirectory())
-	if err := os.Rename(tempDir, plugin.GetDirectory()); err != nil {
-		log.Errorf("Error while moving temporary directory (%s) to plugin's directory (%s) : %s", tempDir, plugin.GetDirectory(), err)
-		commons.WriteResponse(w, http.StatusInternalServerError, "Error while updating plugin's files")
-		return
-	}
+		log.Debugf("Removing old plugin's directory (%s)", plugin.GetDirectory())
+		if err := os.RemoveAll(plugin.GetDirectory()); err != nil {
+			log.Errorf("Error while removing old plugin directory : %s", err)
+			commons.WriteResponse(w, http.StatusInternalServerError, "Error while updating plugin's files")
+			return err
+		}
 
-	if err := plugins.Update(plugin); err != nil {
-		log.Error(err)
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+		log.Debugf("Moving temporary directory (%s) to plugin's directory (%s)", tempDir, plugin.GetDirectory())
+		if err := os.Rename(tempDir, plugin.GetDirectory()); err != nil {
+			log.Errorf("Error while moving temporary directory (%s) to plugin's directory (%s) : %s", tempDir, plugin.GetDirectory(), err)
+			commons.WriteResponse(w, http.StatusInternalServerError, "Error while updating plugin's files")
+			return err
+		}
 
-	log.Infof("Plugin successfuly updated: %s (%s)", plugin.EltName, plugin.Name)
-	commons.WriteJsonResponse(w, plugin)
+		if err := tx.Plugins().Update(plugin); err != nil {
+			log.Error(err)
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
+
+		log.Infof("Plugin successfuly updated: %s (%s)", plugin.EltName, plugin.Name)
+		return commons.WriteJsonResponse(w, plugin)
+	})
 }

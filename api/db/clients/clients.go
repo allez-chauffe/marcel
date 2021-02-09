@@ -1,44 +1,56 @@
 package clients
 
-import (
-	uuid "github.com/satori/go.uuid"
-	bh "github.com/timshannon/bolthold"
+import "github.com/allez-chauffe/marcel/api/db/internal/db"
 
-	"github.com/allez-chauffe/marcel/api/db/internal/db"
-)
+var DefaultStore *Store
 
-func Get(id string) (*Client, error) {
-	var c = new(Client)
+type Store struct {
+	store db.Store
+}
 
-	if err := db.Store.Get(id, c); err != nil {
-		if err == bh.ErrNotFound {
-			return nil, nil
-		}
-		return nil, err
+func CreateStore() error {
+	store, err := db.DB.CreateStore(func() db.Entity {
+		return new(Client)
+	})
+	if err != nil {
+		return err
 	}
-	return c, nil
+
+	DefaultStore = &Store{store}
+
+	return nil
 }
 
-func List() ([]Client, error) {
+func Transactional(tx db.Transaction) *Store {
+	return &Store{DefaultStore.store.Transactional(tx)}
+}
+
+func (b *Store) Get(id string) (*Client, error) {
+	c := &Client{}
+	return c, b.store.Get(id, &c)
+}
+
+func (b *Store) Exists(id string) (bool, error) {
+	return b.store.Exists(id)
+}
+
+func (b *Store) List() ([]Client, error) {
 	var clients = []Client{}
-
-	return clients, db.Store.Find(&clients, nil)
+	return clients, b.store.List(&clients)
 }
 
-func Insert(c *Client) error {
-	c.ID = uuid.NewV4().String()
-
-	return db.Store.Insert(c.ID, c)
+func (b *Store) Insert(c *Client) error {
+	return b.store.Insert(c)
 }
 
-func Update(c *Client) error {
-	return db.Store.Update(c.ID, c)
+func (b *Store) Update(c *Client) error {
+	return b.store.Update(c)
 }
 
-func Delete(id string) error {
-	return db.Store.Delete(id, &Client{})
+func (b *Store) Delete(id string) error {
+	return b.store.Delete(id)
 }
 
-func DeleteAll() error {
-	return db.Store.DeleteMatching(&Client{}, nil)
+func (b *Store) DeleteAll() error {
+	return b.store.DeleteAll()
 }

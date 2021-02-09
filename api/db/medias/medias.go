@@ -3,76 +3,83 @@ package medias
 import (
 	"fmt"
 
-	bh "github.com/timshannon/bolthold"
-	bolt "go.etcd.io/bbolt"
-
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
+	"github.com/sirupsen/logrus"
 )
 
-func List() ([]Media, error) {
-	var medias = []Media{}
+var DefaultStore *Store
 
-	return medias, db.Store.Find(&medias, nil)
+type Store struct {
+	store db.Store
 }
 
-func Get(id int) (*Media, error) {
-	var m = new(Media)
-
-	if err := db.Store.Get(id, m); err != nil {
-		if err == bh.ErrNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return m, nil
+func Transactional(tx db.Transaction) *Store {
+	return &Store{DefaultStore.store.Transactional(tx)}
 }
 
-func nextID(tx *bolt.Tx) (int, error) {
-	agg, err := db.Store.TxFindAggregate(tx, &Media{}, nil)
+func CreateStore() error {
+	store, err := db.DB.CreateStore(func() db.Entity {
+		return new(Media)
+	})
+
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	// We find the new ID by adding 1 to the ID of the last created media
-	if len(agg) != 0 && agg[0].Count() != 0 {
-		lastMedia := new(Media)
-		agg[0].Max("ID", lastMedia)
-		return lastMedia.ID + 1, nil
-	}
-
-	return 1, nil
+	DefaultStore = &Store{store}
+	return nil
 }
 
-func Insert(m *Media) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
-		ID, err := nextID(tx)
-		if err != nil {
+func (b *Store) List() ([]Media, error) {
+	var medias = []Media{}
+	return medias, b.store.List(&medias)
+}
+
+func (b *Store) Get(id int) (*Media, error) {
+	var result = new(Media)
+	return result, b.store.Get(id, &result)
+}
+
+func (b *Store) Insert(m *Media) (err error) {
+	logrus.Debugf("Before ensure")
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
+		if err = store.Insert(m); err != nil {
 			return err
 		}
+		logrus.Debugf("After insert %v", m)
 
-		m.ID = ID
-		m.Name = fmt.Sprintf("Media %d", m.ID)
-
-		return db.Store.TxInsert(tx, m.ID, m)
-	})
-}
-
-func Update(m *Media) error {
-	return db.Store.Update(m.ID, m)
-}
-
-func Delete(id int) error {
-	return db.Store.Delete(id, &Media{})
-}
-
-func UpsertAll(medias []Media) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
-		for _, m := range medias {
-			if err := db.Store.TxUpsert(tx, m.ID, &m); err != nil {
+		// Set new media name if not given
+		if m.Name == "" {
+			m.Name = fmt.Sprintf("Media %d", m.ID)
+			if err := store.Update(m); err != nil {
 				return err
 			}
 		}
 
 		return nil
 	})
+}
+
+func (b *Store) Update(m *Media) error {
+	return b.store.Update(m)
+}
+
+func (b *Store) Delete(id int) error {
+	return b.store.Delete(id)
+}
+
+func (b *Store) UpsertAll(medias []Media) error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
+		for _, m := range medias {
+			if err := store.Upsert(&m); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
+
+func (b *Store) Exists(id int) (bool, error) {
+	return b.store.Exists(id)
 }

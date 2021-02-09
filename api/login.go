@@ -8,7 +8,7 @@ import (
 
 	"github.com/allez-chauffe/marcel/api/auth"
 	"github.com/allez-chauffe/marcel/api/commons"
-	"github.com/allez-chauffe/marcel/api/db/users"
+	"github.com/allez-chauffe/marcel/api/db"
 )
 
 type Credentials struct {
@@ -33,7 +33,7 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 		return
 	}
 
-	user, err := users.GetByLogin(login)
+	user, err := db.Users().GetByLogin(login)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -72,7 +72,7 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := users.Get(refreshClaims.Subject)
+	user, err := db.Users().Get(refreshClaims.Subject)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -99,7 +99,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 		// If the user is connected, update it in database
 		userID := auth.GetAuth(r).Subject
 
-		if err := users.Disconnect(userID); err != nil {
+		if err := db.Users().Disconnect(userID); err != nil {
 			// Do not return here we want to delete the tokens
 			log.Errorf("Error while disconnecting user %s: %s", userID, err)
 		}

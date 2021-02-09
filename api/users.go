@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/allez-chauffe/marcel/api/auth"
 	"github.com/allez-chauffe/marcel/api/commons"
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/api/db/users"
 )
 
@@ -17,6 +19,8 @@ type UserPayload struct {
 	*users.User
 	Password string `json:"password"`
 }
+
+var UserNotFoundErr = errors.New("User not found")
 
 func createUserHandler(w http.ResponseWriter, r *http.Request) {
 	if !auth.CheckPermissions(r, nil, "admin") {
@@ -38,7 +42,7 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := users.Insert(u); err != nil {
+	if err := db.Users().Insert(u); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -57,47 +61,49 @@ func updateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	payload := getUserPayload(w, r)
 
-	savedUser, err := users.Get(userID)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if savedUser == nil || savedUser.ID != payload.ID {
-		commons.WriteResponse(w, http.StatusNotFound, "")
-		return
-	}
-
-	if payload.Password != "" {
-		unchanged, err := savedUser.CheckPassword(payload.Password)
+	db.Transactional(func(tx *db.Tx) error {
+		savedUser, err := tx.Users().Get(userID)
 		if err != nil {
 			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-			return
+			return err
 		}
 
-		if !unchanged {
-			if err := savedUser.SetPassword(payload.Password); err != nil {
+		if savedUser == nil || savedUser.ID != payload.ID {
+			commons.WriteResponse(w, http.StatusNotFound, "")
+			return UserNotFoundErr
+		}
+
+		if payload.Password != "" {
+			unchanged, err := savedUser.CheckPassword(payload.Password)
+			if err != nil {
 				commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-				return
+				return err
 			}
 
-			savedUser.LastDisconnection = time.Now()
+			if !unchanged {
+				if err := savedUser.SetPassword(payload.Password); err != nil {
+					commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+					return err
+				}
+
+				savedUser.LastDisconnection = time.Now()
+			}
 		}
-	}
 
-	savedUser.DisplayName = payload.DisplayName
-	savedUser.Login = payload.Login
+		savedUser.DisplayName = payload.DisplayName
+		savedUser.Login = payload.Login
 
-	if auth.CheckPermissions(r, nil, "admin") {
-		savedUser.Role = payload.Role
-	}
+		if auth.CheckPermissions(r, nil, "admin") {
+			savedUser.Role = payload.Role
+		}
 
-	if err := users.Update(savedUser); err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+		if err := tx.Users().Update(savedUser); err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	commons.WriteJsonResponse(w, savedUser)
+		return commons.WriteJsonResponse(w, savedUser)
+	})
 }
 
 func getUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +112,7 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := users.List()
+	users, err := db.Users().List()
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -124,7 +130,7 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := users.Delete(userID)
+	err := db.Users().Delete(userID)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -134,7 +140,9 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUserPayload(w http.ResponseWriter, r *http.Request) *UserPayload {
-	user := new(UserPayload)
+	user := &UserPayload{
+		User: users.New(),
+	}
 
 	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
 		commons.WriteResponse(w, http.StatusBadRequest, fmt.Sprintf("Error while parsing JSON (%s)", err.Error()))

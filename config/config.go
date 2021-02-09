@@ -94,6 +94,7 @@ func (c *Config) LogLevel() log.Level {
 
 func (c *Config) SetLogLevel(l log.Level) {
 	c.viper().Set("logLevel", l.String())
+	log.SetLevel(l)
 }
 
 func (c *Config) API() *API {

@@ -1,52 +1,58 @@
 package plugins
 
 import (
-	bh "github.com/timshannon/bolthold"
-	bolt "go.etcd.io/bbolt"
-
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
 )
 
-func List() ([]Plugin, error) {
+var DefaultStore *Store
+
+type Store struct {
+	store db.Store
+}
+
+func CreateStore() error {
+	store, err := db.DB.CreateStore(func() db.Entity {
+		return new(Plugin)
+	})
+
+	if err != nil {
+		return err
+	}
+
+	DefaultStore = &Store{store}
+	return nil
+}
+
+func Transactional(tx db.Transaction) *Store {
+	return &Store{DefaultStore.store.Transactional(tx)}
+}
+
+func (b *Store) List() ([]Plugin, error) {
 	var plugins = []Plugin{}
-
-	return plugins, db.Store.Find(&plugins, nil)
+	return plugins, b.store.List(&plugins)
 }
 
-func Get(eltName string) (*Plugin, error) {
+func (b *Store) Get(eltName string) (*Plugin, error) {
 	var p = new(Plugin)
-
-	if err := db.Store.Get(eltName, p); err != nil {
-		if err == bh.ErrNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return p, nil
+	return p, b.store.Get(eltName, &p)
 }
 
-func Exists(eltName string) (bool, error) {
-	if err := db.Store.Get(eltName, &Plugin{}); err != nil {
-		if err == bh.ErrNotFound {
-			return false, nil
-		}
-		return false, err
-	}
-	return true, nil
+func (b *Store) Exists(eltName string) (bool, error) {
+	return b.store.Exists(eltName)
 }
 
-func Insert(p *Plugin) error {
-	return db.Store.Insert(p.EltName, p)
+func (b *Store) Insert(p *Plugin) error {
+	return b.store.Insert(p)
 }
 
-func Update(p *Plugin) error {
-	return db.Store.Update(p.EltName, p)
+func (b *Store) Update(p *Plugin) error {
+	return b.store.Update(p)
 }
 
-func UpsertAll(plugins []Plugin) error {
-	return db.Store.Bolt().Update(func(tx *bolt.Tx) error {
+func (b *Store) UpsertAll(plugins []Plugin) error {
+	return db.EnsureTransaction(b.store, func(store db.Store) error {
 		for _, p := range plugins {
-			if err := db.Store.TxUpsert(tx, p.EltName, &p); err != nil {
+			if err := store.Upsert(&p); err != nil {
 				return err
 			}
 		}
@@ -55,6 +61,6 @@ func UpsertAll(plugins []Plugin) error {
 	})
 }
 
-func Delete(eltName string) error {
-	return db.Store.Delete(eltName, &Plugin{})
+func (b *Store) Delete(eltName string) error {
+	return b.store.Delete(eltName)
 }
