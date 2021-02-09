@@ -1,4 +1,4 @@
-package api
+package auth
 
 import (
 	"encoding/json"
@@ -6,28 +6,33 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/allez-chauffe/marcel/api/auth"
 	"github.com/allez-chauffe/marcel/api/commons"
 	"github.com/allez-chauffe/marcel/api/db"
 )
+
+type Service struct{}
+
+func NewService() *Service {
+	return new(Service)
+}
 
 type Credentials struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	cred := getCredentials(w, r)
+func (s *Service) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	cred := s.getCredentials(w, r)
 
 	if cred != nil {
-		loginWithCredentials(w, cred.Login, cred.Password)
+		s.loginWithCredentials(w, cred.Login, cred.Password)
 		return
 	}
 
-	loginWithRefreshToken(w, r)
+	s.loginWithRefreshToken(w, r)
 }
 
-func loginWithCredentials(w http.ResponseWriter, login string, password string) {
+func (s *Service) loginWithCredentials(w http.ResponseWriter, login string, password string) {
 	if login == "" || password == "" {
 		commons.WriteResponse(w, http.StatusBadRequest, "Missing required fields")
 		return
@@ -55,14 +60,14 @@ func loginWithCredentials(w http.ResponseWriter, login string, password string) 
 		return
 	}
 
-	auth.GenerateAuthToken(w, user)
-	auth.GenerateRefreshToken(w, user)
+	GenerateAuthToken(w, user)
+	GenerateRefreshToken(w, user)
 
 	commons.WriteJsonResponse(w, user)
 }
 
-func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
-	refreshClaims, err := auth.GetRefreshToken(r)
+func (s *Service) loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
+	refreshClaims, err := GetRefreshToken(r)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -78,26 +83,26 @@ func loginWithRefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if user == nil {
-		auth.DeleteRefreshToken(w)
+		DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusUnauthorized, "User not found")
 		return
 	}
 
 	if user.LastDisconnection.Unix() > refreshClaims.IssuedAt {
-		auth.DeleteRefreshToken(w)
+		DeleteRefreshToken(w)
 		commons.WriteResponse(w, http.StatusUnauthorized, "Refresh token has been invalidated")
 		return
 	}
 
-	auth.GenerateAuthToken(w, user)
+	GenerateAuthToken(w, user)
 
 	commons.WriteJsonResponse(w, user)
 }
 
-func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	if auth.CheckPermissions(r, nil) {
+func (s *Service) LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	if CheckPermissions(r, nil) {
 		// If the user is connected, update it in database
-		userID := auth.GetAuth(r).Subject
+		userID := GetAuth(r).Subject
 
 		if err := db.Users().Disconnect(userID); err != nil {
 			// Do not return here we want to delete the tokens
@@ -105,11 +110,11 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	auth.DeleteAuthToken(w)
-	auth.DeleteRefreshToken(w)
+	DeleteAuthToken(w)
+	DeleteRefreshToken(w)
 }
 
-func getCredentials(w http.ResponseWriter, r *http.Request) *Credentials {
+func (s *Service) getCredentials(w http.ResponseWriter, r *http.Request) *Credentials {
 	credentials := &Credentials{}
 
 	if err := json.NewDecoder(r.Body).Decode(credentials); err != nil {
@@ -117,4 +122,17 @@ func getCredentials(w http.ResponseWriter, r *http.Request) *Credentials {
 	}
 
 	return credentials
+}
+
+func (s *Service) ValidateHandler(w http.ResponseWriter, r *http.Request) {
+	if auth := GetAuth(r); auth == nil {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+	}
+}
+
+func (s *Service) ValidateAdminHandler(w http.ResponseWriter, r *http.Request) {
+	if !CheckPermissions(r, nil, "admin") {
+		commons.WriteResponse(w, http.StatusForbidden, "")
+		return
+	}
 }
