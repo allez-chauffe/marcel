@@ -20,7 +20,7 @@ func Module() *module.Module {
 
 	return &module.Module{
 		Name: "Frontend",
-		Start: func(next module.NextFunc) (module.StopFunc, error) {
+		Start: func(_ module.Context, next module.NextFunc) (module.StopFunc, error) {
 			var err error
 			fs, err = initFs()
 			if err != nil {
@@ -31,7 +31,7 @@ func Module() *module.Module {
 		},
 		HTTP: module.HTTP{
 			BasePath: config.Default().Frontend().BasePath(),
-			Setup: func(basePath string, r *mux.Router) {
+			Setup: func(_ module.Context, basePath string, r *mux.Router) {
 				r.PathPrefix("/").Handler(fileHandler(basePath, fs))
 			},
 		},
