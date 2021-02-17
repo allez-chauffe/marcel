@@ -9,6 +9,7 @@ import (
 	"github.com/allez-chauffe/marcel/config"
 	"github.com/allez-chauffe/marcel/httputil"
 	"github.com/allez-chauffe/marcel/module"
+	"github.com/allez-chauffe/marcel/pkg/io/fs/templater"
 )
 
 const index = "index.html"
@@ -48,7 +49,7 @@ func fileHandler(basePath string, fs fs.FS) http.Handler {
 		basePath,
 		http.FileServer(http.FS(
 			httputil.NewNotFoundRewriter(
-				httputil.NewTemplater(
+				templater.New(
 					fs,
 					[]string{index},
 					map[string]string{"REACT_APP_BASE": basePath},

@@ -7,8 +7,8 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/allez-chauffe/marcel/config"
-	"github.com/allez-chauffe/marcel/httputil"
 	"github.com/allez-chauffe/marcel/module"
+	"github.com/allez-chauffe/marcel/pkg/io/fs/templater"
 )
 
 // Module creates the frontend module
@@ -42,7 +42,7 @@ func fileHandler(base string, fs fs.FS) http.Handler {
 	return http.StripPrefix(
 		base,
 		http.FileServer(http.FS(
-			httputil.NewTemplater(
+			templater.New(
 				fs,
 				[]string{"index.html"},
 				map[string]string{"REACT_APP_BASE": base},
