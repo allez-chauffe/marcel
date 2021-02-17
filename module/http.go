@@ -15,7 +15,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/allez-chauffe/marcel/config"
-	"github.com/allez-chauffe/marcel/httputil"
 )
 
 // HTTP describes a module's HTTP setup.
@@ -31,7 +30,7 @@ func (m *Module) startHTTP(ctx *ctx) (*http.Server, error) {
 
 	var rootRouter = mux.NewRouter()
 
-	var basePath, router = mountSubrouter("", rootRouter, httputil.NormalizeBase(config.Default().HTTP().BasePath()), false)
+	var basePath, router = mountSubrouter("", rootRouter, normalizeBase(config.Default().HTTP().BasePath()), false)
 
 	m.normalizeBasePaths()
 
@@ -95,7 +94,7 @@ func (m *Module) stopHTTP(srv *http.Server) {
 }
 
 func (m *Module) normalizeBasePaths() {
-	m.BasePath = httputil.NormalizeBase(m.BasePath)
+	m.BasePath = normalizeBase(m.BasePath)
 
 	for _, subM := range m.SubModules {
 		subM.normalizeBasePaths()
@@ -119,9 +118,9 @@ func mountSubrouter(parentBasePath string, parentRouter *mux.Router, basePath st
 		return parentBasePath, parentRouter
 	}
 
-	var r = parentRouter.PathPrefix(httputil.TrimTrailingSlash(basePath)).Subrouter()
+	var r = parentRouter.PathPrefix(trimTrailingSlash(basePath)).Subrouter()
 
-	var absoluteBasePath = httputil.NormalizeBase(path.Join(parentBasePath, basePath))
+	var absoluteBasePath = normalizeBase(path.Join(parentBasePath, basePath))
 	if redirectSlash {
 		r.Handle("", http.RedirectHandler(absoluteBasePath, http.StatusMovedPermanently))
 	}
@@ -174,4 +173,22 @@ func (modules byBasePath) Less(i, j int) bool {
 
 func (modules byBasePath) Swap(i, j int) {
 	modules[i], modules[j] = modules[j], modules[i]
+}
+
+// normalizeBase adds a leading slash and a trailing slash if missing.
+func normalizeBase(base string) string {
+	if base == "" {
+		return ""
+	}
+	if !strings.HasPrefix(base, "/") {
+		base = "/" + base
+	}
+	if !strings.HasSuffix(base, "/") {
+		base = base + "/"
+	}
+	return base
+}
+
+func trimTrailingSlash(base string) string {
+	return strings.TrimSuffix(base, "/")
 }
