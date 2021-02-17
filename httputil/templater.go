@@ -85,11 +85,11 @@ func (f *bfile) Stat() (os.FileInfo, error) {
 var _ http.File = (*bfile)(nil)
 
 type bfileInfo struct {
-	info os.FileInfo
+	info fs.FileInfo
 	size int64
 }
 
-var _ os.FileInfo = bfileInfo{}
+var _ fs.FileInfo = bfileInfo{}
 
 func (i bfileInfo) Name() string {
 	return i.info.Name()
@@ -99,7 +99,7 @@ func (i bfileInfo) Size() int64 {
 	return i.size
 }
 
-func (i bfileInfo) Mode() os.FileMode {
+func (i bfileInfo) Mode() fs.FileMode {
 	return i.info.Mode()
 }
 
@@ -115,7 +115,7 @@ func (i bfileInfo) Sys() interface{} {
 	return i.info.Sys()
 }
 
-func newBfile(b []byte, info os.FileInfo) http.File {
+func newBfile(b []byte, info fs.FileInfo) http.File {
 	return &bfile{
 		*bytes.NewReader(b),
 		bfileInfo{
