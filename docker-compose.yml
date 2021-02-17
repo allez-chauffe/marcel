@@ -1,0 +1,15 @@
+version: '3'
+services:
+  # Database
+  postgres:
+    image: postgres:10
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    command: "-c max_prepared_transactions=20"
+    ports: # dev purpose only
+      - 5432:5432
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080

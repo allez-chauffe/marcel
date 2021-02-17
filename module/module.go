@@ -14,7 +14,7 @@ import (
 // StartFunc is a module's start function.
 // It must call next.
 // It may return a StopFunc if necessary.
-type StartFunc func(next NextFunc) (StopFunc, error)
+type StartFunc func(ctx Context, next NextFunc) (StopFunc, error)
 
 // StopFunc is a module's stop function.
 type StopFunc func() error
@@ -32,7 +32,9 @@ type Module struct {
 
 // Run run's a module tree.
 func (m Module) Run() (exitCode int) {
-	var startRes = m.start()
+	ctx := new(ctx)
+
+	var startRes = m.start(ctx)
 	if startRes.err != nil {
 		log.Errorln(startRes.err)
 		exitCode = 1
@@ -45,9 +47,9 @@ func (m Module) Run() (exitCode int) {
 		}
 	}()
 
-	var httpSrv, err = m.startHTTP()
+	var httpSrv, err = m.startHTTP(ctx)
 	if err != nil {
-		log.Errorf("Error while starting %s's HTTP: %w", m.Name, err)
+		log.Errorf("Error while starting %s's HTTP: %s", m.Name, err)
 		exitCode = 1
 		return
 	}
@@ -70,7 +72,7 @@ type startResult struct {
 	err  error
 }
 
-func (m Module) start() startResult {
+func (m Module) start(ctx *ctx) startResult {
 	log.Infof("Starting module %s...", m.Name)
 
 	var stopFuncs = make([]StopFunc, 0, len(m.SubModules))
@@ -92,7 +94,7 @@ func (m Module) start() startResult {
 						}
 					}
 				}()
-				startResCh <- subM.start()
+				startResCh <- subM.start(ctx)
 			}(subM)
 		}
 
@@ -115,7 +117,7 @@ func (m Module) start() startResult {
 		return nil
 	}
 
-	var stop, err = m.callStart(next)
+	var stop, err = m.callStart(ctx, next)
 
 	if err == nil {
 		log.Infof("Module %s started", m.Name)
@@ -149,7 +151,7 @@ func (m Module) start() startResult {
 	}
 }
 
-func (m Module) callStart(next NextFunc) (StopFunc, error) {
+func (m Module) callStart(ctx *ctx, next NextFunc) (StopFunc, error) {
 	if m.Start == nil {
 		return nil, next()
 	}
@@ -164,7 +166,7 @@ func (m Module) callStart(next NextFunc) (StopFunc, error) {
 		return next()
 	}
 
-	var stop, err = m.Start(callNext)
+	var stop, err = m.Start(nil, callNext) // FIXME
 	if err != nil {
 		return stop, fmt.Errorf("Error while starting module %s: %w", m.Name, err)
 	}

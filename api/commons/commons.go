@@ -112,10 +112,12 @@ func WriteResponse(w http.ResponseWriter, statusCode int, message string) {
 	w.Write([]byte(" " + message))
 }
 
-func WriteJsonResponse(w http.ResponseWriter, body interface{}) {
+func WriteJsonResponse(w http.ResponseWriter, body interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(body); err != nil {
 		log.Errorf("Error while send JSON data (%s)", err.Error())
+		return err
 	}
+	return nil
 }

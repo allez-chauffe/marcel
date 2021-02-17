@@ -14,6 +14,7 @@ import (
 	"github.com/allez-chauffe/marcel/api/auth"
 	"github.com/allez-chauffe/marcel/api/clients"
 	"github.com/allez-chauffe/marcel/api/commons"
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/api/db/medias"
 	"github.com/allez-chauffe/marcel/config"
 )
@@ -37,7 +38,7 @@ func (m *Service) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	medias, err := medias.List()
+	medias, err := db.Medias().List()
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -60,41 +61,47 @@ func (m *Service) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 // SaveHandler saves a media
 func (m *Service) SaveHandler(w http.ResponseWriter, r *http.Request) {
-	media := &medias.Media{}
-	if err := json.NewDecoder(r.Body).Decode(media); err != nil {
-		commons.WriteResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
+	db.Transactional(func(tx *db.Tx) error {
+		media := &medias.Media{}
+		if err := json.NewDecoder(r.Body).Decode(media); err != nil {
+			commons.WriteResponse(w, http.StatusBadRequest, err.Error())
+			return err
+		}
 
-	tmpMedia, err := medias.Get(media.ID)
-	if err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if tmpMedia == nil {
-		commons.WriteResponse(w, http.StatusNotFound, "")
-		return
-	}
+		tmpMedia, err := tx.Medias().Get(media.ID)
+		if err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
+		if tmpMedia == nil {
+			commons.WriteResponse(w, http.StatusNotFound, "")
+			return err
+		}
 
-	if !auth.CheckPermissions(r, []string{tmpMedia.Owner}, "admin") {
-		commons.WriteResponse(w, http.StatusForbidden, "")
-		return
-	}
+		if !auth.CheckPermissions(r, []string{tmpMedia.Owner}, "admin") {
+			commons.WriteResponse(w, http.StatusForbidden, "")
+			return err
+		}
 
-	if err := activate(media); err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+		if err := activate(media); err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	media.IsActive = true
+		media.IsActive = true
 
-	if err := medias.Update(media); err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+		if err := tx.Medias().Update(media); err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	commons.WriteJsonResponse(w, media)
-	m.clientsService.SendByMedia(media.ID, "update")
+		if err := commons.WriteJsonResponse(w, media); err != nil {
+			return err
+		}
+
+		m.clientsService.SendByMedia(media.ID, "update")
+		return nil
+	})
 }
 
 // CreateHandler creates a new empty media
@@ -106,7 +113,7 @@ func (m *Service) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	media := medias.New(auth.GetAuth(r).Subject)
 
-	if err := medias.Insert(media); err != nil {
+	if err := db.Medias().Insert(media); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -133,7 +140,7 @@ func (m *Service) ActivateHandler(w http.ResponseWriter, r *http.Request) {
 
 	media.IsActive = true
 
-	if err := medias.Update(media); err != nil {
+	if err := db.Medias().Update(media); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -156,7 +163,7 @@ func (m *Service) DeactivateHandler(w http.ResponseWriter, r *http.Request) {
 
 	media.IsActive = false
 
-	if err := medias.Update(media); err != nil {
+	if err := db.Medias().Update(media); err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -177,17 +184,20 @@ func (m *Service) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := medias.Delete(media.ID); err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	db.Transactional(func(tx *db.Tx) error {
+		if err := db.Medias().Delete(media.ID); err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	if err := os.RemoveAll(filepath.Join(config.Default().API().MediasDir(), strconv.Itoa(media.ID))); err != nil {
-		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+		if err := os.RemoveAll(filepath.Join(config.Default().API().MediasDir(), strconv.Itoa(media.ID))); err != nil {
+			commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
+			return err
+		}
 
-	commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
+		commons.WriteResponse(w, http.StatusOK, "Media has been correctly deleted")
+		return nil
+	})
 }
 
 // GetPluginFilesHandler Serves static frontend files of the given plugin instance for the given media.
@@ -223,7 +233,7 @@ func (m *Service) getMediaFromRequest(w http.ResponseWriter, r *http.Request) (m
 		return nil
 	}
 
-	media, err = medias.Get(idMedia)
+	media, err = db.Medias().Get(idMedia)
 	if err != nil {
 		commons.WriteResponse(w, http.StatusInternalServerError, err.Error())
 		return nil

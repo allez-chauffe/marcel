@@ -11,7 +11,7 @@ import (
 	"github.com/allez-chauffe/marcel/module"
 )
 
-const index = "/index.html"
+const index = "index.html"
 
 // Module creates backoffice module
 func Module() *module.Module {
@@ -24,7 +24,7 @@ func Module() *module.Module {
 
 	return &module.Module{
 		Name: "Backoffice",
-		Start: func(next module.NextFunc) (module.StopFunc, error) {
+		Start: func(_ module.Context, next module.NextFunc) (module.StopFunc, error) {
 			var err error
 			fs, err = initFs()
 			if err != nil {
@@ -36,7 +36,7 @@ func Module() *module.Module {
 		HTTP: module.HTTP{
 			BasePath:      config.Default().Backoffice().BasePath(),
 			RedirectSlash: true,
-			Setup: func(basePath string, r *mux.Router) {
+			Setup: func(_ module.Context, basePath string, r *mux.Router) {
 				r.PathPrefix("/").Handler(fileHandler(basePath, fs))
 			},
 		},

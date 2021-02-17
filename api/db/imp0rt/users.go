@@ -1,6 +1,9 @@
 package imp0rt
 
-import "github.com/allez-chauffe/marcel/api/db/users"
+import (
+	"github.com/allez-chauffe/marcel/api/db"
+	"github.com/allez-chauffe/marcel/api/db/users"
+)
 
 type userPassword struct {
 	users.User
@@ -24,5 +27,5 @@ func importUsers(usersPassword []userPassword) error {
 		u.PasswordSalt = up.PasswordSalt
 		usersList = append(usersList, u)
 	}
-	return users.UpsertAll(usersList)
+	return db.Users().UpsertAll(usersList)
 }

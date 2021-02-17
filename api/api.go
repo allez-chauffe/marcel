@@ -7,9 +7,9 @@ import (
 	"github.com/allez-chauffe/marcel/api/auth"
 	"github.com/allez-chauffe/marcel/api/clients"
 	"github.com/allez-chauffe/marcel/api/db"
-	"github.com/allez-chauffe/marcel/api/db/users"
 	"github.com/allez-chauffe/marcel/api/medias"
 	"github.com/allez-chauffe/marcel/api/plugins"
+	"github.com/allez-chauffe/marcel/api/users"
 	"github.com/allez-chauffe/marcel/config"
 	"github.com/allez-chauffe/marcel/module"
 )
@@ -18,10 +18,12 @@ import (
 func Module() *module.Module {
 	var clientsService *clients.Service
 	var mediasService *medias.Service
+	var usersService *users.Service
+	var authService *auth.Service
 
 	return &module.Module{
 		Name: "API",
-		Start: func(next module.NextFunc) (module.StopFunc, error) {
+		Start: func(_ module.Context, next module.NextFunc) (module.StopFunc, error) {
 			if err := db.Open(); err != nil {
 				return nil, err
 			}
@@ -30,12 +32,13 @@ func Module() *module.Module {
 				return db.Close()
 			}
 
-			if err := users.EnsureOneUser(); err != nil {
+			if err := db.Users().EnsureOneUser(); err != nil {
 				return stop, err
 			}
 
+			usersService = users.NewService()
+			authService = auth.NewService()
 			clientsService = clients.NewService()
-
 			mediasService = medias.NewService(clientsService)
 
 			plugins.Initialize()
@@ -44,7 +47,7 @@ func Module() *module.Module {
 		},
 		HTTP: module.HTTP{
 			BasePath: config.Default().API().BasePath(),
-			Setup: func(_ string, r *mux.Router) {
+			Setup: func(_ module.Context, _ string, r *mux.Router) {
 				r.Use(auth.Middleware)
 				if !config.Default().API().Auth().Secure() {
 					log.Warnln("Secure mode is disabled")
@@ -81,18 +84,18 @@ func Module() *module.Module {
 				pluginsRouter.HandleFunc("/{eltName}", plugins.DeleteHandler).Methods("DELETE")
 
 				auth := r.PathPrefix("/auth").Subrouter()
-				auth.HandleFunc("/login", loginHandler).Methods("POST")
-				auth.HandleFunc("/logout", logoutHandler).Methods("PUT")
-				auth.HandleFunc("/validate", validateHandler).Methods("GET")
-				auth.HandleFunc("/validate/admin", validateAdminHandler).Methods("GET")
+				auth.HandleFunc("/login", authService.LoginHandler).Methods("POST")
+				auth.HandleFunc("/logout", authService.LogoutHandler).Methods("PUT")
+				auth.HandleFunc("/validate", authService.ValidateHandler).Methods("GET")
+				auth.HandleFunc("/validate/admin", authService.ValidateAdminHandler).Methods("GET")
 
 				users := auth.PathPrefix("/users").Subrouter()
-				users.HandleFunc("/", createUserHandler).Methods("POST")
-				users.HandleFunc("/", getUsersHandler).Methods("GET")
+				users.HandleFunc("/", usersService.CreateUserHandler).Methods("POST")
+				users.HandleFunc("/", usersService.GetUsersHandler).Methods("GET")
 
 				user := users.PathPrefix("/{userID}").Subrouter()
-				user.HandleFunc("", deleteUserHandler).Methods("DELETE")
-				user.HandleFunc("", updateUserHandler).Methods("PUT")
+				user.HandleFunc("", usersService.DeleteUserHandler).Methods("DELETE")
+				user.HandleFunc("", usersService.UpdateUserHandler).Methods("PUT")
 			},
 		},
 	}

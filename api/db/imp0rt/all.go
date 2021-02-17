@@ -1,6 +1,7 @@
 package imp0rt
 
 import (
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/api/db/medias"
 	"github.com/allez-chauffe/marcel/api/db/plugins"
 )
@@ -15,14 +16,16 @@ func All(inputFile string) error {
 	var data all
 
 	return imp0rt(inputFile, &data, func() error {
-		if err := importUsers(data.Users); err != nil {
-			return err
-		}
+		return db.Transactional(func(tx *db.Tx) error {
+			if err := importUsers(data.Users); err != nil {
+				return err
+			}
 
-		if err := medias.UpsertAll(data.Medias); err != nil {
-			return err
-		}
+			if err := tx.Medias().UpsertAll(data.Medias); err != nil {
+				return err
+			}
 
-		return plugins.UpsertAll(data.Plugins)
+			return tx.Plugins().UpsertAll(data.Plugins)
+		})
 	})
 }

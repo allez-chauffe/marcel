@@ -1,6 +1,7 @@
 {
 	"private": true,
 	"scripts": {
-		"api": "mkdir -p test_env && cd test_env && pwd && gow  -v run .. api --logLevel=debug --secure=false"
+		"api": "mkdir -p test_env && cd test_env && pwd && go run .. api --logLevel=debug --secure=false",
+		"standalone": "mkdir -p test_env && cd test_env && pwd && go run .. standalone"
 	}
 }

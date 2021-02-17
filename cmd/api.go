@@ -45,7 +45,7 @@ func init() {
 }
 
 func commonAPIFlags(flags *pflag.FlagSet, cfg *config.Config) {
-	if _, err := cfg.FlagString(flags, "dbFile", cfg.API().DBFile(), "Database file", "api.dbFile"); err != nil {
+	if _, err := cfg.FlagString(flags, "dbFile", cfg.API().DB().Bolt().File(), "Database file", "api.db.bolt.file"); err != nil {
 		panic(err)
 	}
 

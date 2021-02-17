@@ -1,6 +1,7 @@
 package export
 
 import (
+	"github.com/allez-chauffe/marcel/api/db"
 	"github.com/allez-chauffe/marcel/api/db/users"
 )
 
@@ -11,7 +12,7 @@ type userPassword struct {
 }
 
 func listUsers(withPassword bool) (interface{}, error) {
-	users, err := users.List()
+	users, err := db.Users().List()
 	if err != nil {
 		return nil, err
 	}
