@@ -34,7 +34,7 @@ func Module() (*module.Module, error) {
 
 	config.SetDefault(cfg)
 
-	log.SetReportCaller(true)
+	log.SetReportCaller(true) // Allows filtering logs by package
 	log.SetFormatter(demoFormatter)
 
 	var token string

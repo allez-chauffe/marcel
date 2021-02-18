@@ -6,19 +6,18 @@ require (
 	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/fatih/structs v1.1.0 // indirect
+	github.com/fatih/structs v1.1.0
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
-	github.com/lib/pq v1.9.0 // indirect
+	github.com/lib/pq v1.9.0
 	github.com/mattn/go-isatty v0.0.10
-	github.com/mitchellh/mapstructure v1.4.1 // indirect
+	github.com/mitchellh/mapstructure v1.4.1
 	github.com/nlepage/go-tarfs v1.0.2
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/rs/cors v1.7.0
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.8.0
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
