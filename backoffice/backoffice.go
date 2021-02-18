@@ -8,8 +8,7 @@ import (
 
 	"github.com/allez-chauffe/marcel/config"
 	"github.com/allez-chauffe/marcel/module"
-	"github.com/allez-chauffe/marcel/pkg/io/fs/catchall"
-	"github.com/allez-chauffe/marcel/pkg/io/fs/templater"
+	xfs "github.com/allez-chauffe/marcel/pkg/io/fs"
 )
 
 const index = "index.html"
@@ -48,8 +47,8 @@ func fileHandler(basePath string, fs fs.FS) http.Handler {
 	return http.StripPrefix(
 		basePath,
 		http.FileServer(http.FS(
-			catchall.New(
-				templater.New(
+			xfs.NewCatchAll(
+				xfs.NewTemplater(
 					fs,
 					[]string{index},
 					map[string]string{"REACT_APP_BASE": basePath},

@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/allez-chauffe/marcel/osutil"
-
 	log "github.com/sirupsen/logrus"
+
+	xos "github.com/allez-chauffe/marcel/pkg/os"
 )
 
 // StartFunc is a module's start function.
@@ -59,7 +59,7 @@ func (m Module) Run() (exitCode int) {
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	var signal = <-ch
 
-	if osutil.IsInteractive() {
+	if xos.IsInteractive() {
 		fmt.Print("\r")
 	}
 	log.Infof("Caught signal %s", signal)

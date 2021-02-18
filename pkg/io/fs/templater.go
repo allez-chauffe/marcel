@@ -1,4 +1,4 @@
-package templater
+package xfs
 
 import (
 	"bytes"
@@ -58,9 +58,9 @@ func (tfs *templater) Open(path string) (fs.File, error) {
 	return bf, nil
 }
 
-// New creates a new templater fs.FS around wrapped fs.FS.
+// NewTemplater creates a new templater fs.FS around wrapped fs.FS.
 // Templater will execute files in includes as templates with data.
-func New(wrapped fs.FS, includes []string, data interface{}) fs.FS {
+func NewTemplater(wrapped fs.FS, includes []string, data interface{}) fs.FS {
 	tfs := &templater{wrapped, make(map[string]bool, len(includes)), data, make(map[string]fs.File, len(includes))}
 
 	for _, path := range includes {

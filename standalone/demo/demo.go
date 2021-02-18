@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/allez-chauffe/marcel/osutil"
 	"github.com/allez-chauffe/marcel/standalone"
 
 	log "github.com/sirupsen/logrus"
@@ -17,6 +16,7 @@ import (
 	"github.com/allez-chauffe/marcel/api/db/users"
 	"github.com/allez-chauffe/marcel/config"
 	"github.com/allez-chauffe/marcel/module"
+	xexec "github.com/allez-chauffe/marcel/pkg/os/exec"
 )
 
 // Module creates a demonstration standalone server module.
@@ -76,7 +76,7 @@ func Module() (*module.Module, error) {
 
 				log.Infof("marcel is running at %s", url)
 
-				if err := osutil.Open(url); err != nil {
+				if err := xexec.Open(url); err != nil {
 					log.Errorf("Error while opening browser: %s", err)
 				}
 			},

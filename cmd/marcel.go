@@ -6,13 +6,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/allez-chauffe/marcel/osutil"
-
-	"github.com/allez-chauffe/marcel/standalone/demo"
-
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	xos "github.com/allez-chauffe/marcel/pkg/os"
+	"github.com/allez-chauffe/marcel/standalone/demo"
 )
 
 var configFile string
@@ -32,7 +31,7 @@ var Marcel = &cobra.Command{
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		if osutil.IsInteractive() {
+		if xos.IsInteractive() {
 			return startInteractive(cmd.Usage)
 		}
 

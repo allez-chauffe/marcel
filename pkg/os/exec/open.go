@@ -1,4 +1,4 @@
-package osutil
+package xexec
 
 import "os/exec"
 

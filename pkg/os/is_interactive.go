@@ -1,4 +1,4 @@
-package osutil
+package xos
 
 import (
 	"os"

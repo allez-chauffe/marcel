@@ -1,4 +1,4 @@
-package catchall
+package xfs
 
 import (
 	"errors"
@@ -20,6 +20,6 @@ func (r *catchAll) Open(path string) (fs.File, error) {
 	return f, err
 }
 
-func New(fs fs.FS, defaultPath string) fs.FS {
+func NewCatchAll(fs fs.FS, defaultPath string) fs.FS {
 	return &catchAll{fs, defaultPath}
 }

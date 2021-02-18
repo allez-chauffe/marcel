@@ -1,3 +1,3 @@
-package osutil
+package xexec
 
 const openCmd = "start"
