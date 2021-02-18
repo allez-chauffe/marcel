@@ -7,8 +7,8 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/allez-chauffe/marcel/config"
-	"github.com/allez-chauffe/marcel/httputil"
 	"github.com/allez-chauffe/marcel/module"
+	"github.com/allez-chauffe/marcel/pkg/io/fs/catchall"
 	"github.com/allez-chauffe/marcel/pkg/io/fs/templater"
 )
 
@@ -48,7 +48,7 @@ func fileHandler(basePath string, fs fs.FS) http.Handler {
 	return http.StripPrefix(
 		basePath,
 		http.FileServer(http.FS(
-			httputil.NewNotFoundRewriter(
+			catchall.New(
 				templater.New(
 					fs,
 					[]string{index},
