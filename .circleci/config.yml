@@ -3,16 +3,18 @@ version: 2.1
 executors:
   node_executor:
     docker:
-      - image: circleci/node:12
-    working_directory: /home/circleci/app
+      - image: cimg/node:12.20
   go_executor:
     docker:
-      - image: golang:1.16-rc
-    working_directory: /go/app
+      - image: cimg/go:1.16
+      - image: circleci/postgres:10
+        command: ["--max_prepared_transactions=100"]
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
   std_executor:
     docker:
-      - image: circleci/buildpack-deps:stable-curl
-    working_directory: /tmp/app
+      - image: cimg/base:stable
   gcloud_executor:
     docker:
       - image: google/cloud-sdk:latest
@@ -24,21 +26,21 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - marcel-backoffice-deps-{{ checksum "backoffice/package.json" }}
+            - marcel-backoffice-deps-{{ checksum "pkg/backoffice/package.json" }}
       - run:
           command: yarn
-          working_directory: backoffice
+          working_directory: pkg/backoffice
       - save_cache:
           paths:
-            - backoffice/node_modules
-          key: marcel-backoffice-deps-{{ checksum "backoffice/package.json" }}
+            - pkg/backoffice/node_modules
+          key: marcel-backoffice-deps-{{ checksum "pkg/backoffice/package.json" }}
       - run:
           command: yarn build
-          working_directory: backoffice
+          working_directory: pkg/backoffice
       - persist_to_workspace:
           root: .
           paths:
-            - backoffice/build
+            - pkg/backoffice/build
 
   build_frontend:
     executor: node_executor
@@ -46,21 +48,21 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - marcel-frontend-deps-{{ checksum "frontend/package.json" }}
+            - marcel-frontend-deps-{{ checksum "pkg/frontend/package.json" }}
       - run:
           command: yarn
-          working_directory: frontend
+          working_directory: pkg/frontend
       - save_cache:
           paths:
-            - frontend/node_modules
-          key: marcel-frontend-deps-{{ checksum "frontend/package.json" }}
+            - pkg/frontend/node_modules
+          key: marcel-frontend-deps-{{ checksum "pkg/frontend/package.json" }}
       - run:
           command: yarn build
-          working_directory: frontend
+          working_directory: pkg/frontend
       - persist_to_workspace:
           root: .
           paths:
-            - frontend/build
+            - pkg/frontend/build
 
   build_marcel:
     executor: go_executor
@@ -69,8 +71,8 @@ jobs:
       - attach_workspace:
           at: .
       - run: go mod download
-      - run: go test -mod=readonly .
-      - run: "CGO_ENABLED=0 go build -mod=readonly -trimpath -tags \"osusergo netgo\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/version.version=$CIRCLE_BRANCH -X github.com/allez-chauffe/marcel/version.revision=$CIRCLE_SHA1\" -o marcel"
+      - run: go test -mod=readonly ./...
+      - run: "CGO_ENABLED=0 go build -mod=readonly -trimpath -tags \"osusergo netgo\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_BRANCH -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel ./cmd/marcel"
       - persist_to_workspace:
           root: .
           paths:
@@ -85,9 +87,9 @@ jobs:
           at: .
       - run: go mod download
       - run: go test -mod=readonly .
-      - run: "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=readonly -trimpath -tags \"osusergo netgo noembed\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/version.revision=$CIRCLE_SHA1\" -o marcel_linux_amd64"
-      - run: "CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -mod=readonly -trimpath -tags \"osusergo netgo noembed\" -ldflags \"-H=windowsgui -extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/version.revision=$CIRCLE_SHA1\" -o marcel_windows_amd64.exe"
-      - run: "CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -mod=readonly -trimpath -tags \"noembed\" -ldflags \"-s -extldflags \\\"-sectcreate __TEXT __info_plist Info.plist\\\" -X github.com/allez-chauffe/marcel/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/version.revision=$CIRCLE_SHA1\" -o marcel_darwin_amd64"
+      - run: "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=readonly -trimpath -tags \"osusergo netgo noembed\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_linux_amd64 ./cmd/marcel"
+      - run: "CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -mod=readonly -trimpath -tags \"osusergo netgo noembed\" -ldflags \"-H=windowsgui -extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_windows_amd64.exe ./cmd/marcel"
+      - run: "CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -mod=readonly -trimpath -tags \"noembed\" -ldflags \"-s -extldflags \\\"-sectcreate __TEXT __info_plist Info.plist\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_darwin_amd64 ./cmd/marcel"
       - persist_to_workspace:
           root: .
           paths:
@@ -112,11 +114,11 @@ jobs:
           at: .
       - run:
           command: tar czf ../marcel-backoffice.tgz *
-          working_directory: backoffice/build
+          working_directory: pkg/backoffice/build
       - persist_to_workspace:
           root: .
           paths:
-            - backoffice/marcel-backoffice.tgz
+            - pkg/backoffice/marcel-backoffice.tgz
 
   archive_frontend:
     executor: std_executor
@@ -125,11 +127,11 @@ jobs:
           at: .
       - run:
           command: tar czf ../marcel-frontend.tgz *
-          working_directory: frontend/build
+          working_directory: pkg/frontend/build
       - persist_to_workspace:
           root: .
           paths:
-            - frontend/marcel-frontend.tgz
+            - pkg/frontend/marcel-frontend.tgz
 
   archive_marcel:
     executor: std_executor
@@ -168,8 +170,8 @@ jobs:
           at: .
       - run: go get github.com/tcnksm/ghr
       - run: mkdir assets
-      - run: mv backoffice/marcel-backoffice.tgz assets/marcel-backoffice-${CIRCLE_TAG}.tgz
-      - run: mv frontend/marcel-frontend.tgz assets/marcel-frontend-${CIRCLE_TAG}.tgz
+      - run: mv pkg/backoffice/marcel-backoffice.tgz assets/marcel-backoffice-${CIRCLE_TAG}.tgz
+      - run: mv pkg/frontend/marcel-frontend.tgz assets/marcel-frontend-${CIRCLE_TAG}.tgz
       - run: mv marcel_linux_amd64.tgz assets/marcel_linux_amd64-${CIRCLE_TAG}.tgz
       - run: mv marcel_darwin_amd64.tgz assets/marcel_darwin_amd64-${CIRCLE_TAG}.tgz
       - run: mv marcel_windows_amd64.tgz assets/marcel_windows_amd64-${CIRCLE_TAG}.tgz

@@ -7,6 +7,7 @@
 *.log
 build/
 marcel
+!marcel/
 marcel.exe
 node_modules
 pkged.go
