@@ -64,6 +64,6 @@ func driver() db.Driver {
 	case "postgres":
 		return postgres.Driver
 	default:
-		panic(fmt.Errorf("Unknown database driver %s", driver))
+		panic(fmt.Errorf("Unknown database driver %s", config.Default().API().DB().Driver()))
 	}
 }
