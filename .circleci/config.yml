@@ -3,11 +3,11 @@ version: 2.1
 executors:
   node_executor:
     docker:
-      - image: circleci/node:12
+      - image: cimg/node:12
     working_directory: /home/circleci/app
   go_executor:
     docker:
-      - image: golang:1.16-rc
+      - image: cimg/go:1.16
     working_directory: /go/app
   std_executor:
     docker:
@@ -24,21 +24,21 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - marcel-backoffice-deps-{{ checksum "backoffice/package.json" }}
+            - marcel-backoffice-deps-{{ checksum "pkg/backoffice/package.json" }}
       - run:
           command: yarn
-          working_directory: backoffice
+          working_directory: pkg/backoffice
       - save_cache:
           paths:
-            - backoffice/node_modules
-          key: marcel-backoffice-deps-{{ checksum "backoffice/package.json" }}
+            - pkg/backoffice/node_modules
+          key: marcel-backoffice-deps-{{ checksum "pkg/backoffice/package.json" }}
       - run:
           command: yarn build
-          working_directory: backoffice
+          working_directory: pkg/backoffice
       - persist_to_workspace:
           root: .
           paths:
-            - backoffice/build
+            - pkg/backoffice/build
 
   build_frontend:
     executor: node_executor
@@ -46,21 +46,21 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - marcel-frontend-deps-{{ checksum "frontend/package.json" }}
+            - marcel-frontend-deps-{{ checksum "pkg/frontend/package.json" }}
       - run:
           command: yarn
-          working_directory: frontend
+          working_directory: pkg/frontend
       - save_cache:
           paths:
-            - frontend/node_modules
-          key: marcel-frontend-deps-{{ checksum "frontend/package.json" }}
+            - pkg/frontend/node_modules
+          key: marcel-frontend-deps-{{ checksum "pkg/frontend/package.json" }}
       - run:
           command: yarn build
-          working_directory: frontend
+          working_directory: pkg/frontend
       - persist_to_workspace:
           root: .
           paths:
-            - frontend/build
+            - pkg/frontend/build
 
   build_marcel:
     executor: go_executor
@@ -112,11 +112,11 @@ jobs:
           at: .
       - run:
           command: tar czf ../marcel-backoffice.tgz *
-          working_directory: backoffice/build
+          working_directory: pkg/backoffice/build
       - persist_to_workspace:
           root: .
           paths:
-            - backoffice/marcel-backoffice.tgz
+            - pkg/backoffice/marcel-backoffice.tgz
 
   archive_frontend:
     executor: std_executor
@@ -125,11 +125,11 @@ jobs:
           at: .
       - run:
           command: tar czf ../marcel-frontend.tgz *
-          working_directory: frontend/build
+          working_directory: pkg/frontend/build
       - persist_to_workspace:
           root: .
           paths:
-            - frontend/marcel-frontend.tgz
+            - pkg/frontend/marcel-frontend.tgz
 
   archive_marcel:
     executor: std_executor
@@ -168,8 +168,8 @@ jobs:
           at: .
       - run: go get github.com/tcnksm/ghr
       - run: mkdir assets
-      - run: mv backoffice/marcel-backoffice.tgz assets/marcel-backoffice-${CIRCLE_TAG}.tgz
-      - run: mv frontend/marcel-frontend.tgz assets/marcel-frontend-${CIRCLE_TAG}.tgz
+      - run: mv pkg/backoffice/marcel-backoffice.tgz assets/marcel-backoffice-${CIRCLE_TAG}.tgz
+      - run: mv pkg/frontend/marcel-frontend.tgz assets/marcel-frontend-${CIRCLE_TAG}.tgz
       - run: mv marcel_linux_amd64.tgz assets/marcel_linux_amd64-${CIRCLE_TAG}.tgz
       - run: mv marcel_darwin_amd64.tgz assets/marcel_darwin_amd64-${CIRCLE_TAG}.tgz
       - run: mv marcel_windows_amd64.tgz assets/marcel_windows_amd64-${CIRCLE_TAG}.tgz
