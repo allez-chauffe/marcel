@@ -1,7 +1,7 @@
 package standalone
 
 import (
-	"github.com/allez-chauffe/marcel/api"
+	"github.com/allez-chauffe/marcel/pkg/api"
 	"github.com/allez-chauffe/marcel/pkg/backoffice"
 	"github.com/allez-chauffe/marcel/pkg/frontend"
 	"github.com/allez-chauffe/marcel/pkg/module"

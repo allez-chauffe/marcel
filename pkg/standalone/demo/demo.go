@@ -11,10 +11,10 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/allez-chauffe/marcel/api/auth"
-	"github.com/allez-chauffe/marcel/api/db"
-	"github.com/allez-chauffe/marcel/api/db/users"
+	"github.com/allez-chauffe/marcel/pkg/api/auth"
 	"github.com/allez-chauffe/marcel/pkg/config"
+	"github.com/allez-chauffe/marcel/pkg/db"
+	"github.com/allez-chauffe/marcel/pkg/db/users"
 	"github.com/allez-chauffe/marcel/pkg/module"
 	xexec "github.com/allez-chauffe/marcel/pkg/os/exec"
 )

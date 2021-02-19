@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/allez-chauffe/marcel/api/db/imp0rt"
 	"github.com/allez-chauffe/marcel/pkg/config"
+	"github.com/allez-chauffe/marcel/pkg/db/imp0rt"
 )
 
 func init() {
