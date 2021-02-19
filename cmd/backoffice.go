@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/allez-chauffe/marcel/backoffice"
+	"github.com/allez-chauffe/marcel/pkg/backoffice"
 	"github.com/allez-chauffe/marcel/pkg/config"
 )
 
