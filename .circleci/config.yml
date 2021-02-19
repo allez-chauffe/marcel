@@ -7,6 +7,11 @@ executors:
   go_executor:
     docker:
       - image: cimg/go:1.16
+      - image: circleci/postgres:10
+        command: ["--max_prepared_transactions=100"]
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
   std_executor:
     docker:
       - image: cimg/base:stable
