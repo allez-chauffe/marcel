@@ -4,15 +4,12 @@ executors:
   node_executor:
     docker:
       - image: cimg/node:12.20
-    working_directory: /home/circleci/app
   go_executor:
     docker:
       - image: cimg/go:1.16
-    working_directory: /go/app
   std_executor:
     docker:
       - image: cimg/base:stable
-    working_directory: /tmp/app
   gcloud_executor:
     docker:
       - image: google/cloud-sdk:latest
