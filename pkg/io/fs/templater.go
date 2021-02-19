@@ -11,7 +11,12 @@ type templater struct {
 	fs       fs.FS
 	includes map[string]bool
 	data     interface{}
-	cache    map[string]fs.File
+	cache    map[string]cacheEntry
+}
+
+type cacheEntry struct {
+	b    []byte
+	info fs.FileInfo
 }
 
 var _ fs.FS = (*templater)(nil)
@@ -22,7 +27,7 @@ func (tfs *templater) Open(path string) (fs.File, error) {
 	}
 
 	if f, ok := tfs.cache[path]; ok {
-		return f, nil
+		return newBfile(f.b, f.info), nil
 	}
 
 	f, err := tfs.fs.Open(path)
@@ -52,16 +57,17 @@ func (tfs *templater) Open(path string) (fs.File, error) {
 		return nil, err
 	}
 
-	bf := newBfile(buf.Bytes(), info)
-	tfs.cache[path] = bf
+	var b = buf.Bytes()
 
-	return bf, nil
+	tfs.cache[path] = cacheEntry{b, info}
+
+	return newBfile(b, info), nil
 }
 
 // NewTemplater creates a new templater fs.FS around wrapped fs.FS.
 // Templater will execute files in includes as templates with data.
 func NewTemplater(wrapped fs.FS, includes []string, data interface{}) fs.FS {
-	tfs := &templater{wrapped, make(map[string]bool, len(includes)), data, make(map[string]fs.File, len(includes))}
+	tfs := &templater{wrapped, make(map[string]bool, len(includes)), data, make(map[string]cacheEntry, len(includes))}
 
 	for _, path := range includes {
 		tfs.includes[path] = true
