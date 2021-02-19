@@ -11,7 +11,7 @@ executors:
     working_directory: /go/app
   std_executor:
     docker:
-      - image: circleci/buildpack-deps:stable-curl
+      - image: cimg/base:stable
     working_directory: /tmp/app
   gcloud_executor:
     docker:
