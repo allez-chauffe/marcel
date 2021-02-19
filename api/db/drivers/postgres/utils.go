@@ -13,7 +13,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 )
 
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")

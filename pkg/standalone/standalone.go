@@ -4,7 +4,7 @@ import (
 	"github.com/allez-chauffe/marcel/api"
 	"github.com/allez-chauffe/marcel/backoffice"
 	"github.com/allez-chauffe/marcel/frontend"
-	"github.com/allez-chauffe/marcel/module"
+	"github.com/allez-chauffe/marcel/pkg/module"
 )
 
 // Module creates the standalone module.

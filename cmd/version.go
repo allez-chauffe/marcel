@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/allez-chauffe/marcel/version"
+	"github.com/allez-chauffe/marcel/pkg/version"
 )
 
 func init() {

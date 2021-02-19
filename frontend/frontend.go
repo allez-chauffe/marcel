@@ -6,9 +6,9 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/allez-chauffe/marcel/config"
-	"github.com/allez-chauffe/marcel/module"
+	"github.com/allez-chauffe/marcel/pkg/config"
 	xfs "github.com/allez-chauffe/marcel/pkg/io/fs"
+	"github.com/allez-chauffe/marcel/pkg/module"
 )
 
 // Module creates the frontend module

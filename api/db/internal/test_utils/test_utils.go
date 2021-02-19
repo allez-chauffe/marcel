@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/allez-chauffe/marcel/api/db"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 	"github.com/sirupsen/logrus"
 )
 

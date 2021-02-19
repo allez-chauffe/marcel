@@ -10,8 +10,8 @@ import (
 	"github.com/allez-chauffe/marcel/api/medias"
 	"github.com/allez-chauffe/marcel/api/plugins"
 	"github.com/allez-chauffe/marcel/api/users"
-	"github.com/allez-chauffe/marcel/config"
-	"github.com/allez-chauffe/marcel/module"
+	"github.com/allez-chauffe/marcel/pkg/config"
+	"github.com/allez-chauffe/marcel/pkg/module"
 )
 
 // Module creates API module

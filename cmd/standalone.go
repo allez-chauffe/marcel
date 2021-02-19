@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/allez-chauffe/marcel/config"
-	"github.com/allez-chauffe/marcel/standalone"
+	"github.com/allez-chauffe/marcel/pkg/config"
+	"github.com/allez-chauffe/marcel/pkg/standalone"
 )
 
 func init() {

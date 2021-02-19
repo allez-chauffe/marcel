@@ -9,7 +9,7 @@ import (
 
 	"github.com/allez-chauffe/marcel/api/commons"
 	"github.com/allez-chauffe/marcel/api/db/users"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 )
 
 const AuthCookieName = "Authentication"

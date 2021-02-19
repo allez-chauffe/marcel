@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/allez-chauffe/marcel/api/db/imp0rt"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 )
 
 func init() {

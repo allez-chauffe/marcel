@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 
 	xos "github.com/allez-chauffe/marcel/pkg/os"
-	"github.com/allez-chauffe/marcel/standalone/demo"
+	"github.com/allez-chauffe/marcel/pkg/standalone/demo"
 )
 
 var configFile string
@@ -20,7 +20,7 @@ func init() {
 	var ll = log.InfoLevel
 	Marcel.PersistentFlags().Var((*logLevel)(&ll), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
 
-	Marcel.PersistentFlags().StringVarP(&configFile, "configFile", "c", "", fmt.Sprintf("Config file (default /etc/marcel/config.xxx or ./config.xxx, supports %s)", strings.Join(viper.SupportedExts, " ")))
+	Marcel.PersistentFlags().StringVarP(&configFile, "configFile", "c", "", fmt.Sprintf("Config file (default /etc/marcel/pkg/config.xxx or ./config.xxx, supports %s)", strings.Join(viper.SupportedExts, " ")))
 }
 
 // Marcel is the root command of marcel

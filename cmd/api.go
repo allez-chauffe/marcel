@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/allez-chauffe/marcel/api"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 )
 
 func init() {

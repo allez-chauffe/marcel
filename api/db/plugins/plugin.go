@@ -3,7 +3,7 @@ package plugins
 import (
 	"path/filepath"
 
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 )
 
 // Plugin represents a plugin configuration

@@ -16,7 +16,7 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 
 	"github.com/allez-chauffe/marcel/api/db/plugins"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 	gitConfig "gopkg.in/src-d/go-git.v4/config"
 )
 

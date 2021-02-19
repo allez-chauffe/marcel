@@ -11,7 +11,7 @@ import (
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 )
 
 type boltDriver struct{}

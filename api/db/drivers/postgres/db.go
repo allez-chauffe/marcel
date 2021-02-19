@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/allez-chauffe/marcel/api/db/internal/db"
-	"github.com/allez-chauffe/marcel/config"
+	"github.com/allez-chauffe/marcel/pkg/config"
 )
 
 type postgresDriver struct{}

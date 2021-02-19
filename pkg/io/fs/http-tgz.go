@@ -1,4 +1,4 @@
-package httputil
+package xfs
 
 import (
 	"compress/gzip"
@@ -10,7 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func GetTgzFS(url string) (fs.FS, error) {
+// NewHTTPTgz creates a new fs.FS from the gzipped tar at url.
+func NewHTTPTgz(url string) (fs.FS, error) {
 	log.Infof("Fetching %s...", url)
 	res, err := http.Get(url)
 	if err != nil {
