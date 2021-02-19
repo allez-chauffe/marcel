@@ -1,26 +1,26 @@
-package cmd
+package main
 
 import (
 	"os"
 
 	"github.com/spf13/cobra"
 
+	"github.com/allez-chauffe/marcel/pkg/backoffice"
 	"github.com/allez-chauffe/marcel/pkg/config"
-	"github.com/allez-chauffe/marcel/pkg/frontend"
 )
 
 func init() {
 	var cfg = config.New()
 
 	var cmd = &cobra.Command{
-		Use:   "frontend",
-		Short: "Starts Marcel's Frontend server",
+		Use:   "backoffice",
+		Short: "Starts Marcel's Backoffice server",
 		Args:  cobra.NoArgs,
 
 		PreRunE: preRunForServer(cfg),
 
 		Run: func(_ *cobra.Command, _ []string) {
-			os.Exit(frontend.Module().Run())
+			os.Exit(backoffice.Module().Run())
 		},
 	}
 
@@ -30,7 +30,7 @@ func init() {
 		panic(err)
 	}
 
-	if _, err := cfg.FlagString(flags, "basePath", cfg.Frontend().BasePath(), "Base path", "frontend.basePath"); err != nil {
+	if _, err := cfg.FlagString(flags, "basePath", cfg.Backoffice().BasePath(), "Base path", "backoffice.basePath"); err != nil {
 		panic(err)
 	}
 
@@ -38,5 +38,9 @@ func init() {
 		panic(err)
 	}
 
-	Marcel.AddCommand(cmd)
+	if _, err := cfg.FlagString(flags, "frontendURI", cfg.Frontend().BasePath(), "Frontend URI", "frontend.basePath"); err != nil {
+		panic(err)
+	}
+
+	rootCmd.AddCommand(cmd)
 }

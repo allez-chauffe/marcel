@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	Marcel.AddCommand(&cobra.Command{
+	rootCmd.AddCommand(&cobra.Command{
 		Use:   "version",
 		Short: "Displays version information",
 		Args:  cobra.NoArgs,

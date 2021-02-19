@@ -1,4 +1,4 @@
-cd frontend
+cd pkg/frontend
 yarn build
 docker image build -t zenika/marcel-frontend:dev .
-cd ..
+cd ../..

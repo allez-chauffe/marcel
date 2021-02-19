@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"os"
@@ -48,5 +48,5 @@ func init() {
 		panic(err)
 	}
 
-	Marcel.AddCommand(cmd)
+	rootCmd.AddCommand(cmd)
 }

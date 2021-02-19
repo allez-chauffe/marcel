@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	log "github.com/sirupsen/logrus"
@@ -31,5 +31,5 @@ func setLogLevel(cfg *config.Config) {
 }
 
 func bindLogLevel(cfg *config.Config) {
-	cfg.BindPFlag(Marcel.PersistentFlags(), "logLevel", "logLevel")
+	cfg.BindPFlag(rootCmd.PersistentFlags(), "logLevel", "logLevel")
 }

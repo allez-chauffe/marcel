@@ -67,7 +67,7 @@ jobs:
           at: .
       - run: go mod download
       - run: go test -mod=readonly .
-      - run: "CGO_ENABLED=0 go build -mod=readonly -trimpath -tags \"osusergo netgo\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_BRANCH -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel"
+      - run: "CGO_ENABLED=0 go build -mod=readonly -trimpath -tags \"osusergo netgo\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_BRANCH -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel ./cmd/marcel"
       - persist_to_workspace:
           root: .
           paths:
@@ -82,9 +82,9 @@ jobs:
           at: .
       - run: go mod download
       - run: go test -mod=readonly .
-      - run: "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=readonly -trimpath -tags \"osusergo netgo noembed\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_linux_amd64"
-      - run: "CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -mod=readonly -trimpath -tags \"osusergo netgo noembed\" -ldflags \"-H=windowsgui -extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_windows_amd64.exe"
-      - run: "CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -mod=readonly -trimpath -tags \"noembed\" -ldflags \"-s -extldflags \\\"-sectcreate __TEXT __info_plist Info.plist\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_darwin_amd64"
+      - run: "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=readonly -trimpath -tags \"osusergo netgo noembed\" -ldflags \"-extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_linux_amd64 ./cmd/marcel"
+      - run: "CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -mod=readonly -trimpath -tags \"osusergo netgo noembed\" -ldflags \"-H=windowsgui -extldflags \\\"-static\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_windows_amd64.exe ./cmd/marcel"
+      - run: "CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -mod=readonly -trimpath -tags \"noembed\" -ldflags \"-s -extldflags \\\"-sectcreate __TEXT __info_plist Info.plist\\\" -X github.com/allez-chauffe/marcel/pkg/version.version=$CIRCLE_TAG -X github.com/allez-chauffe/marcel/pkg/version.revision=$CIRCLE_SHA1\" -o marcel_darwin_amd64 ./cmd/marcel"
       - persist_to_workspace:
           root: .
           paths:

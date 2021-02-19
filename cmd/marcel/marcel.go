@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"bufio"
@@ -18,13 +18,12 @@ var configFile string
 
 func init() {
 	var ll = log.InfoLevel
-	Marcel.PersistentFlags().Var((*logLevel)(&ll), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
+	rootCmd.PersistentFlags().Var((*logLevel)(&ll), "logLevel", fmt.Sprintf("Log level: %s, %s, %s, %s or %s", log.TraceLevel, log.DebugLevel, log.InfoLevel, log.WarnLevel, log.ErrorLevel))
 
-	Marcel.PersistentFlags().StringVarP(&configFile, "configFile", "c", "", fmt.Sprintf("Config file (default /etc/marcel/pkg/config.xxx or ./config.xxx, supports %s)", strings.Join(viper.SupportedExts, " ")))
+	rootCmd.PersistentFlags().StringVarP(&configFile, "configFile", "c", "", fmt.Sprintf("Config file (default /etc/marcel/pkg/config.xxx or ./config.xxx, supports %s)", strings.Join(viper.SupportedExts, " ")))
 }
 
-// Marcel is the root command of marcel
-var Marcel = &cobra.Command{
+var rootCmd = &cobra.Command{
 	Use:           "marcel",
 	Short:         "marcel is a configurable plugin based dashboard system",
 	Args:          cobra.NoArgs,

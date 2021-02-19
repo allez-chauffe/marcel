@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"github.com/spf13/cobra"
@@ -8,7 +8,6 @@ import (
 )
 
 func init() {
-
 	var cfg = config.New()
 
 	var importFile string
@@ -35,7 +34,7 @@ func init() {
 		panic(err)
 	}
 
-	Marcel.AddCommand(cmd)
+	rootCmd.AddCommand(cmd)
 
 	cmd.AddCommand(&cobra.Command{
 		Use:   "users [FILE]",
