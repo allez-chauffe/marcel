@@ -7,7 +7,7 @@ executors:
   go_executor:
     docker:
       - image: cimg/go:1.16
-      - image: circleci/postgres:10
+      - image: circleci/postgres:12
         command: ["--max_prepared_transactions=100"]
         environment:
           POSTGRES_USER: postgres
