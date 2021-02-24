@@ -9,36 +9,31 @@ import (
 	"github.com/allez-chauffe/marcel/pkg/db/internal/db"
 )
 
-type boltStoreConfig struct {
-	*boltDatabase
-	newEntity func() db.Entity
-	typeName  string
+type store struct {
+	*client
+	entityFactory func() db.Entity
+	typeName      string
+	tx            *bolt.Tx
 }
 
-type boltStore struct {
-	*boltStoreConfig
-	tx *bolt.Tx
-}
-
-func (store *boltStore) Transactional(tx db.Transaction) db.Store {
+func (s *store) WithTransaction(tx db.Transaction) db.StoreBase {
 	if tx == nil {
-		return store
+		return s
 	}
 
 	boltTx, ok := tx.(*bolt.Tx)
-
 	if !ok {
 		panic("Bolt driver received non bolt transaction (*bbolt.Tx required)")
 	}
 
-	return &boltStore{store.boltStoreConfig, boltTx}
+	return &store{s.client, s.entityFactory, s.typeName, boltTx}
 }
 
-func (store *boltStore) IsTransactional() bool {
-	return store.tx != nil
+func (s *store) IsWithTransaction() bool {
+	return s.tx != nil
 }
 
-func (store *boltStore) Get(id interface{}, result interface{}) error {
+func (s *store) Get(id interface{}, result interface{}) error {
 	var err error
 
 	resultType := reflect.TypeOf(result)
@@ -50,10 +45,10 @@ func (store *boltStore) Get(id interface{}, result interface{}) error {
 
 	resultPointer := reflect.ValueOf(result).Elem()
 
-	if store.IsTransactional() {
-		err = store.bh.TxGet(store.tx, id, resultPointer.Interface())
+	if s.IsWithTransaction() {
+		err = s.bh.TxGet(s.tx, id, resultPointer.Interface())
 	} else {
-		err = store.bh.Get(id, resultPointer.Interface())
+		err = s.bh.Get(id, resultPointer.Interface())
 	}
 
 	if err != nil {
@@ -67,75 +62,102 @@ func (store *boltStore) Get(id interface{}, result interface{}) error {
 	return nil
 }
 
-func (store *boltStore) List(result interface{}) error {
-	if store.IsTransactional() {
-		return store.bh.TxFind(store.tx, result, nil)
+func (s *store) List(result interface{}) error {
+	if s.IsWithTransaction() {
+		return s.bh.TxFind(s.tx, result, nil)
 	}
-	return store.bh.Find(result, nil)
+	return s.bh.Find(result, nil)
 }
 
-func (store *boltStore) Insert(item db.Entity) error {
-	return store.ensureTransaction(func(store *boltStore) error {
+func (s *store) Insert(item db.Entity) error {
+	// FIXME no need for that, see FIXME on s.nextSequence()
+	return s.ensureTransaction(func(s *store) error {
 		if db.ShouldAutoIncrement(item) {
-			id, err := store.nextSequence()
+			id, err := s.nextSequence()
 			if err != nil {
 				return err
 			}
 			item.SetID(id)
 		}
 
-		return store.bh.TxInsert(store.tx, item.GetID(), item)
+		return s.bh.TxInsert(s.tx, item.GetID(), item)
 	})
 }
 
-func (store *boltStore) Update(item db.Entity) error {
-	if store.IsTransactional() {
-		return store.bh.TxUpdate(store.tx, item.GetID(), item)
+func (s *store) Update(item db.Entity) error {
+	if s.IsWithTransaction() {
+		return s.bh.TxUpdate(s.tx, item.GetID(), item)
 	}
-	return store.bh.Update(item.GetID(), item)
+	return s.bh.Update(item.GetID(), item)
 }
 
-func (store *boltStore) Delete(id interface{}) error {
-	if store.IsTransactional() {
-		return store.bh.TxDelete(store.tx, id, store.newEntity())
+func (s *store) Delete(id interface{}) error {
+	if s.IsWithTransaction() {
+		return s.bh.TxDelete(s.tx, id, s.entityFactory())
 	}
-	return store.bh.Delete(id, store.newEntity())
+	return s.bh.Delete(id, s.entityFactory())
 }
 
-func (store *boltStore) DeleteAll() error {
-	if store.IsTransactional() {
-		return store.bh.TxDeleteMatching(store.tx, store.newEntity(), nil)
+func (s *store) DeleteAll() error {
+	if s.IsWithTransaction() {
+		return s.bh.TxDeleteMatching(s.tx, s.entityFactory(), nil)
 	}
-	return store.bh.DeleteMatching(store.newEntity(), nil)
+	return s.bh.DeleteMatching(s.entityFactory(), nil)
 }
 
-func (store *boltStore) Upsert(item db.Entity) error {
-	return store.ensureTransaction(func(bs *boltStore) error {
+func (s *store) Upsert(item db.Entity) error {
+	return s.ensureTransaction(func(s *store) error {
 		if db.ShouldAutoIncrement(item) {
-			id, err := store.nextSequence()
+			id, err := s.nextSequence()
 			if err != nil {
 				return err
 			}
 			item.SetID(id)
 		}
 
-		return store.bh.TxUpsert(store.tx, item.GetID(), item)
+		return s.bh.TxUpsert(s.tx, item.GetID(), item)
 	})
 }
 
-func (store *boltStore) Exists(id interface{}) (bool, error) {
-	entity := store.newEntity()
-	if err := store.Get(id, &entity); err != nil {
+func (s *store) Exists(id interface{}) (bool, error) {
+	entity := s.entityFactory()
+	if err := s.Get(id, &entity); err != nil {
 		return false, err
 	}
 
 	return entity != nil, nil
 }
 
-func (store *boltStore) Find(result interface{}, filters map[string]interface{}) error {
+func (s *store) Find(result interface{}, filters map[string]interface{}) error {
 	query := queryFromFilters(filters)
-	if store.IsTransactional() {
-		return store.bh.TxFind(store.tx, result, query)
+	if s.IsWithTransaction() {
+		return s.bh.TxFind(s.tx, result, query)
 	}
-	return store.bh.Find(result, query)
+	return s.bh.Find(result, query)
+}
+
+func (s *store) ensureTransaction(task func(*store) error) error {
+	if s.IsWithTransaction() {
+		return task(s)
+	}
+
+	return s.bh.Bolt().Update(func(tx *bolt.Tx) error {
+		return task(&store{s.client, s.entityFactory, s.typeName, tx})
+	})
+}
+
+// FIXME use bh.NextSequence() to give to bh.Insert()
+func (s *store) nextSequence() (int, error) {
+	// FIXME not really the right place
+	bucket, err := s.tx.CreateBucketIfNotExists([]byte(s.typeName))
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := bucket.NextSequence()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }

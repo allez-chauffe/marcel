@@ -9,65 +9,76 @@ import (
 	"github.com/allez-chauffe/marcel/pkg/db/internal/db"
 )
 
-type postgresStoreConfig struct {
-	table     string
-	idType    string
-	newEntity func() db.Entity
-	pg        *sql.DB
+type store struct {
+	table         string
+	idType        string
+	entityFactory func() db.Entity
+	pg            *sql.DB
+	tx            *sql.Tx
 }
 
-type postgresStore struct {
-	*postgresStoreConfig
-	tx *sql.Tx
+type storeClient interface {
+	Exec(query string, params ...interface{}) (sql.Result, error)
+	Query(query string, params ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, params ...interface{}) *sql.Row
 }
 
-func (store *postgresStore) Transactional(tx db.Transaction) db.Store {
+var _ storeClient = (*sql.DB)(nil)
+var _ storeClient = (*sql.Tx)(nil)
+
+func (s *store) client() storeClient {
+	if s.tx != nil {
+		return s.tx
+	}
+	return s.pg
+}
+
+func (s *store) WithTransaction(tx db.Transaction) db.StoreBase {
 	if tx == nil {
-		return store
+		return s
 	}
 
 	pgTx, ok := tx.(*sql.Tx)
-
 	if !ok {
 		panic("Postgres driver received non postgres transaction (*sql.Tx required)")
 	}
 
-	return &postgresStore{store.postgresStoreConfig, pgTx}
+	return &store{s.table, s.idType, s.entityFactory, s.pg, pgTx}
 }
 
-func (store *postgresStore) IsTransactional() bool {
-	return store.tx != nil
+func (s *store) IsWithTransaction() bool {
+	return s.tx != nil
 }
 
-func (store *postgresStore) selectQuery(query string) string {
-	return fmt.Sprintf(`SELECT id, data FROM "%s" %s`, store.table, query)
+func (s *store) selectQuery(query string) string {
+	return fmt.Sprintf(`SELECT id, data FROM "%s" %s`, s.table, query)
 }
 
-func (store *postgresStore) Get(id interface{}, result interface{}) error {
-	row := store.client().QueryRow(store.selectQuery("WHERE id = $1"), id)
+func (s *store) Get(id interface{}, result interface{}) error {
+	row := s.client().QueryRow(s.selectQuery("WHERE id = $1"), id)
 
-	if err := store.unmarshallRow(row, result); err != nil {
+	if err := s.unmarshallRow(row, result); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (store *postgresStore) Exists(id interface{}) (bool, error) {
-	entity := store.newEntity()
+func (s *store) Exists(id interface{}) (bool, error) {
+	entity := s.entityFactory()
 
-	if err := store.Get(id, &entity); err != nil {
+	if err := s.Get(id, &entity); err != nil {
 		return false, err
 	}
 
 	return entity != nil, nil
 }
 
-func (store *postgresStore) List(result interface{}) error {
-	return store.Find(result, nil)
+func (s *store) List(result interface{}) error {
+	return s.Find(result, nil)
 }
 
-func (store *postgresStore) Find(result interface{}, filters map[string]interface{}) error {
+func (s *store) Find(result interface{}, filters map[string]interface{}) error {
 	resultVal := reflect.ValueOf(result)
 	if resultVal.Kind() != reflect.Ptr || resultVal.Elem().Kind() != reflect.Slice {
 		panic("List result should be a slice pointer")
@@ -83,14 +94,14 @@ func (store *postgresStore) Find(result interface{}, filters map[string]interfac
 		return nil
 	}
 
-	rows, err := store.client().Query(store.selectQuery("WHERE data @> $1::jsonb"), jsonFilters)
+	rows, err := s.client().Query(s.selectQuery("WHERE data @> $1::jsonb"), jsonFilters)
 	if err != nil {
 		return err
 	}
 
 	for rows.Next() {
-		entity := store.newEntity()
-		if err := store.unmarshallRow(rows, &entity); err != nil {
+		entity := s.entityFactory()
+		if err := s.unmarshallRow(rows, &entity); err != nil {
 			return err
 		}
 		sliceVal = reflect.Append(sliceVal, reflect.ValueOf(entity).Elem())
@@ -100,17 +111,17 @@ func (store *postgresStore) Find(result interface{}, filters map[string]interfac
 	return nil
 }
 
-func (store *postgresStore) Insert(item db.Entity) error {
+func (s *store) Insert(item db.Entity) error {
 	id, data := prepare(item)
 
 	if db.ShouldAutoIncrement(item) {
-		row := store.client().QueryRow(fmt.Sprintf(`INSERT INTO "%s" (data) VALUES ($1) RETURNING id`, store.table), data)
+		row := s.client().QueryRow(fmt.Sprintf(`INSERT INTO "%s" (data) VALUES ($1) RETURNING id`, s.table), data)
 		if err := row.Scan(&id); err != nil {
 			return err
 		}
 		item.SetID(id)
 	} else {
-		if _, err := store.client().Exec(fmt.Sprintf(`INSERT INTO "%s" (id, data) VALUES ($1, $2)`, store.table), id, data); err != nil {
+		if _, err := s.client().Exec(fmt.Sprintf(`INSERT INTO "%s" (id, data) VALUES ($1, $2)`, s.table), id, data); err != nil {
 			return err
 		}
 	}
@@ -118,10 +129,10 @@ func (store *postgresStore) Insert(item db.Entity) error {
 	return nil
 }
 
-func (store *postgresStore) Update(item db.Entity) error {
+func (s *store) Update(item db.Entity) error {
 	id, data := prepare(item)
 
-	result, err := store.client().Exec(fmt.Sprintf(`UPDATE "%s" SET data = $1 WHERE id = $2`, store.table), data, id)
+	result, err := s.client().Exec(fmt.Sprintf(`UPDATE "%s" SET data = $1 WHERE id = $2`, s.table), data, id)
 	if err != nil {
 		return err
 	}
@@ -138,20 +149,20 @@ func (store *postgresStore) Update(item db.Entity) error {
 	return nil
 }
 
-func (store *postgresStore) Upsert(item db.Entity) error {
+func (s *store) Upsert(item db.Entity) error {
 	id, data := prepare(item)
 
 	if db.ShouldAutoIncrement(item) {
-		row := store.client().QueryRow(fmt.Sprintf(`INSERT INTO "%s" (data) VALUES ($1) RETURNING id`, store.table), data)
+		row := s.client().QueryRow(fmt.Sprintf(`INSERT INTO "%s" (data) VALUES ($1) RETURNING id`, s.table), data)
 		if err := row.Scan(&id); err != nil {
 			return err
 		}
 		item.SetID(id)
 	} else {
-		if _, err := store.client().Exec(fmt.Sprintf(`
+		if _, err := s.client().Exec(fmt.Sprintf(`
 				INSERT INTO "%s" (id, data) VALUES ($1, $2)
 				ON CONFLICT (id) DO UPDATE SET data = $2
-			`, store.table), id, data); err != nil {
+			`, s.table), id, data); err != nil {
 			return err
 		}
 	}
@@ -159,12 +170,19 @@ func (store *postgresStore) Upsert(item db.Entity) error {
 	return nil
 }
 
-func (store *postgresStore) Delete(id interface{}) error {
-	_, err := store.client().Exec(fmt.Sprintf(`DELETE FROM "%s" WHERE id = $1`, store.table), id)
+func (s *store) Delete(id interface{}) error {
+	_, err := s.client().Exec(fmt.Sprintf(`DELETE FROM "%s" WHERE id = $1`, s.table), id)
 	return err
 }
 
-func (store *postgresStore) DeleteAll() error {
-	_, err := store.client().Exec(fmt.Sprintf(`DELETE FROM "%s"`, store.table))
+func (s *store) DeleteAll() error {
+	_, err := s.client().Exec(fmt.Sprintf(`DELETE FROM "%s"`, s.table))
 	return err
+}
+
+func (s *store) unmarshallRow(row scanable, result interface{}) error {
+	if s.idType == "serial" {
+		return unmarshallRow(row, 0, result)
+	}
+	return unmarshallRow(row, "", result)
 }

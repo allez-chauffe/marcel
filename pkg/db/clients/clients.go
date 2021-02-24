@@ -2,55 +2,51 @@ package clients
 
 import "github.com/allez-chauffe/marcel/pkg/db/internal/db"
 
-var DefaultStore *Store
-
 type Store struct {
-	store db.Store
+	store db.StoreBase
 }
 
-func CreateStore() error {
-	store, err := db.DB.CreateStore(func() db.Entity {
+func CreateStore(database db.Client) (*Store, error) {
+	store, err := database.CreateStore(func() db.Entity {
 		return new(Client)
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	DefaultStore = &Store{store}
-
-	return nil
+	return &Store{store}, nil
 }
 
-func Transactional(tx db.Transaction) *Store {
-	return &Store{DefaultStore.store.Transactional(tx)}
+func (s *Store) Transactional(tx db.Transaction) *Store {
+	return &Store{s.store.Transactional(tx)}
 }
 
-func (b *Store) Get(id string) (*Client, error) {
+func (s *Store) Get(id string) (*Client, error) {
 	c := &Client{}
-	return c, b.store.Get(id, &c)
+	return c, s.store.Get(id, &c)
 }
 
-func (b *Store) Exists(id string) (bool, error) {
-	return b.store.Exists(id)
+func (s *Store) Exists(id string) (bool, error) {
+	return s.store.Exists(id)
 }
 
-func (b *Store) List() ([]Client, error) {
+func (s *Store) List() ([]Client, error) {
 	var clients = []Client{}
-	return clients, b.store.List(&clients)
+	return clients, s.store.List(&clients)
 }
 
-func (b *Store) Insert(c *Client) error {
-	return b.store.Insert(c)
+func (s *Store) Insert(c *Client) error {
+	return s.store.Insert(c)
 }
 
-func (b *Store) Update(c *Client) error {
-	return b.store.Update(c)
+func (s *Store) Update(c *Client) error {
+	return s.store.Update(c)
 }
 
-func (b *Store) Delete(id string) error {
-	return b.store.Delete(id)
+func (s *Store) Delete(id string) error {
+	return s.store.Delete(id)
 }
 
-func (b *Store) DeleteAll() error {
-	return b.store.DeleteAll()
+func (s *Store) DeleteAll() error {
+	return s.store.DeleteAll()
 }
