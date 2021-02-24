@@ -7,9 +7,9 @@ type StoreBase interface {
 
 	Exists(id interface{}) (bool, error) // Get + check err
 
-	List(result interface{}) error
+	List(result interface{}) error // FIXME find w/ nil filters
 
-	Find(result interface{}, filters map[string]interface{}) error
+	Find(filters map[string]interface{}, result interface{}) error
 
 	Insert(item Entity) error
 
@@ -27,7 +27,25 @@ type StoreBase interface {
 }
 
 type Store interface {
-	StoreBase
+	Get(id interface{}) (interface{}, error)
+
+	Exists(id interface{}) (bool, error) // Get + check err
+
+	List() (interface{}, error)
+
+	Find(filters map[string]interface{}) (interface{}, error)
+
+	Insert(item Entity) error
+
+	Update(item Entity) error
+
+	Upsert(item Entity) error // FIXME Get + Insert/Update
+
+	Delete(id interface{}) error
+
+	DeleteAll() error // FIXME List + Delete
+
+	// FIXME Transactional()
 }
 
 type Entity interface {
@@ -38,9 +56,8 @@ type Entity interface {
 var EntityNotFound = errors.New("Entity not found")
 
 func ShouldAutoIncrement(entity Entity) bool {
+	// FIXME this shouldn't be determined on ID value, but rather set as an option on the store
 	id, isInt := entity.GetID().(int)
-
-	// FIXME use a special autoincrement type like bolthold does
 
 	return isInt && id == -1
 }

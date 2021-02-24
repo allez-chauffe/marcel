@@ -16,6 +16,8 @@ type store struct {
 	tx            *bolt.Tx
 }
 
+var _ db.StoreBase = new(store)
+
 func (s *store) WithTransaction(tx db.Transaction) db.StoreBase {
 	if tx == nil {
 		return s
@@ -128,7 +130,7 @@ func (s *store) Exists(id interface{}) (bool, error) {
 	return entity != nil, nil
 }
 
-func (s *store) Find(result interface{}, filters map[string]interface{}) error {
+func (s *store) Find(filters map[string]interface{}, result interface{}) error {
 	query := queryFromFilters(filters)
 	if s.IsWithTransaction() {
 		return s.bh.TxFind(s.tx, result, query)

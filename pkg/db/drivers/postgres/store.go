@@ -33,6 +33,8 @@ func (s *store) client() storeClient {
 	return s.pg
 }
 
+var _ db.StoreBase = new(store)
+
 func (s *store) WithTransaction(tx db.Transaction) db.StoreBase {
 	if tx == nil {
 		return s
@@ -75,11 +77,12 @@ func (s *store) Exists(id interface{}) (bool, error) {
 }
 
 func (s *store) List(result interface{}) error {
-	return s.Find(result, nil)
+	return s.Find(nil, result)
 }
 
-func (s *store) Find(result interface{}, filters map[string]interface{}) error {
+func (s *store) Find(filters map[string]interface{}, result interface{}) error {
 	resultVal := reflect.ValueOf(result)
+	// FIXME remove this test
 	if resultVal.Kind() != reflect.Ptr || resultVal.Elem().Kind() != reflect.Slice {
 		panic("List result should be a slice pointer")
 	}
