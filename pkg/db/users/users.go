@@ -74,7 +74,7 @@ func (s *Store) List() ([]User, error) {
 
 func (s *Store) Get(id string) (*User, error) {
 	u := new(User)
-	return u, s.store.Get(id, &u)
+	return u, s.store.Get(id, &u) // FIXME non
 }
 
 func (s *Store) GetByLogin(login string) (*User, error) {

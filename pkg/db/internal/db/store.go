@@ -1,63 +1,245 @@
 package db
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"reflect"
+)
 
-type StoreBase interface {
-	Get(id interface{}, result interface{}) error
+var (
+	ErrNotFound       = errors.New("not found")
+	ErrNotImplemented = errors.New("not implemented")
+)
 
-	Exists(id interface{}) (bool, error) // Get + check err
+type Store interface {
+	Get(id interface{}) (interface{}, error)
 
-	List(result interface{}) error // FIXME find w/ nil filters
+	Exists(id interface{}) (bool, error)
 
-	Find(filters map[string]interface{}, result interface{}) error
+	List() (interface{}, error)
 
-	Insert(item Entity) error
+	Find(filters map[string]interface{}) (interface{}, error)
 
-	Update(item Entity) error
+	Insert(e Entity) error
 
-	Upsert(item Entity) error // FIXME Get + Insert/Update
+	Update(e Entity) error
+
+	Upsert(e Entity) error
 
 	Delete(id interface{}) error
 
-	DeleteAll() error // FIXME List + Delete
+	DeleteAll() error
+
+	// FIXME Transactional()
+}
+
+func NewStore(baseFactory func(config *StoreConfig) StoreBase, options ...StoreOption) (Store, error) {
+	var config = new(StoreConfig)
+
+	for _, option := range options {
+		option(config)
+	}
+
+	var base = baseFactory(config)
+
+	return &store{base, config}, nil
+}
+
+type StoreOption func(*StoreConfig) error
+
+func WithType(v interface{}) StoreOption {
+	return func(c *StoreConfig) error {
+		var t = reflect.TypeOf(v)
+		if t != nil && t.Kind() == reflect.Ptr {
+			t = t.Elem()
+		}
+
+		if t == nil || t.Kind() != reflect.Struct {
+			return fmt.Errorf("%#v should be of struct{} or &struct{} kind", v)
+		}
+
+		// FIXME check pointer to t is AssignableTo Entity
+
+		c.new = func() interface{} {
+			return reflect.New(t).Interface()
+		}
+
+		var st = reflect.SliceOf(t)
+		c.newList = func() interface{} {
+			var p = reflect.New(st)
+			p.Elem().Set(reflect.MakeSlice(st, 0, 10))
+			return p.Interface()
+		}
+
+		return nil
+	}
+}
+
+// FIXME WithAutoIncrement
+
+type StoreConfig struct {
+	new     func() interface{}
+	newList func() interface{}
+}
+
+type StoreBase interface {
+	Get(id interface{}, e interface{}) error
+
+	Insert(id interface{}, e interface{}) error
+
+	Update(id interface{}, e interface{}) error
+
+	Delete(id interface{}) error
 
 	WithTransaction(tx Transaction) StoreBase
 
 	IsWithTransaction() bool
 }
 
-type Store interface {
-	Get(id interface{}) (interface{}, error)
+type StoreExists interface {
+	Exists(id interface{}) (bool, error)
+}
 
-	Exists(id interface{}) (bool, error) // Get + check err
+type StoreFind interface {
+	Find(filters map[string]interface{}, result interface{}) error
+}
 
-	List() (interface{}, error)
+type StoreList interface {
+	List(result interface{}) error
+}
 
-	Find(filters map[string]interface{}) (interface{}, error)
+type StoreUpsert interface {
+	Upsert(id interface{}, item interface{}) error
+}
 
-	Insert(item Entity) error
-
-	Update(item Entity) error
-
-	Upsert(item Entity) error // FIXME Get + Insert/Update
-
-	Delete(id interface{}) error
-
-	DeleteAll() error // FIXME List + Delete
-
-	// FIXME Transactional()
+type StoreDeleteAll interface {
+	DeleteAll() error
 }
 
 type Entity interface {
-	GetID() interface{}
+	ID() interface{}
 	SetID(id interface{})
 }
 
-var EntityNotFound = errors.New("Entity not found")
+type store struct {
+	base   StoreBase
+	config *StoreConfig
+}
+
+func (s *store) Get(id interface{}) (interface{}, error) {
+	var e = s.config.new()
+
+	if err := s.base.Get(id, e); err != nil {
+		return nil, err
+	}
+
+	return e, nil
+}
+
+func (s *store) Insert(e Entity) error {
+	return s.base.Insert(e.ID(), e)
+}
+
+func (s *store) Update(e Entity) error {
+	return s.base.Update(e.ID(), e)
+}
+
+func (s *store) Delete(id interface{}) error {
+	return s.base.Delete(id)
+}
+
+func (s *store) Exists(id interface{}) (bool, error) {
+	if se, ok := s.base.(StoreExists); ok {
+		return se.Exists(id)
+	}
+
+	var _, err = s.Get(id)
+
+	if err == nil {
+		return true, nil
+	}
+
+	if errors.Is(err, ErrNotFound) {
+		return false, nil
+	}
+
+	return false, err
+}
+
+func (s *store) List() (interface{}, error) {
+	if sl, ok := s.base.(StoreList); ok {
+		var v = s.config.newList()
+
+		if err := sl.List(v); err != nil {
+			return nil, err
+		}
+
+		return indirect(v), nil
+	}
+
+	return s.Find(nil)
+}
+
+func (s *store) Find(filters map[string]interface{}) (interface{}, error) {
+	if sf, ok := s.base.(StoreFind); ok {
+		var v = s.config.newList()
+
+		if err := sf.Find(filters, v); err != nil {
+			return nil, err
+		}
+
+		return indirect(v), nil
+	}
+
+	return nil, ErrNotImplemented // FIXME wrap error
+}
+
+func (s *store) Upsert(e Entity) error {
+	if su, ok := s.base.(StoreUpsert); ok {
+		return su.Upsert(e.ID(), e)
+	}
+
+	var ok, err = s.Exists(e.ID())
+	if err != nil {
+		return err
+	}
+
+	if ok {
+		return s.Update(e)
+	}
+
+	return s.Insert(e)
+}
+
+func (s *store) DeleteAll() error {
+	if sda, ok := s.base.(StoreDeleteAll); ok {
+		return sda.DeleteAll()
+	}
+
+	var l, err = s.List()
+	if err != nil {
+		return err
+	}
+
+	var v = reflect.ValueOf(l)
+	// FIXME check this is of expected slice type
+
+	for i := 0; i < v.Len(); i++ {
+		if err := s.Delete(v.Index(i).Addr().Interface().(Entity).ID()); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 func ShouldAutoIncrement(entity Entity) bool {
 	// FIXME this shouldn't be determined on ID value, but rather set as an option on the store
-	id, isInt := entity.GetID().(int)
+	id, isInt := entity.ID().(int)
 
 	return isInt && id == -1
+}
+
+func indirect(v interface{}) interface{} {
+	return reflect.Indirect(reflect.ValueOf(v)).Interface()
 }
