@@ -30,7 +30,7 @@ type Store interface {
 
 	DeleteAll() error
 
-	// FIXME Transactional()
+	// FIXME Transactional() or not
 }
 
 func NewStore(baseFactory func(config *StoreConfig) StoreBase, options ...StoreOption) (Store, error) {
@@ -75,11 +75,17 @@ func WithType(v interface{}) StoreOption {
 	}
 }
 
-// FIXME WithAutoIncrement
+func WithAutoIncrement() StoreOption {
+	return func(c *StoreConfig) error {
+		c.autoIncrement = true
+		return nil
+	}
+}
 
 type StoreConfig struct {
-	new     func() interface{}
-	newList func() interface{}
+	new           func() interface{}
+	newList       func() interface{}
+	autoIncrement bool
 }
 
 type StoreBase interface {
@@ -231,13 +237,6 @@ func (s *store) DeleteAll() error {
 	}
 
 	return nil
-}
-
-func ShouldAutoIncrement(entity Entity) bool {
-	// FIXME this shouldn't be determined on ID value, but rather set as an option on the store
-	id, isInt := entity.ID().(int)
-
-	return isInt && id == -1
 }
 
 func indirect(v interface{}) interface{} {
