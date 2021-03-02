@@ -2,7 +2,7 @@ package db
 
 import (
 	"github.com/allez-chauffe/marcel/pkg/db/clients"
-	"github.com/allez-chauffe/marcel/pkg/db/internal/db"
+	"github.com/allez-chauffe/marcel/pkg/db/driver/driver"
 	"github.com/allez-chauffe/marcel/pkg/db/medias"
 	"github.com/allez-chauffe/marcel/pkg/db/plugins"
 	"github.com/allez-chauffe/marcel/pkg/db/users"
@@ -25,7 +25,7 @@ func Users() *users.Store {
 }
 
 type Tx struct {
-	db.Transaction
+	driver.Transaction
 }
 
 func (tx *Tx) Clients() *clients.Store {

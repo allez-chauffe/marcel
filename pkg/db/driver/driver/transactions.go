@@ -1,4 +1,4 @@
-package db
+package driver
 
 import (
 	log "github.com/sirupsen/logrus"

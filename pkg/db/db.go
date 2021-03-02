@@ -1,20 +1,17 @@
 package db
 
 import (
-	"fmt"
-
 	"github.com/allez-chauffe/marcel/pkg/config"
 	"github.com/allez-chauffe/marcel/pkg/db/clients"
-	"github.com/allez-chauffe/marcel/pkg/db/drivers/bolt"
-	"github.com/allez-chauffe/marcel/pkg/db/drivers/postgres"
-	"github.com/allez-chauffe/marcel/pkg/db/internal/db"
+	"github.com/allez-chauffe/marcel/pkg/db/driver/driver"
+	_ "github.com/allez-chauffe/marcel/pkg/db/driver/register" // Register drivers
 	"github.com/allez-chauffe/marcel/pkg/db/medias"
 	"github.com/allez-chauffe/marcel/pkg/db/plugins"
 	"github.com/allez-chauffe/marcel/pkg/db/users"
 )
 
 type DB struct {
-	client  db.Client
+	client  driver.Client
 	clients *clients.Store
 	medias  *medias.Store
 	plugins *plugins.Store
@@ -24,7 +21,7 @@ type DB struct {
 func Open() (database *DB, err error) {
 	database = new(DB)
 
-	database.client, err = driver().Open()
+	database.client, err = driver.Get(config.Default().API().DB().Driver()).Open()
 	if err != nil {
 		return nil, err
 	}
@@ -59,18 +56,7 @@ func (database *DB) Begin() (*Tx, error) {
 }
 
 func Transactional(task func(*Tx) error) (err error) {
-	return db.Transactional(func(tx db.Transaction) error {
+	return driver.Transactional(func(tx driver.Transaction) error {
 		return task(&Tx{tx})
 	})
-}
-
-func driver() db.Driver {
-	switch config.Default().API().DB().Driver() {
-	case "bolt":
-		return bolt.Driver
-	case "postgres":
-		return postgres.Driver
-	default:
-		panic(fmt.Errorf("Unknown database driver %s", config.Default().API().DB().Driver()))
-	}
 }

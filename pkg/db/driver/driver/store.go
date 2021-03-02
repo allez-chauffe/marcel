@@ -1,4 +1,4 @@
-package db
+package driver
 
 import (
 	"errors"
@@ -88,6 +88,18 @@ type StoreConfig struct {
 	autoIncrement bool
 }
 
+func (c *StoreConfig) New() interface{} {
+	return c.new()
+}
+
+func (c *StoreConfig) NewList() interface{} {
+	return c.newList()
+}
+
+func (c *StoreConfig) AutoIncrement() bool {
+	return c.AutoIncrement()
+}
+
 type StoreBase interface {
 	Get(id interface{}, e interface{}) error
 
@@ -99,7 +111,7 @@ type StoreBase interface {
 
 	WithTransaction(tx Transaction) StoreBase
 
-	IsWithTransaction() bool
+	HasTransaction() bool
 }
 
 type StoreExists interface {

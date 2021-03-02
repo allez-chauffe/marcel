@@ -1,7 +1,7 @@
-package db
+package driver
 
 type Client interface {
-	Store(entityFactory func() Entity) (Store, error)
+	Store(...StoreOption) (Store, error)
 	Begin() (Transaction, error)
 	Close() error
 }
