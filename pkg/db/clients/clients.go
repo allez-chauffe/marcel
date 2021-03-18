@@ -1,15 +1,13 @@
 package clients
 
-import "github.com/allez-chauffe/marcel/pkg/db/internal/db"
+import "github.com/allez-chauffe/marcel/pkg/db/driver/driver"
 
 type Store struct {
-	store db.StoreBase
+	store driver.Store
 }
 
-func CreateStore(database db.Client) (*Store, error) {
-	store, err := database.CreateStore(func() db.Entity {
-		return new(Client)
-	})
+func NewStore(client driver.Client) (*Store, error) {
+	store, err := client.Store(driver.WithType(new(Client)))
 	if err != nil {
 		return nil, err
 	}
@@ -17,13 +15,17 @@ func CreateStore(database db.Client) (*Store, error) {
 	return &Store{store}, nil
 }
 
-func (s *Store) Transactional(tx db.Transaction) *Store {
-	return &Store{s.store.Transactional(tx)}
-}
+// FIXME
+// func (s *Store) Transactional(tx db.Transaction) *Store {
+// 	return &Store{s.store.Transactional(tx)}
+// }
 
 func (s *Store) Get(id string) (*Client, error) {
-	c := &Client{}
-	return c, s.store.Get(id, &c)
+	e, err := s.store.Get(id)
+	if err != nil {
+		return nil, err
+	}
+	return e.(*Client), nil
 }
 
 func (s *Store) Exists(id string) (bool, error) {
@@ -31,8 +33,11 @@ func (s *Store) Exists(id string) (bool, error) {
 }
 
 func (s *Store) List() ([]Client, error) {
-	var clients = []Client{}
-	return clients, s.store.List(&clients)
+	l, err := s.store.List()
+	if err != nil {
+		return nil, err
+	}
+	return l.([]Client), nil
 }
 
 func (s *Store) Insert(c *Client) error {

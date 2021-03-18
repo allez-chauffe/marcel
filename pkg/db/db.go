@@ -26,7 +26,7 @@ func Open() (database *DB, err error) {
 		return nil, err
 	}
 
-	if database.clients, err = clients.CreateStore(database.client); err != nil {
+	if database.clients, err = clients.NewStore(database.client); err != nil {
 		return nil, err
 	}
 	if database.medias, err = medias.CreateStore(database.client); err != nil {
@@ -55,8 +55,9 @@ func (database *DB) Begin() (*Tx, error) {
 	return &Tx{tx}, nil
 }
 
-func Transactional(task func(*Tx) error) (err error) {
-	return driver.Transactional(func(tx driver.Transaction) error {
-		return task(&Tx{tx})
-	})
-}
+// FIXME
+// func Transactional(task func(*Tx) error) (err error) {
+// 	return driver.Transactional(func(tx driver.Transaction) error {
+// 		return task(&Tx{tx})
+// 	})
+// }

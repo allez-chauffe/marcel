@@ -135,7 +135,7 @@ type StoreDeleteAll interface {
 }
 
 type Entity interface {
-	ID() interface{}
+	GetID() interface{}
 	SetID(id interface{})
 }
 
@@ -155,11 +155,11 @@ func (s *store) Get(id interface{}) (interface{}, error) {
 }
 
 func (s *store) Insert(e Entity) error {
-	return s.base.Insert(e.ID(), e)
+	return s.base.Insert(e.GetID(), e)
 }
 
 func (s *store) Update(e Entity) error {
-	return s.base.Update(e.ID(), e)
+	return s.base.Update(e.GetID(), e)
 }
 
 func (s *store) Delete(id interface{}) error {
@@ -214,10 +214,10 @@ func (s *store) Find(filters map[string]interface{}) (interface{}, error) {
 
 func (s *store) Upsert(e Entity) error {
 	if su, ok := s.base.(StoreUpsert); ok {
-		return su.Upsert(e.ID(), e)
+		return su.Upsert(e.GetID(), e)
 	}
 
-	var ok, err = s.Exists(e.ID())
+	var ok, err = s.Exists(e.GetID())
 	if err != nil {
 		return err
 	}
@@ -243,7 +243,7 @@ func (s *store) DeleteAll() error {
 	// FIXME check this is of expected slice type
 
 	for i := 0; i < v.Len(); i++ {
-		if err := s.Delete(v.Index(i).Addr().Interface().(Entity).ID()); err != nil {
+		if err := s.Delete(v.Index(i).Addr().Interface().(Entity).GetID()); err != nil {
 			return err
 		}
 	}
