@@ -59,21 +59,31 @@ $ marcel api
 This will serve the api on the default port `8090`.
 
 You should then serve `api`, `backoffice` and `frontend` behind reverse proxy and serve this routes :
-  - `/` : the backend (`backend/build`)
-  - `/front` : the frontend (`frontend/build`)
-  - `/api`: the backend (`localhost:8090` by default)
+  - `/` : the backoffice (`pkg/backoffice/build`)
+  - `/front` : the frontend (`pkg/frontend/build`)
+  - `/api`: the backend (`pkg/api`)
+
+`localhost:8090` by default
   
-## Developpement
+## Development
  
 To have a working development environment, you have to run this 3 commands in separated terminals :
 
 ```bash
-$ cd backoffice && yarn && yarn start
-$ cd frontend && yarn && yarn start
-$ go build && ./marcel api --secure=false
+$ go build ./cmd/marcel && ./marcel api --secure=false
+$ cd pkg/backoffice && yarn && yarn start
+$ cd pkg/frontend && yarn && yarn start
 ```
 
 You can then begin to modify sources. The backend is not compiled in watch mode, so you have to restart it manually. The backoffice and the frontend are live-reloaded.
+
+Another solution is to use `standalone` mode :
+
+```bash
+$ go build ./cmd/marcel && ./marcel standalone
+```
+
+And don't forget to save admin password displayed in logs :-) 
 
 ## License
 
