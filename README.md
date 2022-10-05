@@ -33,7 +33,7 @@ This ways, you can find a list of all available plugins by [searching them on gi
 Building the backend is simple, you can just install the main go package :
 
 ```bash
-$ go install
+$ go install ./cmd/marcel
 ```
 
 This will make the `marcel` command available (if your go bin folder is in your PATH)
@@ -77,13 +77,19 @@ $ cd pkg/frontend && yarn && yarn start
 
 You can then begin to modify sources. The backend is not compiled in watch mode, so you have to restart it manually. The backoffice and the frontend are live-reloaded.
 
-Another solution is to use `standalone` mode :
+Another solution is to use the `standalone` mode if you want a quick launch :
 
 ```bash
 $ go build ./cmd/marcel && ./marcel standalone
 ```
 
-And don't forget to save admin password displayed in logs :-) 
+(don't forget to save admin password displayed in logs :-))
+
+or the `demo` mode if you just want to play with it :
+
+```bash
+$ go build ./cmd/marcel && ./marcel
+```
 
 ## License
 
