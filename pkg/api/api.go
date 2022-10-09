@@ -48,6 +48,7 @@ func Module() *module.Module {
 		HTTP: module.HTTP{
 			BasePath: config.Default().API().BasePath(),
 			Setup: func(_ module.Context, _ string, r *mux.Router) {
+			    r.Use(LoggingMiddleware)
 				r.Use(auth.Middleware)
 				if !config.Default().API().Auth().Secure() {
 					log.Warnln("Secure mode is disabled")
