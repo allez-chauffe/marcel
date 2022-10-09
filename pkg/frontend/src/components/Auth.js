@@ -7,7 +7,7 @@ import LoginForm from './LoginForm'
 class Auth extends React.Component {
   state = {
     user: null,
-    loading: true,
+    loading: false,
     form: {
       login: '',
       password: '',
@@ -16,13 +16,16 @@ class Auth extends React.Component {
 
   componentDidMount() {
     this.authFetcher = authFetcher(this.props.uris)
-    this.login()
+    if (this.state.form.login) {
+        this.login()
+    }
   }
 
   login = event => {
     event && event.preventDefault()
     const { login, password } = this.state.form
     console.log('Logging in...')
+    this.setState({ loading: true })
     this.authFetcher
       .post('login', login && password ? { login, password } : null)
       .then(user => this.setState({ user, loading: false }))

@@ -6,7 +6,7 @@ const LoginForm = ({ login, password, onLoginChange, onPasswordChange, onLogin, 
     <form onSubmit={onLogin}>
       <div className="inputGroup">
         <label htmlFor="login">Login</label>
-        <input id="login" alue={login} onChange={onLoginChange} />
+        <input id="login" value={login} onChange={onLoginChange} />
       </div>
       <div className="inputGroup">
         <label htmlFor="password">Mot de passe</label>
