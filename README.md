@@ -11,7 +11,7 @@ Marcel is a configurable plugin based dashboard system.
 Marcel is based on plugins, and we need you to complete the collection!
 
 By convention, a plugin should have a name begin with `marcel-plugin-*` (`marcel-plugin-text` for example).
-This ways, you can find a list of all available plugins by [searching them on github](https://github.com/search?utf8=%E2%9C%93&q=marcel%2Dplugin)
+This way, you can find a list of all available plugins by [searching them on gitHub](https://github.com/search?utf8=%E2%9C%93&q=marcel%2Dplugin)
 
 [See the marcel-plugin package to know more about plugin creation.](./node-packages/marcel-plugin)
 
@@ -90,6 +90,14 @@ or the `demo` mode if you just want to play with it :
 ```bash
 $ go build ./cmd/marcel && ./marcel
 ```
+
+If you want to explore the bolt database, you can use the tool [boltdbweb](https://github.com/evnix/boltdbweb)
+
+```bash
+$ go install go get github.com/evnix/boltdbweb@latest
+$ boltdbweb --db-name=marcel.db --port=<port>[optional] --static-path=<static-path>[optional]
+```
+
 
 ## License
 
