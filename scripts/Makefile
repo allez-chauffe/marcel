@@ -10,7 +10,7 @@ build-api:  ## build the backend/api project for Raspberry Pi
 .PHONY: build-front
 build-front: ## build the front project
 	cd ../pkg/frontend && \
-	yarn build && \
+	yarn && yarn build && \
 	docker image build -t zenika/marcel-frontend:$(TAG) .
 
 .PHONY: build-back
