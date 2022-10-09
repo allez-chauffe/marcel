@@ -1,6 +1,6 @@
 import { set } from 'immutadot/core/set'
 import { flow } from 'immutadot/core/flow'
-import { unset } from 'immutadot/core/set'
+import { unset } from 'immutadot/core/unset'
 import { actions as loadersActions } from '../store/loaders'
 import { actions } from './actions'
 
