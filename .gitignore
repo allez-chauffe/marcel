@@ -14,3 +14,5 @@ pkged.go
 test_env
 yarn-debug.log
 yarn-error.log
+plugins/
+medias/
