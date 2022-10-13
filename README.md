@@ -24,10 +24,9 @@ This way, you can find a list of all available plugins by [searching them on git
 
 ### Requirements
 
- - go > 1.11.0 (`marcel` is using go modules)
- - node > 9.0.0
- - npm > 5.0.0
-  
+ - go > 1.16.0 (`marcel` is using go modules)
+ - node > 16.17
+
 ### Backend
  
 Building the backend is simple, you can just install the main go package :
@@ -70,9 +69,9 @@ You should then serve `api`, `backoffice` and `frontend` behind reverse proxy an
 To have a working development environment, you have to run this 3 commands in separated terminals :
 
 ```bash
-$ go build ./cmd/marcel && ./marcel api --secure=false
 $ cd pkg/backoffice && yarn && yarn start
 $ cd pkg/frontend && yarn && yarn start
+$ go build ./cmd/marcel && ./marcel api --secure=false
 ```
 
 You can then begin to modify sources. The backend is not compiled in watch mode, so you have to restart it manually. The backoffice and the frontend are live-reloaded.
