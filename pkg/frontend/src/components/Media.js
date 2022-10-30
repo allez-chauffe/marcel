@@ -64,7 +64,7 @@ class Media extends Component {
 
     return (
       <div className="media fullSize" style={styles}>
-        {media.plugins && media.plugins.map(plugin => (
+        {media.plugins?.map(plugin => (
           <Plugin
             plugin={plugin}
             stylesvar={media.stylesvar}
