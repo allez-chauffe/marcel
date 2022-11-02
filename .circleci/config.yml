@@ -15,9 +15,6 @@ executors:
   std_executor:
     docker:
       - image: cimg/base:stable
-  gcloud_executor:
-    docker:
-      - image: google/cloud-sdk:latest
 
 jobs:
   build_backoffice:
@@ -98,15 +95,6 @@ jobs:
             - marcel_windows_amd64.exe
             - marcel_darwin_amd64
 
-  docker_build_marcel:
-    executor: gcloud_executor
-    steps:
-      - checkout
-      - setup_remote_docker
-      - attach_workspace:
-          at: .
-      - run: ./scripts/docker_build.sh eu.gcr.io/zen-dashboard/marcel
-
   archive_backoffice:
     executor: std_executor
     steps:
@@ -147,21 +135,6 @@ jobs:
             - marcel_linux_amd64.tgz
             - marcel_windows_amd64.tgz
             - marcel_darwin_amd64.tgz
-
-  deploy_integration:
-    executor: gcloud_executor
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - plugins-package-{{ .Revision }}
-      - run: ./scripts/install.sh
-      - run:
-          command: rm -rf ${HOME}/.ssh
-          when: always
-      - run:
-          command: rm -f ${HOME}/gcloud-service-key.json
-          when: always
 
   publish_github_release:
     executor: go_executor
@@ -210,10 +183,6 @@ workflows:
             - build_frontend
       - build_marcel_noembed:
           filters: *filters-tag
-      - docker_build_marcel:
-          filters: *filters-master-tag
-          requires:
-            - build_marcel
       - archive_backoffice:
           filters: *filters-tag
           requires:
@@ -226,10 +195,6 @@ workflows:
           filters: *filters-tag
           requires:
             - build_marcel_noembed
-      - deploy_integration:
-          filters: *filters-master
-          requires:
-            - docker_build_marcel
       - publish_github_release:
           filters: *filters-tag
           requires:
